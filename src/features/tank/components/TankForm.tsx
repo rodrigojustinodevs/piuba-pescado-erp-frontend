@@ -6,6 +6,11 @@ import { createTankSchema, type CreateTankFormData } from "../schemas";
 import type { Tank } from "../types";
 import { useCompanies } from "@/features/company";
 import { useTankTypes } from "../hooks/useTankTypes";
+import {
+  TextInput,
+  NumberInput,
+  Select,
+} from "@/shared/components/form";
 
 interface TankFormProps {
   initialData?: Tank;
@@ -51,115 +56,66 @@ export function TankForm({
         <h3 className="text-lg font-semibold text-gray-900">Informações Básicas</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="companyId" className="block text-sm font-medium text-gray-700 mb-1">
-              Empresa *
-            </label>
-            <select
-              id="companyId"
-              {...register("companyId")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Selecione uma empresa</option>
-              {companies.map((company) => (
-                <option key={company.id} value={company.id}>
-                  {company.name}
-                </option>
-              ))}
-            </select>
-            {errors.companyId && (
-              <p className="mt-1 text-sm text-red-600">{errors.companyId.message}</p>
-            )}
-          </div>
+          <Select
+            label="Empresa"
+            required
+            options={companies.map((company) => ({
+              value: String(company.id),
+              label: company.name,
+            }))}
+            placeholder="Selecione uma empresa"
+            {...register("companyId")}
+            error={errors.companyId?.message}
+          />
 
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Nome do Tanque *
-            </label>
-            <input
-              id="name"
-              type="text"
-              {...register("name")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-            )}
-          </div>
+          <TextInput
+            label="Nome do Tanque"
+            required
+            {...register("name")}
+            error={errors.name?.message}
+          />
 
-          <div>
-            <label htmlFor="tankTypeId" className="block text-sm font-medium text-gray-700 mb-1">
-              Tipo de Tanque *
-            </label>
-            <select
-              id="tankTypeId"
-              {...register("tankTypeId")}
-              disabled={isLoadingTypes}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <option value="">
-                {isLoadingTypes ? "Carregando tipos..." : "Selecione um tipo"}
-              </option>
-              {tankTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-            {errors.tankTypeId && (
-              <p className="mt-1 text-sm text-red-600">{errors.tankTypeId.message}</p>
-            )}
-          </div>
+          <Select
+            label="Tipo de Tanque"
+            required
+            disabled={isLoadingTypes}
+            options={tankTypes.map((type) => ({
+              value: String(type.id),
+              label: type.name,
+            }))}
+            placeholder={isLoadingTypes ? "Carregando tipos..." : "Selecione um tipo"}
+            {...register("tankTypeId")}
+            error={errors.tankTypeId?.message}
+          />
 
-          <div>
-            <label htmlFor="capacityLiters" className="block text-sm font-medium text-gray-700 mb-1">
-              Capacidade (litros) *
-            </label>
-            <input
-              id="capacityLiters"
-              type="number"
-              step="0.01"
-              min="0.01"
-              {...register("capacityLiters", { valueAsNumber: true })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.capacityLiters && (
-              <p className="mt-1 text-sm text-red-600">{errors.capacityLiters.message}</p>
-            )}
-          </div>
+          <NumberInput
+            label="Capacidade (litros)"
+            required
+            step={0.01}
+            min={0.01}
+            error={errors.capacityLiters?.message}
+            {...register("capacityLiters", { valueAsNumber: true })}
+          />
 
           <div className="md:col-span-2">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-              Localização
-            </label>
-            <input
-              id="location"
-              type="text"
+            <TextInput
+              label="Localização"
               placeholder="Ex: Setor A - Bloco 3"
               {...register("location")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              error={errors.location?.message}
             />
-            {errors.location && (
-              <p className="mt-1 text-sm text-red-600">{errors.location.message}</p>
-            )}
           </div>
 
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status *
-            </label>
-            <select
-              id="status"
-              {...register("status")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="active">Ativo</option>
-              <option value="inactive">Inativo</option>
-            </select>
-            {errors.status && (
-              <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
-            )}
-          </div>
+          <Select
+            label="Status"
+            required
+            options={[
+              { value: "active", label: "Ativo" },
+              { value: "inactive", label: "Inativo" },
+            ]}
+            {...register("status")}
+            error={errors.status?.message}
+          />
         </div>
       </div>
 
