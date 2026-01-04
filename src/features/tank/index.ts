@@ -9,6 +9,8 @@ export type {
   UpdateTankData,
   TankListResponse,
   TankType,
+  ApiTank,
+  ApiTankListResponse,
 } from "./types";
 
 // Schemas

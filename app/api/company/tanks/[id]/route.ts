@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type { UpdateTankData, Tank } from "@/features/tank";
+import type { UpdateTankData, Tank, ApiTank } from "@/features/tank";
 
 /**
  * Formato de resposta da API para operações individuais
  */
 interface ApiTankResponse {
   status: boolean;
-  response: Tank;
+  response: ApiTank;
   message: string;
 }
 
@@ -56,8 +56,21 @@ export async function GET(
 
     const apiData: ApiTankResponse = await apiResponse.json();
     
-    // Retorna apenas o objeto tank do response
-    return NextResponse.json(apiData.response);
+    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
+    const apiTank = apiData.response;
+    const tank: Tank = {
+      id: apiTank.id,
+      companyId: apiTank.company.id || "",
+      tankTypeId: apiTank.tankType.id,
+      name: apiTank.name,
+      capacityLiters: apiTank.capacityLiters,
+      location: apiTank.location,
+      status: apiTank.status,
+      created_at: apiTank.created_at,
+      updated_at: apiTank.updated_at,
+    };
+    
+    return NextResponse.json(tank);
   } catch (error) {
     console.error("Erro ao buscar tanque:", error);
     return NextResponse.json(
@@ -109,8 +122,21 @@ export async function PUT(
 
     const apiData: ApiTankResponse = await apiResponse.json();
     
-    // Retorna apenas o objeto tank do response
-    return NextResponse.json(apiData.response);
+    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
+    const apiTank = apiData.response;
+    const tank: Tank = {
+      id: apiTank.id,
+      companyId: apiTank.company.id || "",
+      tankTypeId: apiTank.tankType.id,
+      name: apiTank.name,
+      capacityLiters: apiTank.capacityLiters,
+      location: apiTank.location,
+      status: apiTank.status,
+      created_at: apiTank.created_at,
+      updated_at: apiTank.updated_at,
+    };
+    
+    return NextResponse.json(tank);
   } catch (error) {
     console.error("Erro ao atualizar tanque:", error);
     return NextResponse.json(

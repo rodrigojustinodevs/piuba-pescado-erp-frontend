@@ -33,7 +33,7 @@ export interface UpdateTankData extends Partial<CreateTankData> {
 export interface TankType {
   id: string;
   name: string;
-  description: string;
+  description?: string;
 }
 
 /**
@@ -46,11 +46,32 @@ export interface ApiTankTypeListResponse {
 }
 
 /**
+ * Formato de tanque retornado pela API (camelCase com objetos aninhados)
+ */
+export interface ApiTank {
+  id: string;
+  name: string;
+  capacityLiters: number;
+  location?: string;
+  status: "active" | "inactive";
+  tankType: {
+    id: string;
+    name: string;
+  };
+  company: {
+    name: string;
+    id?: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+/**
  * Formato de resposta da API para listagem
  */
 export interface ApiTankListResponse {
   status: boolean;
-  response: Tank[];
+  response: ApiTank[];
   message: string;
   pagination: {
     total: number;

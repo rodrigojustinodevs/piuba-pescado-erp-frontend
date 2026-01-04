@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import type {
   TankListResponse,
   ApiTankListResponse,
+  ApiTank,
   CreateTankData,
   Tank,
 } from "@/features/tank";
@@ -12,7 +13,7 @@ import type {
  */
 interface ApiTankResponse {
   status: boolean;
-  response: Tank;
+  response: ApiTank;
   message: string;
 }
 
@@ -68,9 +69,21 @@ export async function GET(req: NextRequest) {
 
     const apiData: ApiTankListResponse = await apiResponse.json();
 
-    // Transforma o formato da API para o formato esperado pelo frontend
+    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
+    const tanks: Tank[] = (apiData.response || []).map((apiTank: ApiTank) => ({
+      id: apiTank.id,
+      companyId: apiTank.company.id || "",
+      tankTypeId: apiTank.tankType.id,
+      name: apiTank.name,
+      capacityLiters: apiTank.capacityLiters,
+      location: apiTank.location,
+      status: apiTank.status,
+      created_at: apiTank.created_at,
+      updated_at: apiTank.updated_at,
+    }));
+
     const response: TankListResponse = {
-      tanks: apiData.response || [],
+      tanks,
       total: apiData.pagination?.total || 0,
       page: apiData.pagination?.current_page || 1,
       limit: apiData.pagination?.per_page || 10,
@@ -124,8 +137,21 @@ export async function POST(req: NextRequest) {
 
     const apiData: ApiTankResponse = await apiResponse.json();
     
-    // Retorna apenas o objeto tank do response
-    return NextResponse.json(apiData.response, { status: apiResponse.status });
+    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
+    const apiTank = apiData.response;
+    const tank: Tank = {
+      id: apiTank.id,
+      companyId: apiTank.company.id || "",
+      tankTypeId: apiTank.tankType.id,
+      name: apiTank.name,
+      capacityLiters: apiTank.capacityLiters,
+      location: apiTank.location,
+      status: apiTank.status,
+      created_at: apiTank.created_at,
+      updated_at: apiTank.updated_at,
+    };
+    
+    return NextResponse.json(tank, { status: apiResponse.status });
   } catch (error) {
     console.error("Erro ao criar tanque:", error);
     return NextResponse.json(

@@ -2,9 +2,100 @@
 
 @tailwind utilities;
 
+/**
+ * Design System - Piuba Pescados
+ * Variáveis CSS para Light Mode
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Background */
+  --background: #F8FAFC;
+  --background-elevated: #FFFFFF;
+  --background-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Foreground / Text */
+  --foreground: #1F2933;
+  --foreground-secondary: #6B7280;
+  --foreground-disabled: rgba(31, 41, 51, 0.4);
+  --foreground-inverse: #FFFFFF;
+  
+  /* Primary (Azul oceano) */
+  --primary: #014F86;
+  --primary-hover: #013A66;
+  --primary-active: #002546;
+  --primary-disabled: rgba(1, 79, 134, 0.5);
+  --primary-light: #4169A6;
+  --primary-dark: #003566;
+  
+  /* Secondary (Azul profundo) */
+  --secondary: #003566;
+  --secondary-hover: #002446;
+  --secondary-active: #001326;
+  --secondary-disabled: rgba(0, 53, 102, 0.5);
+  --secondary-light: #335586;
+  --secondary-dark: #002446;
+  
+  /* Surface / Cards */
+  --surface: #E6F2F8;
+  --surface-hover: #DCE8F0;
+  --surface-active: #D2DEE8;
+  --surface-disabled: rgba(230, 242, 248, 0.5);
+  --surface-light: #F0F8FC;
+  --surface-dark: #D0E8F0;
+  
+  /* Info */
+  --info: #48CAE4;
+  --info-hover: #38BAE4;
+  --info-active: #28AAD4;
+  --info-disabled: rgba(72, 202, 228, 0.5);
+  --info-light: #68DAF4;
+  --info-dark: #38BAC4;
+  
+  /* Brand / Accent (Laranja) */
+  --brand: #EE6D4D;
+  --brand-hover: #DE5D3D;
+  --brand-active: #CE4D2D;
+  --brand-disabled: rgba(238, 109, 77, 0.5);
+  --brand-light: #FE7D5D;
+  --brand-dark: #DE5D3D;
+  
+  /* Alert */
+  --alert: #F26C2E;
+  --alert-hover: #E25C1E;
+  --alert-active: #D24C0E;
+  --alert-disabled: rgba(242, 108, 46, 0.5);
+  --alert-light: #FF7C3E;
+  --alert-dark: #E25C1E;
+  
+  /* Success */
+  --success: #2A9D8F;
+  --success-hover: #1A8D7F;
+  --success-active: #0A7D6F;
+  --success-disabled: rgba(42, 157, 143, 0.5);
+  --success-light: #3AAD9F;
+  --success-dark: #1A8D7F;
+  
+  /* Warning */
+  --warning: #E9C46A;
+  --warning-hover: #D9B45A;
+  --warning-active: #C9A44A;
+  --warning-disabled: rgba(233, 196, 106, 0.5);
+  --warning-light: #F9D47A;
+  --warning-dark: #D9B45A;
+  
+  /* Error */
+  --error: #E63946;
+  --error-hover: #D62936;
+  --error-active: #C61926;
+  --error-disabled: rgba(230, 57, 70, 0.5);
+  --error-light: #F64956;
+  --error-dark: #D62936;
+  
+  /* Border */
+  --border: #E5E7EB;
+  --border-hover: #D5D7DB;
+  --border-focus: #014F86;
+  --border-error: #E63946;
+  --border-disabled: rgba(229, 231, 235, 0.5);
 }
 
 @theme inline {
@@ -14,15 +105,105 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/**
+ * Design System - Piuba Pescados
+ * Variáveis CSS para Dark Mode
+ */
+.dark {
+  /* Background */
+  --background: #0F172A;
+  --background-elevated: #1E293B;
+  --background-overlay: rgba(0, 0, 0, 0.7);
+  
+  /* Foreground / Text */
+  --foreground: #F1F5F9;
+  --foreground-secondary: #CBD5E1;
+  --foreground-disabled: rgba(241, 245, 249, 0.4);
+  --foreground-inverse: #0F172A;
+  
+  /* Primary (Azul oceano - mais claro) */
+  --primary: #4A9FD8;
+  --primary-hover: #6BB3E3;
+  --primary-active: #3A8FC8;
+  --primary-disabled: rgba(74, 159, 216, 0.4);
+  --primary-light: #7BC4E8;
+  --primary-dark: #2A7FA8;
+  
+  /* Secondary (Azul profundo) */
+  --secondary: #1E5A8A;
+  --secondary-hover: #2E6A9A;
+  --secondary-active: #0E4A7A;
+  --secondary-disabled: rgba(30, 90, 138, 0.4);
+  --secondary-light: #3E7AAA;
+  --secondary-dark: #0E3A6A;
+  
+  /* Surface / Cards */
+  --surface: #1E293B;
+  --surface-hover: #273548;
+  --surface-active: #1A2435;
+  --surface-disabled: rgba(30, 41, 59, 0.5);
+  --surface-light: #334155;
+  --surface-dark: #0F172A;
+  
+  /* Info */
+  --info: #5DD5E8;
+  --info-hover: #6DE5F8;
+  --info-active: #4DC5D8;
+  --info-disabled: rgba(93, 213, 232, 0.4);
+  --info-light: #7DF5F8;
+  --info-dark: #3DB5C8;
+  
+  /* Brand / Accent (Laranja) */
+  --brand: #FF8A6B;
+  --brand-hover: #FF9A7B;
+  --brand-active: #EF7A5B;
+  --brand-disabled: rgba(255, 138, 107, 0.4);
+  --brand-light: #FFAA8B;
+  --brand-dark: #DF6A4B;
+  
+  /* Alert */
+  --alert: #FF8C5A;
+  --alert-hover: #FF9C6A;
+  --alert-active: #EF7C4A;
+  --alert-disabled: rgba(255, 140, 90, 0.4);
+  --alert-light: #FFAC7A;
+  --alert-dark: #DF6C3A;
+  
+  /* Success */
+  --success: #4EC5A3;
+  --success-hover: #5ED5B3;
+  --success-active: #3EB593;
+  --success-disabled: rgba(78, 197, 163, 0.4);
+  --success-light: #6EE5C3;
+  --success-dark: #2EA583;
+  
+  /* Warning */
+  --warning: #F5D47A;
+  --warning-hover: #FFE48A;
+  --warning-active: #E5C46A;
+  --warning-disabled: rgba(245, 212, 122, 0.4);
+  --warning-light: #FFE49A;
+  --warning-dark: #D5B45A;
+  
+  /* Error */
+  --error: #FF5A6A;
+  --error-hover: #FF6A7A;
+  --error-active: #EF4A5A;
+  --error-disabled: rgba(255, 90, 106, 0.4);
+  --error-light: #FF7A8A;
+  --error-dark: #DF3A4A;
+  
+  /* Border */
+  --border: #334155;
+  --border-hover: #475569;
+  --border-focus: #4A9FD8;
+  --border-error: #FF5A6A;
+  --border-disabled: rgba(51, 65, 85, 0.5);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
