@@ -58,9 +58,10 @@ export async function GET(
     
     // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
     const apiTank = apiData.response;
+    console.log(apiTank);
     const tank: Tank = {
       id: apiTank.id,
-      companyId: apiTank.company.id || "",
+      companyId: apiTank.company.id ?? "",
       tankTypeId: apiTank.tankType.id,
       name: apiTank.name,
       capacityLiters: apiTank.capacityLiters,

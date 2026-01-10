@@ -68,11 +68,11 @@ export async function GET(req: NextRequest) {
     }
 
     const apiData: ApiTankListResponse = await apiResponse.json();
-
+    console.log(apiData);
     // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
     const tanks: Tank[] = (apiData.response || []).map((apiTank: ApiTank) => ({
       id: apiTank.id,
-      companyId: apiTank.company.id || "",
+      companyId: apiTank.company.id ?? "",
       tankTypeId: apiTank.tankType.id,
       name: apiTank.name,
       capacityLiters: apiTank.capacityLiters,

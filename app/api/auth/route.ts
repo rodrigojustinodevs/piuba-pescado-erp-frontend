@@ -1,86 +1,69 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { decodeJWT } from "@/shared/utils/jwt";
+import {
+  extractRoleFromJWT,
+  extractUserIdFromJWT,
+  extractEmailFromJWT,
+  extractNameFromJWT,
+  extractCompanyIdFromJWT,
+} from "@/shared/utils/jwtExtractors";
 
-/**
- * URL da API backend
- * Pode ser configurada via variável de ambiente NEXT_PUBLIC_API_URL
- */
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
 
-/**
- * Endpoint de login - faz proxy para a API real
- */
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    // Validação básica
     if (!email || !password) {
       return NextResponse.json(
-        { ok: false, message: "Email e senha são obrigatórios" },
+        { ok: false, message: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    // Faz requisição para a API real
     const apiResponse = await fetch(`${API_BASE_URL}/api/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await apiResponse.json();
 
-    // Verifica se o login foi bem-sucedido
     if (data.status === true && data.response?.token) {
       const token = data.response.token;
-
       const res = NextResponse.json({
         ok: true,
-        message: data.message || "Login realizado com sucesso",
+        message: data.message || "Login successful",
         token,
       });
 
-      // Armazena o token JWT no cookie httpOnly
       res.cookies.set({
         name: "auth_token",
         value: token,
         httpOnly: true,
         path: "/",
         sameSite: "lax",
-        // secure: true, // habilitar em produção HTTPS
-        maxAge: 60 * 60 * 24 * 7, // 7 dias
+        maxAge: 60 * 60 * 24 * 7,
       });
 
       return res;
     }
 
-    // Login falhou
     return NextResponse.json(
-      {
-        ok: false,
-        message: data.message || "Credenciais inválidas",
-      },
+      { ok: false, message: data.message || "Invalid credentials" },
       { status: 401 }
     );
   } catch (error) {
-    console.error("Erro ao fazer login:", error);
+    console.error("Login error:", error);
     return NextResponse.json(
-      {
-        ok: false,
-        message: "Erro ao conectar com o servidor. Tente novamente.",
-      },
+      { ok: false, message: "Server error" },
       { status: 500 }
     );
   }
 }
 
 export async function GET() {
-  // endpoint /api/auth (GET) -> retorna user baseado no cookie
-  // Em produção decodifique/valide token JWT
-  // Aqui usamos um token base64 simples para demo
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
   
@@ -88,5 +71,69 @@ export async function GET() {
     return NextResponse.json({ isAuthenticated: false }, { status: 401 });
   }
 
-  return NextResponse.json({ isAuthenticated: true }, { status: 200 });
+  const decodedToken = decodeJWT(token);
+
+  try {
+    const apiResponse = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (apiResponse.ok) {
+      const userData = await apiResponse.json();
+      const roleFromToken = decodedToken ? extractRoleFromJWT(decodedToken) : null;
+      const roleFromApi = userData.role || userData.user?.role || userData.userType || userData.user?.userType;
+      const finalRole = roleFromApi || roleFromToken;
+      
+      const user = {
+        id: userData.id || userData.user?.id || (decodedToken ? extractUserIdFromJWT(decodedToken) : null),
+        email: userData.email || userData.user?.email || (decodedToken ? extractEmailFromJWT(decodedToken) : null),
+        name: userData.name || userData.user?.name || (decodedToken ? extractNameFromJWT(decodedToken) : null),
+        role: finalRole,
+        companyId: userData.companyId || userData.user?.companyId || userData.company_id || userData.user?.company_id || (decodedToken ? extractCompanyIdFromJWT(decodedToken) : null) || null,
+      };
+
+      console.log("[AUTH] User data:", {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        companyId: user.companyId,
+      });
+      
+      return NextResponse.json({ isAuthenticated: true, user }, { status: 200 });
+    }
+
+    if (decodedToken) {
+      const user = {
+        id: extractUserIdFromJWT(decodedToken),
+        email: extractEmailFromJWT(decodedToken),
+        name: extractNameFromJWT(decodedToken),
+        role: extractRoleFromJWT(decodedToken),
+        companyId: extractCompanyIdFromJWT(decodedToken) || null,
+      };
+
+      return NextResponse.json({ isAuthenticated: true, user }, { status: 200 });
+    }
+
+    return NextResponse.json({ isAuthenticated: true }, { status: 200 });
+  } catch (error) {
+    console.error("[AUTH] Error:", error);
+    
+    if (decodedToken) {
+      const user = {
+        id: extractUserIdFromJWT(decodedToken),
+        email: extractEmailFromJWT(decodedToken),
+        name: extractNameFromJWT(decodedToken),
+        role: extractRoleFromJWT(decodedToken),
+        companyId: extractCompanyIdFromJWT(decodedToken) || null,
+      };
+
+      return NextResponse.json({ isAuthenticated: true, user }, { status: 200 });
+    }
+    
+    return NextResponse.json({ isAuthenticated: true }, { status: 200 });
+  }
 }

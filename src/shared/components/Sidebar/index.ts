@@ -1,9 +1,14 @@
 /**
- * Barrel export para componentes do Sidebar
+ * Exportações do módulo Sidebar
  */
 
 export { Sidebar } from "./Sidebar";
-export { MenuItem } from "./MenuItem";
+export type { SidebarProps, MenuItem } from "./types";
+export { MenuItem as MenuItemComponent } from "./MenuItem";
 export { Dropdown } from "./Dropdown";
-export type { SidebarProps, MenuItem as MenuItemType } from "./types";
 
+// Exportações relacionadas a autorização de menu
+export { menuConfig } from "./menuConfig";
+export type { MenuItemWithAuth } from "./menuConfig";
+export { useMenuAuthorization } from "./hooks/useMenuAuthorization";
+export { canShowMenuItem, filterMenuItemsByAuth, toMenuItem } from "./utils/menuAuthorization";

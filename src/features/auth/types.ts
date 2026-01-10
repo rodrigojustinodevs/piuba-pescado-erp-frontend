@@ -31,6 +31,8 @@ export interface User {
   id: string;
   email: string;
   name?: string;
+  role?: string; // Role/tipo do usuário (master, company_admin, manager, operator)
+  companyId?: string | null; // ID da empresa associada (null para master)
 }
 
 export interface AuthState {

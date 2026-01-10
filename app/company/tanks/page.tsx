@@ -6,7 +6,6 @@ import { useTanks, useDeleteTank } from "@/features/tank";
 import { TankTable } from "@/features/tank/components";
 import { DashboardLayout } from "@/shared/components/Layout";
 import { useAlertModal } from "@/shared/components/AlertModal";
-import type { Tank } from "@/features/tank";
 
 export default function TanksPage() {
   const [page, setPage] = useState(1);
