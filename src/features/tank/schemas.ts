@@ -4,21 +4,12 @@ import { z } from "zod";
  * Schema de validação para criação de tanque
  */
 export const createTankSchema = z.object({
-  companyId: z
-    .string()
-    .min(1, "Empresa é obrigatória")
-    .refine((val) => val !== "", "Empresa é obrigatória"), 
-  tankTypeId: z
-    .string()
-    .min(1, "Tipo de tanque é obrigatório")
-    .refine((val) => val !== "", "Tipo de tanque é obrigatório"),
-  name: z.string().min(1, "Nome é obrigatório").min(3, "Nome deve ter no mínimo 3 caracteres"),
-  capacityLiters: z.number().min(0.01, "Capacidade deve ser maior que zero").positive("Capacidade deve ser positiva"),
+  companyId: z.string().min(1, "Empresa é obrigatória"),
+  tankTypeId: z.string().min(1, "Tipo de tanque é obrigatório"),
+  name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  capacityLiters: z.number().min(0.01, "Capacidade deve ser maior que zero"),
   location: z.string().optional(),
-  status: z.enum(["active", "inactive"]).refine(
-    (val) => val === "active" || val === "inactive",
-    "Status é obrigatório"
-  ),
+  status: z.enum(["active", "inactive"]),
 });
 
 /**

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Sidebar, type SidebarProps } from "../Sidebar";
-import { defaultMenuItems } from "../Sidebar/menuItems";
+import { menuConfig } from "../Sidebar/menuConfig";
+import { useMenuAuthorization } from "../Sidebar/hooks/useMenuAuthorization";
+import { useAuthContext } from "@/shared/contexts/AuthContext";
 
 // Ícone de menu para mobile
 const MenuIcon = () => (
@@ -29,22 +31,38 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({
   children,
-  menuItems = defaultMenuItems,
-  user,
+  menuItems,
+  user: userProp,
 }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Obtém o usuário do contexto de autenticação
+  const { user: contextUser } = useAuthContext();
+  
+  // Usa o usuário do contexto ou o passado como prop (fallback)
+  const user = contextUser || userProp;
+
+  // Filtra itens de menu baseado nas permissões do usuário
+  // Se menuItems for passado como prop, usa ele diretamente (sem filtro de autorização)
+  // Caso contrário, usa a configuração padrão com autorização
+  const authorizedMenuItems = menuItems 
+    ? menuItems 
+    : useMenuAuthorization(menuConfig);
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar
-        items={menuItems}
+        items={authorizedMenuItems}
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         isCollapsed={isSidebarCollapsed}
         onCollapseToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        user={user}
+        user={user ? {
+          name: user.name || user.email,
+          email: user.email,
+        } : undefined}
       />
 
       {/* Main Content */}

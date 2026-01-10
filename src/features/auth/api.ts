@@ -32,12 +32,12 @@ export const authService = {
   },
 
   /**
-   * Verifica se o usuário está autenticado
+   * Verifica se o usuário está autenticado e retorna dados do usuário
    */
-  async checkAuth(): Promise<{ isAuthenticated: boolean }> {
+  async checkAuth(): Promise<{ isAuthenticated: boolean; user?: import("./types").User }> {
     try {
-      const response = await authApi.get("/");
-      return { isAuthenticated: response.status === 200 };
+      const response = await authApi.get<{ isAuthenticated: boolean; user?: import("./types").User }>("/");
+      return response.data;
     } catch {
       return { isAuthenticated: false };
     }

@@ -1,11 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTankSchema, type CreateTankFormData } from "../schemas";
 import type { Tank } from "../types";
 import { useCompanies } from "@/features/company";
 import { useTankTypes } from "../hooks/useTankTypes";
+import { useAuthContext } from "@/shared/contexts/AuthContext";
 import {
   TextInput,
   NumberInput,
@@ -25,6 +27,7 @@ export function TankForm({
   isLoading = false,
   submitLabel = "Salvar",
 }: TankFormProps) {
+  const { isMaster, user } = useAuthContext();
   const { data: companiesData } = useCompanies({ limit: 1000 });
   const companies = companiesData?.companies || [];
   const { data: tankTypes = [], isLoading: isLoadingTypes } = useTankTypes();
@@ -33,8 +36,12 @@ export function TankForm({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+    setValue,
+    control,
+  } = useForm<CreateTankFormData>({
     resolver: zodResolver(createTankSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: initialData
       ? {
           companyId: initialData.companyId,
@@ -45,28 +52,57 @@ export function TankForm({
           status: initialData.status,
         }
       : {
+          companyId: "",
+          tankTypeId: "",
+          name: "",
+          capacityLiters: 0,
+          location: "",
           status: "active" as const,
         },
   });
 
+  useEffect(() => {
+    if (!isMaster() && user?.companyId && !initialData) {
+      setValue("companyId", user.companyId, { shouldValidate: false });
+    }
+  }, [isMaster, user?.companyId, initialData, setValue]);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(
+        (data) => {
+          onSubmit(data);
+        }
+      )}
+      className="space-y-6"
+    >
       {/* Informações Básicas */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Informações Básicas</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Select
-            label="Empresa"
-            required
-            options={companies.map((company) => ({
-              value: String(company.id),
-              label: company.name,
-            }))}
-            placeholder="Selecione uma empresa"
-            {...register("companyId")}
-            error={errors.companyId?.message}
-          />
+          {isMaster() ? (
+            <Controller
+              name="companyId"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  label="Empresa"
+                  required
+                  placeholder="Selecione uma empresa"
+                  options={companies.map((company) => ({
+                    value: String(company.id),
+                    label: company.name,
+                  }))}
+                  value={field.value || ""}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  error={errors.companyId?.message}
+                />
+              )}
+            />
+          ) : (
+            <input type="hidden" {...register("companyId")} />
+          )}
 
           <TextInput
             label="Nome do Tanque"
@@ -75,17 +111,24 @@ export function TankForm({
             error={errors.name?.message}
           />
 
-          <Select
-            label="Tipo de Tanque"
-            required
-            disabled={isLoadingTypes}
-            options={tankTypes.map((type) => ({
-              value: String(type.id),
-              label: type.name,
-            }))}
-            placeholder={isLoadingTypes ? "Carregando tipos..." : "Selecione um tipo"}
-            {...register("tankTypeId")}
-            error={errors.tankTypeId?.message}
+          <Controller
+            name="tankTypeId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                label="Tipo de Tanque"
+                required
+                disabled={isLoadingTypes}
+                placeholder={isLoadingTypes ? "Carregando tipos..." : "Selecione um tipo"}
+                options={tankTypes.map((type) => ({
+                  value: String(type.id),
+                  label: type.name,
+                }))}
+                value={field.value || ""}
+                onChange={(e) => field.onChange(e.target.value)}
+                error={errors.tankTypeId?.message}
+              />
+            )}
           />
 
           <NumberInput

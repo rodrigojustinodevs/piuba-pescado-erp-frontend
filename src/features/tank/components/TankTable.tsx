@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { Tank } from "../types";
 import { useTankTypes } from "../hooks/useTankTypes";
+import { useCompanies } from "@/features/company";
+import { useAuthContext } from "@/shared/contexts/AuthContext";
 
 interface TankTableProps {
   tanks: Tank[];
@@ -12,11 +14,20 @@ interface TankTableProps {
 
 export function TankTable({ tanks, onDelete, isDeleting = false }: TankTableProps) {
   const { data: tankTypes = [] } = useTankTypes();
+  const { data: companiesData } = useCompanies({ limit: 1000 });
+  const companies = companiesData?.companies || [];
+  const { isMaster } = useAuthContext();
 
   const getTankTypeName = (typeId: string | undefined) => {
     if (!typeId) return "-";
     const tankType = tankTypes.find((t) => t.id === typeId);
     return tankType?.name || typeId;
+  };
+
+  const getCompanyName = (companyId: string | undefined) => {
+    if (!companyId) return "-";
+    const company = companies.find((c) => c.id === companyId);
+    return company?.name || companyId;
   };
 
   if (tanks.length === 0) {
@@ -35,6 +46,11 @@ export function TankTable({ tanks, onDelete, isDeleting = false }: TankTableProp
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Nome
             </th>
+            {isMaster() && (
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Empresa
+              </th>
+            )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Capacidade
             </th>
@@ -57,6 +73,11 @@ export function TankTable({ tanks, onDelete, isDeleting = false }: TankTableProp
                   {tank.name}
                 </div>
               </td>
+              {isMaster() && (
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-500">{getCompanyName(tank.companyId)}</div>
+                </td>
+              )}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-500">
                   {tank.capacityLiters

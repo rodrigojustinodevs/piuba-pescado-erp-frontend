@@ -6,10 +6,12 @@ import { useTank, useDeleteTank, useTankTypes } from "@/features/tank";
 import { DashboardLayout } from "@/shared/components/Layout";
 import { useAlertModal } from "@/shared/components/AlertModal";
 import { useCompanies } from "@/features/company";
+import { useAuthContext } from "@/shared/contexts/AuthContext";
 
 export default function TankDetailPage() {
   const params = useParams();
   const id = params.id as string;
+  const { isMaster } = useAuthContext();
   const { data: tank, isLoading, error } = useTank(id);
   const { data: companiesData } = useCompanies({ limit: 1000 });
   const companies = companiesData?.companies || [];
@@ -159,10 +161,12 @@ export default function TankDetailPage() {
               <label className="text-sm font-medium text-gray-500 block mb-1">Nome</label>
               <p className="text-base font-semibold text-gray-900">{tank.name}</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500 block mb-1">Empresa</label>
-              <p className="text-base font-semibold text-gray-900">{getCompanyName(tank.companyId)}</p>
-            </div>
+            {isMaster() && (
+              <div>
+                <label className="text-sm font-medium text-gray-500 block mb-1">Empresa</label>
+                <p className="text-base font-semibold text-gray-900">{getCompanyName(tank.companyId)}</p>
+              </div>
+            )}
             <div>
               <label className="text-sm font-medium text-gray-500 block mb-1">Capacidade</label>
               <p className="text-base font-semibold text-gray-900">
