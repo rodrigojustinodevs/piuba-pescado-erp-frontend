@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type {
-  TankListResponse,
-  ApiTankListResponse,
-  ApiTank,
-  CreateTankData,
-  Tank,
-} from "@/features/tank";
+import type { TankListResponse, ApiTankListResponse, CreateTankData, Tank, ApiTank } from "@/features/tank";
+import { mapApiTank, mapApiTankList } from "@/features/tank/utils/apiMapper";
 
 /**
  * Formato de resposta da API para operações individuais
@@ -68,26 +63,7 @@ export async function GET(req: NextRequest) {
     }
 
     const apiData: ApiTankListResponse = await apiResponse.json();
-    console.log(apiData);
-    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
-    const tanks: Tank[] = (apiData.response || []).map((apiTank: ApiTank) => ({
-      id: apiTank.id,
-      companyId: apiTank.company.id ?? "",
-      tankTypeId: apiTank.tankType.id,
-      name: apiTank.name,
-      capacityLiters: apiTank.capacityLiters,
-      location: apiTank.location,
-      status: apiTank.status,
-      created_at: apiTank.created_at,
-      updated_at: apiTank.updated_at,
-    }));
-
-    const response: TankListResponse = {
-      tanks,
-      total: apiData.pagination?.total || 0,
-      page: apiData.pagination?.current_page || 1,
-      limit: apiData.pagination?.per_page || 10,
-    };
+    const response: TankListResponse = mapApiTankList(apiData);
 
     return NextResponse.json(response);
   } catch (error) {
@@ -136,21 +112,8 @@ export async function POST(req: NextRequest) {
     }
 
     const apiData: ApiTankResponse = await apiResponse.json();
-    
-    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
-    const apiTank = apiData.response;
-    const tank: Tank = {
-      id: apiTank.id,
-      companyId: apiTank.company.id || "",
-      tankTypeId: apiTank.tankType.id,
-      name: apiTank.name,
-      capacityLiters: apiTank.capacityLiters,
-      location: apiTank.location,
-      status: apiTank.status,
-      created_at: apiTank.created_at,
-      updated_at: apiTank.updated_at,
-    };
-    
+    const tank: Tank = mapApiTank(apiData.response);
+
     return NextResponse.json(tank, { status: apiResponse.status });
   } catch (error) {
     console.error("Erro ao criar tanque:", error);

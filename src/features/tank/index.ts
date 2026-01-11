@@ -28,6 +28,7 @@ export {
   useUpdateTank,
   useDeleteTank,
   useTankTypes,
+  useTankLookups,
 } from "./hooks";
 
 // Components

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import type { UpdateTankData, Tank, ApiTank } from "@/features/tank";
+import { mapApiTank } from "@/features/tank/utils/apiMapper";
 
 /**
  * Formato de resposta da API para operações individuais
@@ -21,7 +22,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const cookieStore = await cookies();
@@ -33,7 +34,7 @@ export async function GET(
         { status: 401 }
       );
     }
-
+    
     const { id } = await params;
 
     // Faz requisição para a API real
@@ -55,22 +56,8 @@ export async function GET(
     }
 
     const apiData: ApiTankResponse = await apiResponse.json();
-    
-    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
-    const apiTank = apiData.response;
-    console.log(apiTank);
-    const tank: Tank = {
-      id: apiTank.id,
-      companyId: apiTank.company.id ?? "",
-      tankTypeId: apiTank.tankType.id,
-      name: apiTank.name,
-      capacityLiters: apiTank.capacityLiters,
-      location: apiTank.location,
-      status: apiTank.status,
-      created_at: apiTank.created_at,
-      updated_at: apiTank.updated_at,
-    };
-    
+    const tank: Tank = mapApiTank(apiData.response);
+
     return NextResponse.json(tank);
   } catch (error) {
     console.error("Erro ao buscar tanque:", error);
@@ -86,7 +73,7 @@ export async function GET(
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const cookieStore = await cookies();
@@ -99,7 +86,7 @@ export async function PUT(
       );
     }
 
-    const { id } = await params;
+    const { id } = params;
     const data: Omit<UpdateTankData, "id"> = await req.json();
 
     // Faz requisição para a API real
@@ -122,21 +109,8 @@ export async function PUT(
     }
 
     const apiData: ApiTankResponse = await apiResponse.json();
-    
-    // Transforma o formato da API (camelCase com objetos aninhados) para o formato esperado pelo frontend
-    const apiTank = apiData.response;
-    const tank: Tank = {
-      id: apiTank.id,
-      companyId: apiTank.company.id || "",
-      tankTypeId: apiTank.tankType.id,
-      name: apiTank.name,
-      capacityLiters: apiTank.capacityLiters,
-      location: apiTank.location,
-      status: apiTank.status,
-      created_at: apiTank.created_at,
-      updated_at: apiTank.updated_at,
-    };
-    
+    const tank: Tank = mapApiTank(apiData.response);
+
     return NextResponse.json(tank);
   } catch (error) {
     console.error("Erro ao atualizar tanque:", error);
@@ -152,7 +126,7 @@ export async function PUT(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const cookieStore = await cookies();
@@ -165,7 +139,7 @@ export async function DELETE(
       );
     }
 
-    const { id } = await params;
+    const { id } = params;
 
     // Faz requisição para a API real
     // DELETE usa /api/company/tank (singular)
