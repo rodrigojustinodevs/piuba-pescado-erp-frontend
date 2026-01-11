@@ -2,33 +2,26 @@
 
 import Link from "next/link";
 import type { Tank } from "../types";
-import { useTankTypes } from "../hooks/useTankTypes";
-import { useCompanies } from "@/features/company";
 import { useAuthContext } from "@/shared/contexts/AuthContext";
+import { formatCapacityLiters, getStatusBadgeClass } from "../utils/format";
+import { getCompanyName, getTankTypeLabel } from "../utils/lookups";
 
 interface TankTableProps {
   tanks: Tank[];
   onDelete: (id: string, name: string) => void;
   isDeleting?: boolean;
+  tankTypeMap?: Record<string, string>;
+  companyMap?: Record<string, string>;
 }
 
-export function TankTable({ tanks, onDelete, isDeleting = false }: TankTableProps) {
-  const { data: tankTypes = [] } = useTankTypes();
-  const { data: companiesData } = useCompanies({ limit: 1000 });
-  const companies = companiesData?.companies || [];
+export function TankTable({
+  tanks,
+  onDelete,
+  isDeleting = false,
+  tankTypeMap = {},
+  companyMap = {},
+}: TankTableProps) {
   const { isMaster } = useAuthContext();
-
-  const getTankTypeName = (typeId: string | undefined) => {
-    if (!typeId) return "-";
-    const tankType = tankTypes.find((t) => t.id === typeId);
-    return tankType?.name || typeId;
-  };
-
-  const getCompanyName = (companyId: string | undefined) => {
-    if (!companyId) return "-";
-    const company = companies.find((c) => c.id === companyId);
-    return company?.name || companyId;
-  };
 
   if (tanks.length === 0) {
     return (
@@ -75,31 +68,22 @@ export function TankTable({ tanks, onDelete, isDeleting = false }: TankTableProp
               </td>
               {isMaster() && (
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-500">{getCompanyName(tank.companyId)}</div>
+                  <div className="text-sm text-gray-500">{getCompanyName(companyMap, tank.companyId)}</div>
                 </td>
               )}
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-500">
-                  {tank.capacityLiters
-                    ? tank.capacityLiters.toLocaleString("pt-BR", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }) + " L"
-                    : "-"}
+                  {formatCapacityLiters(tank.capacityLiters)}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-500">
-                  {getTankTypeName(tank.tankTypeId)}
+                  {getTankTypeLabel(tankTypeMap, tank.tankTypeId)}
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
-                  className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    tank.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(tank.status)}`}
                 >
                   {tank.status === "active" ? "Ativo" : "Inativo"}
                 </span>

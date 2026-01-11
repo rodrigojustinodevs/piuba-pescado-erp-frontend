@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useTanks, useDeleteTank } from "@/features/tank";
+import { useTanks, useDeleteTank, useTankLookups } from "@/features/tank";
 import { TankTable } from "@/features/tank/components";
 import { DashboardLayout } from "@/shared/components/Layout";
 import { useAlertModal } from "@/shared/components/AlertModal";
@@ -13,6 +13,7 @@ export default function TanksPage() {
   const { data, isLoading, error } = useTanks({ page, limit: 10, search });
   const deleteTank = useDeleteTank();
   const { showError } = useAlertModal();
+  const { tankTypeMap, companyMap } = useTankLookups();
 
   const handleDelete = (id: string, name: string) => {
     showError(
@@ -96,6 +97,8 @@ export default function TanksPage() {
                 tanks={data.tanks}
                 onDelete={handleDelete}
                 isDeleting={deleteTank.isPending}
+                tankTypeMap={tankTypeMap}
+                companyMap={companyMap}
               />
 
               {/* Pagination */}

@@ -2,20 +2,19 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useTank, useDeleteTank, useTankTypes } from "@/features/tank";
+import { useTank, useDeleteTank, useTankLookups } from "@/features/tank";
 import { DashboardLayout } from "@/shared/components/Layout";
 import { useAlertModal } from "@/shared/components/AlertModal";
-import { useCompanies } from "@/features/company";
 import { useAuthContext } from "@/shared/contexts/AuthContext";
+import { formatCapacityLiters, getStatusBadgeClass } from "@/features/tank/utils/format";
+import { getCompanyName, getTankTypeLabel } from "@/features/tank/utils/lookups";
 
 export default function TankDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { isMaster } = useAuthContext();
   const { data: tank, isLoading, error } = useTank(id);
-  const { data: companiesData } = useCompanies({ limit: 1000 });
-  const companies = companiesData?.companies || [];
-  const { data: tankTypes = [] } = useTankTypes();
+  const { companyMap, tankTypeMap } = useTankLookups();
   const deleteTank = useDeleteTank();
   const { showError } = useAlertModal();
 
@@ -30,17 +29,6 @@ export default function TankDetailPage() {
         }
       );
     }
-  };
-
-  const getCompanyName = (companyId: string) => {
-    const company = companies.find((c) => c.id === companyId);
-    return company?.name || "N/A";
-  };
-
-  const getTankTypeLabel = (typeId: string | undefined) => {
-    if (!typeId) return "-";
-    const tankType = tankTypes.find((t) => t.id === typeId);
-    return tankType?.name || typeId;
   };
 
   if (isLoading) {
@@ -164,23 +152,22 @@ export default function TankDetailPage() {
             {isMaster() && (
               <div>
                 <label className="text-sm font-medium text-gray-500 block mb-1">Empresa</label>
-                <p className="text-base font-semibold text-gray-900">{getCompanyName(tank.companyId)}</p>
+                <p className="text-base font-semibold text-gray-900">
+                  {getCompanyName(companyMap, tank.companyId)}
+                </p>
               </div>
             )}
             <div>
               <label className="text-sm font-medium text-gray-500 block mb-1">Capacidade</label>
               <p className="text-base font-semibold text-gray-900">
-                {tank.capacityLiters
-                  ? tank.capacityLiters.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }) + " L"
-                  : "-"}
+                {formatCapacityLiters(tank.capacityLiters)}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500 block mb-1">Tipo</label>
-              <p className="text-base font-semibold text-gray-900">{getTankTypeLabel(tank.tankTypeId)}</p>
+              <p className="text-base font-semibold text-gray-900">
+                {getTankTypeLabel(tankTypeMap, tank.tankTypeId)}
+              </p>
             </div>
             {tank.location && (
               <div>
@@ -191,11 +178,9 @@ export default function TankDetailPage() {
             <div>
               <label className="text-sm font-medium text-gray-500 block mb-1">Status</label>
               <span
-                className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                  tank.status === "active"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
+                className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(
+                  tank.status
+                )}`}
               >
                 {tank.status === "active" ? "Ativo" : "Inativo"}
               </span>

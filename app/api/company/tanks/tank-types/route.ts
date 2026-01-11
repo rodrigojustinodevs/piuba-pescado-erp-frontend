@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type { ApiTankTypeListResponse } from "@/features/tank";
+import type { TankType } from "@/features/tank";
 
 /**
  * URL da API backend
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const apiData: ApiTankTypeListResponse = await apiResponse.json();
+    const apiData: TankType[] = await apiResponse.json();
     
     // Retorna o formato da API
     return NextResponse.json(apiData);
