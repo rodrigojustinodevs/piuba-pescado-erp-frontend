@@ -37,8 +37,20 @@ export const authService = {
   async checkAuth(): Promise<{ isAuthenticated: boolean; user?: import("./types").User }> {
     try {
       const response = await authApi.get<{ isAuthenticated: boolean; user?: import("./types").User }>("/");
+      if (response.data.isAuthenticated && response.data.user) {
+        console.log("✅ Usuário autenticado - Tipo:", response.data.user.role);
+        console.log("📦 [Auth API] Dados completos do usuário recebidos:", {
+          id: response.data.user.id,
+          email: response.data.user.email,
+          name: response.data.user.name,
+          role: response.data.user.role,
+          companyId: response.data.user.companyId,
+          rawResponse: response.data,
+        });
+      }
       return response.data;
-    } catch {
+    } catch (error) {
+      console.error("❌ [Auth API] Erro ao verificar autenticação:", error);
       return { isAuthenticated: false };
     }
   },
