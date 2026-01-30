@@ -7,17 +7,53 @@ export function canShowMenuItem(
   menuItem: MenuItemWithAuth,
   user: User | null
 ): boolean {
-  if (!user) return false;
   
-  if (user.role === UserRole.MASTER) {
+  // Normaliza o role do usuário (converte hífen para underscore se necessário)
+  const normalizedUserRole = user?.role?.replace(/-/g, "_");
+  const userRoleValue = normalizedUserRole || user?.role;
+  
+  console.log("🔍 [Menu Auth] Verificando item:", {
+    menuItemId: menuItem.id,
+    menuItemLabel: menuItem.label,
+    userRole: user?.role,
+    normalizedUserRole: userRoleValue,
+    allowedRoles: menuItem.allowedRoles,
+    requiresCompany: menuItem.requiresCompany,
+    userCompanyId: user?.companyId,
+  });
+  
+  if (userRoleValue === UserRole.MASTER || user?.role === UserRole.MASTER) {
+    console.log("✅ [Menu Auth] Usuário MASTER - acesso liberado");
     return true;
   }
   
-  if (menuItem.requiresCompany && !user.companyId) return false;
-  if (!menuItem.allowedRoles) return true;
-  if (menuItem.allowedRoles.length === 0) return false;
-  if (!user.role) return false;
-  return menuItem.allowedRoles.includes(user.role);
+  if (menuItem.requiresCompany && !user?.companyId) {
+    console.log("🚫 [Menu Auth] Item requer companyId mas usuário não tem");
+    return false;
+  }
+  
+  if (!menuItem.allowedRoles) {
+    console.log("✅ [Menu Auth] Item sem restrição de roles");
+    return true;
+  }
+  
+  if (menuItem.allowedRoles.length === 0) {
+    console.log("🚫 [Menu Auth] Item com array vazio de allowedRoles");
+    return false;
+  }
+  
+  if (!user?.role) {
+    console.log("🚫 [Menu Auth] Usuário sem role definido");
+    return false;
+  }
+  
+  // Verifica tanto o role original quanto o normalizado
+  const hasAccess = menuItem.allowedRoles.includes(user.role) || 
+                    (userRoleValue ? menuItem.allowedRoles.includes(userRoleValue) : false);
+  
+  console.log(hasAccess ? "✅ [Menu Auth] Acesso permitido" : "🚫 [Menu Auth] Acesso negado");
+  
+  return hasAccess;
 }
 
 export function filterMenuItemsByAuth(
@@ -37,7 +73,8 @@ export function filterMenuItemsByAuth(
 
       const canShow = canShowMenuItem(itemWithFilteredChildren, user);
 
-      if (filteredChildren && filteredChildren.length === 0 && item.children) {
+      if (filteredChildren && filteredChildren.length === 0 && item.children && item.children.length > 0) {
+        console.log(`🚫 [Menu Auth] Item "${item.id}" negado: todos os filhos foram filtrados`);
         return null;
       }
 

@@ -192,7 +192,7 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: "Tanques",
     icon: <TankIcon />,
     href: "/company/tanks",
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
   },
   {

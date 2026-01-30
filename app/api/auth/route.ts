@@ -88,19 +88,29 @@ export async function GET() {
       const roleFromApi = userData.role || userData.user?.role || userData.userType || userData.user?.userType;
       const finalRole = roleFromApi || roleFromToken;
       
+      // Extrai companyId de várias fontes possíveis
+      const companyIdFromApi = userData.companyId || userData.user?.companyId || userData.company_id || userData.user?.company_id;
+      const companyIdFromToken = decodedToken ? extractCompanyIdFromJWT(decodedToken) : null;
+      const finalCompanyId = companyIdFromApi || companyIdFromToken || null;
+      
       const user = {
         id: userData.id || userData.user?.id || (decodedToken ? extractUserIdFromJWT(decodedToken) : null),
         email: userData.email || userData.user?.email || (decodedToken ? extractEmailFromJWT(decodedToken) : null),
         name: userData.name || userData.user?.name || (decodedToken ? extractNameFromJWT(decodedToken) : null),
         role: finalRole,
-        companyId: userData.companyId || userData.user?.companyId || userData.company_id || userData.user?.company_id || (decodedToken ? extractCompanyIdFromJWT(decodedToken) : null) || null,
+        companyId: finalCompanyId,
       };
 
-      console.log("[AUTH] User data:", {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        companyId: user.companyId,
+      console.log("[AUTH] 🔍 Debug completo de autenticação:", {
+        userFinal: user,
+        userDataRaw: userData,
+        decodedToken: decodedToken,
+        companyIdFromApi: companyIdFromApi,
+        companyIdFromToken: companyIdFromToken,
+        finalCompanyId: finalCompanyId,
+        roleFromApi: roleFromApi,
+        roleFromToken: roleFromToken,
+        finalRole: finalRole,
       });
       
       return NextResponse.json({ isAuthenticated: true, user }, { status: 200 });
