@@ -148,7 +148,7 @@ export function Sidebar({
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           {!isCollapsed && (logo || (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">P</span>
               </div>
               <span className="font-bold text-lg text-gray-800">
@@ -197,6 +197,20 @@ export function Sidebar({
           </div>
         </nav>
 
+        <div className="mt-auto">
+          {!isCollapsed && (
+            <div className="px-4 pb-4">
+              <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                <img
+                  src="/aquaculture-sidebar.svg"
+                  alt="Ilustração de piscicultura"
+                  className="h-28 w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/70 to-transparent" />
+              </div>
+            </div>
+          )}
+
         {/* Footer com informações do usuário */}
         {user && !isCollapsed && (
           <div className="border-t border-gray-200 p-4">
@@ -240,6 +254,7 @@ export function Sidebar({
             </button>
           </div>
         )}
+        </div>
       </aside>
     </>
   );
