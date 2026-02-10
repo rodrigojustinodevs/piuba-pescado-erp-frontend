@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type { UpdateCompanyData, Company } from "@/features/company";
+import type { UpdateCompanyData, CreateCompanyData, Company } from "@/features/company";
 
 /**
  * Formato de resposta da API para operações individuais
@@ -15,6 +15,42 @@ interface ApiCompanyResponse {
  * URL da API backend
  */
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
+
+function mapCompanyPayload(data: Partial<CreateCompanyData>) {
+  const payload: Record<string, unknown> = {};
+
+  if (data.name !== undefined) payload.name = data.name;
+  if (data.cnpj !== undefined) payload.cnpj = data.cnpj;
+  if (data.email !== undefined) payload.email = data.email;
+  if (data.phone !== undefined) payload.phone = data.phone;
+  if (data.active !== undefined) payload.active = data.active;
+
+  if (data.address) {
+    if (data.address.street !== undefined) {
+      payload.addressStreet = data.address.street;
+    }
+    if (data.address.number !== undefined) {
+      payload.addressNumber = data.address.number;
+    }
+    if (data.address.complement !== undefined) {
+      payload.addressComplement = data.address.complement;
+    }
+    if (data.address.neighborhood !== undefined) {
+      payload.addressNeighborhood = data.address.neighborhood;
+    }
+    if (data.address.city !== undefined) {
+      payload.addressCity = data.address.city;
+    }
+    if (data.address.state !== undefined) {
+      payload.addressState = data.address.state;
+    }
+    if (data.address.zipCode !== undefined) {
+      payload.addressZipCode = data.address.zipCode;
+    }
+  }
+
+  return payload;
+}
 
 /**
  * GET /api/companies/[id] - Busca uma empresa por ID (proxy para backend)
@@ -86,6 +122,7 @@ export async function PUT(
 
     const { id } = await params;
     const data: Omit<UpdateCompanyData, "id"> = await req.json();
+    const payload = mapCompanyPayload(data);
 
     // Faz requisição para a API real
     const apiResponse = await fetch(`${API_BASE_URL}/api/admin/company/${id}`, {
@@ -94,7 +131,7 @@ export async function PUT(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
 
     if (!apiResponse.ok) {

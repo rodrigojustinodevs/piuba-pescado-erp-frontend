@@ -69,17 +69,66 @@ export default function EditCompanyPage() {
       }}
     >
       <div className="space-y-6">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Editar Empresa</h1>
-          <p className="text-gray-600">Atualize as informações da empresa</p>
+          <h1 className="text-3xl font-bold text-[#0F172A]">Editar Empresa</h1>
+          <div className="mt-2 flex items-center gap-2">
+            <p className="text-base text-[#0F172A]">
+              {company.name} • Empresa {company.active ? "ativa" : "inativa"}
+            </p>
+          </div>
+          <div className="mt-3">
+            <div
+              className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 ${
+                company.active
+                  ? "bg-green-50 text-green-700"
+                  : "bg-red-50 text-red-700"
+              }`}
+            >
+              {company.active ? (
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
+              <span className="text-sm font-medium">
+                {company.active ? "Ativa" : "Inativa"}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        {/* Form Card */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <CompanyForm
             initialData={company}
             onSubmit={handleSubmit}
             isLoading={updateCompany.isPending}
-            submitLabel="Atualizar Empresa"
+            submitLabel="Salvar"
+            isEditMode
           />
         </div>
       </div>
