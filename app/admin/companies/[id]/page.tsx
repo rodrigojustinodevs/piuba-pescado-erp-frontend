@@ -2,82 +2,33 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
 import { useCompany, useDeleteCompany } from "@/features/company";
 import { DashboardLayout } from "@/shared/components/Layout";
 import { useAlertModal } from "@/shared/components/AlertModal";
 
-interface InfoItemProps {
-  label: string;
-  value: React.ReactNode;
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
-function InfoItem({ label, value }: InfoItemProps) {
-  return (
-    <div className="space-y-1">
-      <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
-        {label}
-      </span>
-      <div className="text-sm font-semibold text-slate-900">{value}</div>
-    </div>
-  );
-}
+function formatDateTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
 
-interface InfoCardProps {
-  title: string;
-  children: React.ReactNode;
-  action?: React.ReactNode;
-}
-
-function InfoCard({ title, action, children }: InfoCardProps) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-[#0F172A]">{title}</h2>
-        {action}
-      </div>
-      <div className="grid gap-4">{children}</div>
-    </div>
-  );
-}
-
-interface MetricCardProps {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-}
-
-function MetricCard({ label, value, icon }: MetricCardProps) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-[#0EA5A4]">
-        {icon}
-      </div>
-      <div>
-        <p className="text-xs font-medium text-slate-400">{label}</p>
-        <p className="text-sm font-semibold text-slate-900">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-interface AddressItemProps {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-}
-
-function AddressItem({ label, value, icon }: AddressItemProps) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="mt-0.5 text-[#0EA5A4]">{icon}</div>
-      <div>
-        <p className="text-xs font-medium text-slate-400">{label}</p>
-        <p className="text-sm font-semibold text-slate-900">{value}</p>
-      </div>
-    </div>
-  );
+  if (diffDays === 0) {
+    return `Hoje, ${date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+  }
+  if (diffDays === 1) {
+    return `Ontem, ${date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+  }
+  return formatDate(dateString);
 }
 
 export default function CompanyDetailPage() {
@@ -86,14 +37,13 @@ export default function CompanyDetailPage() {
   const { data: company, isLoading, error } = useCompany(id);
   const deleteCompany = useDeleteCompany();
   const { showError } = useAlertModal();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleDelete = () => {
+  const handleDeactivate = () => {
     if (company) {
       showError(
-        "Confirmar Exclusão",
-        `Tem certeza que deseja excluir a empresa "${company.name}"? Esta ação não pode ser desfeita.`,
-        "Sim, Excluir",
+        "Confirmar Desativação",
+        `Tem certeza que deseja desativar a empresa "${company.name}"?`,
+        "Sim, Desativar",
         () => {
           deleteCompany.mutate(company.id);
         }
@@ -110,7 +60,7 @@ export default function CompanyDetailPage() {
         }}
       >
         <div className="text-center py-8">
-          <div className="flex items-center justify-center gap-2 text-gray-500">
+          <div className="flex items-center justify-center gap-2 text-slate-500">
             <svg
               className="w-5 h-5 animate-spin"
               fill="none"
@@ -143,7 +93,7 @@ export default function CompanyDetailPage() {
           <p className="text-red-600">Empresa não encontrada.</p>
           <Link
             href="/admin/companies"
-            className="mt-4 inline-block text-blue-600 hover:text-blue-800"
+            className="mt-4 inline-block text-[#0EA5A4] hover:text-[#0F766E]"
           >
             Voltar para lista
           </Link>
@@ -159,40 +109,50 @@ export default function CompanyDetailPage() {
         email: "demo@dev.com",
       }}
     >
-      <div className="rounded-2xl bg-[#F8FAFC] p-4 lg:p-6">
-      <div className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-[#0F172A]">
-                {company.name}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-                <span>Unidade aquícola</span>
-                <span className="text-slate-300">•</span>
-                <span
-                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
-                    company.active
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-rose-100 text-rose-700"
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                  {company.active ? "Empresa ativa" : "Empresa inativa"}
-                </span>
-              </div>
-          </div>
+      <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
+        {/* Breadcrumb */}
+        <p className="text-sm text-slate-600 mb-4">
+          Dashboard / Empresas / {company.name}
+        </p>
 
-            <div className="flex items-center gap-2">
+        {/* Main White Card */}
+        <div className="rounded-2xl border border-slate-200 shadow-sm">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-8 bg-white rounded-t-2xl border border-slate-200 shadow-sm p-8">
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#16A34A]/10 border-2 border-[#16A34A]/20">
+                <svg className="h-8 w-8 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 21V5a2 2 0 012-2h6a2 2 0 012 2v16M4 21h16M10 9h2M10 13h2M10 17h2M14 21V7a2 2 0 012-2h2a2 2 0 012 2v14"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-semibold text-[#0F172A] mb-2">{company.name}</h1>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-[#0F172A]">Unidade aquícola</span>
+                  <span
+                    className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${
+                      company.active
+                        ? "bg-[#22C55E] text-white"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {company.active ? "Ativa" : "Inativa"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
               <Link
                 href={`/admin/companies/${company.id}/edit`}
-                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition"
               >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -202,344 +162,168 @@ export default function CompanyDetailPage() {
                 </svg>
                 Editar
               </Link>
-              <div className="relative">
-          <button
-                  type="button"
-                  onClick={() => setIsMenuOpen((prev) => !prev)}
-                  className="flex items-center gap-1 rounded-lg bg-[#0EA5A4] px-3 py-2 text-sm font-semibold text-white hover:bg-[#0F766E]"
-                  aria-haspopup="menu"
-                  aria-expanded={isMenuOpen}
-                >
-                  <span className="sr-only">Abrir menu</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-          >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 12h.01M12 12h.01M18 12h.01"
-                    />
-                  </svg>
-              <svg
-                    className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <button
+                onClick={handleDeactivate}
+                disabled={deleteCompany.isPending}
+                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#EF4444] hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                      d="M6 9l6 6 6-6"
-                />
-              </svg>
-          </button>
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-            <Link
-              href={`/admin/companies/${company.id}/edit`}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-            >
-              <svg
-                        className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
-              Editar
-            </Link>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      disabled={deleteCompany.isPending}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 disabled:opacity-50"
-                    >
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3m-4 0h14"
-                        />
-                      </svg>
-                      {deleteCompany.isPending ? "Excluindo..." : "Excluir"}
-                    </button>
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Desativar
+              </button>
+            </div>
           </div>
+
+          {/* Key Metrics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <p className="text-sm text-slate-600 mb-2">Localização</p>
+              <p className="text-2xl font-semibold text-[#0F172A]">
+                {company.address.city && company.address.state
+                  ? `${company.address.city}, ${company.address.state}`
+                  : "-"}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <p className="text-sm text-slate-600 mb-2">Tanques ativos</p>
+              <p className="text-2xl font-semibold text-[#0F172A]">—</p>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <p className="text-sm text-slate-600 mb-2">Sensores online</p>
+              <p className="text-2xl font-semibold text-[#0F172A]">—</p>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <p className="text-sm text-slate-600 mb-2">Data de criação</p>
+              <p className="text-2xl font-semibold text-[#0F172A]">
+                {formatDate(company.created_at)}
+              </p>
+            </div>
+          </div>
+
+          {/* Informações Básicas Section */}
+          <div className="mb-8 mr-8 ml-8 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-6 w-1 rounded-full bg-[#16A34A]" />
+              <h2 className="text-base font-semibold text-[#0F172A]">Informações Básicas</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Coluna Esquerda */}
+              <div className="space-y-4">
+                {/* NOME - card completo */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">NOME</p>
+                  <p className="text-sm font-medium text-[#0F172A]">{company.name}</p>
+                </div>
+                {/* CNPJ e CONTATO - lado a lado */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">CNPJ</p>
+                    <p className="text-sm font-medium text-[#0F172A]">{company.cnpj}</p>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">CONTATO</p>
+                    <p className="text-sm font-medium text-[#0F172A]">{company.email || "-"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Coluna Direita */}
+              <div className="space-y-4">
+                {/* TELEFONE - card completo */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">TELEFONE</p>
+                  <p className="text-sm font-medium text-[#0F172A]">{company.phone || "-"}</p>
+                </div>
+                {/* STATUS e ÚLTIMA ATUALIZAÇÃO - lado a lado */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">STATUS</p>
+                    <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1">
+                      <span className={`h-2 w-2 rounded-full ${company.active ? "bg-[#22C55E]" : "bg-red-500"}`} />
+                      <p className="text-sm font-medium text-[#0F172A]">
+                        {company.active ? "Ativa" : "Inativa"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">ÚLTIMA ATUALIZAÇÃO</p>
+                    <p className="text-sm font-medium text-[#0F172A]">
+                      {formatDateTime(company.updated_at)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Endereço Section */}
+          <div className="mb-8 mr-8 ml-8 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-6 w-1 rounded-full bg-[#16A34A]" />
+              <h2 className="text-base font-semibold text-[#0F172A]">Endereço</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Coluna Esquerda */}
+              <div className="space-y-4">
+                {/* RUA - card completo */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">RUA</p>
+                  <p className="text-sm font-medium text-[#0F172A]">
+                    {company.address.street && company.address.number
+                      ? `${company.address.street}, ${company.address.number}`
+                      : "-"}
+                  </p>
+                </div>
+                {/* BAIRRO e CEP - lado a lado */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">BAIRRO</p>
+                    <p className="text-sm font-medium text-[#0F172A]">
+                      {company.address.neighborhood || "-"}
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">CEP</p>
+                    <p className="text-sm font-medium text-[#0F172A]">
+                      {company.address.zipCode || "-"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Coluna Direita */}
+              <div className="space-y-4">
+                {/* CIDADE/ESTADO - card completo */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">CIDADE/ESTADO</p>
+                  <p className="text-sm font-medium text-[#0F172A]">
+                    {company.address.city && company.address.state
+                      ? `${company.address.city} • ${company.address.state}`
+                      : "-"}
+                  </p>
+                </div>
+                {/* COMPLEMENTO - card completo */}
+                {company.address.complement && (
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">COMPLEMENTO</p>
+                    <p className="text-sm font-medium text-[#0F172A]">
+                      {company.address.complement}
+                    </p>
+                  </div>
                 )}
+              </div>
             </div>
-            </div>
-            </div>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-            <MetricCard
-              label="Localização"
-              value={
-                company.address.city && company.address.state
-                  ? `${company.address.city}`
-                  : "-"
-              }
-              icon={
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 11a3 3 0 100-6 3 3 0 000 6z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 21s-6-5.373-6-10a6 6 0 1112 0c0 4.627-6 10-6 10z"
-                  />
-                </svg>
-              }
-            />
-            <MetricCard
-              label="Tanques ativos"
-              value="—"
-              icon={
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 7h16M4 12h16M4 17h16"
-                  />
-                </svg>
-              }
-            />
-            <MetricCard
-              label="Sensores online"
-              value="—"
-              icon={
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4a8 8 0 100 16 8 8 0 000-16z"
-                  />
-                </svg>
-              }
-            />
-            <MetricCard
-              label="Atenções"
-              value="—"
-              icon={
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              }
-            />
-            </div>
-
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <InfoCard title="Informações Básicas">
-              <InfoItem label="Nome" value={company.name} />
-              <InfoItem label="CNPJ" value={company.cnpj} />
-              <InfoItem label="Contato" value={company.email || "-"} />
-              <InfoItem label="Telefone" value={company.phone || "-"} />
-              <InfoItem
-                label="Status"
-                value={
-              <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                  company.active
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-rose-100 text-rose-700"
-                }`}
-              >
-                {company.active ? "Ativa" : "Inativa"}
-              </span>
-                }
-              />
-            </InfoCard>
-
-            <InfoCard title="Endereço">
-              <AddressItem
-                label="Rua"
-                value={
-                  company.address.street && company.address.number
-                    ? `${company.address.street}, ${company.address.number}`
-                    : "-"
-                }
-                icon={
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 11a3 3 0 100-6 3 3 0 000 6z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 21s-6-5.373-6-10a6 6 0 1112 0c0 4.627-6 10-6 10z"
-                    />
-                  </svg>
-                }
-              />
-              <AddressItem
-                label="Bairro"
-                value={company.address.neighborhood || "-"}
-                icon={
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z"
-                    />
-                  </svg>
-                }
-              />
-              <AddressItem
-                label="Cidade/Estado"
-                value={
-                  company.address.city && company.address.state
-                    ? `${company.address.city} • ${company.address.state}`
-                    : "-"
-                }
-                icon={
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 20l-5.447-2.724A2 2 0 013 15.382V5a1 1 0 011.447-.894L9 6.382l6-2.276 5.553 2.776A2 2 0 0121 8.618V19a1 1 0 01-1.447.894L15 17.618l-6 2.276z"
-                    />
-                  </svg>
-                }
-              />
-              <AddressItem
-                label="CEP"
-                value={company.address.zipCode || "-"}
-                icon={
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 8h10M7 12h6m-6 4h10"
-                    />
-                  </svg>
-                }
-              />
-            </InfoCard>
-        </div>
-
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="relative z-10 max-w-md space-y-4">
-              <div className="flex items-center gap-2 text-[#0EA5A4]">
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <h3 className="text-base font-semibold text-[#0F172A]">
-                  Próximos Passos
-                </h3>
           </div>
-              <ul className="space-y-2 text-sm text-slate-700">
-                <li className="flex items-center gap-2">
-                  <span className="text-[#22C55E]">✓</span>
-                  Cadastrar tanques
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-[#22C55E]">✓</span>
-                  Conectar sensores
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-[#22C55E]">✓</span>
-                  Configurar alertas de qualidade da água
-                </li>
-              </ul>
-            </div>
-            <Image
-              src="/aquaculture-landscape.svg"
-              alt="Paisagem de aquicultura"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="absolute bottom-0 right-0 h-full w-full object-cover opacity-60"
-            />
-          </div>
+
+
         </div>
       </div>
     </DashboardLayout>
