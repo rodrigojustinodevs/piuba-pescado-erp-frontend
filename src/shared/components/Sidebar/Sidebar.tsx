@@ -1,26 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useAuth } from "@/features/auth";
 import type { SidebarProps } from "./types";
 import { MenuItem } from "./MenuItem";
-
-// Ícones SVG simples
-const MenuIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M4 6h16M4 12h16M4 18h16"
-    />
-  </svg>
-);
 
 const CloseIcon = () => (
   <svg
@@ -138,122 +122,134 @@ export function Sidebar({
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out relative overflow-hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:static lg:z-auto ${
           isCollapsed ? "w-16" : "w-64"
-        } flex flex-col`}
+        }`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {!isCollapsed && (logo || (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+        {/* Ilustração de fundo (apenas expandido) */}
+        {!isCollapsed && (
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[440px]">
+            <div className="relative h-full w-full">
+              <Image
+                src="/aquaculture-sidebar-farm.png"
+                alt=""
+                fill
+                sizes="356px"
+                className="object-cover object-bottom"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-white via-white/90 to-white/10" />
+          </div>
+        )}
+
+        <div className="relative z-10 flex h-full flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+            {!isCollapsed &&
+              (logo || (
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">P</span>
+                  </div>
+                  <span className="font-bold text-lg text-gray-800">
+                    Piuba ERP
+                  </span>
+                </div>
+              ))}
+            {isCollapsed && (
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
                 <span className="text-white font-bold text-sm">P</span>
               </div>
-              <span className="font-bold text-lg text-gray-800">
-                Piuba ERP
-              </span>
+            )}
+            <div className="flex items-center gap-2">
+              {/* Botão para recolher/expandir (desktop) */}
+              <button
+                onClick={toggleCollapse}
+                className="hidden lg:flex p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                aria-label={isCollapsed ? "Expandir menu" : "Recolher menu"}
+                title={isCollapsed ? "Expandir menu" : "Recolher menu"}
+              >
+                {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </button>
+              {/* Botão para fechar (mobile) */}
+              <button
+                onClick={toggle}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-600"
+                aria-label="Fechar menu"
+              >
+                <CloseIcon />
+              </button>
             </div>
-          ))}
-          {isCollapsed && (
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-              <span className="text-white font-bold text-sm">P</span>
+          </div>
+
+          {/* Menu Items */}
+          <nav className="flex-1 overflow-y-auto py-4">
+            <div className="space-y-1 px-2">
+              {items.map((item) => (
+                <MenuItem
+                  key={item.id}
+                  item={item}
+                  isOpen={isOpen}
+                  onToggle={toggle}
+                  isCollapsed={isCollapsed}
+                />
+              ))}
             </div>
-          )}
-          <div className="flex items-center gap-2">
-            {/* Botão para recolher/expandir (desktop) */}
-            <button
-              onClick={toggleCollapse}
-              className="hidden lg:flex p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
-              aria-label={isCollapsed ? "Expandir menu" : "Recolher menu"}
-              title={isCollapsed ? "Expandir menu" : "Recolher menu"}
-            >
-              {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </button>
-            {/* Botão para fechar (mobile) */}
-            <button
-              onClick={toggle}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-600"
-              aria-label="Fechar menu"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-        </div>
+          </nav>
 
-        {/* Menu Items */}
-        <nav className="flex-1 overflow-y-auto py-4">
-          <div className="space-y-1 px-2">
-            {items.map((item) => (
-              <MenuItem
-                key={item.id}
-                item={item}
-                isOpen={isOpen}
-                onToggle={toggle}
-                isCollapsed={isCollapsed}
-              />
-            ))}
-          </div>
-        </nav>
-
-        <div className="mt-auto">
-          {!isCollapsed && (
+          {/* Footer com informações do usuário */}
+          {user && !isCollapsed && (
             <div className="px-4 pb-4">
-              <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <img
-                  src="/aquaculture-sidebar.svg"
-                  alt="Ilustração de piscicultura"
-                  className="h-28 w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/70 to-transparent" />
+              <div className="rounded-2xl border border-slate-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm">
+                <div className="flex items-center gap-3 p-3">
+                  {user.avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-blue-600/10 text-blue-700 flex items-center justify-center">
+                      <UserIcon />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-900 truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {user.subtitle || user.email}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    aria-label="Sair"
+                    title="Sair"
+                  >
+                    <LogoutIcon />
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
-        {/* Footer com informações do usuário */}
-        {user && !isCollapsed && (
-          <div className="border-t border-gray-200 p-4">
-            <div className="flex items-center gap-3 mb-3">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <UserIcon />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {user.name}
-                </p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
-              </div>
+          {/* Footer colapsado - apenas ícone */}
+          {user && isCollapsed && (
+            <div className="p-4">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center p-2 text-red-600 rounded-xl hover:bg-red-50 transition-colors"
+                title="Sair"
+                aria-label="Sair"
+              >
+                <LogoutIcon />
+              </button>
             </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-            >
-              <LogoutIcon />
-              <span>Sair</span>
-            </button>
-          </div>
-        )}
-        {/* Footer colapsado - apenas ícone */}
-        {user && isCollapsed && (
-          <div className="border-t border-gray-200 p-4">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center p-2 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-              title="Sair"
-            >
-              <LogoutIcon />
-            </button>
-          </div>
-        )}
+          )}
         </div>
       </aside>
     </>

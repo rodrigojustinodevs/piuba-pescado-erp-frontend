@@ -14,7 +14,9 @@ interface MenuItemProps {
 
 export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuItemProps) {
   const pathname = usePathname();
-  const isActive = item.href === pathname;
+  const isActive = item.href
+    ? pathname === item.href || pathname.startsWith(`${item.href}/`)
+    : false;
 
   // Se está colapsado e tem filhos, não mostra dropdown
   if (isCollapsed && item.children && item.children.length > 0) {
@@ -24,10 +26,10 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
         title={item.label}
       >
         <div
-          className={`flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+          className={`flex items-center justify-center px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
             isActive
-              ? "bg-blue-50 text-blue-700"
-              : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              ? "bg-emerald-50 text-emerald-700"
+              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
           }`}
         >
           {item.icon && <span className="w-5 h-5">{item.icon}</span>}
@@ -55,18 +57,28 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
   // Item simples com link ou onClick
   const content = (
     <div
-      className={`group relative flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+      className={`group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
         isActive
-          ? "bg-blue-50 text-blue-700"
-          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+          ? "bg-emerald-50 text-emerald-700"
+          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
       } ${isCollapsed ? "justify-center" : ""}`}
     >
-      {item.icon && <span className="w-5 h-5 flex-shrink-0">{item.icon}</span>}
+      {item.icon && (
+        <span
+          className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
+            isActive
+              ? "bg-emerald-100/70 text-emerald-700"
+              : "bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800"
+          }`}
+        >
+          <span className="w-5 h-5">{item.icon}</span>
+        </span>
+      )}
       {!isCollapsed && (
         <>
           <span className="flex-1">{item.label}</span>
           {item.badge && (
-            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
               {item.badge}
             </span>
           )}
