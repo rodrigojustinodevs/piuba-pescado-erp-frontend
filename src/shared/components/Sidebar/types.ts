@@ -22,6 +22,11 @@ export interface SidebarProps {
   user?: {
     name: string;
     email: string;
+    /**
+     * Texto secundário exibido abaixo do nome.
+     * Se não informado, usa o email.
+     */
+    subtitle?: string;
     avatar?: string;
   };
 }
