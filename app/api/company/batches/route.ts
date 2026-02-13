@@ -24,10 +24,12 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") ?? "";
     const limit = searchParams.get("limit") ?? "";
+    const search = searchParams.get("search") ?? "";
 
     const params = new URLSearchParams();
     if (page) params.set("page", page);
     if (limit) params.set("limit", limit);
+    if (search) params.set("search", search);
 
     const query = params.toString();
     const url = `${API_BASE_URL}/api/company/batches${query ? `?${query}` : ""}`;
