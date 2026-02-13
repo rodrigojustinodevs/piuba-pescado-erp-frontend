@@ -6,21 +6,23 @@ import { batchService } from "../services/batchService";
 export interface UseBatchesParams {
   page?: number;
   limit?: number;
+  search?: string;
   enabled?: boolean;
 }
 
 /**
  * Hook para listar lotes (batches).
- * Controla loading, error e data; preparado para futura paginação.
+ * Controla loading, error e data; preparado para paginação e busca.
  */
 export function useBatches({
   page = 1,
   limit = 10,
+  search,
   enabled = true,
 }: UseBatchesParams = {}) {
   const query = useQuery({
-    queryKey: ["batches", "list", page, limit],
-    queryFn: () => batchService.getBatches({ page, limit }),
+    queryKey: ["batches", "list", page, limit, search],
+    queryFn: () => batchService.getBatches({ page, limit, search }),
     enabled,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });

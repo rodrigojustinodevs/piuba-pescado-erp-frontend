@@ -14,10 +14,6 @@ const statusConfig: Record<
     label: "Finalizado",
     className: "bg-slate-100 text-slate-800",
   },
-  canceled: {
-    label: "Cancelado",
-    className: "bg-red-100 text-red-800",
-  },
 };
 
 export interface BatchStatusBadgeProps {

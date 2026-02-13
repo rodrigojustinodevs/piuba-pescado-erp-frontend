@@ -37,6 +37,7 @@ export const batchService = {
   async getBatches(params?: {
     page?: number;
     limit?: number;
+    search?: string;
   }): Promise<BatchListResponse> {
     const response = await batchesApi.get<BatchListResponse>("/", { params });
     return response.data;
