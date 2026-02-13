@@ -87,6 +87,17 @@ const TankIcon = () => (
   </svg>
 );
 
+const BatchIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+    />
+  </svg>
+);
+
 /**
  * Itens de menu padrão - pode ser customizado
  */
@@ -169,6 +180,12 @@ export const defaultMenuItems: MenuItem[] = [
     label: "Tanques",
     icon: <TankIcon />,
     href: "/company/tanks",
+  },
+  {
+    id: "lotes",
+    label: "Lotes",
+    icon: <BatchIcon />,
+    href: "/company/batches",
   },
   {
     id: "configuracoes",
