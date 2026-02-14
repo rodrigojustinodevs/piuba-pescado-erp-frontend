@@ -1,17 +1,17 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { useListPageState } from "@/app/_components/useListPageState";
-import { useCompanies, useDeleteCompany } from "@/features/company";
+import { useCompanies, useDeleteCompany, type Company } from "@/features/company";
 import { useAlertModal } from "@/shared/components/AlertModal";
-import type { Company } from "@/features/company";
 import { DataTable, type DataTableColumn } from "@/shared/components/Table";
 import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
 import { ListHeader } from "@/app/_components/ListHeader";
 import { Pagination } from "@/app/_components/Pagination";
 import { SearchField } from "@/app/_components/SearchField";
+import { SortButton } from "@/app/_components/SortButton";
 import { StatusFilterTabs } from "@/app/_components/StatusFilterTabs";
 import {
-  ChevronDownIcon,
   ChevronRightIcon,
   CircleIcon,
   EyeIcon,
@@ -21,72 +21,148 @@ import {
   TrashIcon,
 } from "@/app/_components/AppIcons";
 
+// ============================================================================
+// 1. DEFINIÇÃO ESTÁTICA DE COLUNAS (Separado da Lógica de View)
+// ============================================================================
+
+const TABLE_COLUMNS: Array<DataTableColumn<Company>> = [
+  {
+    id: "name",
+    header: "Nome",
+    cell: (c) => <div className="text-sm font-medium text-[#0F172A]">{c.name}</div>,
+  },
+  {
+    id: "cnpj",
+    header: "CNPJ",
+    cell: (c) => <div className="text-sm text-slate-600">{c.cnpj}</div>,
+  },
+  {
+    id: "email",
+    header: "E-mail",
+    cell: (c) => <div className="text-sm text-slate-600">{c.email}</div>,
+  },
+  {
+    id: "status",
+    header: "Status",
+    cell: (c) => (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          c.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+        }`}
+      >
+        {c.active ? "Ativa" : "Inativa"}
+      </span>
+    ),
+  },
+];
+
+// ============================================================================
+// 2. COMPONENTE PRINCIPAL
+// ============================================================================
+
 export default function CompaniesPage() {
-  const { page, setPage, search, setSearch, filter, setFilter } = useListPageState({
-    initialSortBy: "name",
-  });
+  // --- Hooks & Estado ---
+  const listState = useListPageState({ initialSortBy: "name" });
+  const { page, setPage, search, setSearch, filter, setFilter } = listState;
+
   const { data, isLoading, error } = useCompanies({ page, limit: 6, search });
   const deleteCompany = useDeleteCompany();
   const { showError } = useAlertModal();
 
-  const handleDelete = (id: string, name: string) => {
+  // --- Lógica de Negócio (Memoizada) ---
+  const filteredCompanies = useMemo(() => {
+    const list = data?.companies ?? [];
+    if (filter === "active") return list.filter((c) => c.active);
+    if (filter === "inactive") return list.filter((c) => !c.active);
+    return list;
+  }, [data?.companies, filter]);
+
+  const stats = useMemo(() => ({
+    total: filteredCompanies.length,
+    inactive: data?.companies.filter((c) => !c.active).length ?? 0,
+  }), [filteredCompanies.length, data?.companies]);
+
+  // --- Handlers ---
+  const handleDelete = useCallback((id: string, name: string) => {
     showError(
       "Confirmar Exclusão",
       `Tem certeza que deseja excluir a empresa "${name}"? Esta ação não pode ser desfeita.`,
       "Sim, Excluir",
-      () => {
-        deleteCompany.mutate(id);
-      }
+      () => deleteCompany.mutate(id)
     );
-  };
+  }, [showError, deleteCompany]);
 
-  // Filter companies based on active filter
-  const filteredCompanies = data?.companies.filter((company: Company) => {
-    if (filter === "active") return company.active;
-    if (filter === "inactive") return !company.active;
-    return true;
-  }) || [];
-
-  const totalFiltered = filteredCompanies.length;
-  const inactiveCount = data?.companies.filter((c: Company) => !c.active).length ?? 0;
-
-  const columns: Array<DataTableColumn<Company>> = [
+  // Definição das ações da tabela (Memoizada para evitar re-criação a cada render)
+  const getRowActions = useCallback((company: Company) => [
     {
-      id: "name",
-      header: "Nome",
-      cell: (company) => (
-        <div className="text-sm font-medium text-[#0F172A]">{company.name}</div>
-      ),
+      label: "Ver detalhes",
+      href: `/admin/companies/${company.id}`,
+      icon: <EyeIcon className="h-4 w-4" />,
     },
     {
-      id: "cnpj",
-      header: "CNPJ",
-      cell: (company) => <div className="text-sm text-slate-600">{company.cnpj}</div>,
+      label: "Editar",
+      href: `/admin/companies/${company.id}/edit`,
+      icon: <PencilIcon className="h-4 w-4" />,
     },
     {
-      id: "email",
-      header: "E-mail",
-      cell: (company) => <div className="text-sm text-slate-600">{company.email}</div>,
+      label: "Excluir",
+      onClick: () => handleDelete(company.id, company.name),
+      variant: "danger" as const,
+      icon: <TrashIcon className="h-4 w-4" />,
     },
-    {
-      id: "status",
-      header: "Status",
-      cell: (company) => (
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            company.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-          }`}
-        >
-          {company.active ? "Ativa" : "Inativa"}
-        </span>
-      ),
-    },
-  ];
+  ], [handleDelete]);
 
+  // --- Render Helpers ---
+  const renderLoading = () => (
+    <div className="p-8 text-center flex justify-center items-center gap-2 text-slate-500">
+      <SpinnerIcon className="w-5 h-5 animate-spin" />
+      <span>Carregando...</span>
+    </div>
+  );
+
+  const renderError = () => (
+    <div className="p-8 text-center text-red-600">
+      Erro ao carregar empresas. Tente novamente.
+    </div>
+  );
+
+  const renderEmpty = () => (
+    <div className="p-8 text-center text-slate-500">
+      Nenhuma empresa encontrada.
+    </div>
+  );
+
+  // --- Decisão do que renderizar na tabela ---
+  let tableContent;
+  if (isLoading) tableContent = renderLoading();
+  else if (error) tableContent = renderError();
+  else if (!filteredCompanies.length) tableContent = renderEmpty();
+  else {
+    tableContent = (
+      <>
+        <DataTable
+          data={filteredCompanies}
+          columns={TABLE_COLUMNS}
+          getRowId={(c) => c.id}
+          rowActions={getRowActions}
+        />
+        {data && data.total > data.limit && (
+          <Pagination
+            page={page}
+            limit={data.limit}
+            total={data.total}
+            itemLabelPlural="empresas"
+            onPageChange={setPage}
+          />
+        )}
+      </>
+    );
+  }
+
+  // --- Render Final ---
   return (
     <DemoDashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
         <ListHeader
           icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
           title="Empresas"
@@ -95,98 +171,37 @@ export default function CompaniesPage() {
           ctaLabel="Nova Empresa"
         />
 
-        {/* Search, Filters and Sort - single line */}
-        <div className="flex flex-wrap items-center gap-3">
-          <SearchField
-            value={search}
-            placeholder="Buscar empresa..."
-            onChange={setSearch}
-          />
+        {/* Toolbar Section */}
+        <section className="flex flex-wrap items-center gap-3">
+          <SearchField value={search} placeholder="Buscar empresa..." onChange={setSearch} />
+          
           <StatusFilterTabs
             filter={filter}
             onChange={setFilter}
-            inactiveCount={inactiveCount}
+            inactiveCount={stats.inactive}
             labels={{ all: "Todas", active: "Ativas", inactive: "Inativas" }}
           />
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-sm text-slate-600">Ordenar por:</span>
-            <button className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-[#0F172A] hover:bg-slate-50 transition-colors">
-              <span>Nome</span>
-              <ChevronDownIcon className="h-4 w-4 text-slate-400" />
-            </button>
-          </div>
-        </div>
+          
+          <SortButton />
+        </section>
 
-        {/* Results Count and Advanced Filters */}
-        <div className="flex items-center justify-between">
+        {/* Info & Filters Section */}
+        <section className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            {totalFiltered} {totalFiltered === 1 ? "empresa encontrada" : "empresas encontradas"}
+            {stats.total} {stats.total === 1 ? "empresa encontrada" : "empresas encontradas"}
           </p>
           <button className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
             <FilterIcon className="h-4 w-4" />
             Filtros avançados
             <ChevronRightIcon className="h-4 w-4" />
           </button>
-        </div>
+        </section>
 
-        {/* Table */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          {isLoading ? (
-            <div className="p-8 text-center">
-              <div className="flex items-center justify-center gap-2 text-slate-500">
-                <SpinnerIcon className="w-5 h-5 animate-spin" />
-                <span>Carregando...</span>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="p-8 text-center text-red-600">
-              Erro ao carregar empresas. Tente novamente.
-            </div>
-          ) : !filteredCompanies.length ? (
-            <div className="p-8 text-center text-slate-500">
-              Nenhuma empresa encontrada.
-            </div>
-          ) : (
-            <>
-              <DataTable
-                data={filteredCompanies}
-                columns={columns}
-                getRowId={(company) => company.id}
-                rowActions={(company) => [
-                  {
-                    label: "Ver detalhes",
-                    href: `/admin/companies/${company.id}`,
-                    icon: <EyeIcon className="h-4 w-4" />,
-                  },
-                  {
-                    label: "Editar",
-                    href: `/admin/companies/${company.id}/edit`,
-                    icon: <PencilIcon className="h-4 w-4" />,
-                  },
-                  {
-                    label: "Excluir",
-                    onClick: () => handleDelete(company.id, company.name),
-                    variant: "danger",
-                    icon: <TrashIcon className="h-4 w-4" />,
-                  },
-                ]}
-              />
-
-              {/* Pagination */}
-              {data && data.total > data.limit && (
-                <Pagination
-                  page={page}
-                  limit={data.limit}
-                  total={data.total}
-                  itemLabelPlural="empresas"
-                  onPageChange={setPage}
-                />
-              )}
-            </>
-          )}
-        </div>
+        {/* Main Content Area */}
+        <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {tableContent}
+        </main>
       </div>
     </DemoDashboardLayout>
   );
 }
-

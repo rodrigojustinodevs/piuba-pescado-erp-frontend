@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useListPageState } from "@/app/_components/useListPageState";
 import { useTanks, useDeleteTank, useTankLookups } from "@/features/tank";
 import { TankTable } from "@/features/tank/components";
@@ -8,48 +9,65 @@ import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
 import { ListHeader } from "@/app/_components/ListHeader";
 import { Pagination } from "@/app/_components/Pagination";
 import { SearchField } from "@/app/_components/SearchField";
+import { SortButton } from "@/app/_components/SortButton";
 import { StatusFilterTabs } from "@/app/_components/StatusFilterTabs";
 import {
   CircleIcon,
-  ChevronDownIcon,
   ChevronRightIcon,
   FilterIcon,
   SpinnerIcon,
 } from "@/app/_components/AppIcons";
 
 export default function TanksPage() {
-  const { page, setPage, search, setSearch, filter, setFilter, sortBy, setSortBy } =
-    useListPageState({ initialSortBy: "name" });
+  // 1. Hooks de Estado e Dados
+  const listState = useListPageState({ initialSortBy: "name" });
+  const { page, setPage, search, setSearch, filter, setFilter, sortBy, setSortBy } = listState;
+
   const { data, isLoading, error } = useTanks({ page, limit: 10, search });
+  const { tankTypeMap, companyMap } = useTankLookups();
   const deleteTank = useDeleteTank();
   const { showError } = useAlertModal();
-  const { tankTypeMap, companyMap } = useTankLookups();
 
-  const handleDelete = (id: string, name: string) => {
+  // 2. Lógica de Negócio (Memoizada para performance)
+  const filteredTanks = useMemo(() => {
+    const tanks = data?.tanks ?? [];
+    if (filter === "active") return tanks.filter(t => t.status === "active");
+    if (filter === "inactive") return tanks.filter(t => t.status !== "active");
+    return tanks;
+  }, [data?.tanks, filter]);
+
+  const stats = useMemo(() => ({
+    total: filteredTanks.length,
+    inactive: data?.tanks.filter(t => t.status !== "active").length ?? 0
+  }), [filteredTanks, data?.tanks]);
+
+  // 3. Handlers
+  const confirmDelete = (id: string, name: string) => {
     showError(
       "Confirmar Exclusão",
       `Tem certeza que deseja excluir o tanque "${name}"? Esta ação não pode ser desfeita.`,
       "Sim, Excluir",
-      () => {
-        deleteTank.mutate(id);
-      }
+      () => deleteTank.mutate(id)
     );
   };
 
-  const filteredTanks =
-    data?.tanks.filter((tank) => {
-      if (filter === "active") return tank.status === "active";
-      if (filter === "inactive") return tank.status !== "active";
-      return true;
-    }) ?? [];
+  // 4. Fragmentos de UI (Sub-renderizadores para manter o retorno principal limpo)
+  const renderEmptyState = () => (
+    <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>
+  );
 
-  const totalFiltered = filteredTanks.length;
-  const inactiveCount = data?.tanks.filter((t) => t.status !== "active").length ?? 0;
+  const renderLoading = () => (
+    <div className="p-8 text-center">
+      <div className="flex items-center justify-center gap-2 text-slate-500">
+        <SpinnerIcon className="w-5 h-5 animate-spin" />
+        <span>Carregando...</span>
+      </div>
+    </div>
+  );
 
   return (
     <DemoDashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
         <ListHeader
           icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
           title="Tanques"
@@ -58,36 +76,24 @@ export default function TanksPage() {
           ctaLabel="Novo Tanque"
         />
 
-        {/* Search, Filters and Sort - single line */}
-        <div className="flex flex-wrap items-center gap-3">
-          <SearchField
-            value={search}
-            placeholder="Buscar tanque..."
-            onChange={setSearch}
-          />
+        {/* Barra de Ferramentas */}
+        <section className="flex flex-wrap items-center gap-3">
+          <SearchField value={search} placeholder="Buscar tanque..." onChange={setSearch} />
+          
           <StatusFilterTabs
             filter={filter}
             onChange={setFilter}
-            inactiveCount={inactiveCount}
+            inactiveCount={stats.inactive}
             labels={{ all: "Todas", active: "Ativos", inactive: "Inativos" }}
           />
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-sm text-slate-600">Ordenar por:</span>
-            <button
-              onClick={() => setSortBy("name")}
-              aria-label={`Ordenar por: ${sortBy}`}
-              className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-[#0F172A] hover:bg-slate-50 transition-colors"
-            >
-              <span>Nome</span>
-              <ChevronDownIcon className="h-4 w-4 text-slate-400" />
-            </button>
-          </div>
-        </div>
 
-        {/* Results Count and Advanced Filters */}
+          <SortButton current={sortBy} onSort={setSortBy} />
+        </section>
+
+        {/* Resumo de Resultados */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            {totalFiltered} {totalFiltered === 1 ? "tanque encontrado" : "tanques encontrados"}
+            {stats.total} {stats.total === 1 ? "tanque encontrado" : "tanques encontrados"}
           </p>
           <button className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
             <FilterIcon className="h-4 w-4" />
@@ -96,34 +102,24 @@ export default function TanksPage() {
           </button>
         </div>
 
-        {/* Table */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          {isLoading ? (
-            <div className="p-8 text-center">
-              <div className="flex items-center justify-center gap-2 text-slate-500">
-                <SpinnerIcon className="w-5 h-5 animate-spin" />
-                <span>Carregando...</span>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="p-8 text-center text-red-600">
-              Erro ao carregar tanques. Tente novamente.
-            </div>
-          ) : !filteredTanks.length ? (
-            <div className="p-8 text-center text-slate-500">
-              Nenhum tanque encontrado.
-            </div>
-          ) : (
-            <>
-              <TankTable
-                tanks={filteredTanks}
-                onDelete={handleDelete}
-                isDeleting={deleteTank.isPending}
-                tankTypeMap={tankTypeMap}
-                companyMap={companyMap}
-              />
+        {/* Conteúdo Principal */}
+        <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {isLoading && renderLoading()}
+          
+          {error && <div className="p-8 text-center text-red-600">Erro ao carregar tanques.</div>}
 
-              {/* Pagination */}
+          {!isLoading && !error && (
+            <>
+              {!filteredTanks.length ? renderEmptyState() : (
+                <TankTable
+                  tanks={filteredTanks}
+                  onDelete={confirmDelete}
+                  isDeleting={deleteTank.isPending}
+                  tankTypeMap={tankTypeMap}
+                  companyMap={companyMap}
+                />
+              )}
+
               {data && data.total > data.limit && (
                 <Pagination
                   page={page}
@@ -135,9 +131,8 @@ export default function TanksPage() {
               )}
             </>
           )}
-        </div>
+        </main>
       </div>
     </DemoDashboardLayout>
   );
 }
-
