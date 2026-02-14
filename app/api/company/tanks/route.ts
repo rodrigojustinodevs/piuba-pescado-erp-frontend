@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import type { TankListResponse, ApiTankListResponse, CreateTankData, Tank, ApiTank } from "@/features/tank";
+import type {
+  TankListResponse,
+  ApiTankListResponse,
+  CreateTankData,
+  Tank,
+  ApiTank,
+} from "@/features/tank";
 import { mapApiTank, mapApiTankList } from "@/features/tank/utils/apiMapper";
+import { backendRequest, HttpResponses } from "../../_utils/backendProxy";
 
 /**
  * Formato de resposta da API para operações individuais
@@ -13,65 +19,33 @@ interface ApiTankResponse {
 }
 
 /**
- * URL da API backend
- * Pode ser configurada via variável de ambiente NEXT_PUBLIC_API_URL
- */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
-
-/**
  * GET /api/company/tanks - Lista tanques com paginação (proxy para backend)
  */
 export async function GET(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "10";
     const search = searchParams.get("search") || "";
 
-    // Faz requisição para a API real
-    // GET usa /api/company/tanks (plural) apenas para listar
     const params = new URLSearchParams({
       page,
       limit,
       ...(search && { search }),
     });
 
-    const apiResponse = await fetch(`${API_BASE_URL}/api/company/tanks?${params}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const result = await backendRequest<ApiTankListResponse>(
+      `/api/company/tanks?${params}`,
+      { method: "GET", withAuth: true, errorFallback: "Erro ao listar tanques" }
+    );
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.message || "Erro ao listar tanques" },
-        { status: apiResponse.status }
-      );
-    }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
 
-    const apiData: ApiTankListResponse = await apiResponse.json();
-    const response: TankListResponse = mapApiTankList(apiData);
-
-    return NextResponse.json(response);
+    const response: TankListResponse = mapApiTankList(result.data);
+    return NextResponse.json(response, { status: result.status });
   } catch (error) {
     console.error("Erro ao listar tanques:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
+    return HttpResponses.serverError();
   }
 }
 
@@ -80,47 +54,22 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-
     const data: CreateTankData = await req.json();
 
-    // Faz requisição para a API real
-    // POST usa /api/company/tank (singular)
-    const apiResponse = await fetch(`${API_BASE_URL}/api/company/tank`, {
+    const result = await backendRequest<ApiTankResponse>(`/api/company/tank`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      withAuth: true,
       body: JSON.stringify(data),
+      errorFallback: "Erro ao criar tanque",
     });
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.message || "Erro ao criar tanque" },
-        { status: apiResponse.status }
-      );
-    }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
 
-    const apiData: ApiTankResponse = await apiResponse.json();
-    const tank: Tank = mapApiTank(apiData.response);
-
-    return NextResponse.json(tank, { status: apiResponse.status });
+    const tank: Tank = mapApiTank(result.data.response);
+    return NextResponse.json(tank, { status: result.status });
   } catch (error) {
     console.error("Erro ao criar tanque:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
+    return HttpResponses.serverError();
   }
 }
 

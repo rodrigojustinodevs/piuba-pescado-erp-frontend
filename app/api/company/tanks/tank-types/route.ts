@@ -1,54 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import type { TankType } from "@/features/tank";
-
-/**
- * URL da API backend
- */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
+import { backendRequest, HttpResponses } from "../../../_utils/backendProxy";
 
 /**
  * GET /api/company/tanks/tank-types - Lista tipos de tanque (proxy para backend)
  */
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-
-    // Faz requisição para a API real
-    const apiResponse = await fetch(`${API_BASE_URL}/api/company/tank-types`, {
+    const result = await backendRequest<TankType[]>(`/api/company/tank-types`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      withAuth: true,
+      errorFallback: "Erro ao listar tipos de tanque",
     });
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.message || "Erro ao listar tipos de tanque" },
-        { status: apiResponse.status }
-      );
-    }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
 
-    const apiData: TankType[] = await apiResponse.json();
-    
-    // Retorna o formato da API
-    return NextResponse.json(apiData);
+    return NextResponse.json(result.data, { status: result.status });
   } catch (error) {
     console.error("Erro ao listar tipos de tanque:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
+    return HttpResponses.serverError();
   }
 }
 

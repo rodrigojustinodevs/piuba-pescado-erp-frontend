@@ -2,7 +2,7 @@
 
 import { forwardRef } from "react";
 import { BaseInput } from "../BaseInput";
-import { useFieldId, getInputBaseClasses } from "../utils";
+import { useInputState } from "../utils";
 import type { NumberInputProps } from "../types";
 
 /**
@@ -49,11 +49,15 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     },
     ref
   ) => {
-    const fieldId = useFieldId(id);
-    const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
-
-    const inputClasses = `${getInputBaseClasses(finalVariant, disabled, size)} ${inputClassName}`;
+    const { fieldId, hasError, finalVariant, inputClasses, describedBy } = useInputState({
+      id,
+      helperText,
+      error,
+      variant,
+      disabled,
+      size,
+      inputClassName,
+    });
 
     return (
       <BaseInput
@@ -80,9 +84,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           required={required}
           className={inputClasses}
           aria-invalid={hasError}
-          aria-describedby={
-            error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
-          }
+          aria-describedby={describedBy}
           {...inputProps}
         />
       </BaseInput>

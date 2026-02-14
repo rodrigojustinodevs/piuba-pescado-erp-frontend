@@ -13,6 +13,18 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
+function generateToastId(): string {
+  // Preferir geradores criptograficamente seguros (evita alertas do Sonar em Math.random()).
+  const cryptoObj = globalThis.crypto;
+  if (cryptoObj?.randomUUID) return cryptoObj.randomUUID();
+
+  // Fallback: getRandomValues + timestamp (ainda suficientemente único para IDs de UI).
+  const bytes = new Uint8Array(16);
+  cryptoObj?.getRandomValues?.(bytes);
+  const randomPart = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  return `${Date.now().toString(36)}-${randomPart}`;
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -21,7 +33,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addToast = useCallback((message: string, type: ToastType = "info") => {
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const id = generateToastId();
     const newToast: Toast = { id, message, type };
     setToasts((prev) => [...prev, newToast]);
   }, []);

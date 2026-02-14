@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { FormFieldSize, FormFieldVariant } from "./types";
+import type { BaseFormFieldProps, FormFieldSize, FormFieldVariant } from "./types";
 
 /**
  * Gera um ID único para o campo se não fornecido
@@ -37,6 +37,43 @@ export function getInputBaseClasses(
     : "bg-white";
 
   return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses}`;
+}
+
+export function getInputAriaDescribedBy(
+  fieldId: string,
+  error?: string,
+  helperText?: string
+): string | undefined {
+  if (error) return `${fieldId}-error`;
+  if (helperText) return `${fieldId}-helper`;
+  return undefined;
+}
+
+type UseInputStateArgs = Pick<
+  BaseFormFieldProps,
+  "id" | "helperText" | "error" | "variant" | "disabled" | "size" | "inputClassName"
+>;
+
+/**
+ * Centraliza lógica compartilhada de inputs (id, variantes, classes e ARIA).
+ */
+export function useInputState({
+  id,
+  helperText,
+  error,
+  variant,
+  disabled,
+  size = "md",
+  inputClassName = "",
+}: UseInputStateArgs) {
+  const fieldId = useFieldId(id);
+  const hasError = !!error;
+  const finalVariant: FormFieldVariant = variant || (hasError ? "error" : "default");
+
+  const inputClasses = `${getInputBaseClasses(finalVariant, disabled, size)} ${inputClassName}`.trim();
+  const describedBy = getInputAriaDescribedBy(fieldId, error, helperText);
+
+  return { fieldId, hasError, finalVariant, inputClasses, describedBy };
 }
 
 /**

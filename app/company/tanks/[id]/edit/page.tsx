@@ -5,13 +5,16 @@ import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTank, useUpdateTank } from "@/features/tank";
-import { DashboardLayout } from "@/shared/components/Layout";
 import type { CreateTankFormData } from "@/features/tank";
 import { createTankSchema } from "@/features/tank/schemas";
 import { useCompanies } from "@/features/company";
 import { useTankTypes } from "@/features/tank/hooks/useTankTypes";
 import { useAuthContext } from "@/shared/contexts/AuthContext";
 import { Input, PageHeader, Select } from "@/shared/components/ui";
+
+import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
+import { LoadingState, NotFoundState } from "@/app/_components/PageStates";
+import { PhotoPlaceholderIcon, SpinnerIcon, TankDocumentIcon } from "@/app/_components/AppIcons";
 
 export default function EditTankPage() {
   const params = useParams();
@@ -80,78 +83,21 @@ export default function EditTankPage() {
   };
 
   if (isLoading) {
-    return (
-      <DashboardLayout
-        user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
-        }}
-      >
-        <div className="text-center py-8">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <svg
-              className="w-5 h-5 animate-spin"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            <span>Carregando...</span>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
+    return <LoadingState />;
   }
 
   if (!tank) {
-    return (
-      <DashboardLayout
-        user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
-        }}
-      >
-        <div className="text-center py-8">
-          <p className="text-red-600">Tanque não encontrado.</p>
-        </div>
-      </DashboardLayout>
-    );
+    return <NotFoundState message="Tanque não encontrado." />;
   }
 
   return (
-    <DashboardLayout
-      user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
-      }}
-    >
+    <DemoDashboardLayout>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         <PageHeader
           breadcrumb="Dashboard / Tanques / Editar"
           title="Tanque"
           subtitle="Atualize as informações do tanque para monitoramento aquícola"
-          icon={
-            <svg className="h-6 w-6 text-[#0EA5A4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 7h18M6 7V5a2 2 0 012-2h8a2 2 0 012 2v2M6 7v14a2 2 0 002 2h8a2 2 0 002-2V7"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 11h6M9 15h6"
-              />
-            </svg>
-          }
+          icon={<TankDocumentIcon className="h-6 w-6 text-[#0EA5A4]" />}
         />
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -301,20 +247,7 @@ export default function EditTankPage() {
                           </div>
                         ) : (
                           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0EA5A4]/10 text-[#0EA5A4]">
-                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 7h18M5 7l2-3h10l2 3M5 7v13a1 1 0 001 1h12a1 1 0 001-1V7"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 11a3 3 0 100 6 3 3 0 000-6z"
-                              />
-                            </svg>
+                            <PhotoPlaceholderIcon className="h-5 w-5" />
                           </div>
                         )}
 
@@ -334,19 +267,7 @@ export default function EditTankPage() {
                   className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {updateTank.isPending && (
-                    <svg
-                      className="h-4 w-4 animate-spin"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
+                    <SpinnerIcon className="h-4 w-4 animate-spin" />
                   )}
                   {updateTank.isPending ? "Atualizando..." : "Atualizar Tanque"}
                 </button>
@@ -355,7 +276,7 @@ export default function EditTankPage() {
           </div>
         </form>
       </div>
-    </DashboardLayout>
+    </DemoDashboardLayout>
   );
 }
 

@@ -11,7 +11,7 @@ import type {
  * Usa a rota de proxy do Next.js que faz requisição para o backend
  */
 const companyApi = axios.create({
-  baseURL: "/api/companies",
+  baseURL: "/api/admin/companies",
   headers: {
     "Content-Type": "application/json",
   },
