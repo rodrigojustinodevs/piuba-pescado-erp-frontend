@@ -30,7 +30,8 @@ jobs:
 
       # A action sonarcloud-github-action foi descontinuada; a sonarqube-scan-action é o replacement direto.
       - name: Sonar Scan
-        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        # v5.0.0 (pinned): https://github.com/SonarSource/sonarqube-scan-action/releases/tag/v5.0.0
+        uses: SonarSource/sonarqube-scan-action@0303d6b62e310685c0e34d0b9cde218036885c4d
         with:
           args: >
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || github.event.repository.name }}
