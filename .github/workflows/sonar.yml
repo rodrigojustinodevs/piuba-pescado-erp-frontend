@@ -28,8 +28,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+      # A action sonarcloud-github-action foi descontinuada; a sonarqube-scan-action é o replacement direto.
+      - name: Sonar Scan
+        # v5.0.0 (pinned): https://github.com/SonarSource/sonarqube-scan-action/releases/tag/v5.0.0
+        uses: SonarSource/sonarqube-scan-action@0303d6b62e310685c0e34d0b9cde218036885c4d
+        with:
+          args: >
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || github.event.repository.name }}
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION || github.repository_owner }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Gerado automaticamente pelo GitHub
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # O segredo que você criou manualmente

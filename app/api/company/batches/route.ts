@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import type { BatchListResponse, ApiBatchListResponse } from "@/features/batch";
+import type { BatchListResponse, ApiBatchListResponse, CreateBatchData, Batch } from "@/features/batch";
 import { mapApiBatchList } from "@/features/batch/utils/apiMapper";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
+import { backendRequest, HttpResponses } from "../../_utils/backendProxy";
 
 /**
  * GET /api/company/batches - Lista lotes da empresa (proxy para backend)
@@ -11,16 +9,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
  */
 export async function GET(req: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") ?? "";
     const limit = searchParams.get("limit") ?? "";
@@ -32,32 +20,44 @@ export async function GET(req: NextRequest) {
     if (search) params.set("search", search);
 
     const query = params.toString();
-    const url = `${API_BASE_URL}/api/company/batches${query ? `?${query}` : ""}`;
+    const endpoint = `/api/company/batches${query ? `?${query}` : ""}`;
 
-    const apiResponse = await fetch(url, {
+    const result = await backendRequest<ApiBatchListResponse>(endpoint, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      withAuth: true,
+      errorFallback: "Erro ao listar lotes",
     });
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: (errorData as { message?: string }).message || "Erro ao listar lotes" },
-        { status: apiResponse.status }
-      );
-    }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
 
-    const apiData: ApiBatchListResponse = await apiResponse.json();
-    const response: BatchListResponse = mapApiBatchList(apiData);
-    return NextResponse.json(response);
+    const response: BatchListResponse = mapApiBatchList(result.data);
+    return NextResponse.json(response, { status: result.status });
   } catch (error) {
     console.error("Erro ao listar lotes:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
+    return HttpResponses.serverError();
+  }
+}
+
+/**
+ * POST /api/company/batches - Cria um novo lote (proxy para backend)
+ * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const data: CreateBatchData = await req.json();
+
+    const result = await backendRequest<Batch>(`/api/company/batche`, {
+      method: "POST",
+      withAuth: true,
+      body: JSON.stringify(data),
+      errorFallback: "Erro ao criar lote",
+    });
+
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+
+    return NextResponse.json(result.data, { status: result.status });
+  } catch (error) {
+    console.error("Erro ao criar lote:", error);
+    return HttpResponses.serverError();
   }
 }

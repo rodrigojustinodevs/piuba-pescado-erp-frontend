@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import type { UpdateTankData, Tank, ApiTank } from "@/features/tank";
 import { mapApiTank } from "@/features/tank/utils/apiMapper";
+import { backendRequest, HttpResponses } from "../../../_utils/backendProxy";
 
 /**
  * Formato de resposta da API para operações individuais
@@ -12,161 +12,79 @@ interface ApiTankResponse {
   message: string;
 }
 
-/**
- * URL da API backend
- */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
+type RouteParams = { params: Promise<{ id: string }> };
+
+const backendTankPath = (id: string) => `/api/company/tank/${id}`;
+
+function toTankResponse(result: { data: ApiTankResponse; status: number }) {
+  const tank: Tank = mapApiTank(result.data.response);
+  return NextResponse.json(tank, { status: result.status });
+}
+
+async function withTankId(
+  params: RouteParams["params"],
+  actionLabel: string,
+  handler: (id: string) => Promise<NextResponse>
+) {
+  try {
+    const { id } = await params;
+    return await handler(id);
+  } catch (error) {
+    console.error(`Erro ao ${actionLabel} tanque:`, error);
+    return HttpResponses.serverError();
+  }
+}
 
 /**
  * GET /api/company/tanks/[id] - Busca um tanque por ID (proxy para backend)
  */
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-    
-    const { id } = await params;
-
-    // Faz requisição para a API real
-    // GET por ID usa /api/company/tank (singular)
-    const apiResponse = await fetch(`${API_BASE_URL}/api/company/tank/${id}`, {
+export async function GET(_req: NextRequest, { params }: RouteParams) {
+  return withTankId(params, "buscar", async (id) => {
+    const result = await backendRequest<ApiTankResponse>(backendTankPath(id), {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      withAuth: true,
+      errorFallback: "Tanque não encontrado",
     });
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.message || "Tanque não encontrado" },
-        { status: apiResponse.status }
-      );
-    }
-
-    const apiData: ApiTankResponse = await apiResponse.json();
-    const tank: Tank = mapApiTank(apiData.response);
-
-    return NextResponse.json(tank);
-  } catch (error) {
-    console.error("Erro ao buscar tanque:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
-  }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    return toTankResponse(result);
+  });
 }
 
 /**
  * PUT /api/company/tanks/[id] - Atualiza um tanque (proxy para backend)
  */
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-
-    const { id } = params;
+export async function PUT(req: NextRequest, { params }: RouteParams) {
+  return withTankId(params, "atualizar", async (id) => {
     const data: Omit<UpdateTankData, "id"> = await req.json();
 
-    // Faz requisição para a API real
-    // PUT usa /api/company/tank (singular)
-    const apiResponse = await fetch(`${API_BASE_URL}/api/company/tank/${id}`, {
+    const result = await backendRequest<ApiTankResponse>(backendTankPath(id), {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      withAuth: true,
       body: JSON.stringify(data),
+      errorFallback: "Erro ao atualizar tanque",
     });
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.message || "Erro ao atualizar tanque" },
-        { status: apiResponse.status }
-      );
-    }
-
-    const apiData: ApiTankResponse = await apiResponse.json();
-    const tank: Tank = mapApiTank(apiData.response);
-
-    return NextResponse.json(tank);
-  } catch (error) {
-    console.error("Erro ao atualizar tanque:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
-  }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    return toTankResponse(result);
+  });
 }
 
 /**
  * DELETE /api/company/tanks/[id] - Remove um tanque (proxy para backend)
  */
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: "Não autenticado" },
-        { status: 401 }
-      );
-    }
-
-    const { id } = params;
-
-    // Faz requisição para a API real
-    // DELETE usa /api/company/tank (singular)
-    const apiResponse = await fetch(`${API_BASE_URL}/api/company/tank/${id}`, {
+export async function DELETE(_req: NextRequest, { params }: RouteParams) {
+  return withTankId(params, "deletar", async (id) => {
+    const result = await backendRequest(backendTankPath(id), {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      withAuth: true,
+      expectJson: false,
+      errorFallback: "Erro ao deletar tanque",
     });
 
-    if (!apiResponse.ok) {
-      const errorData = await apiResponse.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorData.message || "Erro ao deletar tanque" },
-        { status: apiResponse.status }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Erro ao deletar tanque:", error);
-    return NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
-    );
-  }
+    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    return NextResponse.json({ success: true }, { status: result.status });
+  });
 }
 
 
