@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useListPageState } from "@/app/_components/useListPageState";
 import { useTanks, useDeleteTank, useTankLookups } from "@/features/tank";
 import { TankTable } from "@/features/tank/components";
 import { useAlertModal } from "@/shared/components/AlertModal";
@@ -18,13 +17,9 @@ import {
   SpinnerIcon,
 } from "@/app/_components/AppIcons";
 
-type FilterType = "all" | "active" | "inactive";
-
 export default function TanksPage() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<FilterType>("all");
-  const [sortBy, setSortBy] = useState("name");
+  const { page, setPage, search, setSearch, filter, setFilter, sortBy, setSortBy } =
+    useListPageState({ initialSortBy: "name" });
   const { data, isLoading, error } = useTanks({ page, limit: 10, search });
   const deleteTank = useDeleteTank();
   const { showError } = useAlertModal();
@@ -68,10 +63,7 @@ export default function TanksPage() {
           <SearchField
             value={search}
             placeholder="Buscar tanque..."
-            onChange={(next) => {
-              setSearch(next);
-              setPage(1);
-            }}
+            onChange={setSearch}
           />
           <StatusFilterTabs
             filter={filter}

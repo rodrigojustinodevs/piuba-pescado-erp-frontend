@@ -1,46 +1,6 @@
 "use client";
 
-import type { ReactNode, SVGProps } from "react";
-
-type IconBaseProps = {
-  children: ReactNode;
-  className?: string;
-};
-
-const IconBase = ({ children, className = "w-5 h-5" }: IconBaseProps) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    {children}
-  </svg>
-);
-
-type IconPathProps = Omit<SVGProps<SVGPathElement>, "strokeLinecap" | "strokeLinejoin" | "strokeWidth"> & {
-  d: string;
-};
-
-const IconPath = ({ d, ...rest }: IconPathProps) => (
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth={2}
-    d={d}
-    {...rest}
-  />
-);
-
-type StrokeIconProps = { className?: string };
-
-function createStrokeIcon(paths: string | string[]) {
-  const ds = Array.isArray(paths) ? paths : [paths];
-  return function StrokeIcon({ className }: StrokeIconProps) {
-    return (
-      <IconBase className={className}>
-        {ds.map((d, idx) => (
-          <IconPath key={idx} d={d} />
-        ))}
-      </IconBase>
-    );
-  };
-}
+import { createStrokeIcon } from "@/shared/components/icons/strokeIcon";
 
 export const SpinnerIcon = createStrokeIcon(
   "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"

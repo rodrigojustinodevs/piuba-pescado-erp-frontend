@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useListPageState } from "@/app/_components/useListPageState";
 import { useCompanies, useDeleteCompany } from "@/features/company";
 import { useAlertModal } from "@/shared/components/AlertModal";
 import type { Company } from "@/features/company";
@@ -21,13 +21,10 @@ import {
   TrashIcon,
 } from "@/app/_components/AppIcons";
 
-type FilterType = "all" | "active" | "inactive";
-
 export default function CompaniesPage() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<FilterType>("all");
-  const [sortBy, setSortBy] = useState("name");
+  const { page, setPage, search, setSearch, filter, setFilter } = useListPageState({
+    initialSortBy: "name",
+  });
   const { data, isLoading, error } = useCompanies({ page, limit: 6, search });
   const deleteCompany = useDeleteCompany();
   const { showError } = useAlertModal();
@@ -103,10 +100,7 @@ export default function CompaniesPage() {
           <SearchField
             value={search}
             placeholder="Buscar empresa..."
-            onChange={(next) => {
-              setSearch(next);
-              setPage(1);
-            }}
+            onChange={setSearch}
           />
           <StatusFilterTabs
             filter={filter}
