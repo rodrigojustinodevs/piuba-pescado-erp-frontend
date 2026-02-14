@@ -5,28 +5,42 @@ import { backendRequest, HttpResponses } from "../../../_utils/backendProxy";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
+const backendBatchPath = (id: string) => `/api/company/batche/${id}`;
+
+function toBatchResponse(result: { data: ApiBatchResponse; status: number }) {
+  const batch: Batch = mapApiBatch(result.data);
+  return NextResponse.json(batch, { status: result.status });
+}
+
+async function withBatchId(
+  params: RouteParams["params"],
+  actionLabel: string,
+  handler: (id: string) => Promise<NextResponse>
+) {
+  try {
+    const { id } = await params;
+    return await handler(id);
+  } catch (error) {
+    console.error(`Erro ao ${actionLabel} lote:`, error);
+    return HttpResponses.serverError();
+  }
+}
+
 /**
  * GET /api/company/batches/[id] - Busca um lote por ID (proxy para backend)
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
 export async function GET(_req: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
-
-    const result = await backendRequest<ApiBatchResponse>(`/api/company/batche/${id}`, {
+  return withBatchId(params, "buscar", async (id) => {
+    const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
       method: "GET",
       withAuth: true,
       errorFallback: "Lote não encontrado",
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
-    const batch: Batch = mapApiBatch(result.data);
-    return NextResponse.json(batch, { status: result.status });
-  } catch (error) {
-    console.error("Erro ao buscar lote:", error);
-    return HttpResponses.serverError();
-  }
+    return toBatchResponse(result);
+  });
 }
 
 /**
@@ -34,11 +48,9 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
 export async function PUT(req: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
+  return withBatchId(params, "atualizar", async (id) => {
     const data: Omit<UpdateBatchData, "id"> = await req.json();
-
-    const result = await backendRequest<ApiBatchResponse>(`/api/company/batche/${id}`, {
+    const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
       method: "PUT",
       withAuth: true,
       body: JSON.stringify(data),
@@ -46,13 +58,8 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
-    const batch: Batch = mapApiBatch(result.data);
-    return NextResponse.json(batch, { status: result.status });
-  } catch (error) {
-    console.error("Erro ao atualizar lote:", error);
-    return HttpResponses.serverError();
-  }
+    return toBatchResponse(result);
+  });
 }
 
 /**
@@ -60,10 +67,8 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
-
-    const result = await backendRequest(`/api/company/batche/${id}`, {
+  return withBatchId(params, "deletar", async (id) => {
+    const result = await backendRequest(backendBatchPath(id), {
       method: "DELETE",
       withAuth: true,
       expectJson: false,
@@ -71,11 +76,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
     return NextResponse.json({ success: true }, { status: result.status });
-  } catch (error) {
-    console.error("Erro ao deletar lote:", error);
-    return HttpResponses.serverError();
-  }
+  });
 }
 

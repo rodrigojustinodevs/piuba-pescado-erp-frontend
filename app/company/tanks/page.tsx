@@ -6,16 +6,15 @@ import { useTanks, useDeleteTank, useTankLookups } from "@/features/tank";
 import { TankTable } from "@/features/tank/components";
 import { useAlertModal } from "@/shared/components/AlertModal";
 import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
+import { ListHeader } from "@/app/_components/ListHeader";
+import { Pagination } from "@/app/_components/Pagination";
+import { SearchField } from "@/app/_components/SearchField";
+import { StatusFilterTabs } from "@/app/_components/StatusFilterTabs";
 import {
   CircleIcon,
   ChevronDownIcon,
-  ChevronLeftIcon,
   ChevronRightIcon,
-  DoubleChevronLeftIcon,
-  DoubleChevronRightIcon,
   FilterIcon,
-  PlusIcon,
-  SearchIcon,
   SpinnerIcon,
 } from "@/app/_components/AppIcons";
 
@@ -56,87 +55,30 @@ export default function TanksPage() {
     <DemoDashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center">
-              <CircleIcon className="h-8 w-8 text-[#0EA5A4]" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-[#0F172A]">Tanques</h1>
-              <p className="mt-1 text-base text-slate-500">
-                Gerencie e acompanhe os tanques cadastrados
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/company/tanks/create"
-            className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] transition-colors"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Novo Tanque
-          </Link>
-        </div>
+        <ListHeader
+          icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
+          title="Tanques"
+          subtitle="Gerencie e acompanhe os tanques cadastrados"
+          ctaHref="/company/tanks/create"
+          ctaLabel="Novo Tanque"
+        />
 
         {/* Search, Filters and Sort - single line */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[200px]">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <SearchIcon className="h-5 w-5 text-[#0EA5A4]" />
-            </div>
-            <input
-              type="text"
-              placeholder="Buscar tanque..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full rounded-lg border border-[#0EA5A4] bg-white pl-10 pr-4 py-2.5 text-sm text-[#0F172A] placeholder:text-slate-400 focus:border-[#0EA5A4] focus:outline-none focus:ring-1 focus:ring-[#0EA5A4]"
-            />
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                filter === "all"
-                  ? "bg-[#0EA5A4] text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
-              }`}
-            >
-              Todas
-            </button>
-            <button
-              onClick={() => setFilter("active")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                filter === "active"
-                  ? "bg-[#0EA5A4] text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
-              }`}
-            >
-              Ativos
-            </button>
-            <button
-              onClick={() => setFilter("inactive")}
-              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                filter === "inactive"
-                  ? "bg-[#0EA5A4] text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
-              }`}
-            >
-              Inativos
-              {inactiveCount > 0 && (
-                <span
-                  className={`ml-2 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                    filter === "inactive"
-                      ? "bg-white/20 text-white"
-                      : "bg-[#0EA5A4] text-white"
-                  }`}
-                >
-                  {inactiveCount}
-                </span>
-              )}
-            </button>
-          </div>
+          <SearchField
+            value={search}
+            placeholder="Buscar tanque..."
+            onChange={(next) => {
+              setSearch(next);
+              setPage(1);
+            }}
+          />
+          <StatusFilterTabs
+            filter={filter}
+            onChange={setFilter}
+            inactiveCount={inactiveCount}
+            labels={{ all: "Todas", active: "Ativos", inactive: "Inativos" }}
+          />
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-sm text-slate-600">Ordenar por:</span>
             <button
@@ -191,65 +133,13 @@ export default function TanksPage() {
 
               {/* Pagination */}
               {data && data.total > data.limit && (
-                <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-                  <div className="text-sm text-slate-600">
-                    Mostrando {((page - 1) * data.limit) + 1}-{Math.min(page * data.limit, data.total)} de{" "}
-                    {data.total} tanques
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => setPage(1)}
-                      disabled={page === 1}
-                      className="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg hover:bg-slate-100 transition-colors"
-                      aria-label="Primeira página"
-                    >
-                      <DoubleChevronLeftIcon className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                      className="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg hover:bg-slate-100 transition-colors"
-                      aria-label="Página anterior"
-                    >
-                      <ChevronLeftIcon className="w-4 h-4" />
-                    </button>
-                    {Array.from(
-                      { length: Math.min(3, Math.ceil(data.total / data.limit)) },
-                      (_, i) => {
-                        const pageNum = i + 1;
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => setPage(pageNum)}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                              page === pageNum
-                                ? "bg-[#0EA5A4] text-white"
-                                : "text-slate-600 hover:bg-slate-100"
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      }
-                    )}
-                    <button
-                      onClick={() => setPage((p) => p + 1)}
-                      disabled={page * data.limit >= data.total}
-                      className="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg hover:bg-slate-100 transition-colors"
-                      aria-label="Próxima página"
-                    >
-                      <ChevronRightIcon className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setPage(Math.ceil(data.total / data.limit))}
-                      disabled={page * data.limit >= data.total}
-                      className="p-2 text-slate-400 hover:text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg hover:bg-slate-100 transition-colors"
-                      aria-label="Última página"
-                    >
-                      <DoubleChevronRightIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                <Pagination
+                  page={page}
+                  limit={data.limit}
+                  total={data.total}
+                  itemLabelPlural="tanques"
+                  onPageChange={setPage}
+                />
               )}
             </>
           )}

@@ -14,7 +14,7 @@ interface ToastContextType {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 function generateToastId(): string {
-  // Preferir geradores criptograficamente seguros (evita alertas do Sonar em Math.random()).
+  // Preferir geradores criptograficamente seguros (evita alertas do Sonar sobre PRNG não seguro).
   const cryptoObj = globalThis.crypto;
   if (cryptoObj?.randomUUID) return cryptoObj.randomUUID();
 

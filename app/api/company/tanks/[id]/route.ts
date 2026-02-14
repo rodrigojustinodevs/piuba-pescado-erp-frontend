@@ -14,38 +14,51 @@ interface ApiTankResponse {
 
 type RouteParams = { params: Promise<{ id: string }> };
 
+const backendTankPath = (id: string) => `/api/company/tank/${id}`;
+
+function toTankResponse(result: { data: ApiTankResponse; status: number }) {
+  const tank: Tank = mapApiTank(result.data.response);
+  return NextResponse.json(tank, { status: result.status });
+}
+
+async function withTankId(
+  params: RouteParams["params"],
+  actionLabel: string,
+  handler: (id: string) => Promise<NextResponse>
+) {
+  try {
+    const { id } = await params;
+    return await handler(id);
+  } catch (error) {
+    console.error(`Erro ao ${actionLabel} tanque:`, error);
+    return HttpResponses.serverError();
+  }
+}
+
 /**
  * GET /api/company/tanks/[id] - Busca um tanque por ID (proxy para backend)
  */
 export async function GET(_req: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
-
-    const result = await backendRequest<ApiTankResponse>(`/api/company/tank/${id}`, {
+  return withTankId(params, "buscar", async (id) => {
+    const result = await backendRequest<ApiTankResponse>(backendTankPath(id), {
       method: "GET",
       withAuth: true,
       errorFallback: "Tanque não encontrado",
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
-    const tank: Tank = mapApiTank(result.data.response);
-    return NextResponse.json(tank, { status: result.status });
-  } catch (error) {
-    console.error("Erro ao buscar tanque:", error);
-    return HttpResponses.serverError();
-  }
+    return toTankResponse(result);
+  });
 }
 
 /**
  * PUT /api/company/tanks/[id] - Atualiza um tanque (proxy para backend)
  */
 export async function PUT(req: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
+  return withTankId(params, "atualizar", async (id) => {
     const data: Omit<UpdateTankData, "id"> = await req.json();
 
-    const result = await backendRequest<ApiTankResponse>(`/api/company/tank/${id}`, {
+    const result = await backendRequest<ApiTankResponse>(backendTankPath(id), {
       method: "PUT",
       withAuth: true,
       body: JSON.stringify(data),
@@ -53,23 +66,16 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
-    const tank: Tank = mapApiTank(result.data.response);
-    return NextResponse.json(tank, { status: result.status });
-  } catch (error) {
-    console.error("Erro ao atualizar tanque:", error);
-    return HttpResponses.serverError();
-  }
+    return toTankResponse(result);
+  });
 }
 
 /**
  * DELETE /api/company/tanks/[id] - Remove um tanque (proxy para backend)
  */
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
-  try {
-    const { id } = await params;
-
-    const result = await backendRequest(`/api/company/tank/${id}`, {
+  return withTankId(params, "deletar", async (id) => {
+    const result = await backendRequest(backendTankPath(id), {
       method: "DELETE",
       withAuth: true,
       expectJson: false,
@@ -77,12 +83,8 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
     return NextResponse.json({ success: true }, { status: result.status });
-  } catch (error) {
-    console.error("Erro ao deletar tanque:", error);
-    return HttpResponses.serverError();
-  }
+  });
 }
 
 

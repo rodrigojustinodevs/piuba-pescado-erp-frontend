@@ -1,8 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useInputState } from "../utils";
+import { PrimitiveInput } from "../PrimitiveInput";
 import type { TextInputProps } from "../types";
 
 /**
@@ -34,61 +33,8 @@ import type { TextInputProps } from "../types";
  * ```
  */
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
-  (
-    {
-      label,
-      helperText,
-      error,
-      required,
-      disabled,
-      size = "md",
-      variant,
-      id,
-      name,
-      type = "text",
-      className = "",
-      inputClassName = "",
-      ...inputProps
-    },
-    ref
-  ) => {
-    const { fieldId, hasError, finalVariant, inputClasses, describedBy } = useInputState({
-      id,
-      helperText,
-      error,
-      variant,
-      disabled,
-      size,
-      inputClassName,
-    });
-
-    return (
-      <BaseInput
-        label={label}
-        helperText={helperText}
-        error={error}
-        required={required}
-        disabled={disabled}
-        size={size}
-        variant={finalVariant}
-        id={fieldId}
-        name={name}
-        className={className}
-      >
-        <input
-          ref={ref}
-          id={fieldId}
-          name={name}
-          type={type}
-          disabled={disabled}
-          required={required}
-          className={inputClasses}
-          aria-invalid={hasError}
-          aria-describedby={describedBy}
-          {...inputProps}
-        />
-      </BaseInput>
-    );
+  ({ type = "text", ...props }, ref) => {
+    return <PrimitiveInput ref={ref} type={type} {...props} />;
   }
 );
 

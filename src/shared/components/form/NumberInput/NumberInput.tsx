@@ -1,8 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useInputState } from "../utils";
+import { PrimitiveInput } from "../PrimitiveInput";
 import type { NumberInputProps } from "../types";
 
 /**
@@ -29,66 +28,8 @@ import type { NumberInputProps } from "../types";
  * ```
  */
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
-  (
-    {
-      label,
-      helperText,
-      error,
-      required,
-      disabled,
-      size = "md",
-      variant,
-      id,
-      name,
-      min,
-      max,
-      step,
-      className = "",
-      inputClassName = "",
-      ...inputProps
-    },
-    ref
-  ) => {
-    const { fieldId, hasError, finalVariant, inputClasses, describedBy } = useInputState({
-      id,
-      helperText,
-      error,
-      variant,
-      disabled,
-      size,
-      inputClassName,
-    });
-
-    return (
-      <BaseInput
-        label={label}
-        helperText={helperText}
-        error={error}
-        required={required}
-        disabled={disabled}
-        size={size}
-        variant={finalVariant}
-        id={fieldId}
-        name={name}
-        className={className}
-      >
-        <input
-          ref={ref}
-          id={fieldId}
-          name={name}
-          type="number"
-          min={min}
-          max={max}
-          step={step}
-          disabled={disabled}
-          required={required}
-          className={inputClasses}
-          aria-invalid={hasError}
-          aria-describedby={describedBy}
-          {...inputProps}
-        />
-      </BaseInput>
-    );
+  ({ min, max, step, ...props }, ref) => {
+    return <PrimitiveInput ref={ref} type="number" min={min} max={max} step={step} {...props} />;
   }
 );
 
