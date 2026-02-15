@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { decodeJWT } from '@/shared/utils/jwt';
 import {
   extractRoleFromJWT,
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { ok: false, message: 'Email and password are required' },
+        { ok: false, message: ErrorMessages.LOGIN_REQUIRED_FIELDS },
         { status: 400 },
       );
     }
@@ -51,12 +52,15 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { ok: false, message: data.message || 'Invalid credentials' },
+      { ok: false, message: data.message || ErrorMessages.LOGIN_CREDENTIALS },
       { status: 401 },
     );
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json({ ok: false, message: 'Server error' }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, message: ErrorMessages.LOGIN_SERVER_ERROR },
+      { status: 500 },
+    );
   }
 }
 

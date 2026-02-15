@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { useAuth, loginSchema, type LoginFormData } from '@/features/auth';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { EmailInput, PasswordInput } from '@/shared/components/form';
 
 const WhatsAppIcon = () => (
@@ -102,7 +103,7 @@ export default function LoginPage() {
                 className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-100"
                 role="alert"
               >
-                {loginError?.message || 'Credenciais inválidas. Tente novamente.'}
+                {loginError?.message || ErrorMessages.LOGIN_CREDENTIALS}
               </div>
             )}
 

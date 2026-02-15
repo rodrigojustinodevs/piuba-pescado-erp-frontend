@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
 import type { LoginCredentials, LoginResponse } from './types';
 
 /**
@@ -10,6 +11,31 @@ const authApi = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+/**
+ * Interceptor: traduz erros da API (backend pode vir em inglês) para mensagens
+ * em português do ErrorMessages. O usuário sempre vê texto em PT.
+ */
+authApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (!axios.isAxiosError(error) || !error.response) {
+      return Promise.reject(error);
+    }
+    const status = error.response.status;
+
+    if (status === 400) {
+      return Promise.reject(new Error(ErrorMessages.LOGIN_REQUIRED_FIELDS));
+    }
+    if (status === 401) {
+      return Promise.reject(new Error(ErrorMessages.LOGIN_CREDENTIALS));
+    }
+    if (status >= 500) {
+      return Promise.reject(new Error(ErrorMessages.LOGIN_SERVER_ERROR));
+    }
+    return Promise.reject(new Error(ErrorMessages.UNEXPECTED));
+  },
+);
 
 /**
  * Serviço de autenticação
