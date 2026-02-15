@@ -5,6 +5,8 @@ import { DataTable, type DataTableColumn } from '@/shared/components/Table';
 import { BatchStatusBadge } from './BatchStatusBadge';
 import { formatDate, formatQuantity, getCultivationLabel } from '../utils/format';
 
+const CELL_TEXT_CLASS = 'text-sm text-slate-600';
+
 export interface BatchTableProps {
   batches: Batch[];
   onDelete: (id: string, species: string) => void;
@@ -23,12 +25,12 @@ export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTable
     {
       id: 'species',
       header: 'Espécie',
-      cell: (batch) => <div className="text-sm text-slate-600">{batch.species}</div>,
+      cell: (batch) => <div className={CELL_TEXT_CLASS}>{batch.species}</div>,
     },
     {
       id: 'tank',
       header: 'Tanque',
-      cell: (batch) => <div className="text-sm text-slate-600">{batch.tank?.name ?? '—'}</div>,
+      cell: (batch) => <div className={CELL_TEXT_CLASS}>{batch.tank?.name ?? '—'}</div>,
     },
     {
       id: 'initialQuantity',

@@ -6,6 +6,8 @@ import { formatCapacityLiters, getStatusBadgeClass } from '../utils/format';
 import { getCompanyName, getTankTypeLabel } from '../utils/lookups';
 import { DataTable, type DataTableColumn } from '@/shared/components/Table';
 
+const CELL_TEXT_CLASS = 'text-sm text-slate-600';
+
 interface TankTableProps {
   tanks: Tank[];
   onDelete: (id: string, name: string) => void;
@@ -39,9 +41,7 @@ export function TankTable({
             id: 'company',
             header: 'Empresa',
             cell: (tank) => (
-              <div className="text-sm text-slate-600">
-                {getCompanyName(companyMap, tank.companyId)}
-              </div>
+              <div className={CELL_TEXT_CLASS}>{getCompanyName(companyMap, tank.companyId)}</div>
             ),
           },
         ] as Array<DataTableColumn<Tank>>)
@@ -50,16 +50,14 @@ export function TankTable({
       id: 'capacity',
       header: 'Capacidade',
       cell: (tank) => (
-        <div className="text-sm text-slate-600">{formatCapacityLiters(tank.capacityLiters)}</div>
+        <div className={CELL_TEXT_CLASS}>{formatCapacityLiters(tank.capacityLiters)}</div>
       ),
     },
     {
       id: 'type',
       header: 'Tipo',
       cell: (tank) => (
-        <div className="text-sm text-slate-600">
-          {getTankTypeLabel(tankTypeMap, tank.tankTypeId)}
-        </div>
+        <div className={CELL_TEXT_CLASS}>{getTankTypeLabel(tankTypeMap, tank.tankTypeId)}</div>
       ),
     },
     {
