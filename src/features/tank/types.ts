@@ -2,6 +2,8 @@
  * Tipos relacionados à entidade Tank
  */
 
+import type { ApiListResponse, ApiResponse } from '@/shared/types/api';
+
 export interface Tank {
   id: string;
   companyId: string;
@@ -39,11 +41,7 @@ export interface TankType {
 /**
  * Formato de resposta da API para listagem de tipos
  */
-export interface ApiTankTypeListResponse {
-  status: boolean;
-  response: TankType[];
-  message: string;
-}
+export type ApiTankTypeListResponse = ApiResponse<TankType[]>;
 
 /**
  * Formato de tanque retornado pela API (camelCase com objetos aninhados)
@@ -69,18 +67,7 @@ export interface ApiTank {
 /**
  * Formato de resposta da API para listagem
  */
-export interface ApiTankListResponse {
-  status: boolean;
-  response: ApiTank[];
-  message: string;
-  pagination: {
-    total: number;
-    current_page: number;
-    last_page: number;
-    first_page: number;
-    per_page: number;
-  };
-}
+export type ApiTankListResponse = ApiListResponse<ApiTank>;
 
 /**
  * Formato padronizado para uso no frontend

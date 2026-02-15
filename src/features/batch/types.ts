@@ -2,6 +2,8 @@
  * Tipos relacionados à entidade Batch (Lote)
  */
 
+import type { ApiListResponse, ApiResponse } from '@/shared/types/api';
+
 export type BatchStatus = 'active' | 'finished';
 
 export type BatchCultivation = 'daycare' | string;
@@ -26,11 +28,7 @@ export interface Batch {
 /**
  * Formato de resposta da API para operações individuais (formato bruto da API)
  */
-export interface ApiBatchResponse {
-  status: boolean;
-  response: Batch;
-  message: string;
-}
+export type ApiBatchResponse = ApiResponse<Batch>;
 
 /**
  * Dados para criação de um novo lote
@@ -53,18 +51,7 @@ export interface UpdateBatchData extends Partial<CreateBatchData> {
 /**
  * Formato de resposta da API para listagem de lotes (formato bruto da API)
  */
-export interface ApiBatchListResponse {
-  status: boolean;
-  response: Batch[];
-  message: string;
-  pagination: {
-    total: number;
-    current_page: number;
-    last_page: number;
-    first_page: number;
-    per_page: number;
-  };
-}
+export type ApiBatchListResponse = ApiListResponse<Batch>;
 
 /**
  * Formato padronizado para uso no frontend
