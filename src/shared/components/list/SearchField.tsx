@@ -1,6 +1,6 @@
 'use client';
 
-import { SearchIcon } from './AppIcons';
+import { SearchIcon } from '@/shared/components/icons/AppIcons';
 
 export function SearchField({
   value,

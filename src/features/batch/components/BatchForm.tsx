@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   createBatchSchema,
@@ -13,14 +13,25 @@ import type { Batch } from '../types';
 import { useTanks } from '@/features/tank';
 import { Input, Select } from '@/shared/components/ui';
 
-export interface BatchFormProps {
-  initialData?: Batch;
-  onSubmit: (data: CreateBatchFormData | UpdateBatchFormData) => void;
+type BatchFormCommonProps = {
   isLoading?: boolean;
   submitLabel?: string;
-}
+};
+
+export type BatchFormProps =
+  | (BatchFormCommonProps & {
+      mode: 'create';
+      initialData?: never;
+      onSubmit: (data: CreateBatchFormData) => void;
+    })
+  | (BatchFormCommonProps & {
+      mode: 'update';
+      initialData: Batch;
+      onSubmit: (data: UpdateBatchFormData) => void;
+    });
 
 export function BatchForm({
+  mode,
   initialData,
   onSubmit,
   isLoading = false,
@@ -31,7 +42,7 @@ export function BatchForm({
   });
   const tanks = tanksData?.tanks || [];
 
-  const isEditMode = Boolean(initialData);
+  const isEditMode = mode === 'update';
   const schema = isEditMode ? updateBatchSchema : createBatchSchema;
 
   const {
@@ -76,7 +87,12 @@ export function BatchForm({
   }, [initialData, reset]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(
+        onSubmit as unknown as SubmitHandler<CreateBatchFormData | UpdateBatchFormData>,
+      )}
+      className="space-y-6"
+    >
       {/* Informações do Lote */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Informações do Lote</h3>

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { PlusIcon } from './AppIcons';
+import { PlusIcon } from '@/shared/components/icons/AppIcons';
 
 export function ListHeader({
   icon,

@@ -7,7 +7,7 @@ import type { BaseFormFieldProps } from '../types';
 
 import type { InputHTMLAttributes } from 'react';
 
-type PrimitiveInputProps = BaseFormFieldProps & InputHTMLAttributes<HTMLInputElement>;
+type PrimitiveInputProps = BaseFormFieldProps & Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>;
 
 /**
  * Input "primitivo" para reutilização interna.

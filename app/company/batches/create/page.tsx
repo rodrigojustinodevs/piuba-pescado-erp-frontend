@@ -4,22 +4,17 @@ import { useCreateBatch } from '@/features/batch';
 import { BatchForm } from '@/features/batch/components';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { PageHeader } from '@/shared/components/ui';
-import type { CreateBatchFormData } from '@/features/batch/schemas';
+import { demoUser } from '@/shared/constants/demoUser';
 
 export default function BatchCreatePage() {
   const createBatch = useCreateBatch();
 
-  const onSubmit = (data: CreateBatchFormData) => {
+  const onSubmit = (data: Parameters<typeof createBatch.mutate>[0]) => {
     createBatch.mutate(data);
   };
 
   return (
-    <DashboardLayout
-      user={{
-        name: 'Usuário Demo',
-        email: 'demo@dev.com',
-      }}
-    >
+    <DashboardLayout user={demoUser}>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         <PageHeader
           breadcrumb="Dashboard / Lotes / Novo"
@@ -44,6 +39,7 @@ export default function BatchCreatePage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
           <BatchForm
+            mode="create"
             onSubmit={onSubmit}
             isLoading={createBatch.isPending}
             submitLabel="Criar Lote"

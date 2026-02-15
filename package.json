@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint \"app/**/*.{ts,tsx,js,jsx}\" \"src/**/*.{ts,tsx,js,jsx}\"",
     "init:tailwind": "tailwindcss init -p",
     "sonar": "sonar-scanner",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",

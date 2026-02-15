@@ -7,9 +7,10 @@ import { useAlertModal } from '@/shared/components/AlertModal';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { formatCapacityLiters } from '@/features/tank/utils/format';
 import { getCompanyName, getTankTypeLabel } from '@/features/tank/utils/lookups';
-import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
-import { LoadingState, NotFoundState } from '@/app/_components/PageStates';
-import { PencilIcon, TankDocumentIcon, TrashIcon } from '@/app/_components/AppIcons';
+import { DashboardLayout } from '@/shared/components/Layout';
+import { demoUser } from '@/shared/constants/demoUser';
+import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
+import { PencilIcon, TankDocumentIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
 // (formatadores movidos para src/shared/utils/dateFormat.ts)
@@ -37,11 +38,19 @@ export default function TankDetailPage() {
   };
 
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <DashboardLayout user={demoUser}>
+        <LoadingState />
+      </DashboardLayout>
+    );
   }
 
   if (error || !tank) {
-    return <NotFoundState message="Tanque não encontrado." backHref="/company/tanks" />;
+    return (
+      <DashboardLayout user={demoUser}>
+        <NotFoundState message="Tanque não encontrado." backHref="/company/tanks" />
+      </DashboardLayout>
+    );
   }
 
   const companyName = getCompanyName(companyMap, tank.companyId);
@@ -49,7 +58,7 @@ export default function TankDetailPage() {
   const capacity = formatCapacityLiters(tank.capacityLiters);
 
   return (
-    <DemoDashboardLayout>
+    <DashboardLayout user={demoUser}>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         {/* Breadcrumb */}
         <p className="text-sm text-slate-600 mb-4">Dashboard / Tanques / {tank.name}</p>
@@ -196,6 +205,6 @@ export default function TankDetailPage() {
           </div>
         </div>
       </div>
-    </DemoDashboardLayout>
+    </DashboardLayout>
   );
 }
