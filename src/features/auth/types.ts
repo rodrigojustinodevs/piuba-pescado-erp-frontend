@@ -2,6 +2,8 @@
  * Tipos relacionados à autenticação
  */
 
+import type { AuthenticatedUser, AuthState as SharedAuthState } from '@/shared/types/auth';
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -27,16 +29,8 @@ export interface LoginResponse {
   token?: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  role?: string; // Role/tipo do usuário (master, company_admin, manager, operator)
-  companyId?: string | null; // ID da empresa associada (null para master)
-}
-
-export interface AuthState {
-  isAuthenticated: boolean;
-  user: User | null;
-  isLoading: boolean;
-}
+/**
+ * Tipos compartilhados (fonte única): use `src/shared/types/auth.ts`
+ */
+export type User = AuthenticatedUser;
+export type AuthState = SharedAuthState;

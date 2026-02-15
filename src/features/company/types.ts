@@ -2,6 +2,8 @@
  * Tipos relacionados à entidade Company
  */
 
+import type { ApiListResponse } from '@/shared/types/api';
+
 export interface Company {
   id: string;
   name: string;
@@ -47,18 +49,7 @@ export interface UpdateCompanyData extends Partial<CreateCompanyData> {
 /**
  * Formato de resposta da API para listagem
  */
-export interface ApiCompanyListResponse {
-  status: boolean;
-  response: Company[];
-  message: string;
-  pagination: {
-    total: number;
-    current_page: number;
-    last_page: number;
-    first_page: number;
-    per_page: number;
-  };
-}
+export type ApiCompanyListResponse = ApiListResponse<Company>;
 
 /**
  * Formato padronizado para uso no frontend

@@ -5,13 +5,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/features/auth/api';
 import { useLogin } from '@/features/auth/hooks/useLogin';
-import type { User, LoginCredentials, LoginResponse } from '@/features/auth/types';
-import { UserRole, type UserRoleType } from '@/shared/types/auth';
+import type { LoginCredentials, LoginResponse } from '@/features/auth/types';
+import { UserRole, type UserRoleType, type AuthenticatedUser } from '@/shared/types/auth';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: User | null;
+  user: AuthenticatedUser | null;
   login: (credentials: LoginCredentials) => void;
   loginAsync: (credentials: LoginCredentials) => Promise<LoginResponse>;
   logout: () => Promise<void>;

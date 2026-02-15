@@ -1,4 +1,4 @@
-import type { User } from '@/features/auth/types';
+import type { AuthenticatedUser as User } from '@/shared/types/auth';
 import { UserRole } from '@/shared/types/auth';
 import type { MenuItemWithAuth } from '../menuConfig';
 import type { MenuItem } from '../types';
