@@ -9,7 +9,7 @@ import { useCompanies } from '@/features/company';
 import { useTankTypes } from '@/features/tank/hooks/useTankTypes';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { Input, Select } from '@/shared/components/ui';
-import { PhotoPlaceholderIcon } from '@/app/_components/AppIcons';
+import { PhotoPlaceholderIcon } from '@/shared/components/icons/AppIcons';
 
 type TankUpsertFormProps = {
   initialValues?: CreateTankFormData;

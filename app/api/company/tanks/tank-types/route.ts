@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import type { TankType } from '@/features/tank';
 import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
 
 /**
  * GET /api/company/tanks/tank-types - Lista tipos de tanque (proxy para backend)
  */
-export async function GET(_req: NextRequest) {
+export async function GET() {
   try {
     const result = await backendRequest<TankType[]>(`/api/company/tank-types`, {
       method: 'GET',

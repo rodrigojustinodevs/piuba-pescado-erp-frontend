@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDownIcon } from '@/app/_components/AppIcons';
+import { ChevronDownIcon } from '@/shared/components/icons/AppIcons';
 
 export type SortButtonProps = {
   /** Valor atual (apenas para acessibilidade/telemetria visual futura) */

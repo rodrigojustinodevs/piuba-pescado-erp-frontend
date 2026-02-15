@@ -36,12 +36,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       size = 'md',
       variant,
       id,
-      name,
       options,
       placeholder,
       className = '',
       inputClassName = '',
-      onChange,
       ...selectProps
     },
     ref,
@@ -51,21 +49,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const finalVariant = variant || (hasError ? 'error' : 'default');
 
     const selectClasses = `${getInputBaseClasses(finalVariant, disabled, size)} ${inputClassName}`;
-
-    // Handler para garantir que o onChange do register seja chamado corretamente
-    // O onChange do register vem dentro de selectProps quando usamos {...register()}
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      // Primeiro chama o onChange do register (que está em selectProps)
-      // Isso garante que o React Hook Form seja notificado da mudança
-      if (selectProps.onChange) {
-        selectProps.onChange(e);
-      }
-
-      // Depois chama o onChange customizado se fornecido
-      if (onChange) {
-        onChange(e);
-      }
-    };
 
     return (
       <BaseInput
@@ -90,7 +73,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
           }
           {...selectProps}
-          onChange={handleChange}
         >
           {placeholder && (
             <option value="" disabled>

@@ -1,16 +1,19 @@
 'use client';
 
 import { useMemo, useCallback } from 'react';
-import { useListPageState } from '@/app/_components/useListPageState';
+import { useListPageState } from '@/shared/hooks/useListPageState';
 import { useCompanies, useDeleteCompany, type Company } from '@/features/company';
 import { useAlertModal } from '@/shared/components/AlertModal';
 import { DataTable, type DataTableColumn } from '@/shared/components/Table';
-import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
-import { ListHeader } from '@/app/_components/ListHeader';
-import { Pagination } from '@/app/_components/Pagination';
-import { SearchField } from '@/app/_components/SearchField';
-import { SortButton } from '@/app/_components/SortButton';
-import { StatusFilterTabs } from '@/app/_components/StatusFilterTabs';
+import { DashboardLayout } from '@/shared/components/Layout';
+import { demoUser } from '@/shared/constants/demoUser';
+import {
+  ListHeader,
+  Pagination,
+  SearchField,
+  SortButton,
+  StatusFilterTabs,
+} from '@/shared/components/list';
 import {
   ChevronRightIcon,
   CircleIcon,
@@ -19,7 +22,7 @@ import {
   PencilIcon,
   SpinnerIcon,
   TrashIcon,
-} from '@/app/_components/AppIcons';
+} from '@/shared/components/icons/AppIcons';
 
 // ============================================================================
 // 1. DEFINIÇÃO ESTÁTICA DE COLUNAS (Separado da Lógica de View)
@@ -166,13 +169,13 @@ export default function CompaniesPage() {
 
   // --- Render Final ---
   return (
-    <DemoDashboardLayout>
+    <DashboardLayout user={demoUser}>
       <div className="space-y-6">
         <ListHeader
           icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
           title="Empresas"
           subtitle="Gerencie e acompanhe as unidades aquícolas cadastradas"
-          ctaHref="/admin/companies/new"
+          ctaHref="/admin/companies/create"
           ctaLabel="Nova Empresa"
         />
 
@@ -207,6 +210,6 @@ export default function CompaniesPage() {
           {tableContent}
         </main>
       </div>
-    </DemoDashboardLayout>
+    </DashboardLayout>
   );
 }

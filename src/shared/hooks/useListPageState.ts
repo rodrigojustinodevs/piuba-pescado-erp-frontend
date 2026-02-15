@@ -4,10 +4,10 @@ import { useCallback, useState } from 'react';
 
 export type StatusFilter = 'all' | 'active' | 'inactive';
 
-type UseListPageStateArgs = {
+type UseListPageStateArgs<TFilter extends string> = {
   initialPage?: number;
   initialSearch?: string;
-  initialFilter?: StatusFilter;
+  initialFilter?: TFilter;
   initialSortBy?: string;
 };
 
@@ -15,15 +15,15 @@ type UseListPageStateArgs = {
  * Estado comum de páginas de listagem (paginação, busca, filtro e ordenação).
  * Ajuda a evitar duplicação entre listas diferentes (ex.: Tanques, Empresas).
  */
-export function useListPageState({
+export function useListPageState<TFilter extends string = StatusFilter>({
   initialPage = 1,
   initialSearch = '',
-  initialFilter = 'all',
+  initialFilter = 'all' as TFilter,
   initialSortBy = 'name',
-}: UseListPageStateArgs = {}) {
+}: UseListPageStateArgs<TFilter> = {}) {
   const [page, setPage] = useState(initialPage);
   const [search, setSearchState] = useState(initialSearch);
-  const [filter, setFilter] = useState<StatusFilter>(initialFilter);
+  const [filter, setFilter] = useState<TFilter>(initialFilter);
   const [sortBy, setSortBy] = useState(initialSortBy);
 
   const setSearch = useCallback((next: string) => {

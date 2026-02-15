@@ -1,17 +1,25 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useListPageState } from '@/app/_components/useListPageState';
+import { useListPageState } from '@/shared/hooks/useListPageState';
 import { useTanks, useDeleteTank, useTankLookups } from '@/features/tank';
 import { TankTable } from '@/features/tank/components';
 import { useAlertModal } from '@/shared/components/AlertModal';
-import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
-import { ListHeader } from '@/app/_components/ListHeader';
-import { Pagination } from '@/app/_components/Pagination';
-import { SearchField } from '@/app/_components/SearchField';
-import { SortButton } from '@/app/_components/SortButton';
-import { StatusFilterTabs } from '@/app/_components/StatusFilterTabs';
-import { CircleIcon, ChevronRightIcon, FilterIcon, SpinnerIcon } from '@/app/_components/AppIcons';
+import { DashboardLayout } from '@/shared/components/Layout';
+import { demoUser } from '@/shared/constants/demoUser';
+import {
+  ListHeader,
+  Pagination,
+  SearchField,
+  SortButton,
+  StatusFilterTabs,
+} from '@/shared/components/list';
+import {
+  CircleIcon,
+  ChevronRightIcon,
+  FilterIcon,
+  SpinnerIcon,
+} from '@/shared/components/icons/AppIcons';
 
 export default function TanksPage() {
   // 1. Hooks de Estado e Dados
@@ -64,7 +72,7 @@ export default function TanksPage() {
   );
 
   return (
-    <DemoDashboardLayout>
+    <DashboardLayout user={demoUser}>
       <div className="space-y-6">
         <ListHeader
           icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
@@ -133,6 +141,6 @@ export default function TanksPage() {
           )}
         </main>
       </div>
-    </DemoDashboardLayout>
+    </DashboardLayout>
   );
 }

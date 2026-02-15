@@ -1,7 +1,5 @@
 'use client';
 
-import { ReactNode } from 'react';
-
 export type AlertType = 'success' | 'warning' | 'error';
 
 export interface AlertProps {

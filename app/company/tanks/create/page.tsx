@@ -3,7 +3,7 @@
 import { useCreateTank } from '@/features/tank';
 import { DashboardLayout } from '@/shared/components/Layout';
 import type { CreateTankFormData } from '@/features/tank';
-import { TankDocumentIcon } from '@/app/_components/AppIcons';
+import { TankDocumentIcon } from '@/shared/components/icons/AppIcons';
 import { TankPageShell } from '../_components/TankPageShell';
 import { TankUpsertForm } from '../_components/TankUpsertForm';
 

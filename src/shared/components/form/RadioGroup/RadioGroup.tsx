@@ -83,7 +83,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                 label={option.label}
                 checked={value === option.value}
                 disabled={disabled || option.disabled}
-                onChange={(e) => {
+                onChange={() => {
                   if (onChange) {
                     onChange(option.value);
                   }

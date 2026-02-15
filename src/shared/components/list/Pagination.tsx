@@ -5,7 +5,7 @@ import {
   ChevronRightIcon,
   DoubleChevronLeftIcon,
   DoubleChevronRightIcon,
-} from './AppIcons';
+} from '@/shared/components/icons/AppIcons';
 
 export function Pagination({
   page,

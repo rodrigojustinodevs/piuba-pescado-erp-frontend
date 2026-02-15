@@ -4,9 +4,10 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useCompany, useDeleteCompany } from '@/features/company';
 import { useAlertModal } from '@/shared/components/AlertModal';
-import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
-import { LoadingState, NotFoundState } from '@/app/_components/PageStates';
-import { BuildingIcon, PencilIcon, TrashIcon } from '@/app/_components/AppIcons';
+import { DashboardLayout } from '@/shared/components/Layout';
+import { demoUser } from '@/shared/constants/demoUser';
+import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
+import { BuildingIcon, PencilIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
 export default function CompanyDetailPage() {
@@ -30,15 +31,23 @@ export default function CompanyDetailPage() {
   };
 
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <DashboardLayout user={demoUser}>
+        <LoadingState />
+      </DashboardLayout>
+    );
   }
 
   if (error || !company) {
-    return <NotFoundState message="Empresa não encontrada." backHref="/admin/companies" />;
+    return (
+      <DashboardLayout user={demoUser}>
+        <NotFoundState message="Empresa não encontrada." backHref="/admin/companies" />
+      </DashboardLayout>
+    );
   }
 
   return (
-    <DemoDashboardLayout>
+    <DashboardLayout user={demoUser}>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         {/* Breadcrumb */}
         <p className="text-sm text-slate-600 mb-4">Dashboard / Empresas / {company.name}</p>
@@ -233,6 +242,6 @@ export default function CompanyDetailPage() {
           </div>
         </div>
       </div>
-    </DemoDashboardLayout>
+    </DashboardLayout>
   );
 }

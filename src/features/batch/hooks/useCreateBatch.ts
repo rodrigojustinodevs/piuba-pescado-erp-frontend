@@ -16,7 +16,7 @@ export function useCreateBatch() {
 
   return useMutation({
     mutationFn: (data: CreateBatchData) => batchService.create(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalida a lista de lotes
       queryClient.invalidateQueries({ queryKey: ['batches', 'list'] });
 

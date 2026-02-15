@@ -5,7 +5,8 @@ import { useBatch, useUpdateBatch } from '@/features/batch';
 import { BatchForm } from '@/features/batch/components';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { PageHeader } from '@/shared/components/ui';
-import type { UpdateBatchFormData } from '@/features/batch/schemas';
+import { demoUser } from '@/shared/constants/demoUser';
+import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 
 export default function BatchEditPage() {
   const params = useParams();
@@ -13,62 +14,28 @@ export default function BatchEditPage() {
   const { data: batch, isLoading } = useBatch(id);
   const updateBatch = useUpdateBatch();
 
-  const onSubmit = (data: UpdateBatchFormData) => {
+  const onSubmit = (data: Parameters<typeof updateBatch.mutate>[0]) => {
     updateBatch.mutate({ ...data, id });
   };
 
   if (isLoading) {
     return (
-      <DashboardLayout
-        user={{
-          name: 'Usuário Demo',
-          email: 'demo@dev.com',
-        }}
-      >
-        <div className="text-center py-8">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <svg
-              className="w-5 h-5 animate-spin"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            <span>Carregando...</span>
-          </div>
-        </div>
+      <DashboardLayout user={demoUser}>
+        <LoadingState />
       </DashboardLayout>
     );
   }
 
   if (!batch) {
     return (
-      <DashboardLayout
-        user={{
-          name: 'Usuário Demo',
-          email: 'demo@dev.com',
-        }}
-      >
-        <div className="text-center py-8">
-          <p className="text-red-600">Lote não encontrado.</p>
-        </div>
+      <DashboardLayout user={demoUser}>
+        <NotFoundState message="Lote não encontrado." backHref="/company/batches" />
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout
-      user={{
-        name: 'Usuário Demo',
-        email: 'demo@dev.com',
-      }}
-    >
+    <DashboardLayout user={demoUser}>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         <PageHeader
           breadcrumb="Dashboard / Lotes / Editar"
@@ -93,6 +60,7 @@ export default function BatchEditPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
           <BatchForm
+            mode="update"
             initialData={batch}
             onSubmit={onSubmit}
             isLoading={updateBatch.isPending}

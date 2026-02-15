@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { useFieldId, getInputBaseClasses, getLabelClasses, getHelperTextClasses } from '../utils';
+import { useFieldId, getLabelClasses, getHelperTextClasses } from '../utils';
 import type { BaseFormFieldProps } from '../types';
 
 /**
@@ -36,11 +36,8 @@ export const BaseInput = forwardRef<HTMLDivElement, BaseInputInternalProps>(
       helperText,
       error,
       required,
-      disabled,
       size = 'md',
-      variant,
       id,
-      name,
       className = '',
       children,
       inlineLabel = false,
@@ -51,7 +48,6 @@ export const BaseInput = forwardRef<HTMLDivElement, BaseInputInternalProps>(
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? 'error' : 'default');
 
     // Determina qual mensagem exibir (erro tem prioridade sobre helper text)
     const displayMessage = error || helperText;
@@ -60,11 +56,7 @@ export const BaseInput = forwardRef<HTMLDivElement, BaseInputInternalProps>(
     return (
       <div ref={ref} className={className}>
         {!inlineLabel && label && (
-          <label
-            htmlFor={fieldId}
-            className={getLabelClasses(size, required)}
-            id={`${fieldId}-label`}
-          >
+          <label htmlFor={fieldId} className={getLabelClasses(size)} id={`${fieldId}-label`}>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -72,11 +64,7 @@ export const BaseInput = forwardRef<HTMLDivElement, BaseInputInternalProps>(
 
         <div className={inlineLabel ? 'flex items-center gap-2' : ''}>
           {inlineLabel && label && (
-            <label
-              htmlFor={fieldId}
-              className={getLabelClasses(size, required)}
-              id={`${fieldId}-label`}
-            >
+            <label htmlFor={fieldId} className={getLabelClasses(size)} id={`${fieldId}-label`}>
               {label}
               {required && <span className="text-red-500 ml-1">*</span>}
             </label>
