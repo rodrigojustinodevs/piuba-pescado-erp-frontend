@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { authService } from '../api';
 import type { LoginCredentials, LoginResponse } from '../types';
 
@@ -17,7 +18,7 @@ export function useLogin() {
       const response = await authService.login(credentials);
 
       if (!response.ok) {
-        throw new Error(response.message || 'Credenciais inválidas');
+        throw new Error(response.message || ErrorMessages.LOGIN_CREDENTIALS);
       }
 
       // Retorna a resposta com o token

@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005';
 
@@ -19,13 +20,9 @@ export async function getAuthToken(): Promise<string | null> {
 }
 
 export const HttpResponses = {
-  unauthorized: () => NextResponse.json({ error: 'Não autenticado' }, { status: 401 }),
+  unauthorized: () => NextResponse.json({ error: ErrorMessages.UNAUTHORIZED }, { status: 401 }),
 
-  serverError: () =>
-    NextResponse.json(
-      { error: 'Erro ao conectar com o servidor. Tente novamente.' },
-      { status: 500 },
-    ),
+  serverError: () => NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 }),
 
   fromApiError: (error: string, status: number) => NextResponse.json({ error }, { status }),
 } as const;
@@ -43,7 +40,7 @@ export async function backendRequest<T = unknown>(
   options: RequestOptions = {},
 ): Promise<ApiResult<T | null>> {
   const {
-    errorFallback = 'Ocorreu um erro inesperado',
+    errorFallback = ErrorMessages.UNEXPECTED,
     expectJson = true,
     withAuth = false,
     ...fetchInit
@@ -59,7 +56,7 @@ export async function backendRequest<T = unknown>(
   if (withAuth) {
     const token = await getAuthToken();
     if (!token) {
-      return { ok: false, error: 'Não autenticado', status: 401 };
+      return { ok: false, error: ErrorMessages.UNAUTHORIZED, status: 401 };
     }
     headers.set('Authorization', `Bearer ${token}`);
   }
@@ -91,6 +88,6 @@ export async function backendRequest<T = unknown>(
     return { ok: true, data, status: response.status };
   } catch (error) {
     console.error('[BACKEND_REQUEST_ERROR]', error);
-    return { ok: false, error: 'Falha na comunicação com o servidor.', status: 500 };
+    return { ok: false, error: ErrorMessages.SERVER_FAILURE, status: 500 };
   }
 }
