@@ -1,16 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAuthContext } from "@/shared/contexts/AuthContext";
+import { useState } from 'react';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
 
 // Ícones SVG
 const SearchIcon = () => (
-  <svg
-    className="w-5 h-5 text-gray-400"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
+  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -21,12 +16,7 @@ const SearchIcon = () => (
 );
 
 const BellIcon = () => (
-  <svg
-    className="w-5 h-5 text-gray-600"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
+  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -37,12 +27,7 @@ const BellIcon = () => (
 );
 
 const EnvelopeIcon = () => (
-  <svg
-    className="w-5 h-5 text-gray-600"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
+  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -53,12 +38,7 @@ const EnvelopeIcon = () => (
 );
 
 const UserIcon = () => (
-  <svg
-    className="w-10 h-10 text-white"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
+  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -68,33 +48,44 @@ const UserIcon = () => (
   </svg>
 );
 
+const MenuIcon = () => (
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M4 6h16M4 12h16M4 18h16"
+    />
+  </svg>
+);
+
 export interface HeaderProps {
   userTitle?: string;
+  /** Chamado ao clicar no botão de menu (mobile). Use para abrir o sidebar. */
+  onMenuClick?: () => void;
 }
 
-export function Header({
-  userTitle,
-}: HeaderProps) {
+export function Header({ userTitle, onMenuClick }: HeaderProps) {
   const { user } = useAuthContext();
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
 
   const getUserTitle = () => {
     if (userTitle) return userTitle;
     if (user?.role) {
       const roleMap: Record<string, string> = {
-        master: "Administrador Master",
-        company_admin: "Administrador",
-        manager: "Gerente",
-        operator: "Operador",
+        master: 'Administrador Master',
+        company_admin: 'Administrador',
+        manager: 'Gerente',
+        operator: 'Operador',
       };
-      return roleMap[user.role] || "Usuário";
+      return roleMap[user.role] || 'Usuário';
     }
-    return "Usuário";
+    return 'Usuário';
   };
 
   const getUserInitials = () => {
     if (user?.name) {
-      const names = user.name.split(" ");
+      const names = user.name.split(' ');
       if (names.length >= 2) {
         return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
       }
@@ -103,12 +94,23 @@ export function Header({
     if (user?.email) {
       return user.email.substring(0, 2).toUpperCase();
     }
-    return "U";
+    return 'U';
   };
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between gap-4">
+        {/* Botão menu (mobile) - abre o sidebar */}
+        {onMenuClick && (
+          <button
+            type="button"
+            onClick={onMenuClick}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Abrir menu"
+          >
+            <MenuIcon />
+          </button>
+        )}
         {/* Search Bar */}
         <div className="flex-1 max-w-md">
           <div className="relative">
@@ -165,7 +167,7 @@ export function Header({
             </div>
             <div className="hidden md:block">
               <p className="text-sm font-semibold text-gray-900">
-                {user?.name || user?.email || "Usuário"}
+                {user?.name || user?.email || 'Usuário'}
               </p>
               <p className="text-xs text-gray-500">{getUserTitle()}</p>
             </div>
@@ -175,4 +177,3 @@ export function Header({
     </header>
   );
 }
-

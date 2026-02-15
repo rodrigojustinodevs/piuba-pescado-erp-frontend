@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "next lint",
     "init:tailwind": "tailwindcss init -p",
-    "sonar": "sonar-scanner"
+    "sonar": "sonar-scanner",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",
+    "check": "prettier --check \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

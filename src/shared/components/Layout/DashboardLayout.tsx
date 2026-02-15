@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Sidebar, type SidebarProps } from "../Sidebar";
-import { menuConfig } from "../Sidebar/menuConfig";
-import { useMenuAuthorization } from "../Sidebar/hooks/useMenuAuthorization";
-import { useAuthContext } from "@/shared/contexts/AuthContext";
-import { Header, type HeaderProps } from "../Header";
+import { useState } from 'react';
+import { Sidebar, type SidebarProps } from '../Sidebar';
+import { menuConfig } from '../Sidebar/menuConfig';
+import { useMenuAuthorization } from '../Sidebar/hooks/useMenuAuthorization';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
+import { Header, type HeaderProps } from '../Header';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  menuItems?: SidebarProps["items"];
-  user?: SidebarProps["user"];
+  menuItems?: SidebarProps['items'];
+  user?: SidebarProps['user'];
   headerProps?: HeaderProps;
 }
 
@@ -25,7 +25,7 @@ export function DashboardLayout({
 
   // Obtém o usuário do contexto de autenticação
   const { user: contextUser } = useAuthContext();
-  
+
   // Usa o usuário do contexto ou o passado como prop (fallback)
   const user = contextUser || userProp;
 
@@ -43,16 +43,20 @@ export function DashboardLayout({
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         isCollapsed={isSidebarCollapsed}
         onCollapseToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        user={user ? {
-          name: user.name || user.email,
-          email: user.email,
-        } : undefined}
+        user={
+          user
+            ? {
+                name: user.name || user.email,
+                email: user.email,
+              }
+            : undefined
+        }
       />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <Header {...headerProps} />
+        <Header {...headerProps} onMenuClick={() => setIsSidebarOpen((open) => !open)} />
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto">
@@ -62,4 +66,3 @@ export function DashboardLayout({
     </div>
   );
 }
-

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useFieldId } from "../utils";
-import type { RadioProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { useFieldId } from '../utils';
+import type { RadioProps } from '../types';
 
 /**
  * Componente de radio button reutilizável e acessível.
@@ -32,19 +32,19 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       name,
       value,
       checked,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       ...radioProps
     },
-    ref
+    ref,
   ) => {
     const fieldId = useFieldId(id);
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
+    const finalVariant = variant || (hasError ? 'error' : 'default');
 
     const radioClasses = `w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 ${
-      hasError ? "border-red-500" : ""
-    } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${inputClassName}`;
+      hasError ? 'border-red-500' : ''
+    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${inputClassName}`;
 
     return (
       <BaseInput
@@ -69,7 +69,6 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           disabled={disabled}
           required={required}
           className={radioClasses}
-          aria-invalid={hasError}
           aria-describedby={
             error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
           }
@@ -77,8 +76,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         />
       </BaseInput>
     );
-  }
+  },
 );
 
-Radio.displayName = "Radio";
-
+Radio.displayName = 'Radio';
