@@ -1,106 +1,98 @@
-import { useId } from "react";
-import type { BaseFormFieldProps, FormFieldSize, FormFieldVariant } from "./types";
+import { useId, useMemo } from 'react';
+import type { BaseFormFieldProps, FormFieldSize, FormFieldVariant } from './types';
 
-/**
- * Gera um ID único para o campo se não fornecido
- */
+const BASE_INPUT_CLASSES =
+  'w-full rounded-lg border transition-all duration-200 bg-white focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50';
+
+const INPUT_SIZES: Record<FormFieldSize, string> = {
+  sm: 'px-2.5 py-1.5 text-sm',
+  md: 'px-3 py-2 text-sm',
+  lg: 'px-4 py-3 text-base',
+};
+
+const INPUT_VARIANTS: Record<FormFieldVariant, string> = {
+  default: 'border-gray-300 focus:ring-blue-500 focus:border-blue-500',
+  error: 'border-red-500 focus:ring-red-500 focus:border-red-500',
+  success: 'border-green-500 focus:ring-green-500 focus:border-green-500',
+};
+
+const LABEL_SIZES: Record<FormFieldSize, string> = {
+  sm: 'text-xs',
+  md: 'text-sm',
+  lg: 'text-base',
+};
+
+const HELPER_SIZES: Record<FormFieldSize, string> = {
+  sm: 'text-xs',
+  md: 'text-sm',
+  lg: 'text-sm',
+};
+
+function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
+
+export function getInputAriaDescribedBy(
+  fieldId: string,
+  hasError?: boolean,
+  hasHelper?: boolean,
+): string | undefined {
+  if (hasError) return `${fieldId}-error`;
+  if (hasHelper) return `${fieldId}-helper`;
+  return undefined;
+}
+
+export function getInputBaseClasses(
+  variant: FormFieldVariant = 'default',
+  disabled?: boolean,
+  size: FormFieldSize = 'md',
+): string {
+  return cn(BASE_INPUT_CLASSES, INPUT_SIZES[size], INPUT_VARIANTS[variant]);
+}
+
+export function getLabelClasses(size: FormFieldSize = 'md'): string {
+  return cn('block font-medium text-gray-700 mb-1', LABEL_SIZES[size]);
+}
+
+export function getHelperTextClasses(isError?: boolean, size: FormFieldSize = 'md'): string {
+  return cn('mt-1', HELPER_SIZES[size], isError ? 'text-red-600' : 'text-gray-500');
+}
+
 export function useFieldId(id?: string): string {
   const generatedId = useId();
   return id || generatedId;
 }
 
-/**
- * Retorna as classes CSS base para o input baseado no estado
- */
-export function getInputBaseClasses(
-  variant: FormFieldVariant = "default",
-  disabled?: boolean,
-  size: FormFieldSize = "md"
-): string {
-  const baseClasses =
-    "w-full rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2";
-
-  const sizeClasses = {
-    sm: "px-2.5 py-1.5 text-sm",
-    md: "px-3 py-2 text-sm",
-    lg: "px-4 py-3 text-base",
-  };
-
-  const variantClasses = {
-    default: "border-gray-300 focus:ring-blue-500 focus:border-blue-500",
-    error: "border-red-500 focus:ring-red-500 focus:border-red-500",
-    success: "border-green-500 focus:ring-green-500 focus:border-green-500",
-  };
-
-  const disabledClasses = disabled
-    ? "opacity-50 cursor-not-allowed bg-gray-50"
-    : "bg-white";
-
-  return `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${disabledClasses}`;
-}
-
-export function getInputAriaDescribedBy(
-  fieldId: string,
-  error?: string,
-  helperText?: string
-): string | undefined {
-  if (error) return `${fieldId}-error`;
-  if (helperText) return `${fieldId}-helper`;
-  return undefined;
-}
-
 type UseInputStateArgs = Pick<
   BaseFormFieldProps,
-  "id" | "helperText" | "error" | "variant" | "disabled" | "size" | "inputClassName"
+  'id' | 'helperText' | 'error' | 'variant' | 'disabled' | 'size' | 'inputClassName'
 >;
 
-/**
- * Centraliza lógica compartilhada de inputs (id, variantes, classes e ARIA).
- */
 export function useInputState({
   id,
   helperText,
   error,
   variant,
   disabled,
-  size = "md",
-  inputClassName = "",
+  size = 'md',
+  inputClassName,
 }: UseInputStateArgs) {
   const fieldId = useFieldId(id);
   const hasError = !!error;
-  const finalVariant: FormFieldVariant = variant || (hasError ? "error" : "default");
 
-  const inputClasses = `${getInputBaseClasses(finalVariant, disabled, size)} ${inputClassName}`.trim();
-  const describedBy = getInputAriaDescribedBy(fieldId, error, helperText);
+  const finalVariant: FormFieldVariant = hasError ? 'error' : variant || 'default';
 
-  return { fieldId, hasError, finalVariant, inputClasses, describedBy };
-}
+  const describedBy = getInputAriaDescribedBy(fieldId, hasError, !!helperText);
 
-/**
- * Retorna as classes CSS para o label baseado no tamanho
- */
-export function getLabelClasses(size: FormFieldSize = "md", required?: boolean): string {
-  const sizeClasses = {
-    sm: "text-xs",
-    md: "text-sm",
-    lg: "text-base",
+  const inputClasses = useMemo(() => {
+    return cn(getInputBaseClasses(finalVariant, disabled, size), inputClassName);
+  }, [finalVariant, disabled, size, inputClassName]);
+
+  return {
+    fieldId,
+    hasError,
+    finalVariant,
+    inputClasses,
+    describedBy,
   };
-
-  return `block font-medium text-gray-700 mb-1 ${sizeClasses[size]} ${required ? "" : ""}`;
 }
-
-/**
- * Retorna as classes CSS para mensagens de erro/helper
- */
-export function getHelperTextClasses(isError?: boolean, size: FormFieldSize = "md"): string {
-  const sizeClasses = {
-    sm: "text-xs",
-    md: "text-sm",
-    lg: "text-sm",
-  };
-
-  const colorClasses = isError ? "text-red-600" : "text-gray-500";
-
-  return `mt-1 ${sizeClasses[size]} ${colorClasses}`;
-}
-
