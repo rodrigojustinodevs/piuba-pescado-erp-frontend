@@ -1,2 +1,1 @@
-export { CompanyForm } from "./CompanyForm";
-
+export { CompanyForm } from './CompanyForm';

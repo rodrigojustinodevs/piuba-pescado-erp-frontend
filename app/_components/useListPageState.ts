@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
-export type StatusFilter = "all" | "active" | "inactive";
+export type StatusFilter = 'all' | 'active' | 'inactive';
 
 type UseListPageStateArgs = {
   initialPage?: number;
@@ -17,9 +17,9 @@ type UseListPageStateArgs = {
  */
 export function useListPageState({
   initialPage = 1,
-  initialSearch = "",
-  initialFilter = "all",
-  initialSortBy = "name",
+  initialSearch = '',
+  initialFilter = 'all',
+  initialSortBy = 'name',
 }: UseListPageStateArgs = {}) {
   const [page, setPage] = useState(initialPage);
   const [search, setSearchState] = useState(initialSearch);
@@ -43,4 +43,3 @@ export function useListPageState({
     setSortBy,
   };
 }
-

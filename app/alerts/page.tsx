@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { DashboardLayout } from "@/shared/components/Layout";
-import { Alert } from "@/shared/components/Alert";
-import { useAlertModal } from "@/shared/components/AlertModal";
-import Link from "next/link";
+import { DashboardLayout } from '@/shared/components/Layout';
+import { Alert } from '@/shared/components/Alert';
+import { useAlertModal } from '@/shared/components/AlertModal';
+import Link from 'next/link';
 
 export default function AlertsPage() {
   const { showSuccess, showError, showWarning, showInfo } = useAlertModal();
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="space-y-8">
@@ -88,8 +88,8 @@ export default function AlertsPage() {
             <button
               onClick={() =>
                 showSuccess(
-                  "Success Alert!",
-                  "Your action was completed successfully. All changes have been saved."
+                  'Success Alert!',
+                  'Your action was completed successfully. All changes have been saved.',
                 )
               }
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
@@ -99,8 +99,8 @@ export default function AlertsPage() {
             <button
               onClick={() =>
                 showError(
-                  "Danger Alert!",
-                  "Lorem ipsum dolor sit amet consectetur. Feugiat ipsum libero tempor felis risus nisi non. Quisque eu ut tempor curabitur."
+                  'Danger Alert!',
+                  'Lorem ipsum dolor sit amet consectetur. Feugiat ipsum libero tempor felis risus nisi non. Quisque eu ut tempor curabitur.',
                 )
               }
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
@@ -110,8 +110,8 @@ export default function AlertsPage() {
             <button
               onClick={() =>
                 showWarning(
-                  "Warning Alert!",
-                  "Please be cautious when performing this action. Make sure you understand the consequences."
+                  'Warning Alert!',
+                  'Please be cautious when performing this action. Make sure you understand the consequences.',
                 )
               }
               className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium"
@@ -121,8 +121,8 @@ export default function AlertsPage() {
             <button
               onClick={() =>
                 showInfo(
-                  "Info Alert!",
-                  "This is an informational message. You can use this to provide additional context or details."
+                  'Info Alert!',
+                  'This is an informational message. You can use this to provide additional context or details.',
                 )
               }
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
@@ -135,5 +135,3 @@ export default function AlertsPage() {
     </DashboardLayout>
   );
 }
-
-

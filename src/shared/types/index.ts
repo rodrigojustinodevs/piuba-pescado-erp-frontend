@@ -2,7 +2,4 @@
  * Exportações centralizadas de tipos compartilhados
  */
 
-export * from "./auth";
-
-
-
+export * from './auth';

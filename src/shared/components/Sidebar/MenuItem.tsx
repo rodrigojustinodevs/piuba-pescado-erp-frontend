@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { MenuItem as MenuItemType } from "./types";
-import { Dropdown } from "./Dropdown";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type { MenuItem as MenuItemType } from './types';
+import { Dropdown } from './Dropdown';
 
 interface MenuItemProps {
   item: MenuItemType;
@@ -21,15 +21,12 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
   // Se está colapsado e tem filhos, não mostra dropdown
   if (isCollapsed && item.children && item.children.length > 0) {
     return (
-      <div
-        className="group relative"
-        title={item.label}
-      >
+      <div className="group relative" title={item.label}>
         <div
           className={`flex items-center justify-center px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
             isActive
-              ? "bg-emerald-50 text-emerald-700"
-              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+              ? 'bg-emerald-50 text-emerald-700'
+              : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
           }`}
         >
           {item.icon && <span className="w-5 h-5">{item.icon}</span>}
@@ -44,14 +41,7 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
 
   // Se tem filhos, renderiza como dropdown
   if (item.children && item.children.length > 0) {
-    return (
-      <Dropdown
-        item={item}
-        isOpen={isOpen}
-        onToggle={onToggle}
-        isCollapsed={isCollapsed}
-      />
-    );
+    return <Dropdown item={item} isOpen={isOpen} onToggle={onToggle} isCollapsed={isCollapsed} />;
   }
 
   // Item simples com link ou onClick
@@ -59,16 +49,16 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
     <div
       className={`group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
         isActive
-          ? "bg-emerald-50 text-emerald-700"
-          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-      } ${isCollapsed ? "justify-center" : ""}`}
+          ? 'bg-emerald-50 text-emerald-700'
+          : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+      } ${isCollapsed ? 'justify-center' : ''}`}
     >
       {item.icon && (
         <span
           className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
             isActive
-              ? "bg-emerald-100/70 text-emerald-700"
-              : "bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800"
+              ? 'bg-emerald-100/70 text-emerald-700'
+              : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800'
           }`}
         >
           <span className="w-5 h-5">{item.icon}</span>
@@ -111,4 +101,3 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
 
   return content;
 }
-

@@ -1,9 +1,4 @@
-import type {
-  ApiBatchListResponse,
-  ApiBatchResponse,
-  BatchListResponse,
-  Batch,
-} from "../types";
+import type { ApiBatchListResponse, ApiBatchResponse, BatchListResponse, Batch } from '../types';
 
 /**
  * Mapeia a resposta da API para o formato padronizado usado no frontend

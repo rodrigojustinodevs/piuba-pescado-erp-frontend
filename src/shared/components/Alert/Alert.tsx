@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-export type AlertType = "success" | "warning" | "error";
+export type AlertType = 'success' | 'warning' | 'error';
 
 export interface AlertProps {
   type: AlertType;
@@ -15,22 +15,22 @@ export interface AlertProps {
 
 const typeStyles = {
   success: {
-    container: "bg-green-50 border-green-200",
-    icon: "bg-green-500 text-white",
-    title: "text-green-900",
-    message: "text-green-700",
+    container: 'bg-green-50 border-green-200',
+    icon: 'bg-green-500 text-white',
+    title: 'text-green-900',
+    message: 'text-green-700',
   },
   warning: {
-    container: "bg-yellow-50 border-yellow-200",
-    icon: "bg-yellow-500 text-white",
-    title: "text-yellow-900",
-    message: "text-yellow-700",
+    container: 'bg-yellow-50 border-yellow-200',
+    icon: 'bg-yellow-500 text-white',
+    title: 'text-yellow-900',
+    message: 'text-yellow-700',
   },
   error: {
-    container: "bg-red-50 border-red-200",
-    icon: "bg-red-500 text-white",
-    title: "text-red-900",
-    message: "text-red-700",
+    container: 'bg-red-50 border-red-200',
+    icon: 'bg-red-500 text-white',
+    title: 'text-red-900',
+    message: 'text-red-700',
   },
 };
 
@@ -69,8 +69,8 @@ export function Alert({
   title,
   message,
   learnMoreLink,
-  learnMoreText = "Learn more",
-  className = "",
+  learnMoreText = 'Learn more',
+  className = '',
 }: AlertProps) {
   const styles = typeStyles[type];
   const icon = typeIcons[type];
@@ -81,7 +81,9 @@ export function Alert({
       role="alert"
     >
       {/* Icon Circle */}
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${styles.icon}`}>
+      <div
+        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${styles.icon}`}
+      >
         {icon}
       </div>
 
@@ -101,5 +103,3 @@ export function Alert({
     </div>
   );
 }
-
-

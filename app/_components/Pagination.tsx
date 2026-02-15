@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   DoubleChevronLeftIcon,
   DoubleChevronRightIcon,
-} from "./AppIcons";
+} from './AppIcons';
 
 export function Pagination({
   page,
@@ -57,7 +57,7 @@ export function Pagination({
               key={pageNum}
               onClick={() => onPageChange(pageNum)}
               className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                page === pageNum ? "bg-[#0EA5A4] text-white" : "text-slate-600 hover:bg-slate-100"
+                page === pageNum ? 'bg-[#0EA5A4] text-white' : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
               {pageNum}
@@ -85,4 +85,3 @@ export function Pagination({
     </div>
   );
 }
-

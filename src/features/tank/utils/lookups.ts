@@ -1,5 +1,5 @@
-import type { TankType } from "../types";
-import type { Company } from "@/features/company";
+import type { TankType } from '../types';
+import type { Company } from '@/features/company';
 
 type MapDictionary = Record<string, string>;
 
@@ -18,12 +18,11 @@ export function buildCompanyMap(companies: Company[] = []): MapDictionary {
 }
 
 export function getTankTypeLabel(map: MapDictionary, typeId?: string) {
-  if (!typeId) return "-";
+  if (!typeId) return '-';
   return map[typeId] || typeId;
 }
 
 export function getCompanyName(map: MapDictionary, companyId?: string) {
-  if (!companyId) return "-";
+  if (!companyId) return '-';
   return map[companyId] || companyId;
 }
-

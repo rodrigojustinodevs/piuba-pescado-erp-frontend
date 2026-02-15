@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { PrimitiveInput } from "../PrimitiveInput";
-import type { TextInputProps } from "../types";
+import { forwardRef } from 'react';
+import { PrimitiveInput } from '../PrimitiveInput';
+import type { TextInputProps } from '../types';
 
 /**
  * Componente de input de texto reutilizável e acessível.
@@ -33,10 +33,9 @@ import type { TextInputProps } from "../types";
  * ```
  */
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
-  ({ type = "text", ...props }, ref) => {
+  ({ type = 'text', ...props }, ref) => {
     return <PrimitiveInput ref={ref} type={type} {...props} />;
-  }
+  },
 );
 
-TextInput.displayName = "TextInput";
-
+TextInput.displayName = 'TextInput';

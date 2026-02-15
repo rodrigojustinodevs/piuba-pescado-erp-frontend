@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useMemo, useCallback } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { authService } from "@/features/auth/api";
-import { useLogin } from "@/features/auth/hooks/useLogin";
-import type { User, LoginCredentials, LoginResponse } from "@/features/auth/types";
-import { UserRole, type UserRoleType } from "@/shared/types/auth";
+import { createContext, useContext, useMemo, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { authService } from '@/features/auth/api';
+import { useLogin } from '@/features/auth/hooks/useLogin';
+import type { User, LoginCredentials, LoginResponse } from '@/features/auth/types';
+import { UserRole, type UserRoleType } from '@/shared/types/auth';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -33,7 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginHook = useLogin();
 
   const { data: authState, isLoading } = useQuery({
-    queryKey: ["auth", "check"],
+    queryKey: ['auth', 'check'],
     queryFn: () => authService.checkAuth(),
     staleTime: 1000 * 60 * 5,
     retry: false,
@@ -43,45 +43,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authService.logout();
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error('Logout error:', error);
     } finally {
       queryClient.clear();
-      router.push("/login");
+      router.push('/login');
       router.refresh();
     }
   }, [queryClient, router]);
 
   const hasRole = useMemo(
-    () => (role: UserRoleType | UserRoleType[]): boolean => {
-      if (!authState?.user?.role) return false;
-      const userRole = authState.user.role;
-      return Array.isArray(role) ? role.includes(userRole) : userRole === role;
-    },
-    [authState?.user]
+    () =>
+      (role: UserRoleType | UserRoleType[]): boolean => {
+        if (!authState?.user?.role) return false;
+        const userRole = authState.user.role;
+        return Array.isArray(role) ? role.includes(userRole) : userRole === role;
+      },
+    [authState?.user],
   );
 
   const canAccess = useMemo(
-    () => (allowedRoles: UserRoleType[]): boolean => {
-      if (!authState?.user?.role) return false;
-      return allowedRoles.includes(authState.user.role);
-    },
-    [authState?.user]
+    () =>
+      (allowedRoles: UserRoleType[]): boolean => {
+        if (!authState?.user?.role) return false;
+        return allowedRoles.includes(authState.user.role);
+      },
+    [authState?.user],
   );
 
   const isMaster = useMemo(
     () => (): boolean => authState?.user?.role === UserRole.MASTER,
-    [authState?.user]
+    [authState?.user],
   );
 
   const isCompanyAdmin = useMemo(
     () => (): boolean => authState?.user?.role === UserRole.COMPANY_ADMIN,
-    [authState?.user]
+    [authState?.user],
   );
 
-  const hasCompany = useMemo(
-    () => (): boolean => !!authState?.user?.companyId,
-    [authState?.user]
-  );
+  const hasCompany = useMemo(() => (): boolean => !!authState?.user?.companyId, [authState?.user]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -115,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isMaster,
       isCompanyAdmin,
       hasCompany,
-    ]
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -124,8 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuthContext(): AuthContextValue {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuthContext must be used within AuthProvider");
+    throw new Error('useAuthContext must be used within AuthProvider');
   }
   return context;
 }
-

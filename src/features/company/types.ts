@@ -18,7 +18,7 @@ export interface Company {
     zipCode: string;
   };
   active: boolean;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
 }
@@ -69,4 +69,3 @@ export interface CompanyListResponse {
   page: number;
   limit: number;
 }
-

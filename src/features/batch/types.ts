@@ -2,9 +2,9 @@
  * Tipos relacionados à entidade Batch (Lote)
  */
 
-export type BatchStatus = "active" | "finished";
+export type BatchStatus = 'active' | 'finished';
 
-export type BatchCultivation = "daycare" | string;
+export type BatchCultivation = 'daycare' | string;
 
 export interface BatchTank {
   id: string;

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
-import { AlertModal, type AlertModalType } from "./AlertModal";
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { AlertModal, type AlertModalType } from './AlertModal';
 
 interface AlertModalState {
   isOpen: boolean;
@@ -18,11 +18,21 @@ interface AlertModalContextType {
     title: string,
     message: string,
     buttonText?: string,
-    onConfirm?: () => void
+    onConfirm?: () => void,
   ) => void;
-  showSuccess: (title: string, message: string, buttonText?: string, onConfirm?: () => void) => void;
+  showSuccess: (
+    title: string,
+    message: string,
+    buttonText?: string,
+    onConfirm?: () => void,
+  ) => void;
   showError: (title: string, message: string, buttonText?: string, onConfirm?: () => void) => void;
-  showWarning: (title: string, message: string, buttonText?: string, onConfirm?: () => void) => void;
+  showWarning: (
+    title: string,
+    message: string,
+    buttonText?: string,
+    onConfirm?: () => void,
+  ) => void;
   showInfo: (title: string, message: string, buttonText?: string, onConfirm?: () => void) => void;
   closeAlert: () => void;
 }
@@ -32,9 +42,9 @@ const AlertModalContext = createContext<AlertModalContextType | undefined>(undef
 export function AlertModalProvider({ children }: { children: ReactNode }) {
   const [modalState, setModalState] = useState<AlertModalState>({
     isOpen: false,
-    type: "info",
-    title: "",
-    message: "",
+    type: 'info',
+    title: '',
+    message: '',
   });
 
   const showAlert = useCallback(
@@ -43,7 +53,7 @@ export function AlertModalProvider({ children }: { children: ReactNode }) {
       title: string,
       message: string,
       buttonText?: string,
-      onConfirm?: () => void
+      onConfirm?: () => void,
     ) => {
       setModalState({
         isOpen: true,
@@ -54,35 +64,35 @@ export function AlertModalProvider({ children }: { children: ReactNode }) {
         onConfirm,
       });
     },
-    []
+    [],
   );
 
   const showSuccess = useCallback(
     (title: string, message: string, buttonText?: string, onConfirm?: () => void) => {
-      showAlert("success", title, message, buttonText, onConfirm);
+      showAlert('success', title, message, buttonText, onConfirm);
     },
-    [showAlert]
+    [showAlert],
   );
 
   const showError = useCallback(
     (title: string, message: string, buttonText?: string, onConfirm?: () => void) => {
-      showAlert("error", title, message, buttonText, onConfirm);
+      showAlert('error', title, message, buttonText, onConfirm);
     },
-    [showAlert]
+    [showAlert],
   );
 
   const showWarning = useCallback(
     (title: string, message: string, buttonText?: string, onConfirm?: () => void) => {
-      showAlert("warning", title, message, buttonText, onConfirm);
+      showAlert('warning', title, message, buttonText, onConfirm);
     },
-    [showAlert]
+    [showAlert],
   );
 
   const showInfo = useCallback(
     (title: string, message: string, buttonText?: string, onConfirm?: () => void) => {
-      showAlert("info", title, message, buttonText, onConfirm);
+      showAlert('info', title, message, buttonText, onConfirm);
     },
-    [showAlert]
+    [showAlert],
   );
 
   const closeAlert = useCallback(() => {
@@ -117,8 +127,7 @@ export function AlertModalProvider({ children }: { children: ReactNode }) {
 export function useAlertModal() {
   const context = useContext(AlertModalContext);
   if (context === undefined) {
-    throw new Error("useAlertModal must be used within an AlertModalProvider");
+    throw new Error('useAlertModal must be used within an AlertModalProvider');
   }
   return context;
 }
-

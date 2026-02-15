@@ -5,17 +5,17 @@ export function extractRoleFromJWT(payload: JWTPayload | null): string | null {
 
   if (Array.isArray(payload.roles) && payload.roles.length > 0) {
     const role = payload.roles[0] as string;
-    if (role === "master_admin" || role === "master") {
-      return "master";
+    if (role === 'master_admin' || role === 'master') {
+      return 'master';
     }
-    if (role.endsWith("_admin")) {
-      return role.replace("_admin", "");
+    if (role.endsWith('_admin')) {
+      return role.replace('_admin', '');
     }
     return role;
   }
 
   if (payload.is_master_admin === true) {
-    return "master";
+    return 'master';
   }
 
   return (
@@ -57,4 +57,3 @@ export function extractCompanyIdFromJWT(payload: JWTPayload | null): string | nu
     null
   );
 }
-

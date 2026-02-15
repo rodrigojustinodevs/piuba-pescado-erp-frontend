@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { SearchIcon } from "./AppIcons";
+import { SearchIcon } from './AppIcons';
 
 export function SearchField({
   value,
@@ -26,4 +26,3 @@ export function SearchField({
     </div>
   );
 }
-

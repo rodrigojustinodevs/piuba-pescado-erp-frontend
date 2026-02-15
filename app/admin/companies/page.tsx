@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useMemo, useCallback } from "react";
-import { useListPageState } from "@/app/_components/useListPageState";
-import { useCompanies, useDeleteCompany, type Company } from "@/features/company";
-import { useAlertModal } from "@/shared/components/AlertModal";
-import { DataTable, type DataTableColumn } from "@/shared/components/Table";
-import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
-import { ListHeader } from "@/app/_components/ListHeader";
-import { Pagination } from "@/app/_components/Pagination";
-import { SearchField } from "@/app/_components/SearchField";
-import { SortButton } from "@/app/_components/SortButton";
-import { StatusFilterTabs } from "@/app/_components/StatusFilterTabs";
+import { useMemo, useCallback } from 'react';
+import { useListPageState } from '@/app/_components/useListPageState';
+import { useCompanies, useDeleteCompany, type Company } from '@/features/company';
+import { useAlertModal } from '@/shared/components/AlertModal';
+import { DataTable, type DataTableColumn } from '@/shared/components/Table';
+import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
+import { ListHeader } from '@/app/_components/ListHeader';
+import { Pagination } from '@/app/_components/Pagination';
+import { SearchField } from '@/app/_components/SearchField';
+import { SortButton } from '@/app/_components/SortButton';
+import { StatusFilterTabs } from '@/app/_components/StatusFilterTabs';
 import {
   ChevronRightIcon,
   CircleIcon,
@@ -19,7 +19,7 @@ import {
   PencilIcon,
   SpinnerIcon,
   TrashIcon,
-} from "@/app/_components/AppIcons";
+} from '@/app/_components/AppIcons';
 
 // ============================================================================
 // 1. DEFINIÇÃO ESTÁTICA DE COLUNAS (Separado da Lógica de View)
@@ -27,30 +27,30 @@ import {
 
 const TABLE_COLUMNS: Array<DataTableColumn<Company>> = [
   {
-    id: "name",
-    header: "Nome",
+    id: 'name',
+    header: 'Nome',
     cell: (c) => <div className="text-sm font-medium text-[#0F172A]">{c.name}</div>,
   },
   {
-    id: "cnpj",
-    header: "CNPJ",
+    id: 'cnpj',
+    header: 'CNPJ',
     cell: (c) => <div className="text-sm text-slate-600">{c.cnpj}</div>,
   },
   {
-    id: "email",
-    header: "E-mail",
+    id: 'email',
+    header: 'E-mail',
     cell: (c) => <div className="text-sm text-slate-600">{c.email}</div>,
   },
   {
-    id: "status",
-    header: "Status",
+    id: 'status',
+    header: 'Status',
     cell: (c) => (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          c.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          c.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
         }`}
       >
-        {c.active ? "Ativa" : "Inativa"}
+        {c.active ? 'Ativa' : 'Inativa'}
       </span>
     ),
   },
@@ -62,7 +62,7 @@ const TABLE_COLUMNS: Array<DataTableColumn<Company>> = [
 
 export default function CompaniesPage() {
   // --- Hooks & Estado ---
-  const listState = useListPageState({ initialSortBy: "name" });
+  const listState = useListPageState({ initialSortBy: 'name' });
   const { page, setPage, search, setSearch, filter, setFilter } = listState;
 
   const { data, isLoading, error } = useCompanies({ page, limit: 6, search });
@@ -72,45 +72,54 @@ export default function CompaniesPage() {
   // --- Lógica de Negócio (Memoizada) ---
   const filteredCompanies = useMemo(() => {
     const list = data?.companies ?? [];
-    if (filter === "active") return list.filter((c) => c.active);
-    if (filter === "inactive") return list.filter((c) => !c.active);
+    if (filter === 'active') return list.filter((c) => c.active);
+    if (filter === 'inactive') return list.filter((c) => !c.active);
     return list;
   }, [data?.companies, filter]);
 
-  const stats = useMemo(() => ({
-    total: filteredCompanies.length,
-    inactive: data?.companies.filter((c) => !c.active).length ?? 0,
-  }), [filteredCompanies.length, data?.companies]);
+  const stats = useMemo(
+    () => ({
+      total: filteredCompanies.length,
+      inactive: data?.companies.filter((c) => !c.active).length ?? 0,
+    }),
+    [filteredCompanies.length, data?.companies],
+  );
 
   // --- Handlers ---
-  const handleDelete = useCallback((id: string, name: string) => {
-    showError(
-      "Confirmar Exclusão",
-      `Tem certeza que deseja excluir a empresa "${name}"? Esta ação não pode ser desfeita.`,
-      "Sim, Excluir",
-      () => deleteCompany.mutate(id)
-    );
-  }, [showError, deleteCompany]);
+  const handleDelete = useCallback(
+    (id: string, name: string) => {
+      showError(
+        'Confirmar Exclusão',
+        `Tem certeza que deseja excluir a empresa "${name}"? Esta ação não pode ser desfeita.`,
+        'Sim, Excluir',
+        () => deleteCompany.mutate(id),
+      );
+    },
+    [showError, deleteCompany],
+  );
 
   // Definição das ações da tabela (Memoizada para evitar re-criação a cada render)
-  const getRowActions = useCallback((company: Company) => [
-    {
-      label: "Ver detalhes",
-      href: `/admin/companies/${company.id}`,
-      icon: <EyeIcon className="h-4 w-4" />,
-    },
-    {
-      label: "Editar",
-      href: `/admin/companies/${company.id}/edit`,
-      icon: <PencilIcon className="h-4 w-4" />,
-    },
-    {
-      label: "Excluir",
-      onClick: () => handleDelete(company.id, company.name),
-      variant: "danger" as const,
-      icon: <TrashIcon className="h-4 w-4" />,
-    },
-  ], [handleDelete]);
+  const getRowActions = useCallback(
+    (company: Company) => [
+      {
+        label: 'Ver detalhes',
+        href: `/admin/companies/${company.id}`,
+        icon: <EyeIcon className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        href: `/admin/companies/${company.id}/edit`,
+        icon: <PencilIcon className="h-4 w-4" />,
+      },
+      {
+        label: 'Excluir',
+        onClick: () => handleDelete(company.id, company.name),
+        variant: 'danger' as const,
+        icon: <TrashIcon className="h-4 w-4" />,
+      },
+    ],
+    [handleDelete],
+  );
 
   // --- Render Helpers ---
   const renderLoading = () => (
@@ -121,15 +130,11 @@ export default function CompaniesPage() {
   );
 
   const renderError = () => (
-    <div className="p-8 text-center text-red-600">
-      Erro ao carregar empresas. Tente novamente.
-    </div>
+    <div className="p-8 text-center text-red-600">Erro ao carregar empresas. Tente novamente.</div>
   );
 
   const renderEmpty = () => (
-    <div className="p-8 text-center text-slate-500">
-      Nenhuma empresa encontrada.
-    </div>
+    <div className="p-8 text-center text-slate-500">Nenhuma empresa encontrada.</div>
   );
 
   // --- Decisão do que renderizar na tabela ---
@@ -174,21 +179,21 @@ export default function CompaniesPage() {
         {/* Toolbar Section */}
         <section className="flex flex-wrap items-center gap-3">
           <SearchField value={search} placeholder="Buscar empresa..." onChange={setSearch} />
-          
+
           <StatusFilterTabs
             filter={filter}
             onChange={setFilter}
             inactiveCount={stats.inactive}
-            labels={{ all: "Todas", active: "Ativas", inactive: "Inativas" }}
+            labels={{ all: 'Todas', active: 'Ativas', inactive: 'Inativas' }}
           />
-          
+
           <SortButton />
         </section>
 
         {/* Info & Filters Section */}
         <section className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            {stats.total} {stats.total === 1 ? "empresa encontrada" : "empresas encontradas"}
+            {stats.total} {stats.total === 1 ? 'empresa encontrada' : 'empresas encontradas'}
           </p>
           <button className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
             <FilterIcon className="h-4 w-4" />

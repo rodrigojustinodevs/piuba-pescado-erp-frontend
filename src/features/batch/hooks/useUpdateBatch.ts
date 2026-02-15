@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/shared/contexts/ToastContext";
-import { batchService } from "../services/batchService";
-import type { UpdateBatchData } from "../types";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/shared/contexts/ToastContext';
+import { batchService } from '../services/batchService';
+import type { UpdateBatchData } from '../types';
 
 /**
  * Hook para atualizar um lote existente
@@ -18,17 +18,17 @@ export function useUpdateBatch() {
     mutationFn: (data: UpdateBatchData) => batchService.update(data),
     onSuccess: (data) => {
       // Invalida queries relacionadas
-      queryClient.invalidateQueries({ queryKey: ["batches", "list"] });
-      queryClient.invalidateQueries({ queryKey: ["batches", "detail", data.id] });
+      queryClient.invalidateQueries({ queryKey: ['batches', 'list'] });
+      queryClient.invalidateQueries({ queryKey: ['batches', 'detail', data.id] });
 
       // Mostra mensagem de sucesso
-      showSuccess("Lote atualizado com sucesso!");
+      showSuccess('Lote atualizado com sucesso!');
 
       // Redireciona para a página de detalhes
       router.push(`/company/batches/${data.id}`);
     },
     onError: (error: Error) => {
-      showError(error.message || "Erro ao atualizar lote. Tente novamente.");
+      showError(error.message || 'Erro ao atualizar lote. Tente novamente.');
     },
   });
 }

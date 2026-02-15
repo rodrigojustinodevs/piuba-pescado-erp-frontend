@@ -1,3 +1,1 @@
-export { Alert, type AlertProps, type AlertType } from "./Alert";
-
-
+export { Alert, type AlertProps, type AlertType } from './Alert';

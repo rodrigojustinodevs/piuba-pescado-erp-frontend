@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createCompanySchema, type CreateCompanyFormData } from "../schemas";
-import type { Company } from "../types";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createCompanySchema, type CreateCompanyFormData } from '../schemas';
+import type { Company } from '../types';
 
 interface CompanyFormProps {
   initialData?: Company;
@@ -20,16 +20,16 @@ export function CompanyForm({
   initialData,
   onSubmit,
   isLoading = false,
-  submitLabel = "Salvar",
+  submitLabel = 'Salvar',
   currentStep,
   onStepChange,
   totalSteps,
   isEditMode = false,
 }: CompanyFormProps) {
   const baseInputClass =
-    "peer w-full rounded-lg border border-slate-200 bg-white px-4 pt-6 pb-2 text-sm text-[#0F172A] placeholder:text-transparent focus:border-[#0EA5A4] focus:outline-none";
+    'peer w-full rounded-lg border border-slate-200 bg-white px-4 pt-6 pb-2 text-sm text-[#0F172A] placeholder:text-transparent focus:border-[#0EA5A4] focus:outline-none';
   const getInputClass = (hasError?: boolean) =>
-    `${baseInputClass} ${hasError ? "border-red-500 focus:border-red-500" : ""}`;
+    `${baseInputClass} ${hasError ? 'border-red-500 focus:border-red-500' : ''}`;
 
   const {
     register,
@@ -60,9 +60,7 @@ export function CompanyForm({
         },
   });
   const isStepMode =
-    currentStep !== undefined &&
-    onStepChange !== undefined &&
-    totalSteps !== undefined;
+    currentStep !== undefined && onStepChange !== undefined && totalSteps !== undefined;
   const isLastStep = isStepMode ? currentStep === totalSteps : true;
 
   const handleStepSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -72,15 +70,15 @@ export function CompanyForm({
     }
 
     const fieldsByStep: Record<number, string[]> = {
-      1: ["name", "cnpj"],
-      2: ["email", "phone"],
+      1: ['name', 'cnpj'],
+      2: ['email', 'phone'],
       3: [
-        "address.street",
-        "address.number",
-        "address.neighborhood",
-        "address.city",
-        "address.state",
-        "address.zipCode",
+        'address.street',
+        'address.number',
+        'address.neighborhood',
+        'address.city',
+        'address.state',
+        'address.zipCode',
       ],
     };
 
@@ -102,9 +100,7 @@ export function CompanyForm({
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Left Column: Informações Básicas */}
           <div className="space-y-4">
-            <h2 className="text-base font-semibold text-[#0F172A]">
-              Informações Básicas
-            </h2>
+            <h2 className="text-base font-semibold text-[#0F172A]">Informações Básicas</h2>
 
             <div className="space-y-4">
               <div className="relative">
@@ -112,7 +108,7 @@ export function CompanyForm({
                   id="name"
                   type="text"
                   placeholder=" "
-                  {...register("name")}
+                  {...register('name')}
                   className={getInputClass(!!errors.name)}
                 />
                 <label
@@ -121,11 +117,7 @@ export function CompanyForm({
                 >
                   Nome da Empresa *
                 </label>
-                {errors.name && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.name.message}
-                  </p>
-                )}
+                {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
               </div>
 
               <div className="relative">
@@ -133,7 +125,7 @@ export function CompanyForm({
                   id="cnpj"
                   type="text"
                   placeholder=" "
-                  {...register("cnpj")}
+                  {...register('cnpj')}
                   className={getInputClass(!!errors.cnpj)}
                 />
                 <label
@@ -142,11 +134,7 @@ export function CompanyForm({
                 >
                   CNPJ *
                 </label>
-                {errors.cnpj && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.cnpj.message}
-                  </p>
-                )}
+                {errors.cnpj && <p className="mt-1 text-xs text-red-600">{errors.cnpj.message}</p>}
               </div>
 
               <div className="relative">
@@ -154,7 +142,7 @@ export function CompanyForm({
                   id="email"
                   type="email"
                   placeholder=" "
-                  {...register("email")}
+                  {...register('email')}
                   className={getInputClass(!!errors.email)}
                 />
                 <label
@@ -164,9 +152,7 @@ export function CompanyForm({
                   E-mail
                 </label>
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.email.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
                 )}
               </div>
 
@@ -175,7 +161,7 @@ export function CompanyForm({
                   id="phone"
                   type="text"
                   placeholder=" "
-                  {...register("phone")}
+                  {...register('phone')}
                   className={getInputClass(!!errors.phone)}
                 />
                 <label
@@ -185,9 +171,7 @@ export function CompanyForm({
                   Telefone
                 </label>
                 {errors.phone && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.phone.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>
                 )}
               </div>
 
@@ -208,19 +192,15 @@ export function CompanyForm({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-[#0F172A]">
-                      Empresa ativa
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      Unidade disponível para monitoramento.
-                    </p>
+                    <p className="text-sm font-medium text-[#0F172A]">Empresa ativa</p>
+                    <p className="text-xs text-slate-500">Unidade disponível para monitoramento.</p>
                   </div>
                 </div>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     id="active"
                     type="checkbox"
-                    {...register("active")}
+                    {...register('active')}
                     className="sr-only peer"
                   />
                   <span className="relative h-6 w-11 rounded-full bg-slate-200 transition-colors peer-checked:bg-[#0EA5A4]">
@@ -262,7 +242,7 @@ export function CompanyForm({
                   id="zipCode"
                   type="text"
                   placeholder=" "
-                  {...register("address.zipCode")}
+                  {...register('address.zipCode')}
                   className={getInputClass(!!errors.address?.zipCode)}
                 />
                 <label
@@ -272,9 +252,7 @@ export function CompanyForm({
                   CEP *
                 </label>
                 {errors.address?.zipCode && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.address.zipCode.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.address.zipCode.message}</p>
                 )}
               </div>
 
@@ -283,7 +261,7 @@ export function CompanyForm({
                   id="street"
                   type="text"
                   placeholder=" "
-                  {...register("address.street")}
+                  {...register('address.street')}
                   className={getInputClass(!!errors.address?.street)}
                 />
                 <label
@@ -293,9 +271,7 @@ export function CompanyForm({
                   Rua *
                 </label>
                 {errors.address?.street && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.address.street.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.address.street.message}</p>
                 )}
               </div>
 
@@ -304,7 +280,7 @@ export function CompanyForm({
                   id="number"
                   type="text"
                   placeholder=" "
-                  {...register("address.number")}
+                  {...register('address.number')}
                   className={getInputClass(!!errors.address?.number)}
                 />
                 <label
@@ -314,9 +290,7 @@ export function CompanyForm({
                   Número
                 </label>
                 {errors.address?.number && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.address.number.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.address.number.message}</p>
                 )}
               </div>
 
@@ -325,7 +299,7 @@ export function CompanyForm({
                   id="neighborhood"
                   type="text"
                   placeholder=" "
-                  {...register("address.neighborhood")}
+                  {...register('address.neighborhood')}
                   className={getInputClass(!!errors.address?.neighborhood)}
                 />
                 <label
@@ -335,9 +309,7 @@ export function CompanyForm({
                   Bairro
                 </label>
                 {errors.address?.neighborhood && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.address.neighborhood.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.address.neighborhood.message}</p>
                 )}
               </div>
 
@@ -346,7 +318,7 @@ export function CompanyForm({
                   id="complement"
                   type="text"
                   placeholder=" "
-                  {...register("address.complement")}
+                  {...register('address.complement')}
                   className={getInputClass()}
                 />
                 <label
@@ -362,7 +334,7 @@ export function CompanyForm({
                   id="city"
                   type="text"
                   placeholder=" "
-                  {...register("address.city")}
+                  {...register('address.city')}
                   className={getInputClass(!!errors.address?.city)}
                 />
                 <label
@@ -372,9 +344,7 @@ export function CompanyForm({
                   Cidade
                 </label>
                 {errors.address?.city && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.address.city.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.address.city.message}</p>
                 )}
               </div>
 
@@ -384,7 +354,7 @@ export function CompanyForm({
                   type="text"
                   maxLength={2}
                   placeholder=" "
-                  {...register("address.state")}
+                  {...register('address.state')}
                   className={`${getInputClass(!!errors.address?.state)} uppercase`}
                 />
                 <label
@@ -394,9 +364,7 @@ export function CompanyForm({
                   Estado
                 </label>
                 {errors.address?.state && (
-                  <p className="mt-1 text-xs text-red-600">
-                    {errors.address.state.message}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600">{errors.address.state.message}</p>
                 )}
               </div>
             </div>
@@ -425,7 +393,7 @@ export function CompanyForm({
                 />
               </svg>
             )}
-            {isLoading ? "Salvando..." : submitLabel}
+            {isLoading ? 'Salvando...' : submitLabel}
           </button>
           <button
             type="button"
@@ -444,75 +412,66 @@ export function CompanyForm({
     <form onSubmit={handleStepSubmit} className="space-y-6">
       {(!isStepMode || currentStep === 1) && (
         <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0EA5A4]/10 text-xs font-semibold text-[#0EA5A4]">
-            1
-          </span>
-          <h3 className="text-base font-semibold text-[#0F172A]">Empresa</h3>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="relative">
-            <input
-              id="name"
-              type="text"
-              placeholder=" "
-              {...register("name")}
-              className={getInputClass(!!errors.name)}
-            />
-            <label
-              htmlFor="name"
-              className="absolute left-4 top-2 text-xs font-medium text-slate-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-[#0EA5A4]"
-            >
-              Nome/Razão social *
-            </label>
-            {errors.name && (
-              <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="relative">
-            <input
-              id="cnpj"
-              type="text"
-              placeholder=" "
-              {...register("cnpj")}
-              className={getInputClass(!!errors.cnpj)}
-            />
-            <label
-              htmlFor="cnpj"
-              className="absolute left-4 top-2 text-xs font-medium text-slate-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-[#0EA5A4]"
-            >
-              CNPJ *
-            </label>
-            <p className="mt-1 text-xs text-slate-400">00.000.000/0000-00</p>
-            {errors.cnpj && (
-              <p className="mt-1 text-xs text-red-600">{errors.cnpj.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-          <div>
-            <p className="text-sm font-medium text-[#0F172A]">Status da Empresa</p>
-            <p className="text-xs text-slate-500">
-              Essa unidade estará disponível para monitoramento.
-            </p>
-          </div>
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              id="active"
-              type="checkbox"
-              {...register("active")}
-              className="sr-only peer"
-            />
-            <span className="text-sm text-slate-600">Empresa ativa</span>
-            <span className="relative h-6 w-11 rounded-full bg-slate-200 transition-colors peer-checked:bg-[#0EA5A4]">
-              <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5" />
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0EA5A4]/10 text-xs font-semibold text-[#0EA5A4]">
+              1
             </span>
-          </label>
+            <h3 className="text-base font-semibold text-[#0F172A]">Empresa</h3>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="relative">
+              <input
+                id="name"
+                type="text"
+                placeholder=" "
+                {...register('name')}
+                className={getInputClass(!!errors.name)}
+              />
+              <label
+                htmlFor="name"
+                className="absolute left-4 top-2 text-xs font-medium text-slate-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-[#0EA5A4]"
+              >
+                Nome/Razão social *
+              </label>
+              {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
+            </div>
+
+            <div className="relative">
+              <input
+                id="cnpj"
+                type="text"
+                placeholder=" "
+                {...register('cnpj')}
+                className={getInputClass(!!errors.cnpj)}
+              />
+              <label
+                htmlFor="cnpj"
+                className="absolute left-4 top-2 text-xs font-medium text-slate-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-slate-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-[#0EA5A4]"
+              >
+                CNPJ *
+              </label>
+              <p className="mt-1 text-xs text-slate-400">00.000.000/0000-00</p>
+              {errors.cnpj && <p className="mt-1 text-xs text-red-600">{errors.cnpj.message}</p>}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div>
+              <p className="text-sm font-medium text-[#0F172A]">Status da Empresa</p>
+              <p className="text-xs text-slate-500">
+                Essa unidade estará disponível para monitoramento.
+              </p>
+            </div>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input id="active" type="checkbox" {...register('active')} className="sr-only peer" />
+              <span className="text-sm text-slate-600">Empresa ativa</span>
+              <span className="relative h-6 w-11 rounded-full bg-slate-200 transition-colors peer-checked:bg-[#0EA5A4]">
+                <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5" />
+              </span>
+            </label>
+          </div>
         </div>
-      </div>
       )}
 
       {(!isStepMode || currentStep === 2) && (
@@ -530,7 +489,7 @@ export function CompanyForm({
                 id="email"
                 type="email"
                 placeholder=" "
-                {...register("email")}
+                {...register('email')}
                 className={getInputClass(!!errors.email)}
               />
               <label
@@ -539,11 +498,7 @@ export function CompanyForm({
               >
                 E-mail *
               </label>
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
             </div>
 
             <div className="relative">
@@ -551,7 +506,7 @@ export function CompanyForm({
                 id="phone"
                 type="text"
                 placeholder=" "
-                {...register("phone")}
+                {...register('phone')}
                 className={getInputClass(!!errors.phone)}
               />
               <label
@@ -561,11 +516,7 @@ export function CompanyForm({
                 Telefone *
               </label>
               <p className="mt-1 text-xs text-slate-400">(00) 00000-0000</p>
-              {errors.phone && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.phone.message}
-                </p>
-              )}
+              {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>}
             </div>
           </div>
         </div>
@@ -586,7 +537,7 @@ export function CompanyForm({
                 id="street"
                 type="text"
                 placeholder=" "
-                {...register("address.street")}
+                {...register('address.street')}
                 className={getInputClass(!!errors.address?.street)}
               />
               <label
@@ -596,9 +547,7 @@ export function CompanyForm({
                 Rua *
               </label>
               {errors.address?.street && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.address.street.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.address.street.message}</p>
               )}
             </div>
 
@@ -607,7 +556,7 @@ export function CompanyForm({
                 id="number"
                 type="text"
                 placeholder=" "
-                {...register("address.number")}
+                {...register('address.number')}
                 className={getInputClass(!!errors.address?.number)}
               />
               <label
@@ -617,9 +566,7 @@ export function CompanyForm({
                 Número *
               </label>
               {errors.address?.number && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.address.number.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.address.number.message}</p>
               )}
             </div>
 
@@ -628,7 +575,7 @@ export function CompanyForm({
                 id="complement"
                 type="text"
                 placeholder=" "
-                {...register("address.complement")}
+                {...register('address.complement')}
                 className={getInputClass()}
               />
               <label
@@ -644,7 +591,7 @@ export function CompanyForm({
                 id="neighborhood"
                 type="text"
                 placeholder=" "
-                {...register("address.neighborhood")}
+                {...register('address.neighborhood')}
                 className={getInputClass(!!errors.address?.neighborhood)}
               />
               <label
@@ -654,9 +601,7 @@ export function CompanyForm({
                 Bairro *
               </label>
               {errors.address?.neighborhood && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.address.neighborhood.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.address.neighborhood.message}</p>
               )}
             </div>
 
@@ -665,7 +610,7 @@ export function CompanyForm({
                 id="city"
                 type="text"
                 placeholder=" "
-                {...register("address.city")}
+                {...register('address.city')}
                 className={getInputClass(!!errors.address?.city)}
               />
               <label
@@ -675,9 +620,7 @@ export function CompanyForm({
                 Cidade *
               </label>
               {errors.address?.city && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.address.city.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.address.city.message}</p>
               )}
             </div>
 
@@ -687,7 +630,7 @@ export function CompanyForm({
                 type="text"
                 maxLength={2}
                 placeholder=" "
-                {...register("address.state")}
+                {...register('address.state')}
                 className={`${getInputClass(!!errors.address?.state)} uppercase`}
               />
               <label
@@ -698,9 +641,7 @@ export function CompanyForm({
               </label>
               <p className="mt-1 text-xs text-slate-400">SP</p>
               {errors.address?.state && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.address.state.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.address.state.message}</p>
               )}
             </div>
 
@@ -709,7 +650,7 @@ export function CompanyForm({
                 id="zipCode"
                 type="text"
                 placeholder=" "
-                {...register("address.zipCode")}
+                {...register('address.zipCode')}
                 className={getInputClass(!!errors.address?.zipCode)}
               />
               <label
@@ -720,9 +661,7 @@ export function CompanyForm({
               </label>
               <p className="mt-1 text-xs text-slate-400">00000-000</p>
               {errors.address?.zipCode && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.address.zipCode.message}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{errors.address.zipCode.message}</p>
               )}
             </div>
           </div>
@@ -758,13 +697,12 @@ export function CompanyForm({
             </svg>
           )}
           {isLoading
-            ? "Salvando..."
+            ? 'Salvando...'
             : isStepMode && !isLastStep
-            ? "Salvar e continuar →"
-            : submitLabel}
+              ? 'Salvar e continuar →'
+              : submitLabel}
         </button>
       </div>
     </form>
   );
 }
-

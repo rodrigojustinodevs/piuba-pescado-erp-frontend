@@ -3,19 +3,14 @@
  */
 
 // Types
-export type {
-  Company,
-  CreateCompanyData,
-  UpdateCompanyData,
-  CompanyListResponse,
-} from "./types";
+export type { Company, CreateCompanyData, UpdateCompanyData, CompanyListResponse } from './types';
 
 // Schemas
-export { createCompanySchema, updateCompanySchema } from "./schemas";
-export type { CreateCompanyFormData, UpdateCompanyFormData } from "./schemas";
+export { createCompanySchema, updateCompanySchema } from './schemas';
+export type { CreateCompanyFormData, UpdateCompanyFormData } from './schemas';
 
 // Services
-export { companyService } from "./services/companyService";
+export { companyService } from './services/companyService';
 
 // Hooks
 export {
@@ -24,5 +19,4 @@ export {
   useCreateCompany,
   useUpdateCompany,
   useDeleteCompany,
-} from "./hooks";
-
+} from './hooks';

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { Radio } from "../Radio";
-import { useFieldId } from "../utils";
-import type { RadioGroupProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { Radio } from '../Radio';
+import { useFieldId } from '../utils';
+import type { RadioGroupProps } from '../types';
 
 /**
  * Componente de grupo de radio buttons reutilizável e acessível.
@@ -40,16 +40,16 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
       options,
       value,
       onChange,
-      orientation = "vertical",
-      className = "",
+      orientation = 'vertical',
+      className = '',
     },
-    ref
+    ref,
   ) => {
     const groupId = useFieldId();
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
+    const finalVariant = variant || (hasError ? 'error' : 'default');
 
-    const containerClasses = `flex ${orientation === "horizontal" ? "flex-row gap-4" : "flex-col gap-2"}`;
+    const containerClasses = `flex ${orientation === 'horizontal' ? 'flex-row gap-4' : 'flex-col gap-2'}`;
 
     return (
       <BaseInput
@@ -94,8 +94,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
         </div>
       </BaseInput>
     );
-  }
+  },
 );
 
-RadioGroup.displayName = "RadioGroup";
-
+RadioGroup.displayName = 'RadioGroup';

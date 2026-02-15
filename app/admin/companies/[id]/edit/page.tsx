@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useCompany, useUpdateCompany } from "@/features/company";
-import { CompanyForm } from "@/features/company/components";
-import { DashboardLayout } from "@/shared/components/Layout";
-import type { CreateCompanyFormData } from "@/features/company";
+import { useParams } from 'next/navigation';
+import { useCompany, useUpdateCompany } from '@/features/company';
+import { CompanyForm } from '@/features/company/components';
+import { DashboardLayout } from '@/shared/components/Layout';
+import type { CreateCompanyFormData } from '@/features/company';
 
 export default function EditCompanyPage() {
   const params = useParams();
@@ -20,8 +20,8 @@ export default function EditCompanyPage() {
     return (
       <DashboardLayout
         user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
+          name: 'Usuário Demo',
+          email: 'demo@dev.com',
         }}
       >
         <div className="text-center py-8">
@@ -50,8 +50,8 @@ export default function EditCompanyPage() {
     return (
       <DashboardLayout
         user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
+          name: 'Usuário Demo',
+          email: 'demo@dev.com',
         }}
       >
         <div className="text-center py-8">
@@ -64,8 +64,8 @@ export default function EditCompanyPage() {
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="space-y-6">
@@ -74,24 +74,17 @@ export default function EditCompanyPage() {
           <h1 className="text-3xl font-bold text-[#0F172A]">Editar Empresa</h1>
           <div className="mt-2 flex items-center gap-2">
             <p className="text-base text-[#0F172A]">
-              {company.name} • Empresa {company.active ? "ativa" : "inativa"}
+              {company.name} • Empresa {company.active ? 'ativa' : 'inativa'}
             </p>
           </div>
           <div className="mt-3">
             <div
               className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 ${
-                company.active
-                  ? "bg-green-50 text-green-700"
-                  : "bg-red-50 text-red-700"
+                company.active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
               }`}
             >
               {company.active ? (
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -100,12 +93,7 @@ export default function EditCompanyPage() {
                   />
                 </svg>
               ) : (
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -114,9 +102,7 @@ export default function EditCompanyPage() {
                   />
                 </svg>
               )}
-              <span className="text-sm font-medium">
-                {company.active ? "Ativa" : "Inativa"}
-              </span>
+              <span className="text-sm font-medium">{company.active ? 'Ativa' : 'Inativa'}</span>
             </div>
           </div>
         </div>
@@ -135,4 +121,3 @@ export default function EditCompanyPage() {
     </DashboardLayout>
   );
 }
-

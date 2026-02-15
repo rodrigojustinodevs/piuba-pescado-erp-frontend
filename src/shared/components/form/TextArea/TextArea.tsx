@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useFieldId, getInputBaseClasses } from "../utils";
-import type { TextAreaProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { useFieldId, getInputBaseClasses } from '../utils';
+import type { TextAreaProps } from '../types';
 
 /**
  * Componente de textarea reutilizável e acessível.
@@ -27,20 +27,20 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       error,
       required,
       disabled,
-      size = "md",
+      size = 'md',
       variant,
       id,
       name,
       rows = 4,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       ...textareaProps
     },
-    ref
+    ref,
   ) => {
     const fieldId = useFieldId(id);
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
+    const finalVariant = variant || (hasError ? 'error' : 'default');
 
     const textareaClasses = `${getInputBaseClasses(finalVariant, disabled, size)} resize-y ${inputClassName}`;
 
@@ -73,8 +73,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         />
       </BaseInput>
     );
-  }
+  },
 );
 
-TextArea.displayName = "TextArea";
-
+TextArea.displayName = 'TextArea';

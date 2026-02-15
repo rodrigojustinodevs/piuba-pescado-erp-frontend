@@ -1,2 +1,1 @@
-export { PrimitiveInput } from "./PrimitiveInput";
-
+export { PrimitiveInput } from './PrimitiveInput';

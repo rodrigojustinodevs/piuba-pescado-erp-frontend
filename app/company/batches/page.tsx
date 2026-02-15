@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { useBatches, useDeleteBatch } from "@/features/batch";
-import type { BatchStatus } from "@/features/batch";
-import { BatchTable } from "@/features/batch/components";
-import { DashboardLayout } from "@/shared/components/Layout";
-import { Alert } from "@/shared/components/Alert";
-import { useAlertModal } from "@/shared/components/AlertModal";
+import { useState } from 'react';
+import Link from 'next/link';
+import { useBatches, useDeleteBatch } from '@/features/batch';
+import type { BatchStatus } from '@/features/batch';
+import { BatchTable } from '@/features/batch/components';
+import { DashboardLayout } from '@/shared/components/Layout';
+import { Alert } from '@/shared/components/Alert';
+import { useAlertModal } from '@/shared/components/AlertModal';
 
-type FilterType = "all" | BatchStatus;
+type FilterType = 'all' | BatchStatus;
 
 export default function BatchListPage() {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<FilterType>("all");
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<FilterType>('all');
   const { data, isLoading, error, isError } = useBatches({
     page,
     limit: 10,
@@ -25,12 +25,12 @@ export default function BatchListPage() {
 
   const handleDelete = (id: string, species: string) => {
     showAlertError(
-      "Confirmar Exclusão",
+      'Confirmar Exclusão',
       `Tem certeza que deseja excluir o lote de "${species}"? Esta ação não pode ser desfeita.`,
-      "Sim, Excluir",
+      'Sim, Excluir',
       () => {
         deleteBatch.mutate(id);
-      }
+      },
     );
   };
 
@@ -42,19 +42,19 @@ export default function BatchListPage() {
         !searchTerm ||
         batch.species.toLowerCase().includes(searchTerm) ||
         batch.tank?.name?.toLowerCase().includes(searchTerm);
-      const matchesStatus = filter === "all" || batch.status === filter;
+      const matchesStatus = filter === 'all' || batch.status === filter;
       return matchesSearch && matchesStatus;
     }) ?? [];
 
   const totalFiltered = filteredBatches.length;
-  const activeCount = data?.batches.filter((b) => b.status === "active").length ?? 0;
-  const finishedCount = data?.batches.filter((b) => b.status === "finished").length ?? 0;
+  const activeCount = data?.batches.filter((b) => b.status === 'active').length ?? 0;
+  const finishedCount = data?.batches.filter((b) => b.status === 'finished').length ?? 0;
 
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="space-y-6">
@@ -62,11 +62,7 @@ export default function BatchListPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center">
-              <svg
-                className="h-8 w-8 text-[#0EA5A4]"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-8 w-8 text-[#0EA5A4]" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
               </svg>
             </div>
@@ -81,12 +77,7 @@ export default function BatchListPage() {
             href="/company/batches/create"
             className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] transition-colors"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -129,31 +120,31 @@ export default function BatchListPage() {
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <button
-              onClick={() => setFilter("all")}
+              onClick={() => setFilter('all')}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                filter === "all"
-                  ? "bg-[#0EA5A4] text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+                filter === 'all'
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
               }`}
             >
               Todos
             </button>
             <button
-              onClick={() => setFilter("active")}
+              onClick={() => setFilter('active')}
               className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                filter === "active"
-                  ? "bg-[#0EA5A4] text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+                filter === 'active'
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
               }`}
             >
               Ativos
             </button>
             <button
-              onClick={() => setFilter("finished")}
+              onClick={() => setFilter('finished')}
               className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                filter === "finished"
-                  ? "bg-[#0EA5A4] text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+                filter === 'finished'
+                  ? 'bg-[#0EA5A4] text-white'
+                  : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
               }`}
             >
               Finalizados
@@ -164,7 +155,7 @@ export default function BatchListPage() {
         {/* Contagem de resultados */}
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            {totalFiltered} {totalFiltered === 1 ? "lote encontrado" : "lotes encontrados"}
+            {totalFiltered} {totalFiltered === 1 ? 'lote encontrado' : 'lotes encontrados'}
           </p>
         </div>
 
@@ -200,14 +191,14 @@ export default function BatchListPage() {
           ) : !filteredBatches.length ? (
             <div className="p-8 text-center text-slate-500">
               <p className="text-base">
-                {search || filter !== "all"
-                  ? "Nenhum lote encontrado com os filtros aplicados."
-                  : "Nenhum lote cadastrado."}
+                {search || filter !== 'all'
+                  ? 'Nenhum lote encontrado com os filtros aplicados.'
+                  : 'Nenhum lote cadastrado.'}
               </p>
               <p className="mt-1 text-sm">
-                {search || filter !== "all"
-                  ? "Tente alterar a busca ou os filtros."
-                  : "Clique em Novo Lote para criar o primeiro."}
+                {search || filter !== 'all'
+                  ? 'Tente alterar a busca ou os filtros.'
+                  : 'Clique em Novo Lote para criar o primeiro.'}
               </p>
             </div>
           ) : (

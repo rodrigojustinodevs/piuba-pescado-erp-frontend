@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/shared/contexts/ToastContext";
-import { companyService } from "../services/companyService";
-import type { CreateCompanyData } from "../types";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/shared/contexts/ToastContext';
+import { companyService } from '../services/companyService';
+import type { CreateCompanyData } from '../types';
 
 /**
  * Hook para criar uma nova empresa
@@ -18,17 +18,16 @@ export function useCreateCompany() {
     mutationFn: (data: CreateCompanyData) => companyService.create(data),
     onSuccess: (data) => {
       // Invalida a lista de empresas
-      queryClient.invalidateQueries({ queryKey: ["companies", "list"] });
-      
+      queryClient.invalidateQueries({ queryKey: ['companies', 'list'] });
+
       // Mostra mensagem de sucesso
-      showSuccess("Empresa criada com sucesso!");
-      
+      showSuccess('Empresa criada com sucesso!');
+
       // Redireciona para a página de detalhes
       router.push(`/admin/companies/${data.id}`);
     },
     onError: (error: Error) => {
-      showError(error.message || "Erro ao criar empresa. Tente novamente.");
+      showError(error.message || 'Erro ao criar empresa. Tente novamente.');
     },
   });
 }
-

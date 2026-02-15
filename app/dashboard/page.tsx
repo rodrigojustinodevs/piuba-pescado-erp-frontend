@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useAuth } from "@/features/auth";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { DashboardLayout } from "@/shared/components/Layout";
+import { useAuth } from '@/features/auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { DashboardLayout } from '@/shared/components/Layout';
 import {
   CommerceCard,
   MembershipCard,
@@ -11,23 +11,23 @@ import {
   DashboardBanner,
   RevenueCard,
   StatCard,
-} from "@/features/dashboard/components";
+} from '@/features/dashboard/components';
 
 export default function DashboardPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   const stats = [
-    { label: "Total Sales", value: "$560K", accent: "indigo" as const },
-    { label: "Total Profit", value: "$185K", accent: "teal" as const },
-    { label: "Total Cost", value: "$375K", accent: "blue" as const },
-    { label: "Revenue", value: "$742K", accent: "teal" as const },
-    { label: "Today", value: "$4600", accent: "teal" as const },
+    { label: 'Total Sales', value: '$560K', accent: 'indigo' as const },
+    { label: 'Total Profit', value: '$185K', accent: 'teal' as const },
+    { label: 'Total Cost', value: '$375K', accent: 'blue' as const },
+    { label: 'Revenue', value: '$742K', accent: 'teal' as const },
+    { label: 'Today', value: '$4600', accent: 'teal' as const },
   ];
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push("/login");
+      router.push('/login');
     }
   }, [isAuthenticated, isLoading, router]);
 
@@ -48,8 +48,8 @@ export default function DashboardPage() {
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="space-y-6">
@@ -87,7 +87,3 @@ export default function DashboardPage() {
     </DashboardLayout>
   );
 }
-
-
-
-

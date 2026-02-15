@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 const MicrophoneIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,20 +20,24 @@ interface DashboardBannerProps {
 }
 
 export function DashboardBanner({
-  title = "Hello Devs!",
-  message = "We are on a mission to help developers like you to build beautiful projects for FREE.",
-  buttonText = "Announcements",
+  title = 'Hello Devs!',
+  message = 'We are on a mission to help developers like you to build beautiful projects for FREE.',
+  buttonText = 'Announcements',
   onButtonClick,
-  className = "",
+  className = '',
 }: DashboardBannerProps) {
   return (
     <div
       className={`bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 relative overflow-hidden rounded-2xl shadow-lg h-full w-full ${className}`}
-      style={{ minHeight: '200px'}}
+      style={{ minHeight: '200px' }}
     >
       {/* Wave Pattern Background */}
       <div className="absolute inset-0 opacity-10 h-full w-full">
-        <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <svg
+          className="absolute bottom-0 w-full h-full"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+        >
           <path
             d="M0,60 C300,20 600,100 900,60 C1050,40 1150,50 1200,60 L1200,120 L0,120 Z"
             fill="white"
@@ -60,4 +64,3 @@ export function DashboardBanner({
     </div>
   );
 }
-

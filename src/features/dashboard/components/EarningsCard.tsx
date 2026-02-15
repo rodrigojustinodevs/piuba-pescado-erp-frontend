@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card } from "@/shared/components/Cards";
+import { useState } from 'react';
+import { Card } from '@/shared/components/Cards';
 
 interface ChatbotProduct {
   id: string;
@@ -20,22 +20,22 @@ interface ChatbotProduct {
   };
 }
 
-const timeframes = ["1D", "1W", "1M", "1Y", "All time"];
+const timeframes = ['1D', '1W', '1M', '1Y', 'All time'];
 
 const products: ChatbotProduct[] = [
   {
-    id: "1",
-    name: "EchoBot",
-    type: "GPT4-based",
+    id: '1',
+    name: 'EchoBot',
+    type: 'GPT4-based',
     icon: (
       <div className="w-10 h-10 bg-blue-500 rounded flex items-center justify-center">
         <span className="text-white font-bold text-sm">B</span>
       </div>
     ),
-    currentPledge: "$80.00",
+    currentPledge: '$80.00',
     lifetimeSupport: {
-      value: "$512.00",
-      change: "12%",
+      value: '$512.00',
+      change: '12%',
       isPositive: true,
     },
     storage: {
@@ -44,18 +44,18 @@ const products: ChatbotProduct[] = [
     },
   },
   {
-    id: "2",
-    name: "EchoBot",
-    type: "GPT4-based",
+    id: '2',
+    name: 'EchoBot',
+    type: 'GPT4-based',
     icon: (
       <div className="w-10 h-10 bg-red-500 rounded flex items-center justify-center">
         <span className="text-white font-bold text-sm">||</span>
       </div>
     ),
-    currentPledge: "$160.00",
+    currentPledge: '$160.00',
     lifetimeSupport: {
-      value: "$256.00",
-      change: "12%",
+      value: '$256.00',
+      change: '12%',
       isPositive: true,
     },
     storage: {
@@ -66,7 +66,7 @@ const products: ChatbotProduct[] = [
 ];
 
 export function EarningsCard() {
-  const [selectedTimeframe, setSelectedTimeframe] = useState("1D");
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
 
   return (
     <Card
@@ -79,8 +79,8 @@ export function EarningsCard() {
               onClick={() => setSelectedTimeframe(timeframe)}
               className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${
                 selectedTimeframe === timeframe
-                  ? "bg-gray-800 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {timeframe}
@@ -124,22 +124,14 @@ export function EarningsCard() {
               {/* Lifetime support */}
               <div className="col-span-3">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-gray-900">
-                    {product.lifetimeSupport.value}
-                  </span>
+                  <span className="font-medium text-gray-900">{product.lifetimeSupport.value}</span>
                   <span
                     className={`text-xs font-medium flex items-center gap-1 ${
-                      product.lifetimeSupport.isPositive
-                        ? "text-green-600"
-                        : "text-red-600"
+                      product.lifetimeSupport.isPositive ? 'text-green-600' : 'text-red-600'
                     }`}
                   >
                     {product.lifetimeSupport.isPositive ? (
-                      <svg
-                        className="w-3 h-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
@@ -147,11 +139,7 @@ export function EarningsCard() {
                         />
                       </svg>
                     ) : (
-                      <svg
-                        className="w-3 h-3"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
@@ -185,4 +173,3 @@ export function EarningsCard() {
     </Card>
   );
 }
-

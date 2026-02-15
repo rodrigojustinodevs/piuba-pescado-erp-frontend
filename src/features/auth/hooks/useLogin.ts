@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { authService } from "../api";
-import type { LoginCredentials, LoginResponse } from "../types";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { authService } from '../api';
+import type { LoginCredentials, LoginResponse } from '../types';
 
 /**
  * Hook para realizar login usando React Query
@@ -15,9 +15,9 @@ export function useLogin() {
   const mutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
       const response = await authService.login(credentials);
-      
+
       if (!response.ok) {
-        throw new Error(response.message || "Credenciais inválidas");
+        throw new Error(response.message || 'Credenciais inválidas');
       }
 
       // Retorna a resposta com o token
@@ -25,15 +25,15 @@ export function useLogin() {
     },
     onSuccess: () => {
       // Invalida queries relacionadas à autenticação
-      queryClient.invalidateQueries({ queryKey: ["auth"] });
-      
+      queryClient.invalidateQueries({ queryKey: ['auth'] });
+
       // Redireciona para o dashboard após login bem-sucedido
-      router.push("/dashboard");
+      router.push('/dashboard');
       router.refresh(); // Força atualização do middleware
     },
     onError: (error: Error) => {
       // Erro já é tratado pelo mutation.error
-      console.error("Erro ao fazer login:", error);
+      console.error('Erro ao fazer login:', error);
     },
   });
 
@@ -46,7 +46,3 @@ export function useLogin() {
     reset: mutation.reset,
   };
 }
-
-
-
-

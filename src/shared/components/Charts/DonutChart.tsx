@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface DonutChartProps {
   percentage: number;
@@ -51,14 +51,11 @@ export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
       <div className="space-y-3">
         {data.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded"
-              style={{ backgroundColor: item.color }}
-            />
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: item.color }} />
             <span className="text-sm text-gray-600">{item.label}</span>
             <span
               className={`text-xs font-medium flex items-center gap-1 ml-auto ${
-                item.isPositive ? "text-green-600" : "text-red-600"
+                item.isPositive ? 'text-green-600' : 'text-red-600'
               }`}
             >
               {item.isPositive ? (
@@ -86,4 +83,3 @@ export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
     </div>
   );
 }
-

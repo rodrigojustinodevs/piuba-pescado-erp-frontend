@@ -1,7 +1,7 @@
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8005";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005';
 
 export interface RequestOptions extends RequestInit {
   errorFallback?: string;
@@ -15,16 +15,16 @@ export type ApiResult<T> =
 
 export async function getAuthToken(): Promise<string | null> {
   const cookieStore = await cookies();
-  return cookieStore.get("auth_token")?.value ?? null;
+  return cookieStore.get('auth_token')?.value ?? null;
 }
 
 export const HttpResponses = {
-  unauthorized: () => NextResponse.json({ error: "Não autenticado" }, { status: 401 }),
+  unauthorized: () => NextResponse.json({ error: 'Não autenticado' }, { status: 401 }),
 
   serverError: () =>
     NextResponse.json(
-      { error: "Erro ao conectar com o servidor. Tente novamente." },
-      { status: 500 }
+      { error: 'Erro ao conectar com o servidor. Tente novamente.' },
+      { status: 500 },
     ),
 
   fromApiError: (error: string, status: number) => NextResponse.json({ error }, { status }),
@@ -32,36 +32,36 @@ export const HttpResponses = {
 
 export function backendRequest(
   endpoint: string,
-  options: RequestOptions & { expectJson: false }
+  options: RequestOptions & { expectJson: false },
 ): Promise<ApiResult<null>>;
 export function backendRequest<T = unknown>(
   endpoint: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<ApiResult<T>>;
 export async function backendRequest<T = unknown>(
   endpoint: string,
-  options: RequestOptions = {}
+  options: RequestOptions = {},
 ): Promise<ApiResult<T | null>> {
   const {
-    errorFallback = "Ocorreu um erro inesperado",
+    errorFallback = 'Ocorreu um erro inesperado',
     expectJson = true,
     withAuth = false,
     ...fetchInit
   } = options;
 
-  const url = endpoint.startsWith("http") ? endpoint : `${API_BASE_URL}${endpoint}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
 
   const headers = new Headers(fetchInit.headers);
-  if (expectJson && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  if (expectJson && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
   }
 
   if (withAuth) {
     const token = await getAuthToken();
     if (!token) {
-      return { ok: false, error: "Não autenticado", status: 401 };
+      return { ok: false, error: 'Não autenticado', status: 401 };
     }
-    headers.set("Authorization", `Bearer ${token}`);
+    headers.set('Authorization', `Bearer ${token}`);
   }
 
   try {
@@ -90,8 +90,7 @@ export async function backendRequest<T = unknown>(
     const data = (await response.json()) as T;
     return { ok: true, data, status: response.status };
   } catch (error) {
-    console.error("[BACKEND_REQUEST_ERROR]", error);
-    return { ok: false, error: "Falha na comunicação com o servidor.", status: 500 };
+    console.error('[BACKEND_REQUEST_ERROR]', error);
+    return { ok: false, error: 'Falha na comunicação com o servidor.', status: 500 };
   }
 }
-

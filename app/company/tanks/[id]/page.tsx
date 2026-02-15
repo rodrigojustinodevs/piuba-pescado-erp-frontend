@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useTank, useDeleteTank, useTankLookups } from "@/features/tank";
-import { useAlertModal } from "@/shared/components/AlertModal";
-import { useAuthContext } from "@/shared/contexts/AuthContext";
-import { formatCapacityLiters } from "@/features/tank/utils/format";
-import { getCompanyName, getTankTypeLabel } from "@/features/tank/utils/lookups";
-import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
-import { LoadingState, NotFoundState } from "@/app/_components/PageStates";
-import { PencilIcon, TankDocumentIcon, TrashIcon } from "@/app/_components/AppIcons";
-import { formatDatePtBR, formatRelativeDateTimePtBR } from "@/shared/utils/dateFormat";
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useTank, useDeleteTank, useTankLookups } from '@/features/tank';
+import { useAlertModal } from '@/shared/components/AlertModal';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
+import { formatCapacityLiters } from '@/features/tank/utils/format';
+import { getCompanyName, getTankTypeLabel } from '@/features/tank/utils/lookups';
+import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
+import { LoadingState, NotFoundState } from '@/app/_components/PageStates';
+import { PencilIcon, TankDocumentIcon, TrashIcon } from '@/app/_components/AppIcons';
+import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
 // (formatadores movidos para src/shared/utils/dateFormat.ts)
 
@@ -26,12 +26,12 @@ export default function TankDetailPage() {
   const handleDeactivate = () => {
     if (tank) {
       showError(
-        "Confirmar Desativação",
+        'Confirmar Desativação',
         `Tem certeza que deseja desativar o tanque "${tank.name}"?`,
-        "Sim, Desativar",
+        'Sim, Desativar',
         () => {
           deleteTank.mutate(tank.id);
-        }
+        },
       );
     }
   };
@@ -52,9 +52,7 @@ export default function TankDetailPage() {
     <DemoDashboardLayout>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         {/* Breadcrumb */}
-        <p className="text-sm text-slate-600 mb-4">
-          Dashboard / Tanques / {tank.name}
-        </p>
+        <p className="text-sm text-slate-600 mb-4">Dashboard / Tanques / {tank.name}</p>
 
         {/* Main White Card */}
         <div className=" rounded-2xl border border-slate-200 shadow-sm">
@@ -72,12 +70,12 @@ export default function TankDetailPage() {
                   )}
                   <span
                     className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${
-                      tank.status === "active"
-                        ? "bg-[#22C55E] text-white"
-                        : "bg-red-100 text-red-700"
+                      tank.status === 'active'
+                        ? 'bg-[#22C55E] text-white'
+                        : 'bg-red-100 text-red-700'
                     }`}
                   >
-                    {tank.status === "active" ? "Ativo" : "Inativo"}
+                    {tank.status === 'active' ? 'Ativo' : 'Inativo'}
                   </span>
                 </div>
               </div>
@@ -114,9 +112,7 @@ export default function TankDetailPage() {
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
               <p className="text-sm text-slate-600 mb-2">Localização</p>
-              <p className="text-2xl font-semibold text-[#0F172A]">
-                {tank.location || "-"}
-              </p>
+              <p className="text-2xl font-semibold text-[#0F172A]">{tank.location || '-'}</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
               <p className="text-sm text-slate-600 mb-2">Data de criação</p>
@@ -161,7 +157,7 @@ export default function TankDetailPage() {
                 {/* LOCALIZAÇÃO - card completo */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                   <p className="text-xs font-medium text-slate-600 uppercase mb-2">LOCALIZAÇÃO</p>
-                  <p className="text-sm font-medium text-[#0F172A]">{tank.location || "-"}</p>
+                  <p className="text-sm font-medium text-[#0F172A]">{tank.location || '-'}</p>
                 </div>
                 {/* STATUS e ÚLTIMA ATUALIZAÇÃO - lado a lado */}
                 <div className="grid grid-cols-2 gap-4">
@@ -170,12 +166,14 @@ export default function TankDetailPage() {
                     <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1">
                       <span className="h-2 w-2 rounded-full bg-[#22C55E]" />
                       <p className="text-sm font-medium text-[#0F172A]">
-                        {tank.status === "active" ? "Ativo" : "Inativo"}
+                        {tank.status === 'active' ? 'Ativo' : 'Inativo'}
                       </p>
                     </div>
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">ÚLTIMA ATUALIZAÇÃO</p>
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                      ÚLTIMA ATUALIZAÇÃO
+                    </p>
                     <p className="text-sm font-medium text-[#0F172A]">
                       {formatRelativeDateTimePtBR(tank.updated_at)}
                     </p>
@@ -186,11 +184,11 @@ export default function TankDetailPage() {
           </div>
 
           {/* Monitoramento Section */}
-        <div className="bg-white m-8 p-8 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-6 w-1 rounded-full bg-[#16A34A]" />
-            <h2 className="text-base font-semibold text-[#0F172A]">Monitoramento</h2>
-          </div>
+          <div className="bg-white m-8 p-8 rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-6 w-1 rounded-full bg-[#16A34A]" />
+              <h2 className="text-base font-semibold text-[#0F172A]">Monitoramento</h2>
+            </div>
 
             <div className="text-center py-12 border border-slate-200 rounded-lg p-4">
               <p className="text-sm text-slate-600">Sem sensores vinculados.</p>
@@ -201,4 +199,3 @@ export default function TankDetailPage() {
     </DemoDashboardLayout>
   );
 }
-

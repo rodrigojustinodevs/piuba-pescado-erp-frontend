@@ -1,14 +1,12 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { useAuthContext } from "@/shared/contexts/AuthContext";
-import type { MenuItemWithAuth } from "../menuConfig";
-import { filterMenuItemsByAuth, toMenuItem } from "../utils/menuAuthorization";
-import type { MenuItem } from "../types";
+import { useMemo } from 'react';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
+import type { MenuItemWithAuth } from '../menuConfig';
+import { filterMenuItemsByAuth, toMenuItem } from '../utils/menuAuthorization';
+import type { MenuItem } from '../types';
 
-export function useMenuAuthorization(
-  menuConfig: MenuItemWithAuth[]
-): MenuItem[] {
+export function useMenuAuthorization(menuConfig: MenuItemWithAuth[]): MenuItem[] {
   const { user } = useAuthContext();
 
   return useMemo(() => {
@@ -16,6 +14,3 @@ export function useMenuAuthorization(
     return filteredItems.map(toMenuItem);
   }, [menuConfig, user]);
 }
-
-
-
