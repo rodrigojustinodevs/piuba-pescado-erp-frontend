@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { MenuItem } from "./types";
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type { MenuItem } from './types';
 
 // Ícone de seta para baixo
 const ChevronDownIcon = ({ className }: { className?: string }) => (
@@ -14,12 +14,7 @@ const ChevronDownIcon = ({ className }: { className?: string }) => (
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 9l-7 7-7-7"
-    />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
 );
 
@@ -31,35 +26,37 @@ interface DropdownProps {
   isCollapsed?: boolean;
 }
 
-export function Dropdown({ item, isOpen, onToggle, level = 0, isCollapsed = false }: DropdownProps) {
+export function Dropdown({
+  item,
+  isOpen,
+  onToggle,
+  level = 0,
+  isCollapsed = false,
+}: DropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsExpanded(false);
       }
     }
 
     if (isExpanded) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isExpanded]);
 
   const hasChildren = item.children && item.children.length > 0;
   const paddingLeft = level * 1.5; // rem
 
-  const isRouteActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+  const isRouteActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   const hasActiveDescendant = (node: MenuItem): boolean => {
     if (node.href && isRouteActive(node.href)) return true;
@@ -83,8 +80,8 @@ export function Dropdown({ item, isOpen, onToggle, level = 0, isCollapsed = fals
     const leafActive = item.href ? isRouteActive(item.href) : false;
     const leafClasses = `group relative w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
       leafActive
-        ? "bg-emerald-50 text-emerald-700"
-        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+        ? 'bg-emerald-50 text-emerald-700'
+        : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
     }`;
 
     const leafContent = (
@@ -97,8 +94,8 @@ export function Dropdown({ item, isOpen, onToggle, level = 0, isCollapsed = fals
           <span
             className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
               leafActive
-                ? "bg-emerald-100/70 text-emerald-700"
-                : "bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800"
+                ? 'bg-emerald-100/70 text-emerald-700'
+                : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800'
             }`}
           >
             <span className="w-5 h-5">{item.icon}</span>
@@ -148,19 +145,19 @@ export function Dropdown({ item, isOpen, onToggle, level = 0, isCollapsed = fals
         onClick={handleClick}
         className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
           isActuallyExpanded || isActive
-            ? "bg-emerald-50 text-emerald-700"
-            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-        } ${isCollapsed ? "justify-center" : ""}`}
+            ? 'bg-emerald-50 text-emerald-700'
+            : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+        } ${isCollapsed ? 'justify-center' : ''}`}
         style={!isCollapsed ? { paddingLeft: `${paddingLeft + 1}rem` } : undefined}
         title={isCollapsed ? item.label : undefined}
       >
-        <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
           {item.icon && (
             <span
               className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
                 isExpanded || isActive
-                  ? "bg-emerald-100/70 text-emerald-700"
-                  : "bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800"
+                  ? 'bg-emerald-100/70 text-emerald-700'
+                  : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800'
               }`}
             >
               <span className="w-5 h-5">{item.icon}</span>
@@ -180,7 +177,7 @@ export function Dropdown({ item, isOpen, onToggle, level = 0, isCollapsed = fals
         {hasChildren && !isCollapsed && (
           <ChevronDownIcon
             className={`w-4 h-4 transition-transform flex-shrink-0 ${
-              isActuallyExpanded ? "transform rotate-180" : ""
+              isActuallyExpanded ? 'transform rotate-180' : ''
             }`}
           />
         )}
@@ -209,4 +206,3 @@ export function Dropdown({ item, isOpen, onToggle, level = 0, isCollapsed = fals
     </div>
   );
 }
-

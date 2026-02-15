@@ -1,19 +1,14 @@
-import axios from "axios";
-import type {
-  Company,
-  CreateCompanyData,
-  UpdateCompanyData,
-  CompanyListResponse,
-} from "../types";
+import axios from 'axios';
+import type { Company, CreateCompanyData, UpdateCompanyData, CompanyListResponse } from '../types';
 
 /**
  * Cliente axios configurado para a API de empresas
  * Usa a rota de proxy do Next.js que faz requisição para o backend
  */
 const companyApi = axios.create({
-  baseURL: "/api/admin/companies",
+  baseURL: '/api/admin/companies',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -29,7 +24,7 @@ export const companyService = {
     limit?: number;
     search?: string;
   }): Promise<CompanyListResponse> {
-    const response = await companyApi.get<CompanyListResponse>("/", { params });
+    const response = await companyApi.get<CompanyListResponse>('/', { params });
     return response.data;
   },
 
@@ -45,7 +40,7 @@ export const companyService = {
    * Cria uma nova empresa
    */
   async create(data: CreateCompanyData): Promise<Company> {
-    const response = await companyApi.post<Company>("/", data);
+    const response = await companyApi.post<Company>('/', data);
     return response.data;
   },
 
@@ -65,4 +60,3 @@ export const companyService = {
     await companyApi.delete(`/${id}`);
   },
 };
-

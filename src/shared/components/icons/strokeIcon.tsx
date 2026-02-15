@@ -1,4 +1,4 @@
-import type { ReactNode, SVGProps } from "react";
+import type { ReactNode, SVGProps } from 'react';
 
 export type StrokeIconProps = { className?: string };
 
@@ -7,24 +7,21 @@ type IconBaseProps = {
   className?: string;
 };
 
-const IconBase = ({ children, className = "w-5 h-5" }: IconBaseProps) => (
+const IconBase = ({ children, className = 'w-5 h-5' }: IconBaseProps) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     {children}
   </svg>
 );
 
-type IconPathProps = Omit<SVGProps<SVGPathElement>, "strokeLinecap" | "strokeLinejoin" | "strokeWidth"> & {
+type IconPathProps = Omit<
+  SVGProps<SVGPathElement>,
+  'strokeLinecap' | 'strokeLinejoin' | 'strokeWidth'
+> & {
   d: string;
 };
 
 const IconPath = ({ d, ...rest }: IconPathProps) => (
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth={2}
-    d={d}
-    {...rest}
-  />
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d} {...rest} />
 );
 
 export function createStrokeIcon(paths: string | string[]) {
@@ -46,4 +43,3 @@ export function createStrokeIconNoProps(paths: string | string[]) {
     return <Icon />;
   };
 }
-

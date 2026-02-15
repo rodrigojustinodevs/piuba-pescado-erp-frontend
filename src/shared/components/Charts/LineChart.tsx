@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface LineChartProps {
   data: Array<{
@@ -12,10 +12,7 @@ interface LineChartProps {
 export function LineChart({ data, height = 200 }: LineChartProps) {
   // Placeholder para gráfico de linha
   // Em produção, usar uma biblioteca como recharts ou chart.js
-  const maxValue = Math.max(
-    ...data.flatMap((d) => [d.value1, d.value2]),
-    1000
-  );
+  const maxValue = Math.max(...data.flatMap((d) => [d.value1, d.value2]), 1000);
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
@@ -40,11 +37,8 @@ export function LineChart({ data, height = 200 }: LineChartProps) {
         {/* Line 1 */}
         <polyline
           points={data
-            .map(
-              (d, i) =>
-                `${i * 100},${height - (d.value1 / maxValue) * height}`
-            )
-            .join(" ")}
+            .map((d, i) => `${i * 100},${height - (d.value1 / maxValue) * height}`)
+            .join(' ')}
           fill="none"
           stroke="#3b82f6"
           strokeWidth="2"
@@ -53,11 +47,8 @@ export function LineChart({ data, height = 200 }: LineChartProps) {
         {/* Line 2 */}
         <polyline
           points={data
-            .map(
-              (d, i) =>
-                `${i * 100},${height - (d.value2 / maxValue) * height}`
-            )
-            .join(" ")}
+            .map((d, i) => `${i * 100},${height - (d.value2 / maxValue) * height}`)
+            .join(' ')}
           fill="none"
           stroke="#6366f1"
           strokeWidth="2"
@@ -72,4 +63,3 @@ export function LineChart({ data, height = 200 }: LineChartProps) {
     </div>
   );
 }
-

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useBatch, useUpdateBatch } from "@/features/batch";
-import { BatchForm } from "@/features/batch/components";
-import { DashboardLayout } from "@/shared/components/Layout";
-import { PageHeader } from "@/shared/components/ui";
-import type { UpdateBatchFormData } from "@/features/batch/schemas";
+import { useParams } from 'next/navigation';
+import { useBatch, useUpdateBatch } from '@/features/batch';
+import { BatchForm } from '@/features/batch/components';
+import { DashboardLayout } from '@/shared/components/Layout';
+import { PageHeader } from '@/shared/components/ui';
+import type { UpdateBatchFormData } from '@/features/batch/schemas';
 
 export default function BatchEditPage() {
   const params = useParams();
@@ -21,8 +21,8 @@ export default function BatchEditPage() {
     return (
       <DashboardLayout
         user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
+          name: 'Usuário Demo',
+          email: 'demo@dev.com',
         }}
       >
         <div className="text-center py-8">
@@ -51,8 +51,8 @@ export default function BatchEditPage() {
     return (
       <DashboardLayout
         user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
+          name: 'Usuário Demo',
+          email: 'demo@dev.com',
         }}
       >
         <div className="text-center py-8">
@@ -65,8 +65,8 @@ export default function BatchEditPage() {
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">

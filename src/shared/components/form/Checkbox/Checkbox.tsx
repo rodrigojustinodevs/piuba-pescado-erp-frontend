@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useFieldId } from "../utils";
-import type { CheckboxProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { useFieldId } from '../utils';
+import type { CheckboxProps } from '../types';
 
 /**
  * Componente de checkbox reutilizável e acessível.
@@ -37,19 +37,19 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       name,
       checked,
       value = true,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       ...checkboxProps
     },
-    ref
+    ref,
   ) => {
     const fieldId = useFieldId(id);
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
+    const finalVariant = variant || (hasError ? 'error' : 'default');
 
     const checkboxClasses = `w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 ${
-      hasError ? "border-red-500" : ""
-    } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${inputClassName}`;
+      hasError ? 'border-red-500' : ''
+    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${inputClassName}`;
 
     return (
       <BaseInput
@@ -82,8 +82,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         />
       </BaseInput>
     );
-  }
+  },
 );
 
-Checkbox.displayName = "Checkbox";
-
+Checkbox.displayName = 'Checkbox';

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { ToastComponent, type Toast } from "./Toast";
+import { ToastComponent, type Toast } from './Toast';
 
 interface ToastContainerProps {
   toasts: Toast[];
@@ -18,4 +18,3 @@ export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
     </div>
   );
 }
-

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useFieldId, getInputBaseClasses } from "../utils";
-import type { SelectProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { useFieldId, getInputBaseClasses } from '../utils';
+import type { SelectProps } from '../types';
 
 /**
  * Componente de select reutilizável e acessível.
@@ -33,22 +33,22 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       error,
       required,
       disabled,
-      size = "md",
+      size = 'md',
       variant,
       id,
       name,
       options,
       placeholder,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       onChange,
       ...selectProps
     },
-    ref
+    ref,
   ) => {
     const fieldId = useFieldId(id);
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
+    const finalVariant = variant || (hasError ? 'error' : 'default');
 
     const selectClasses = `${getInputBaseClasses(finalVariant, disabled, size)} ${inputClassName}`;
 
@@ -60,7 +60,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       if (selectProps.onChange) {
         selectProps.onChange(e);
       }
-      
+
       // Depois chama o onChange customizado se fornecido
       if (onChange) {
         onChange(e);
@@ -99,7 +99,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           )}
           {options && options.length > 0 ? (
             options.map((option) => (
-              <option key={String(option.value)} value={String(option.value)} disabled={option.disabled}>
+              <option
+                key={String(option.value)}
+                value={String(option.value)}
+                disabled={option.disabled}
+              >
                 {option.label}
               </option>
             ))
@@ -111,8 +115,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </select>
       </BaseInput>
     );
-  }
+  },
 );
 
-Select.displayName = "Select";
-
+Select.displayName = 'Select';

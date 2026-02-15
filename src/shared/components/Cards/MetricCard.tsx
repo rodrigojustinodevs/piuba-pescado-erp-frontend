@@ -5,16 +5,16 @@ interface MetricCardProps {
     value: string;
     isPositive: boolean;
   };
-  color?: "blue" | "light-blue" | "red";
+  color?: 'blue' | 'light-blue' | 'red';
 }
 
 const colorClasses = {
-  blue: "bg-blue-500",
-  "light-blue": "bg-blue-300",
-  red: "bg-red-500",
+  blue: 'bg-blue-500',
+  'light-blue': 'bg-blue-300',
+  red: 'bg-red-500',
 };
 
-export function MetricCard({ label, value, change, color = "blue" }: MetricCardProps) {
+export function MetricCard({ label, value, change, color = 'blue' }: MetricCardProps) {
   return (
     <div className="flex items-start gap-3">
       <div className={`w-3 h-3 rounded mt-1 flex-shrink-0 ${colorClasses[color]}`} />
@@ -25,7 +25,7 @@ export function MetricCard({ label, value, change, color = "blue" }: MetricCardP
           {change && (
             <span
               className={`text-sm font-medium flex items-center gap-1 ${
-                change.isPositive ? "text-green-600" : "text-red-600"
+                change.isPositive ? 'text-green-600' : 'text-red-600'
               }`}
             >
               {change.isPositive ? (
@@ -53,4 +53,3 @@ export function MetricCard({ label, value, change, color = "blue" }: MetricCardP
     </div>
   );
 }
-

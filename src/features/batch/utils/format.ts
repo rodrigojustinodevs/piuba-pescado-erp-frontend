@@ -7,7 +7,7 @@
  * Evita problemas de conversão de timezone
  */
 function extractDatePart(dateString: string): string {
-  return dateString.split("T")[0] ?? dateString;
+  return dateString.split('T')[0] ?? dateString;
 }
 
 /**
@@ -23,11 +23,11 @@ function isValidDateFormat(datePart: string): boolean {
  */
 function formatDateComponents(year: number, month: number, day: number): string {
   const date = new Date(Date.UTC(year, month - 1, day));
-  return date.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
   });
 }
 
@@ -37,7 +37,7 @@ function formatDateComponents(year: number, month: number, day: number): string 
  */
 export function formatDate(dateString: string | null | undefined): string {
   if (!dateString) {
-    return "—";
+    return '—';
   }
 
   try {
@@ -47,24 +47,24 @@ export function formatDate(dateString: string | null | undefined): string {
       // Fallback para parsing normal se não for formato YYYY-MM-DD
       const date = new Date(dateString);
       if (Number.isNaN(date.getTime())) {
-        return "—";
+        return '—';
       }
-      return date.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
       });
     }
 
-    const [year, month, day] = datePart.split("-").map(Number);
+    const [year, month, day] = datePart.split('-').map(Number);
 
     if (!year || !month || !day) {
-      return "—";
+      return '—';
     }
 
     return formatDateComponents(year, month, day);
   } catch {
-    return "—";
+    return '—';
   }
 }
 
@@ -73,17 +73,17 @@ export function formatDate(dateString: string | null | undefined): string {
  */
 export function formatQuantity(value: number | undefined | null): string {
   if (value === undefined || value === null) {
-    return "—";
+    return '—';
   }
 
-  return value.toLocaleString("pt-BR", {
+  return value.toLocaleString('pt-BR', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
 }
 
 const CULTIVATION_LABELS: Record<string, string> = {
-  daycare: "Berçário",
+  daycare: 'Berçário',
 } as const;
 
 /**
@@ -109,9 +109,9 @@ function getDaysDifference(date1: Date, date2: Date): number {
  * Formata hora para exibição (HH:mm)
  */
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
+  return date.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -120,13 +120,13 @@ function formatTime(date: Date): string {
  */
 export function formatDateTime(dateString: string | null | undefined): string {
   if (!dateString) {
-    return "—";
+    return '—';
   }
 
   try {
     const date = new Date(dateString);
     if (Number.isNaN(date.getTime())) {
-      return "—";
+      return '—';
     }
 
     const now = new Date();
@@ -142,6 +142,6 @@ export function formatDateTime(dateString: string | null | undefined): string {
 
     return formatDate(dateString);
   } catch {
-    return "—";
+    return '—';
   }
 }

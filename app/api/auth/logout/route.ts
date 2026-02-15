@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
 /**
  * Endpoint para logout
@@ -9,17 +9,13 @@ export async function POST() {
 
   // Remove o cookie de autenticação
   res.cookies.set({
-    name: "auth_token",
-    value: "",
+    name: 'auth_token',
+    value: '',
     httpOnly: true,
-    path: "/",
-    sameSite: "lax",
+    path: '/',
+    sameSite: 'lax',
     maxAge: 0, // Expira imediatamente
   });
 
   return res;
 }
-
-
-
-

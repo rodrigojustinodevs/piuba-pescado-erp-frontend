@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { useTankTypes } from "./useTankTypes";
-import { useCompanies } from "@/features/company";
-import { buildCompanyMap, buildTankTypeMap } from "../utils/lookups";
+import { useMemo } from 'react';
+import { useTankTypes } from './useTankTypes';
+import { useCompanies } from '@/features/company';
+import { buildCompanyMap, buildTankTypeMap } from '../utils/lookups';
 
 /**
  * Hook para obter mapas de lookup (id -> label) de tipos de tanque e empresas.
@@ -15,13 +15,10 @@ export function useTankLookups() {
 
   const companyMap = useMemo(
     () => buildCompanyMap(companiesData?.companies || []),
-    [companiesData?.companies]
+    [companiesData?.companies],
   );
 
-  const tankTypeMap = useMemo(
-    () => buildTankTypeMap(tankTypes),
-    [tankTypes]
-  );
+  const tankTypeMap = useMemo(() => buildTankTypeMap(tankTypes), [tankTypes]);
 
   return {
     tankTypeMap,
@@ -29,4 +26,3 @@ export function useTankLookups() {
     isLoading: isLoadingTypes || isLoadingCompanies,
   };
 }
-

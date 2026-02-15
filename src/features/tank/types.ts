@@ -9,7 +9,7 @@ export interface Tank {
   name: string;
   capacityLiters: number;
   location?: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
 }
@@ -20,7 +20,7 @@ export interface CreateTankData {
   name: string;
   capacityLiters: number;
   location?: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
 }
 
 export interface UpdateTankData extends Partial<CreateTankData> {
@@ -53,7 +53,7 @@ export interface ApiTank {
   name: string;
   capacityLiters: number;
   location?: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   tankType: {
     id: string;
     name: string;

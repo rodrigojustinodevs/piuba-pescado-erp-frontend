@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import Link from "next/link";
-import { PlusIcon } from "./AppIcons";
+import type { ReactNode } from 'react';
+import Link from 'next/link';
+import { PlusIcon } from './AppIcons';
 
 export function ListHeader({
   icon,
@@ -37,4 +37,3 @@ export function ListHeader({
     </div>
   );
 }
-

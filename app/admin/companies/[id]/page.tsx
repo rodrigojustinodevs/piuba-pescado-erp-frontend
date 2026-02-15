@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useCompany, useDeleteCompany } from "@/features/company";
-import { useAlertModal } from "@/shared/components/AlertModal";
-import { DemoDashboardLayout } from "@/app/_components/DemoDashboardLayout";
-import { LoadingState, NotFoundState } from "@/app/_components/PageStates";
-import { BuildingIcon, PencilIcon, TrashIcon } from "@/app/_components/AppIcons";
-import { formatDatePtBR, formatRelativeDateTimePtBR } from "@/shared/utils/dateFormat";
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useCompany, useDeleteCompany } from '@/features/company';
+import { useAlertModal } from '@/shared/components/AlertModal';
+import { DemoDashboardLayout } from '@/app/_components/DemoDashboardLayout';
+import { LoadingState, NotFoundState } from '@/app/_components/PageStates';
+import { BuildingIcon, PencilIcon, TrashIcon } from '@/app/_components/AppIcons';
+import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -19,12 +19,12 @@ export default function CompanyDetailPage() {
   const handleDeactivate = () => {
     if (company) {
       showError(
-        "Confirmar Desativação",
+        'Confirmar Desativação',
         `Tem certeza que deseja desativar a empresa "${company.name}"?`,
-        "Sim, Desativar",
+        'Sim, Desativar',
         () => {
           deleteCompany.mutate(company.id);
-        }
+        },
       );
     }
   };
@@ -41,9 +41,7 @@ export default function CompanyDetailPage() {
     <DemoDashboardLayout>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         {/* Breadcrumb */}
-        <p className="text-sm text-slate-600 mb-4">
-          Dashboard / Empresas / {company.name}
-        </p>
+        <p className="text-sm text-slate-600 mb-4">Dashboard / Empresas / {company.name}</p>
 
         {/* Main White Card */}
         <div className="rounded-2xl border border-slate-200 shadow-sm">
@@ -59,12 +57,10 @@ export default function CompanyDetailPage() {
                   <span className="text-sm text-[#0F172A]">Unidade aquícola</span>
                   <span
                     className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${
-                      company.active
-                        ? "bg-[#22C55E] text-white"
-                        : "bg-red-100 text-red-700"
+                      company.active ? 'bg-[#22C55E] text-white' : 'bg-red-100 text-red-700'
                     }`}
                   >
-                    {company.active ? "Ativa" : "Inativa"}
+                    {company.active ? 'Ativa' : 'Inativa'}
                   </span>
                 </div>
               </div>
@@ -96,7 +92,7 @@ export default function CompanyDetailPage() {
               <p className="text-2xl font-semibold text-[#0F172A]">
                 {company.address.city && company.address.state
                   ? `${company.address.city}, ${company.address.state}`
-                  : "-"}
+                  : '-'}
               </p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
@@ -138,7 +134,7 @@ export default function CompanyDetailPage() {
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">CONTATO</p>
-                    <p className="text-sm font-medium text-[#0F172A]">{company.email || "-"}</p>
+                    <p className="text-sm font-medium text-[#0F172A]">{company.email || '-'}</p>
                   </div>
                 </div>
               </div>
@@ -148,21 +144,25 @@ export default function CompanyDetailPage() {
                 {/* TELEFONE - card completo */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                   <p className="text-xs font-medium text-slate-600 uppercase mb-2">TELEFONE</p>
-                  <p className="text-sm font-medium text-[#0F172A]">{company.phone || "-"}</p>
+                  <p className="text-sm font-medium text-[#0F172A]">{company.phone || '-'}</p>
                 </div>
                 {/* STATUS e ÚLTIMA ATUALIZAÇÃO - lado a lado */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">STATUS</p>
                     <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1">
-                      <span className={`h-2 w-2 rounded-full ${company.active ? "bg-[#22C55E]" : "bg-red-500"}`} />
+                      <span
+                        className={`h-2 w-2 rounded-full ${company.active ? 'bg-[#22C55E]' : 'bg-red-500'}`}
+                      />
                       <p className="text-sm font-medium text-[#0F172A]">
-                        {company.active ? "Ativa" : "Inativa"}
+                        {company.active ? 'Ativa' : 'Inativa'}
                       </p>
                     </div>
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">ÚLTIMA ATUALIZAÇÃO</p>
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                      ÚLTIMA ATUALIZAÇÃO
+                    </p>
                     <p className="text-sm font-medium text-[#0F172A]">
                       {formatRelativeDateTimePtBR(company.updated_at)}
                     </p>
@@ -188,7 +188,7 @@ export default function CompanyDetailPage() {
                   <p className="text-sm font-medium text-[#0F172A]">
                     {company.address.street && company.address.number
                       ? `${company.address.street}, ${company.address.number}`
-                      : "-"}
+                      : '-'}
                   </p>
                 </div>
                 {/* BAIRRO e CEP - lado a lado */}
@@ -196,13 +196,13 @@ export default function CompanyDetailPage() {
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">BAIRRO</p>
                     <p className="text-sm font-medium text-[#0F172A]">
-                      {company.address.neighborhood || "-"}
+                      {company.address.neighborhood || '-'}
                     </p>
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">CEP</p>
                     <p className="text-sm font-medium text-[#0F172A]">
-                      {company.address.zipCode || "-"}
+                      {company.address.zipCode || '-'}
                     </p>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ export default function CompanyDetailPage() {
                   <p className="text-sm font-medium text-[#0F172A]">
                     {company.address.city && company.address.state
                       ? `${company.address.city} • ${company.address.state}`
-                      : "-"}
+                      : '-'}
                   </p>
                 </div>
                 {/* COMPLEMENTO - card completo */}
@@ -231,11 +231,8 @@ export default function CompanyDetailPage() {
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
     </DemoDashboardLayout>
   );
 }
-

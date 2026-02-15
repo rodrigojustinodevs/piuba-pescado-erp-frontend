@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { batchService } from "../services/batchService";
+import { useQuery } from '@tanstack/react-query';
+import { batchService } from '../services/batchService';
 
 export interface UseBatchesParams {
   page?: number;
@@ -21,12 +21,12 @@ export function useBatches({
   enabled = true,
 }: UseBatchesParams = {}) {
   const query = useQuery({
-    queryKey: ["batches", "list", page, limit, search],
+    queryKey: ['batches', 'list', page, limit, search],
     queryFn: () => batchService.getBatches({ page, limit, search }),
     enabled,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
-  
+
   return {
     data: query.data,
     batches: query.data?.batches ?? [],

@@ -1,14 +1,14 @@
-import type { InputHTMLAttributes, TextareaHTMLAttributes, SelectHTMLAttributes } from "react";
+import type { InputHTMLAttributes, TextareaHTMLAttributes, SelectHTMLAttributes } from 'react';
 
 /**
  * Tamanhos disponíveis para componentes de formulário
  */
-export type FormFieldSize = "sm" | "md" | "lg";
+export type FormFieldSize = 'sm' | 'md' | 'lg';
 
 /**
  * Variantes visuais disponíveis
  */
-export type FormFieldVariant = "default" | "error" | "success";
+export type FormFieldVariant = 'default' | 'error' | 'success';
 
 /**
  * Props base compartilhadas por todos os campos de formulário
@@ -64,20 +64,18 @@ export interface BaseFormFieldProps {
  * Props para componentes de input de texto
  */
 export interface TextInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "id">,
-    BaseFormFieldProps {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id'>, BaseFormFieldProps {
   /**
    * Tipo do input (text, email, password, etc.)
    */
-  type?: "text" | "email" | "password" | "tel" | "url" | "search";
+  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search';
 }
 
 /**
  * Props para componentes de input numérico
  */
 export interface NumberInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "id" | "type">,
-    BaseFormFieldProps {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type'>, BaseFormFieldProps {
   /**
    * Valor mínimo permitido
    */
@@ -89,15 +87,14 @@ export interface NumberInputProps
   /**
    * Incremento/decremento (step)
    */
-  step?: number | string | "any";
+  step?: number | string | 'any';
 }
 
 /**
  * Props para componentes de textarea
  */
 export interface TextAreaProps
-  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "size" | "id">,
-    BaseFormFieldProps {
+  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size' | 'id'>, BaseFormFieldProps {
   /**
    * Número de linhas visíveis
    */
@@ -126,8 +123,7 @@ export interface SelectOption {
  * Props para componentes Select
  */
 export interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size" | "id">,
-    BaseFormFieldProps {
+  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size' | 'id'>, BaseFormFieldProps {
   /**
    * Opções do select
    */
@@ -142,8 +138,9 @@ export interface SelectProps
  * Props para componentes Checkbox
  */
 export interface CheckboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "id" | "type" | "value">,
-    Omit<BaseFormFieldProps, "size"> {
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type' | 'value'>,
+    Omit<BaseFormFieldProps, 'size'> {
   /**
    * Se o checkbox está marcado
    */
@@ -158,8 +155,9 @@ export interface CheckboxProps
  * Props para componentes Radio
  */
 export interface RadioProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "id" | "type">,
-    Omit<BaseFormFieldProps, "size"> {
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type'>,
+    Omit<BaseFormFieldProps, 'size'> {
   /**
    * Se o radio está selecionado
    */
@@ -173,7 +171,7 @@ export interface RadioProps
 /**
  * Props para grupos de Radio
  */
-export interface RadioGroupProps extends Omit<BaseFormFieldProps, "id" | "name"> {
+export interface RadioGroupProps extends Omit<BaseFormFieldProps, 'id' | 'name'> {
   /**
    * Nome do grupo (obrigatório para grupos)
    */
@@ -193,18 +191,18 @@ export interface RadioGroupProps extends Omit<BaseFormFieldProps, "id" | "name">
   /**
    * Orientação do grupo
    */
-  orientation?: "horizontal" | "vertical";
+  orientation?: 'horizontal' | 'vertical';
 }
 
 /**
  * Props para componentes Switch
  */
 export interface SwitchProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "id" | "type">,
-    Omit<BaseFormFieldProps, "size"> {
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type'>,
+    Omit<BaseFormFieldProps, 'size'> {
   /**
    * Se o switch está ativado
    */
   checked?: boolean;
 }
-

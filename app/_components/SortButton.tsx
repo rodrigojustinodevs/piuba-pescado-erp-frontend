@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { ChevronDownIcon } from "@/app/_components/AppIcons";
+import { ChevronDownIcon } from '@/app/_components/AppIcons';
 
 export type SortButtonProps = {
   /** Valor atual (apenas para acessibilidade/telemetria visual futura) */
@@ -13,13 +13,8 @@ export type SortButtonProps = {
   label?: string;
 };
 
-export function SortButton({
-  current,
-  onSort,
-  value = "name",
-  label = "Nome",
-}: SortButtonProps) {
-  const ariaLabel = current ? `Ordenar por: ${current}` : "Ordenar por";
+export function SortButton({ current, onSort, value = 'name', label = 'Nome' }: SortButtonProps) {
+  const ariaLabel = current ? `Ordenar por: ${current}` : 'Ordenar por';
 
   return (
     <div className="flex items-center gap-2 shrink-0">
@@ -36,4 +31,3 @@ export function SortButton({
     </div>
   );
 }
-

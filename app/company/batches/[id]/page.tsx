@@ -1,11 +1,16 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useBatch } from "@/features/batch";
-import { BatchStatusBadge } from "@/features/batch/components";
-import { DashboardLayout } from "@/shared/components/Layout";
-import { formatDate, formatQuantity, getCultivationLabel, formatDateTime } from "@/features/batch/utils/format";
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useBatch } from '@/features/batch';
+import { BatchStatusBadge } from '@/features/batch/components';
+import { DashboardLayout } from '@/shared/components/Layout';
+import {
+  formatDate,
+  formatQuantity,
+  getCultivationLabel,
+  formatDateTime,
+} from '@/features/batch/utils/format';
 
 export default function BatchDetailPage() {
   const params = useParams();
@@ -16,8 +21,8 @@ export default function BatchDetailPage() {
     return (
       <DashboardLayout
         user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
+          name: 'Usuário Demo',
+          email: 'demo@dev.com',
         }}
       >
         <div className="text-center py-8">
@@ -46,8 +51,8 @@ export default function BatchDetailPage() {
     return (
       <DashboardLayout
         user={{
-          name: "Usuário Demo",
-          email: "demo@dev.com",
+          name: 'Usuário Demo',
+          email: 'demo@dev.com',
         }}
       >
         <div className="text-center py-8">
@@ -66,14 +71,14 @@ export default function BatchDetailPage() {
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         {/* Breadcrumb */}
         <p className="text-sm text-slate-600 mb-4">
-          Dashboard / Lotes / {batch?.id ? `${batch.id.slice(0, 8)}…` : "—"}
+          Dashboard / Lotes / {batch?.id ? `${batch.id.slice(0, 8)}…` : '—'}
         </p>
 
         {/* Main White Card */}
@@ -98,12 +103,10 @@ export default function BatchDetailPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-semibold text-[#0F172A] mb-2">
-                  Lote {batch?.id ? `${batch.id.slice(0, 8)}…` : "—"}
+                  Lote {batch?.id ? `${batch.id.slice(0, 8)}…` : '—'}
                 </h1>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-[#0F172A]">
-                    Tanque: {batch.tank?.name || "—"}
-                  </span>
+                  <span className="text-sm text-[#0F172A]">Tanque: {batch.tank?.name || '—'}</span>
                   <BatchStatusBadge status={batch.status} />
                 </div>
               </div>
@@ -114,12 +117,7 @@ export default function BatchDetailPage() {
                 href={`/company/batches/${batch.id}/edit`}
                 className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition"
               >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -152,9 +150,7 @@ export default function BatchDetailPage() {
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
               <p className="text-sm text-slate-600 mb-2">Data de Entrada</p>
-              <p className="text-2xl font-semibold text-[#0F172A]">
-                {formatDate(batch.entryDate)}
-              </p>
+              <p className="text-2xl font-semibold text-[#0F172A]">{formatDate(batch.entryDate)}</p>
             </div>
           </div>
 
@@ -171,9 +167,7 @@ export default function BatchDetailPage() {
                 {/* TANQUE - card completo */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                   <p className="text-xs font-medium text-slate-600 uppercase mb-2">TANQUE</p>
-                  <p className="text-sm font-medium text-[#0F172A]">
-                    {batch.tank?.name || "—"}
-                  </p>
+                  <p className="text-sm font-medium text-[#0F172A]">{batch.tank?.name || '—'}</p>
                 </div>
                 {/* ESPÉCIE e QUANTIDADE INICIAL - lado a lado */}
                 <div className="grid grid-cols-2 gap-4">
@@ -233,12 +227,8 @@ export default function BatchDetailPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                <p className="text-xs font-medium text-slate-600 uppercase mb-2">
-                  DATA DE CRIAÇÃO
-                </p>
-                <p className="text-sm font-medium text-[#0F172A]">
-                  {formatDate(batch.createdAt)}
-                </p>
+                <p className="text-xs font-medium text-slate-600 uppercase mb-2">DATA DE CRIAÇÃO</p>
+                <p className="text-sm font-medium text-[#0F172A]">{formatDate(batch.createdAt)}</p>
               </div>
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                 <p className="text-xs font-medium text-slate-600 uppercase mb-2">

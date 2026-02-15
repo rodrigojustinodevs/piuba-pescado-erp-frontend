@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useCreateCompany } from "@/features/company";
-import { CompanyForm } from "@/features/company/components";
-import { DashboardLayout } from "@/shared/components/Layout";
-import type { CreateCompanyFormData } from "@/features/company";
+import { useState } from 'react';
+import { useCreateCompany } from '@/features/company';
+import { CompanyForm } from '@/features/company/components';
+import { DashboardLayout } from '@/shared/components/Layout';
+import type { CreateCompanyFormData } from '@/features/company';
 
 export default function NewCompanyPage() {
   const createCompany = useCreateCompany();
   const steps = [
-    { title: "Empresa", description: "Empresa", icon: "building" },
-    { title: "Contato", description: "Empresa", icon: "mail" },
-    { title: "Localização", description: "Localização", icon: "pin" },
-    { title: "Confirmação", description: "", icon: "check" },
+    { title: 'Empresa', description: 'Empresa', icon: 'building' },
+    { title: 'Contato', description: 'Empresa', icon: 'mail' },
+    { title: 'Localização', description: 'Localização', icon: 'pin' },
+    { title: 'Confirmação', description: '', icon: 'check' },
   ];
   const [currentStep, setCurrentStep] = useState(1);
   const formTotalSteps = 3;
@@ -24,16 +24,14 @@ export default function NewCompanyPage() {
   return (
     <DashboardLayout
       user={{
-        name: "Usuário Demo",
-        email: "demo@dev.com",
+        name: 'Usuário Demo',
+        email: 'demo@dev.com',
       }}
     >
       <div className="rounded-2xl bg-[#F8FAFC] p-4 lg:p-6">
-      <div className="space-y-6">
+        <div className="space-y-6">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-[#0F172A]">
-              Nova Unidade Aquícola
-            </h1>
+            <h1 className="text-2xl font-semibold text-[#0F172A]">Nova Unidade Aquícola</h1>
             <p className="text-sm text-slate-600">
               Configure a base da sua produção de peixes ou camarões
             </p>
@@ -48,8 +46,8 @@ export default function NewCompanyPage() {
                   const isCompleted = stepNumber < currentStep;
                   const isLast = stepNumber === steps.length;
                   const cardClasses = isActive
-                    ? "border-[#0EA5A4]/30 bg-white shadow-sm"
-                    : "border-slate-200 bg-white";
+                    ? 'border-[#0EA5A4]/30 bg-white shadow-sm'
+                    : 'border-slate-200 bg-white';
 
                   return (
                     <div key={step.title} className="relative">
@@ -63,11 +61,11 @@ export default function NewCompanyPage() {
                           <div
                             className={`flex h-8 w-8 items-center justify-center rounded-lg ${
                               isCompleted || isActive
-                                ? "bg-[#0EA5A4] text-white"
-                                : "bg-slate-100 text-slate-400"
+                                ? 'bg-[#0EA5A4] text-white'
+                                : 'bg-slate-100 text-slate-400'
                             }`}
                           >
-                            {step.icon === "building" && (
+                            {step.icon === 'building' && (
                               <svg
                                 className="h-4 w-4"
                                 fill="none"
@@ -82,7 +80,7 @@ export default function NewCompanyPage() {
                                 />
                               </svg>
                             )}
-                            {step.icon === "mail" && (
+                            {step.icon === 'mail' && (
                               <svg
                                 className="h-4 w-4"
                                 fill="none"
@@ -97,7 +95,7 @@ export default function NewCompanyPage() {
                                 />
                               </svg>
                             )}
-                            {step.icon === "pin" && (
+                            {step.icon === 'pin' && (
                               <svg
                                 className="h-4 w-4"
                                 fill="none"
@@ -118,7 +116,7 @@ export default function NewCompanyPage() {
                                 />
                               </svg>
                             )}
-                            {step.icon === "check" && (
+                            {step.icon === 'check' && (
                               <svg
                                 className="h-4 w-4"
                                 fill="none"
@@ -139,9 +137,7 @@ export default function NewCompanyPage() {
                               {stepNumber}. {step.title}
                             </p>
                             {step.description && (
-                              <p className="text-xs text-slate-400">
-                                {step.description}
-                              </p>
+                              <p className="text-xs text-slate-400">{step.description}</p>
                             )}
                           </div>
                         </div>
@@ -166,7 +162,7 @@ export default function NewCompanyPage() {
 
               <div className="rounded-2xl border border-transparent bg-gradient-to-br from-[#E6FFFB] via-[#D1FAF8] to-[#F0FDFE] p-4 shadow-sm">
                 <div className="flex items-center justify-between">
-        <div>
+                  <div>
                     <p className="text-sm font-semibold text-[#0F172A]">
                       Próximo: Cadastrar Tanques
                     </p>
@@ -189,17 +185,17 @@ export default function NewCompanyPage() {
                   </svg>
                 </div>
               </div>
-        </div>
+            </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <CompanyForm
-            onSubmit={handleSubmit}
-            isLoading={createCompany.isPending}
+              <CompanyForm
+                onSubmit={handleSubmit}
+                isLoading={createCompany.isPending}
                 submitLabel="Salvar e continuar →"
                 currentStep={currentStep}
                 onStepChange={setCurrentStep}
                 totalSteps={formTotalSteps}
-          />
+              />
             </div>
           </div>
         </div>
@@ -207,4 +203,3 @@ export default function NewCompanyPage() {
     </DashboardLayout>
   );
 }
-

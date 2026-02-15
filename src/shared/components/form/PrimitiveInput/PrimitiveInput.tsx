@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useInputState } from "../utils";
-import type { BaseFormFieldProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { useInputState } from '../utils';
+import type { BaseFormFieldProps } from '../types';
 
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from 'react';
 
 type PrimitiveInputProps = BaseFormFieldProps & InputHTMLAttributes<HTMLInputElement>;
 
@@ -21,15 +21,15 @@ export const PrimitiveInput = forwardRef<HTMLInputElement, PrimitiveInputProps>(
       error,
       required,
       disabled,
-      size = "md",
+      size = 'md',
       variant,
       id,
       name,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       ...inputProps
     },
-    ref
+    ref,
   ) => {
     const { fieldId, hasError, finalVariant, inputClasses, describedBy } = useInputState({
       id,
@@ -69,8 +69,7 @@ export const PrimitiveInput = forwardRef<HTMLInputElement, PrimitiveInputProps>(
         />
       </BaseInput>
     );
-  }
+  },
 );
 
-PrimitiveInput.displayName = "PrimitiveInput";
-
+PrimitiveInput.displayName = 'PrimitiveInput';

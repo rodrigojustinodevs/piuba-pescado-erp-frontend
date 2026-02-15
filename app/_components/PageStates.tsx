@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { DemoDashboardLayout } from "./DemoDashboardLayout";
-import { SpinnerIcon } from "./AppIcons";
+import Link from 'next/link';
+import { DemoDashboardLayout } from './DemoDashboardLayout';
+import { SpinnerIcon } from './AppIcons';
 
-export function LoadingState({ label = "Carregando..." }: { label?: string }) {
+export function LoadingState({ label = 'Carregando...' }: { label?: string }) {
   return (
     <DemoDashboardLayout>
       <div className="text-center py-8">
@@ -20,7 +20,7 @@ export function LoadingState({ label = "Carregando..." }: { label?: string }) {
 export function NotFoundState({
   message,
   backHref,
-  backLabel = "Voltar para lista",
+  backLabel = 'Voltar para lista',
 }: {
   message: string;
   backHref?: string;
@@ -31,10 +31,7 @@ export function NotFoundState({
       <div className="text-center py-8">
         <p className="text-red-600">{message}</p>
         {backHref && (
-          <Link
-            href={backHref}
-            className="mt-4 inline-block text-[#0EA5A4] hover:text-[#0F766E]"
-          >
+          <Link href={backHref} className="mt-4 inline-block text-[#0EA5A4] hover:text-[#0F766E]">
             {backLabel}
           </Link>
         )}
@@ -42,4 +39,3 @@ export function NotFoundState({
     </DemoDashboardLayout>
   );
 }
-

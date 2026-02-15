@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface BarChartProps {
   data: Array<{
@@ -33,7 +33,7 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
               y={y}
               width={barWidth}
               height={barHeight}
-              fill={isEven ? "#93c5fd" : "#6366f1"}
+              fill={isEven ? '#93c5fd' : '#6366f1'}
               rx="4"
             />
           );
@@ -48,4 +48,3 @@ export function BarChart({ data, height = 200 }: BarChartProps) {
     </div>
   );
 }
-

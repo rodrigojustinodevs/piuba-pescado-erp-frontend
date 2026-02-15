@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { BaseInput } from "../BaseInput";
-import { useFieldId } from "../utils";
-import type { SwitchProps } from "../types";
+import { forwardRef } from 'react';
+import { BaseInput } from '../BaseInput';
+import { useFieldId } from '../utils';
+import type { SwitchProps } from '../types';
 
 /**
  * Componente de switch (toggle) reutilizável e acessível.
@@ -30,22 +30,22 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       id,
       name,
       checked,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       ...switchProps
     },
-    ref
+    ref,
   ) => {
     const fieldId = useFieldId(id);
     const hasError = !!error;
-    const finalVariant = variant || (hasError ? "error" : "default");
+    const finalVariant = variant || (hasError ? 'error' : 'default');
 
     const switchClasses = `relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-      checked ? "bg-blue-600" : "bg-gray-300"
-    } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${hasError ? "ring-2 ring-red-500" : ""} ${inputClassName}`;
+      checked ? 'bg-blue-600' : 'bg-gray-300'
+    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${hasError ? 'ring-2 ring-red-500' : ''} ${inputClassName}`;
 
     const thumbClasses = `inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-      checked ? "translate-x-6" : "translate-x-1"
+      checked ? 'translate-x-6' : 'translate-x-1'
     }`;
 
     return (
@@ -83,8 +83,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
         </label>
       </BaseInput>
     );
-  }
+  },
 );
 
-Switch.displayName = "Switch";
-
+Switch.displayName = 'Switch';

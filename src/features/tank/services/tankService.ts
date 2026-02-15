@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import type {
   Tank,
   CreateTankData,
@@ -6,16 +6,16 @@ import type {
   TankListResponse,
   TankType,
   ApiTankTypeListResponse,
-} from "../types";
+} from '../types';
 
 /**
  * Cliente axios configurado para a API de tanques
  * Usa a rota de proxy do Next.js que faz requisição para o backend
  */
 const tankApi = axios.create({
-  baseURL: "/api/company/tanks",
+  baseURL: '/api/company/tanks',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -31,7 +31,7 @@ export const tankService = {
     limit?: number;
     search?: string;
   }): Promise<TankListResponse> {
-    const response = await tankApi.get<TankListResponse>("/", { params });
+    const response = await tankApi.get<TankListResponse>('/', { params });
     return response.data;
   },
 
@@ -47,7 +47,7 @@ export const tankService = {
    * Cria um novo tanque
    */
   async create(data: CreateTankData): Promise<Tank> {
-    const response = await tankApi.post<Tank>("/", data);
+    const response = await tankApi.post<Tank>('/', data);
     return response.data;
   },
 
@@ -71,8 +71,7 @@ export const tankService = {
    * Lista todos os tipos de tanque disponíveis
    */
   async getTankTypes(): Promise<TankType[]> {
-    const response = await tankApi.get<ApiTankTypeListResponse>("/tank-types");
+    const response = await tankApi.get<ApiTankTypeListResponse>('/tank-types');
     return response.data.response || [];
   },
 };
-

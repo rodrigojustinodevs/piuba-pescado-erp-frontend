@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { forwardRef, useState } from "react";
-import { TextInput } from "../TextInput";
-import type { TextInputProps } from "../types";
+import { forwardRef, useState } from 'react';
+import { TextInput } from '../TextInput';
+import type { TextInputProps } from '../types';
 
 /**
  * Componente de input de senha com toggle de visibilidade.
@@ -17,23 +17,23 @@ import type { TextInputProps } from "../types";
  * />
  * ```
  */
-export const PasswordInput = forwardRef<HTMLInputElement, Omit<TextInputProps, "type">>(
-  ({ className = "", ...props }, ref) => {
+export const PasswordInput = forwardRef<HTMLInputElement, Omit<TextInputProps, 'type'>>(
+  ({ className = '', ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
       <div className={`relative ${className}`}>
         <TextInput
           ref={ref}
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           {...props}
-          inputClassName={`${props.inputClassName || ""} pr-10`}
+          inputClassName={`${props.inputClassName || ''} pr-10`}
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
-          aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+          aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
           tabIndex={-1}
         >
           {showPassword ? (
@@ -76,8 +76,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, Omit<TextInputProps, "
         </button>
       </div>
     );
-  }
+  },
 );
 
-PasswordInput.displayName = "PasswordInput";
-
+PasswordInput.displayName = 'PasswordInput';

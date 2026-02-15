@@ -1,5 +1,5 @@
 // Client Side Logic
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 
 // Cria um cliente de cache do React Query que será usado globalmente
 export const queryClient = new QueryClient({

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { PrimitiveInput } from "../PrimitiveInput";
-import type { NumberInputProps } from "../types";
+import { forwardRef } from 'react';
+import { PrimitiveInput } from '../PrimitiveInput';
+import type { NumberInputProps } from '../types';
 
 /**
  * Componente de input numérico com suporte a min, max e step.
@@ -30,8 +30,7 @@ import type { NumberInputProps } from "../types";
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
   ({ min, max, step, ...props }, ref) => {
     return <PrimitiveInput ref={ref} type="number" min={min} max={max} step={step} {...props} />;
-  }
+  },
 );
 
-NumberInput.displayName = "NumberInput";
-
+NumberInput.displayName = 'NumberInput';

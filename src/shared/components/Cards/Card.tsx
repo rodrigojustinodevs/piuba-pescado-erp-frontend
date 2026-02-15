@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 interface CardProps {
   title: string;
@@ -7,7 +7,7 @@ interface CardProps {
   headerAction?: ReactNode;
 }
 
-export function Card({ title, children, className = "", headerAction }: CardProps) {
+export function Card({ title, children, className = '', headerAction }: CardProps) {
   return (
     <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -18,4 +18,3 @@ export function Card({ title, children, className = "", headerAction }: CardProp
     </div>
   );
 }
-

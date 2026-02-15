@@ -1,8 +1,8 @@
 export enum UserRole {
-  MASTER = "master",
-  COMPANY_ADMIN = "company-admin",
-  MANAGER = "manager",
-  OPERATOR = "operator",
+  MASTER = 'master',
+  COMPANY_ADMIN = 'company-admin',
+  MANAGER = 'manager',
+  OPERATOR = 'operator',
 }
 
 export type UserRoleType = UserRole | string;
@@ -20,6 +20,3 @@ export type AuthState = {
   user: AuthenticatedUser | null;
   isLoading: boolean;
 };
-
-
-

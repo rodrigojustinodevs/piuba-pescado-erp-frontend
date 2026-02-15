@@ -1,9 +1,9 @@
-import type { ApiTank, ApiTankListResponse, Tank, TankListResponse } from "../types";
+import type { ApiTank, ApiTankListResponse, Tank, TankListResponse } from '../types';
 
 export function mapApiTank(apiTank: ApiTank): Tank {
   return {
     id: apiTank.id,
-    companyId: apiTank.company.id ?? "",
+    companyId: apiTank.company.id ?? '',
     tankTypeId: apiTank.tankType.id,
     name: apiTank.name,
     capacityLiters: apiTank.capacityLiters,
@@ -24,4 +24,3 @@ export function mapApiTankList(apiData: ApiTankListResponse): TankListResponse {
     limit: apiData.pagination?.per_page || 10,
   };
 }
-

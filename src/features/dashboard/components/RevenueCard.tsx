@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 export function RevenueCard() {
   return (
@@ -56,7 +56,3 @@ export function RevenueCard() {
     </div>
   );
 }
-
-
-
-

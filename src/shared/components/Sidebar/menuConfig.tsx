@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { MenuItem } from "./types";
-import { UserRole, type UserRoleType } from "@/shared/types/auth";
+import type { MenuItem } from './types';
+import { UserRole, type UserRoleType } from '@/shared/types/auth';
 import {
   BatchIcon,
   BuildingIcon,
@@ -11,12 +11,12 @@ import {
   ReportsIcon,
   SettingsIcon,
   TankIcon,
-} from "./menuIcons";
+} from './menuIcons';
 
 /**
  * Interface estendida para itens de menu com controle de acesso
  */
-export interface MenuItemWithAuth extends Omit<MenuItem, "children"> {
+export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   allowedRoles?: UserRoleType[];
   requiresCompany?: boolean;
   children?: MenuItemWithAuth[];
@@ -24,119 +24,116 @@ export interface MenuItemWithAuth extends Omit<MenuItem, "children"> {
 
 export const menuConfig: MenuItemWithAuth[] = [
   {
-    id: "dashboard",
-    label: "Dashboard",
+    id: 'dashboard',
+    label: 'Dashboard',
     icon: <DashboardIcon />,
-    href: "/dashboard",
+    href: '/dashboard',
     allowedRoles: [UserRole.MASTER, UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
   },
   {
-    id: "vendas",
-    label: "Vendas",
+    id: 'vendas',
+    label: 'Vendas',
     icon: <OrdersIcon />,
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
     children: [
       {
-        id: "pedidos",
-        label: "Pedidos",
-        href: "/dashboard/pedidos",
+        id: 'pedidos',
+        label: 'Pedidos',
+        href: '/dashboard/pedidos',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
       },
       {
-        id: "orcamentos",
-        label: "Orçamentos",
-        href: "/dashboard/orcamentos",
+        id: 'orcamentos',
+        label: 'Orçamentos',
+        href: '/dashboard/orcamentos',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
       {
-        id: "clientes",
-        label: "Clientes",
-        href: "/dashboard/clientes",
+        id: 'clientes',
+        label: 'Clientes',
+        href: '/dashboard/clientes',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
     ],
   },
   {
-    id: "estoque",
-    label: "Estoque",
+    id: 'estoque',
+    label: 'Estoque',
     icon: <ProductsIcon />,
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
     requiresCompany: true,
     children: [
       {
-        id: "produtos",
-        label: "Produtos",
-        href: "/dashboard/produtos",
+        id: 'produtos',
+        label: 'Produtos',
+        href: '/dashboard/produtos',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
       {
-        id: "categorias",
-        label: "Categorias",
-        href: "/dashboard/categorias",
+        id: 'categorias',
+        label: 'Categorias',
+        href: '/dashboard/categorias',
         allowedRoles: [UserRole.COMPANY_ADMIN],
       },
       {
-        id: "movimentacoes",
-        label: "Movimentações",
-        href: "/dashboard/movimentacoes",
+        id: 'movimentacoes',
+        label: 'Movimentações',
+        href: '/dashboard/movimentacoes',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
     ],
   },
   {
-    id: "relatorios",
-    label: "Relatórios",
+    id: 'relatorios',
+    label: 'Relatórios',
     icon: <ReportsIcon />,
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
     requiresCompany: true,
     children: [
       {
-        id: "vendas",
-        label: "Relatório de Vendas",
-        href: "/dashboard/relatorios/vendas",
+        id: 'vendas',
+        label: 'Relatório de Vendas',
+        href: '/dashboard/relatorios/vendas',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
       {
-        id: "estoque",
-        label: "Relatório de Estoque",
-        href: "/dashboard/relatorios/estoque",
+        id: 'estoque',
+        label: 'Relatório de Estoque',
+        href: '/dashboard/relatorios/estoque',
         allowedRoles: [UserRole.COMPANY_ADMIN],
       },
     ],
   },
   {
-    id: "empresas",
-    label: "Empresas",
+    id: 'empresas',
+    label: 'Empresas',
     icon: <BuildingIcon />,
-    href: "/admin/companies",
+    href: '/admin/companies',
     allowedRoles: [UserRole.MASTER],
   },
   {
-    id: "tanques",
-    label: "Tanques",
+    id: 'tanques',
+    label: 'Tanques',
     icon: <TankIcon />,
-    href: "/company/tanks",
+    href: '/company/tanks',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
   },
   {
-    id: "lotes",
-    label: "Lotes",
+    id: 'lotes',
+    label: 'Lotes',
     icon: <BatchIcon />,
-    href: "/company/batches",
+    href: '/company/batches',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
   },
   {
-    id: "configuracoes",
-    label: "Configurações",
+    id: 'configuracoes',
+    label: 'Configurações',
     icon: <SettingsIcon />,
-    href: "/dashboard/configuracoes",
+    href: '/dashboard/configuracoes',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
     requiresCompany: true,
   },
 ];
-
-
-

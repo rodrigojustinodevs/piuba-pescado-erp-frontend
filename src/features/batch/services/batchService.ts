@@ -1,18 +1,13 @@
-import axios from "axios";
-import type {
-  BatchListResponse,
-  CreateBatchData,
-  UpdateBatchData,
-  Batch,
-} from "../types";
+import axios from 'axios';
+import type { BatchListResponse, CreateBatchData, UpdateBatchData, Batch } from '../types';
 
 /**
  * Cliente axios para listagem (plural: batches)
  */
 const batchesApi = axios.create({
-  baseURL: "/api/company/batches",
+  baseURL: '/api/company/batches',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -29,7 +24,7 @@ export const batchService = {
     limit?: number;
     search?: string;
   }): Promise<BatchListResponse> {
-    const response = await batchesApi.get<BatchListResponse>("/", { params });
+    const response = await batchesApi.get<BatchListResponse>('/', { params });
     return response.data;
   },
 
@@ -47,7 +42,7 @@ export const batchService = {
    * Padronizado para /api/company/batches.
    */
   async create(data: CreateBatchData): Promise<Batch> {
-    const response = await batchesApi.post<Batch>("/", data);
+    const response = await batchesApi.post<Batch>('/', data);
     return response.data;
   },
 

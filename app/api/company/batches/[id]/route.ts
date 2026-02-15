@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import type { Batch, UpdateBatchData, ApiBatchResponse } from "@/features/batch";
-import { mapApiBatch } from "@/features/batch/utils/apiMapper";
-import { backendRequest, HttpResponses } from "../../../_utils/backendProxy";
+import { NextRequest, NextResponse } from 'next/server';
+import type { Batch, UpdateBatchData, ApiBatchResponse } from '@/features/batch';
+import { mapApiBatch } from '@/features/batch/utils/apiMapper';
+import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -13,9 +13,9 @@ function toBatchResponse(result: { data: ApiBatchResponse; status: number }) {
 }
 
 async function withBatchId(
-  params: RouteParams["params"],
+  params: RouteParams['params'],
   actionLabel: string,
-  handler: (id: string) => Promise<NextResponse>
+  handler: (id: string) => Promise<NextResponse>,
 ) {
   try {
     const { id } = await params;
@@ -31,11 +31,11 @@ async function withBatchId(
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
 export async function GET(_req: NextRequest, { params }: RouteParams) {
-  return withBatchId(params, "buscar", async (id) => {
+  return withBatchId(params, 'buscar', async (id) => {
     const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
-      method: "GET",
+      method: 'GET',
       withAuth: true,
-      errorFallback: "Lote não encontrado",
+      errorFallback: 'Lote não encontrado',
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
@@ -48,13 +48,13 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
 export async function PUT(req: NextRequest, { params }: RouteParams) {
-  return withBatchId(params, "atualizar", async (id) => {
-    const data: Omit<UpdateBatchData, "id"> = await req.json();
+  return withBatchId(params, 'atualizar', async (id) => {
+    const data: Omit<UpdateBatchData, 'id'> = await req.json();
     const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
-      method: "PUT",
+      method: 'PUT',
       withAuth: true,
       body: JSON.stringify(data),
-      errorFallback: "Erro ao atualizar lote",
+      errorFallback: 'Erro ao atualizar lote',
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
@@ -67,16 +67,15 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
-  return withBatchId(params, "deletar", async (id) => {
+  return withBatchId(params, 'deletar', async (id) => {
     const result = await backendRequest(backendBatchPath(id), {
-      method: "DELETE",
+      method: 'DELETE',
       withAuth: true,
       expectJson: false,
-      errorFallback: "Erro ao deletar lote",
+      errorFallback: 'Erro ao deletar lote',
     });
 
     if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
     return NextResponse.json({ success: true }, { status: result.status });
   });
 }
-

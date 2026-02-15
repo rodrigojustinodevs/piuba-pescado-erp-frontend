@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import type { Tank } from "../types";
-import { useAuthContext } from "@/shared/contexts/AuthContext";
-import { formatCapacityLiters, getStatusBadgeClass } from "../utils/format";
-import { getCompanyName, getTankTypeLabel } from "../utils/lookups";
-import { DataTable, type DataTableColumn } from "@/shared/components/Table";
+import type { Tank } from '../types';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
+import { formatCapacityLiters, getStatusBadgeClass } from '../utils/format';
+import { getCompanyName, getTankTypeLabel } from '../utils/lookups';
+import { DataTable, type DataTableColumn } from '@/shared/components/Table';
 
 interface TankTableProps {
   tanks: Tank[];
@@ -24,24 +24,20 @@ export function TankTable({
   const { isMaster } = useAuthContext();
 
   if (tanks.length === 0) {
-    return (
-      <div className="p-8 text-center text-slate-500">
-        Nenhum tanque encontrado.
-      </div>
-    );
+    return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
   }
 
   const columns: Array<DataTableColumn<Tank>> = [
     {
-      id: "name",
-      header: "Nome",
+      id: 'name',
+      header: 'Nome',
       cell: (tank) => <div className="text-sm font-medium text-[#0F172A]">{tank.name}</div>,
     },
     ...(isMaster()
       ? ([
           {
-            id: "company",
-            header: "Empresa",
+            id: 'company',
+            header: 'Empresa',
             cell: (tank) => (
               <div className="text-sm text-slate-600">
                 {getCompanyName(companyMap, tank.companyId)}
@@ -51,15 +47,15 @@ export function TankTable({
         ] as Array<DataTableColumn<Tank>>)
       : []),
     {
-      id: "capacity",
-      header: "Capacidade",
+      id: 'capacity',
+      header: 'Capacidade',
       cell: (tank) => (
         <div className="text-sm text-slate-600">{formatCapacityLiters(tank.capacityLiters)}</div>
       ),
     },
     {
-      id: "type",
-      header: "Tipo",
+      id: 'type',
+      header: 'Tipo',
       cell: (tank) => (
         <div className="text-sm text-slate-600">
           {getTankTypeLabel(tankTypeMap, tank.tankTypeId)}
@@ -67,15 +63,15 @@ export function TankTable({
       ),
     },
     {
-      id: "status",
-      header: "Status",
+      id: 'status',
+      header: 'Status',
       cell: (tank) => (
         <span
           className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(
-            tank.status
+            tank.status,
           )}`}
         >
-          {tank.status === "active" ? "Ativo" : "Inativo"}
+          {tank.status === 'active' ? 'Ativo' : 'Inativo'}
         </span>
       ),
     },
@@ -88,7 +84,7 @@ export function TankTable({
       getRowId={(tank) => tank.id}
       rowActions={(tank) => [
         {
-          label: "Ver detalhes",
+          label: 'Ver detalhes',
           href: `/company/tanks/${tank.id}`,
           icon: (
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +104,7 @@ export function TankTable({
           ),
         },
         {
-          label: "Editar",
+          label: 'Editar',
           href: `/company/tanks/${tank.id}/edit`,
           icon: (
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,12 +118,17 @@ export function TankTable({
           ),
         },
         {
-          label: "Excluir",
+          label: 'Excluir',
           onClick: () => onDelete(tank.id, tank.name),
-          variant: "danger",
+          variant: 'danger',
           disabled: isDeleting,
           icon: isDeleting ? (
-            <svg className="h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 animate-spin"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -150,5 +151,3 @@ export function TankTable({
     />
   );
 }
-
-

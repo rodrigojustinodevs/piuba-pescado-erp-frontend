@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { Batch } from "../types";
-import { DataTable, type DataTableColumn } from "@/shared/components/Table";
-import { BatchStatusBadge } from "./BatchStatusBadge";
-import { formatDate, formatQuantity, getCultivationLabel } from "../utils/format";
+import type { Batch } from '../types';
+import { DataTable, type DataTableColumn } from '@/shared/components/Table';
+import { BatchStatusBadge } from './BatchStatusBadge';
+import { formatDate, formatQuantity, getCultivationLabel } from '../utils/format';
 
 export interface BatchTableProps {
   batches: Batch[];
@@ -11,75 +11,53 @@ export interface BatchTableProps {
   isDeleting?: boolean;
 }
 
-export function BatchTable({
-  batches,
-  onDelete,
-  isDeleting = false,
-}: BatchTableProps) {
+export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTableProps) {
   const columns: Array<DataTableColumn<Batch>> = [
     {
-      id: "lote",
-      header: "Lote",
+      id: 'lote',
+      header: 'Lote',
       cell: (batch) => (
-        <div className="text-sm font-medium text-[#0F172A]">
-          {batch.id.slice(0, 8)}…
-        </div>
+        <div className="text-sm font-medium text-[#0F172A]">{batch.id.slice(0, 8)}…</div>
       ),
     },
     {
-      id: "species",
-      header: "Espécie",
+      id: 'species',
+      header: 'Espécie',
+      cell: (batch) => <div className="text-sm text-slate-600">{batch.species}</div>,
+    },
+    {
+      id: 'tank',
+      header: 'Tanque',
+      cell: (batch) => <div className="text-sm text-slate-600">{batch.tank?.name ?? '—'}</div>,
+    },
+    {
+      id: 'initialQuantity',
+      header: 'Quantidade Inicial',
       cell: (batch) => (
-        <div className="text-sm text-slate-600">{batch.species}</div>
+        <div className="text-sm text-slate-600">{formatQuantity(batch.initialQuantity)}</div>
       ),
     },
     {
-      id: "tank",
-      header: "Tanque",
+      id: 'cultivation',
+      header: 'Cultivo',
       cell: (batch) => (
-        <div className="text-sm text-slate-600">{batch.tank?.name ?? "—"}</div>
+        <div className="text-sm text-slate-600">{getCultivationLabel(batch.cultivation)}</div>
       ),
     },
     {
-      id: "initialQuantity",
-      header: "Quantidade Inicial",
-      cell: (batch) => (
-        <div className="text-sm text-slate-600">
-          {formatQuantity(batch.initialQuantity)}
-        </div>
-      ),
-    },
-    {
-      id: "cultivation",
-      header: "Cultivo",
-      cell: (batch) => (
-        <div className="text-sm text-slate-600">
-          {getCultivationLabel(batch.cultivation)}
-        </div>
-      ),
-    },
-    {
-      id: "status",
-      header: "Status",
+      id: 'status',
+      header: 'Status',
       cell: (batch) => <BatchStatusBadge status={batch.status} />,
     },
     {
-      id: "entryDate",
-      header: "Entrada",
-      cell: (batch) => (
-        <div className="text-sm text-slate-600">
-          {formatDate(batch.entryDate)}
-        </div>
-      ),
+      id: 'entryDate',
+      header: 'Entrada',
+      cell: (batch) => <div className="text-sm text-slate-600">{formatDate(batch.entryDate)}</div>,
     },
   ];
 
   if (batches.length === 0) {
-    return (
-      <div className="p-8 text-center text-slate-500">
-        Nenhum lote encontrado.
-      </div>
-    );
+    return <div className="p-8 text-center text-slate-500">Nenhum lote encontrado.</div>;
   }
 
   return (
@@ -89,15 +67,10 @@ export function BatchTable({
       getRowId={(batch) => batch.id}
       rowActions={(batch) => [
         {
-          label: "Ver detalhes",
+          label: 'Ver detalhes',
           href: `/company/batches/${batch.id}`,
           icon: (
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -114,15 +87,10 @@ export function BatchTable({
           ),
         },
         {
-          label: "Editar",
+          label: 'Editar',
           href: `/company/batches/${batch.id}/edit`,
           icon: (
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -133,9 +101,9 @@ export function BatchTable({
           ),
         },
         {
-          label: "Excluir",
+          label: 'Excluir',
           onClick: () => onDelete(batch.id, batch.species),
-          variant: "danger",
+          variant: 'danger',
           disabled: isDeleting,
           icon: isDeleting ? (
             <svg
@@ -152,12 +120,7 @@ export function BatchTable({
               />
             </svg>
           ) : (
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

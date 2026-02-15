@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { authService } from "../api";
-import { useLogin } from "./useLogin";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { authService } from '../api';
+import { useLogin } from './useLogin';
 
 /**
  * Hook principal de autenticação
@@ -16,7 +16,7 @@ export function useAuth() {
 
   // Query para verificar o estado de autenticação
   const { data: authState, isLoading } = useQuery({
-    queryKey: ["auth", "check"],
+    queryKey: ['auth', 'check'],
     queryFn: async () => {
       const result = await authService.checkAuth();
       return result;
@@ -29,11 +29,11 @@ export function useAuth() {
     try {
       await authService.logout();
     } catch (error) {
-      console.error("Erro ao fazer logout:", error);
+      console.error('Erro ao fazer logout:', error);
     } finally {
       // Limpa o cache do React Query
       queryClient.clear();
-      router.push("/login");
+      router.push('/login');
       router.refresh();
     }
   };
@@ -42,16 +42,15 @@ export function useAuth() {
     // Estado de autenticação
     isAuthenticated: authState?.isAuthenticated ?? false,
     isLoading: isLoading || loginHook.isLoading,
-    
+
     // Métodos de autenticação
     login: loginHook.login,
     loginAsync: loginHook.loginAsync,
     logout,
-    
+
     // Estado do login
     loginError: loginHook.error,
     isLoginError: loginHook.isError,
     resetLoginError: loginHook.reset,
   };
 }
-

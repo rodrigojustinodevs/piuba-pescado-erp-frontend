@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { MenuItem } from "./types";
+import type { MenuItem } from './types';
 import {
   BatchIcon,
   BuildingIcon,
@@ -10,102 +10,101 @@ import {
   ReportsIcon,
   SettingsIcon,
   TankIcon,
-} from "./menuIcons";
+} from './menuIcons';
 
 /**
  * Itens de menu padrão - pode ser customizado
  */
 export const defaultMenuItems: MenuItem[] = [
   {
-    id: "dashboard",
-    label: "Dashboard",
+    id: 'dashboard',
+    label: 'Dashboard',
     icon: <DashboardIcon />,
-    href: "/dashboard",
+    href: '/dashboard',
   },
   {
-    id: "vendas",
-    label: "Vendas",
+    id: 'vendas',
+    label: 'Vendas',
     icon: <OrdersIcon />,
     children: [
       {
-        id: "pedidos",
-        label: "Pedidos",
-        href: "/dashboard/pedidos",
+        id: 'pedidos',
+        label: 'Pedidos',
+        href: '/dashboard/pedidos',
       },
       {
-        id: "orcamentos",
-        label: "Orçamentos",
-        href: "/dashboard/orcamentos",
+        id: 'orcamentos',
+        label: 'Orçamentos',
+        href: '/dashboard/orcamentos',
       },
       {
-        id: "clientes",
-        label: "Clientes",
-        href: "/dashboard/clientes",
+        id: 'clientes',
+        label: 'Clientes',
+        href: '/dashboard/clientes',
       },
     ],
   },
   {
-    id: "estoque",
-    label: "Estoque",
+    id: 'estoque',
+    label: 'Estoque',
     icon: <ProductsIcon />,
     children: [
       {
-        id: "produtos",
-        label: "Produtos",
-        href: "/dashboard/produtos",
+        id: 'produtos',
+        label: 'Produtos',
+        href: '/dashboard/produtos',
       },
       {
-        id: "categorias",
-        label: "Categorias",
-        href: "/dashboard/categorias",
+        id: 'categorias',
+        label: 'Categorias',
+        href: '/dashboard/categorias',
       },
       {
-        id: "movimentacoes",
-        label: "Movimentações",
-        href: "/dashboard/movimentacoes",
+        id: 'movimentacoes',
+        label: 'Movimentações',
+        href: '/dashboard/movimentacoes',
       },
     ],
   },
   {
-    id: "relatorios",
-    label: "Relatórios",
+    id: 'relatorios',
+    label: 'Relatórios',
     icon: <ReportsIcon />,
     children: [
       {
-        id: "vendas",
-        label: "Relatório de Vendas",
-        href: "/dashboard/relatorios/vendas",
+        id: 'vendas',
+        label: 'Relatório de Vendas',
+        href: '/dashboard/relatorios/vendas',
       },
       {
-        id: "estoque",
-        label: "Relatório de Estoque",
-        href: "/dashboard/relatorios/estoque",
+        id: 'estoque',
+        label: 'Relatório de Estoque',
+        href: '/dashboard/relatorios/estoque',
       },
     ],
   },
   {
-    id: "empresas",
-    label: "Empresas",
+    id: 'empresas',
+    label: 'Empresas',
     icon: <BuildingIcon />,
-    href: "/admin/companies",
+    href: '/admin/companies',
   },
   {
-    id: "tanques",
-    label: "Tanques",
+    id: 'tanques',
+    label: 'Tanques',
     icon: <TankIcon />,
-    href: "/company/tanks",
+    href: '/company/tanks',
   },
   {
-    id: "lotes",
-    label: "Lotes",
+    id: 'lotes',
+    label: 'Lotes',
     icon: <BatchIcon />,
-    href: "/company/batches",
+    href: '/company/batches',
   },
   {
-    id: "configuracoes",
-    label: "Configurações",
+    id: 'configuracoes',
+    label: 'Configurações',
     icon: <SettingsIcon />,
-    href: "/dashboard/configuracoes",
+    href: '/dashboard/configuracoes',
   },
 ];
-

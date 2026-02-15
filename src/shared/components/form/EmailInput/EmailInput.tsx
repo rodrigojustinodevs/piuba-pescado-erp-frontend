@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { forwardRef } from "react";
-import { TextInput } from "../TextInput";
-import type { TextInputProps } from "../types";
+import { forwardRef } from 'react';
+import { TextInput } from '../TextInput';
+import type { TextInputProps } from '../types';
 
 /**
  * Componente de input de email com validação HTML5 nativa.
@@ -17,11 +17,10 @@ import type { TextInputProps } from "../types";
  * />
  * ```
  */
-export const EmailInput = forwardRef<HTMLInputElement, Omit<TextInputProps, "type">>(
+export const EmailInput = forwardRef<HTMLInputElement, Omit<TextInputProps, 'type'>>(
   (props, ref) => {
     return <TextInput ref={ref} type="email" {...props} />;
-  }
+  },
 );
 
-EmailInput.displayName = "EmailInput";
-
+EmailInput.displayName = 'EmailInput';
