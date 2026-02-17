@@ -1,5 +1,0 @@
-/**
- * Mensagens de erro exibidas ao usuário, sempre em português.
- * O backend pode continuar retornando em inglês; o frontend mapeia por status/código
- * e exibe estas mensagens, centralizando a experiência do usuário.
- */
