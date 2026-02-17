@@ -1,0 +1,72 @@
+'use client';
+
+import type { Settlement } from '../types';
+import { formatDatePtBR } from '@/shared/utils/dateFormat';
+import { DataTable, EditIcon, EyeIcon, type DataTableColumn } from '@/shared/components/Table';
+
+const CELL_TEXT_CLASS = 'text-sm text-slate-600';
+
+interface SettlementTableProps {
+  settlements: Settlement[];
+  batchMap?: Record<string, string>;
+}
+
+export function SettlementTable({ settlements, batchMap = {} }: SettlementTableProps) {
+  const getBatchLabel = (batcheId: string) => batchMap[batcheId] ?? `${batcheId.slice(0, 8)}…`;
+
+  const columns: Array<DataTableColumn<Settlement>> = [
+    {
+      id: 'settlementDate',
+      header: 'Data do povoamento',
+      cell: (row) => (
+        <div className="text-sm font-medium text-[#0F172A]">
+          {formatDatePtBR(row.settlementDate)}
+        </div>
+      ),
+    },
+    {
+      id: 'batcheId',
+      header: 'Lote',
+      cell: (row) => <div className={CELL_TEXT_CLASS}>{getBatchLabel(row.batcheId)}</div>,
+    },
+    {
+      id: 'quantity',
+      header: 'Quantidade',
+      cell: (row) => <div className={CELL_TEXT_CLASS}>{row.quantity}</div>,
+    },
+    {
+      id: 'averageWeight',
+      header: 'Peso médio (kg)',
+      cell: (row) => <div className={CELL_TEXT_CLASS}>{row.averageWeight}</div>,
+    },
+    {
+      id: 'createdAt',
+      header: 'Criado em',
+      cell: (row) => <div className={CELL_TEXT_CLASS}>{formatDatePtBR(row.createdAt)}</div>,
+    },
+  ];
+
+  if (settlements.length === 0) {
+    return <div className="p-8 text-center text-slate-500">Nenhum povoamento encontrado.</div>;
+  }
+
+  return (
+    <DataTable
+      data={settlements}
+      columns={columns}
+      getRowId={(row) => row.id}
+      rowActions={(row) => [
+        {
+          label: 'Ver detalhes',
+          href: `/company/settlements/${row.id}`,
+          icon: <EyeIcon className="h-4 w-4" />,
+        },
+        {
+          label: 'Editar',
+          href: `/company/settlements/${row.id}/edit`,
+          icon: <EditIcon className="h-4 w-4" />,
+        },
+      ]}
+    />
+  );
+}

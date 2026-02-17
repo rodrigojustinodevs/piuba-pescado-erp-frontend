@@ -8,6 +8,7 @@ import {
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
+  SettlementIcon,
   SettingsIcon,
   TankIcon,
 } from './menuIcons';
@@ -100,6 +101,12 @@ export const defaultMenuItems: MenuItem[] = [
     label: 'Lotes',
     icon: <BatchIcon />,
     href: '/company/batches',
+  },
+  {
+    id: 'povoamentos',
+    label: 'Povoamentos',
+    icon: <SettlementIcon />,
+    href: '/company/settlements',
   },
   {
     id: 'configuracoes',
