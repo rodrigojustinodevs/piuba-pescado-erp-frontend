@@ -9,13 +9,11 @@ import {
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
+  SettlementIcon,
   SettingsIcon,
   TankIcon,
 } from './menuIcons';
 
-/**
- * Interface estendida para itens de menu com controle de acesso
- */
 export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   allowedRoles?: UserRoleType[];
   requiresCompany?: boolean;
@@ -125,6 +123,14 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Lotes',
     icon: <BatchIcon />,
     href: '/company/batches',
+    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+    requiresCompany: true,
+  },
+  {
+    id: 'povoamentos',
+    label: 'Povoamentos',
+    icon: <SettlementIcon />,
+    href: '/company/settlements',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
   },

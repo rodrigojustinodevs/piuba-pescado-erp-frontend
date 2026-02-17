@@ -4,31 +4,11 @@ import { forwardRef } from 'react';
 import { useFieldId, getLabelClasses, getHelperTextClasses } from '../utils';
 import type { BaseFormFieldProps } from '../types';
 
-/**
- * Props internas do BaseInput (não expostas diretamente)
- */
 interface BaseInputInternalProps extends BaseFormFieldProps {
-  /**
-   * Elemento renderizado (input, textarea, select)
-   */
   children: React.ReactNode;
-  /**
-   * Se o campo deve renderizar o label inline (para checkbox/radio)
-   */
   inlineLabel?: boolean;
 }
 
-/**
- * Componente base que encapsula a estrutura comum de campos de formulário:
- * - Label
- * - Input/Field
- * - Helper text / Error message
- * - Estados visuais (error, success, disabled)
- * - Acessibilidade
- *
- * Este componente não é exportado diretamente, mas serve como base para
- * todos os outros componentes de formulário.
- */
 export const BaseInput = forwardRef<HTMLDivElement, BaseInputInternalProps>(
   (
     {
@@ -49,7 +29,6 @@ export const BaseInput = forwardRef<HTMLDivElement, BaseInputInternalProps>(
     const helperId = `${fieldId}-helper`;
     const hasError = !!error;
 
-    // Determina qual mensagem exibir (erro tem prioridade sobre helper text)
     const displayMessage = error || helperText;
     const messageId = hasError ? errorId : helperId;
 
