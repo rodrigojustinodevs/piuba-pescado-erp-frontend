@@ -4,6 +4,8 @@ import { z } from 'zod';
  * Schema de validação para criação de lote
  */
 export const createBatchSchema = z.object({
+  name: z.string().min(1, 'Nome do lote é obrigatório'),
+  description: z.string().min(1, 'Descrição é obrigatória'),
   tankId: z.string().min(1, 'Tanque é obrigatório'),
   entryDate: z.string().min(1, 'Data de entrada é obrigatória'),
   initialQuantity: z.number().min(1, 'Quantidade inicial deve ser maior que zero'),

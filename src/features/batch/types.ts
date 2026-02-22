@@ -15,6 +15,8 @@ export interface BatchTank {
 
 export interface Batch {
   id: string;
+  name?: string;
+  description?: string | null;
   entryDate: string | null;
   initialQuantity: number;
   species: string;
@@ -34,6 +36,8 @@ export type ApiBatchResponse = ApiResponse<Batch>;
  * Dados para criação de um novo lote
  */
 export interface CreateBatchData {
+  name: string;
+  description: string;
   tankId: string;
   entryDate: string;
   initialQuantity: number;

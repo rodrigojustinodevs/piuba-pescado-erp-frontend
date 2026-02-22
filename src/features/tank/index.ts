@@ -29,6 +29,7 @@ export {
   useDeleteTank,
   useTankTypes,
   useTankLookups,
+  useTanksWithoutBatches,
 } from './hooks';
 
 // Components

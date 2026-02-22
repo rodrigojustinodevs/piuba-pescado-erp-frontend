@@ -107,7 +107,7 @@ export function SettlementForm({
                 placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
                 options={batches.map((batch) => ({
                   value: batch.id,
-                  label: `${batch.species} (${batch.entryDate?.split('T')[0] ?? '-'})`,
+                  label: `${batch.name || batch.species} (${batch.entryDate?.split('T')[0] ?? '-'})`,
                 }))}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}
