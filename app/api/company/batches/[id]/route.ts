@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { Batch, UpdateBatchData, ApiBatchResponse } from '@/features/batch';
+import { withAuthGuard } from '@/features/auth/guards/withAuthGuard';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { HttpError } from '@/shared/lib/http/httpError';
+import { serverHttpClient } from '@/shared/lib/http';
 import { mapApiBatch } from '@/features/batch/utils/apiMapper';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
 const backendBatchPath = (id: string) => `/api/company/batche/${id}`;
 
-function toBatchResponse(result: { data: ApiBatchResponse; status: number }) {
-  const batch: Batch = mapApiBatch(result.data);
-  return NextResponse.json(batch, { status: result.status });
+function toBatchResponse(data: ApiBatchResponse) {
+  const batch: Batch = mapApiBatch(data);
+  return NextResponse.json(batch, { status: 200 });
 }
 
 async function withBatchId(
@@ -21,8 +24,11 @@ async function withBatchId(
     const { id } = await params;
     return await handler(id);
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error(`Erro ao ${actionLabel} lote:`, error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }
 
@@ -30,52 +36,40 @@ async function withBatchId(
  * GET /api/company/batches/[id] - Busca um lote por ID (proxy para backend)
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
-export async function GET(_req: NextRequest, { params }: RouteParams) {
+export const GET = withAuthGuard(async (_auth, _req: NextRequest, { params }: RouteParams) => {
   return withBatchId(params, 'buscar', async (id) => {
-    const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
+    const data = await serverHttpClient.request<ApiBatchResponse>(backendBatchPath(id), {
       method: 'GET',
-      withAuth: true,
-      errorFallback: 'Lote não encontrado',
     });
-
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-    return toBatchResponse(result);
+    return toBatchResponse(data);
   });
-}
+});
 
 /**
  * PUT /api/company/batches/[id] - Atualiza um lote (proxy para backend)
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
-export async function PUT(req: NextRequest, { params }: RouteParams) {
+export const PUT = withAuthGuard(async (_auth, req: NextRequest, { params }: RouteParams) => {
   return withBatchId(params, 'atualizar', async (id) => {
     const data: Omit<UpdateBatchData, 'id'> = await req.json();
-    const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
+    const responseData = await serverHttpClient.request<ApiBatchResponse>(backendBatchPath(id), {
       method: 'PUT',
-      withAuth: true,
       body: JSON.stringify(data),
-      errorFallback: 'Erro ao atualizar lote',
     });
-
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-    return toBatchResponse(result);
+    return toBatchResponse(responseData);
   });
-}
+});
 
 /**
  * DELETE /api/company/batches/[id] - Remove um lote (proxy para backend)
  * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
  */
-export async function DELETE(_req: NextRequest, { params }: RouteParams) {
+export const DELETE = withAuthGuard(async (_auth, _req: NextRequest, { params }: RouteParams) => {
   return withBatchId(params, 'deletar', async (id) => {
-    const result = await backendRequest(backendBatchPath(id), {
+    await serverHttpClient.request(backendBatchPath(id), {
       method: 'DELETE',
-      withAuth: true,
       expectJson: false,
-      errorFallback: 'Erro ao deletar lote',
     });
-
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-    return NextResponse.json({ success: true }, { status: result.status });
+    return NextResponse.json({ success: true }, { status: 200 });
   });
-}
+});

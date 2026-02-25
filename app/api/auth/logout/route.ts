@@ -1,21 +1,20 @@
-import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { successResponse } from '@/shared/lib/api/responseEnvelope';
 
 /**
  * Endpoint para logout
  * Remove o cookie de autenticação
  */
 export async function POST() {
-  const res = NextResponse.json({ ok: true });
-
-  // Remove o cookie de autenticação
-  res.cookies.set({
+  const cookieStore = await cookies();
+  cookieStore.set({
     name: 'auth_token',
     value: '',
     httpOnly: true,
     path: '/',
     sameSite: 'lax',
-    maxAge: 0, // Expira imediatamente
+    maxAge: 0,
   });
 
-  return res;
+  return successResponse({ ok: true }, 200);
 }

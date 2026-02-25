@@ -4,8 +4,11 @@ import type {
   UpdateSettlementData,
   ApiSettlementResponse,
 } from '@/features/settlement';
+import { withAuthGuard } from '@/features/auth/guards/withAuthGuard';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { HttpError } from '@/shared/lib/http/httpError';
+import { serverHttpClient } from '@/shared/lib/http';
 import { mapApiSettlement } from '@/features/settlement/utils/apiMapper';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
 
 // Tipagem rigorosa para as rotas do App Router
 type RouteContext = { params: Promise<{ id: string }> };
@@ -17,9 +20,9 @@ const ENDPOINTS = {
 /**
  * Utilitário de transformação: API Backend -> Resposta Frontend
  */
-function createSettlementResponse(apiData: ApiSettlementResponse, status: number): NextResponse {
+function createSettlementResponse(apiData: ApiSettlementResponse): NextResponse {
   const mappedSettlement: Settlement = mapApiSettlement(apiData);
-  return NextResponse.json(mappedSettlement, { status });
+  return NextResponse.json(mappedSettlement, { status: 200 });
 }
 
 /**
@@ -35,30 +38,26 @@ async function settlementRouteRunner(
   try {
     return await handler(id);
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error(`[SETTLEMENT_ROUTE_ERROR] Erro ao ${action} (ID: ${id}):`, error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }
 
 // --- Route Handlers ---
 
-export async function GET(_req: NextRequest, context: RouteContext) {
+export const GET = withAuthGuard(async (_auth, _req: NextRequest, context: RouteContext) => {
   return settlementRouteRunner(context, 'buscar', async (id) => {
-    const result = await backendRequest<ApiSettlementResponse>(ENDPOINTS.details(id), {
+    const data = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
       method: 'GET',
-      withAuth: true,
-      errorFallback: 'Povoamento não encontrado',
     });
-
-    if (!result.ok) {
-      return HttpResponses.fromApiError(result.error, result.status);
-    }
-
-    return createSettlementResponse(result.data, result.status);
+    return createSettlementResponse(data);
   });
-}
+});
 
-export async function PUT(req: NextRequest, context: RouteContext) {
+export const PUT = withAuthGuard(async (_auth, req: NextRequest, context: RouteContext) => {
   return settlementRouteRunner(context, 'atualizar', async (id) => {
     const body = (await req.json().catch(() => null)) as UpdateSettlementData | null;
 
@@ -66,17 +65,10 @@ export async function PUT(req: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Payload inválido' }, { status: 400 });
     }
 
-    const result = await backendRequest<ApiSettlementResponse>(ENDPOINTS.details(id), {
+    const data = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
       method: 'PUT',
-      withAuth: true,
       body: JSON.stringify(body),
-      errorFallback: 'Erro ao atualizar povoamento',
     });
-
-    if (!result.ok) {
-      return HttpResponses.fromApiError(result.error, result.status);
-    }
-
-    return createSettlementResponse(result.data, result.status);
+    return createSettlementResponse(data);
   });
-}
+});

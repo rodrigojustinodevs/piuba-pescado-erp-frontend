@@ -1,31 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ApiTankListResponse, TankListResponse } from '@/features/tank';
 import { mapApiTankList } from '@/features/tank/utils/apiMapper';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
-import { extractPagePerPageParams } from '../../../_utils/pagination';
+import { withAuthGuard } from '@/features/auth/guards/withAuthGuard';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { HttpError } from '@/shared/lib/http/httpError';
+import { serverHttpClient } from '@/shared/lib/http';
+import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
 
 /**
  * GET /api/company/tanks/without-batches - Lista tanques sem lotes (proxy para backend)
  */
-export async function GET(req: NextRequest) {
+export const GET = withAuthGuard(async (_auth, req: NextRequest) => {
   try {
-    const queryParams = extractPagePerPageParams(req.nextUrl.searchParams, { per_page: '15' });
+    const queryString = buildPaginationQueryString(req.nextUrl.searchParams, {
+      limitParam: 'per_page',
+      defaultLimit: 15,
+    });
 
-    const result = await backendRequest<ApiTankListResponse>(
-      `/api/company/tanks/without-batches?${queryParams.toString()}`,
+    const data = await serverHttpClient.request<ApiTankListResponse>(
+      `/api/company/tanks/without-batches?${queryString}`,
       {
         method: 'GET',
-        withAuth: true,
-        errorFallback: 'Erro ao listar tanques disponíveis',
       },
     );
-
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
-
-    const response: TankListResponse = mapApiTankList(result.data);
-    return NextResponse.json(response, { status: result.status });
+    const response: TankListResponse = mapApiTankList(data);
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Erro ao listar tanques sem lotes:', error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
-}
+});

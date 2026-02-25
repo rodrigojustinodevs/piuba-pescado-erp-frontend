@@ -2,6 +2,20 @@ import axios from 'axios';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import type { LoginCredentials, LoginResponse } from './types';
 
+type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: string };
+
+function unwrapEnvelope<T>(payload: ApiEnvelope<T> | T): T {
+  if (
+    typeof payload === 'object' &&
+    payload !== null &&
+    'success' in payload &&
+    payload.success === true
+  ) {
+    return payload.data;
+  }
+  return payload as T;
+}
+
 /**
  * Cliente axios configurado para a API de autenticação
  */
@@ -45,8 +59,11 @@ export const authService = {
    * Realiza o login do usuário
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    const response = await authApi.post<LoginResponse>('/', credentials);
-    return response.data;
+    const response = await authApi.post<ApiEnvelope<LoginResponse> | LoginResponse>(
+      '/',
+      credentials,
+    );
+    return unwrapEnvelope(response.data);
   },
 
   /**
@@ -62,22 +79,31 @@ export const authService = {
    */
   async checkAuth(): Promise<{ isAuthenticated: boolean; user?: import('./types').User }> {
     try {
-      const response = await authApi.get<{
-        isAuthenticated: boolean;
-        user?: import('./types').User;
-      }>('/');
-      if (response.data.isAuthenticated && response.data.user) {
-        console.log('✅ Usuário autenticado - Tipo:', response.data.user.role);
+      const response = await authApi.get<
+        | ApiEnvelope<{
+            isAuthenticated: boolean;
+            user?: import('./types').User;
+          }>
+        | {
+            isAuthenticated: boolean;
+            user?: import('./types').User;
+          }
+      >('/');
+
+      const data = unwrapEnvelope(response.data);
+
+      if (data.isAuthenticated && data.user) {
+        console.log('✅ Usuário autenticado - Tipo:', data.user.role);
         console.log('📦 [Auth API] Dados completos do usuário recebidos:', {
-          id: response.data.user.id,
-          email: response.data.user.email,
-          name: response.data.user.name,
-          role: response.data.user.role,
-          companyId: response.data.user.companyId,
-          rawResponse: response.data,
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.name,
+          role: data.user.role,
+          companyId: data.user.companyId,
+          rawResponse: data,
         });
       }
-      return response.data;
+      return data;
     } catch (error) {
       console.error('❌ [Auth API] Erro ao verificar autenticação:', error);
       return { isAuthenticated: false };

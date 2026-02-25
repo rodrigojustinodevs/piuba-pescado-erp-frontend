@@ -5,22 +5,20 @@ import type {
   CreateBatchData,
 } from '@/features/batch';
 import { mapApiBatchList } from '@/features/batch/utils/apiMapper';
-import { createListGetHandler, createCreatePostHandler } from '../../_utils/proxyListRoute';
-import { buildPageLimitSearchQueryString } from '../../_utils/pagination';
+import { createListGetHandler, createUpsertHandler } from '@/shared/lib/api/routeFactories';
+import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
 
 const CONTEXT = 'Batches API Proxy';
 
 export const GET = createListGetHandler<ApiBatchListResponse, BatchListResponse>({
   backendPath: '/api/company/batches',
-  errorFallback: 'Erro ao listar lotes',
   mapResponse: mapApiBatchList,
   context: CONTEXT,
-  buildQueryString: buildPageLimitSearchQueryString,
+  buildQueryString: buildPaginationQueryString,
 });
 
-/** Backend usa /api/company/batche (singular) para criação. */
-export const POST = createCreatePostHandler<Batch, CreateBatchData>({
+export const POST = createUpsertHandler<Batch, CreateBatchData>({
   backendPath: '/api/company/batche',
-  errorFallback: 'Erro ao criar lote',
+  method: 'POST',
   context: CONTEXT,
 });
