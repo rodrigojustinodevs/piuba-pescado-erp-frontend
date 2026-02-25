@@ -9,11 +9,19 @@ import { formatBatchShortLabel } from '@/features/batch/utils/format';
 import { useTanks } from '@/features/tank';
 import { useAlertModal } from '@/shared/components/AlertModal';
 import { DashboardLayout } from '@/shared/components/Layout';
-import { Alert } from '@/shared/components/Alert';
 import { demoUser } from '@/shared/constants/demoUser';
-import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
-import { ListEmptyState, ListLoadingState } from '@/shared/components/states/ListStates';
-import { ChevronRightIcon, CircleIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
+import {
+  ListHeader,
+  ListSearchAndSortBar,
+  ListSummaryBar,
+  Pagination,
+} from '@/shared/components/list';
+import {
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
+import { CircleIcon } from '@/shared/components/icons/AppIcons';
 import { buildEntityMap } from '@/shared/utils/entityMap';
 
 const PER_PAGE = 25;
@@ -71,41 +79,33 @@ export default function TransfersPage() {
           ctaLabel="Nova Transferência"
         />
 
-        <section className="flex flex-wrap items-center gap-3">
-          <SearchField value={search} placeholder="Buscar transferência..." onChange={setSearch} />
-          <SortButton current={sortBy} onSort={setSortBy} />
-        </section>
+        <ListSearchAndSortBar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Buscar transferência..."
+          sortBy={sortBy}
+          onSort={setSortBy}
+        />
 
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-slate-600">
-            {total} {total === 1 ? 'transferência encontrada' : 'transferências encontradas'}
-          </p>
-          <button
-            type="button"
-            className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-          >
-            <FilterIcon className="h-4 w-4" />
-            Filtros avançados
-            <ChevronRightIcon className="h-4 w-4" />
-          </button>
-        </div>
+        <ListSummaryBar
+          total={total}
+          singularLabel="transferência encontrada"
+          pluralLabel="transferências encontradas"
+        />
 
         <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
           {isLoading && <ListLoadingState />}
 
           {error && (
-            <div className="p-6">
-              <Alert
-                type="error"
-                title="Erro ao carregar transferências"
-                message="Não foi possível carregar as transferências. Tente novamente mais tarde."
-              />
-            </div>
+            <ListErrorState
+              title="Erro ao carregar transferências"
+              message="Não foi possível carregar as transferências. Tente novamente mais tarde."
+            />
           )}
 
           {!isLoading && !error && (
             <>
-              {!transfers.length ? (
+              {transfers.length === 0 ? (
                 <ListEmptyState title={emptyTitle} subtitle={emptySubtitle} />
               ) : (
                 <TransferTable

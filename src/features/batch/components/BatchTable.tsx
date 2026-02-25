@@ -14,6 +14,14 @@ import { formatDate, formatQuantity, getCultivationLabel } from '../utils/format
 
 const CELL_TEXT_CLASS = 'text-sm text-slate-600';
 
+type BatchDescriptionCellProps = {
+  description: Batch['description'];
+};
+
+function BatchDescriptionCell({ description }: BatchDescriptionCellProps) {
+  return <div className={CELL_TEXT_CLASS}>{description ?? '—'}</div>;
+}
+
 export interface BatchTableProps {
   batches: Batch[];
   onDelete: (id: string, species: string) => void;
@@ -32,7 +40,7 @@ export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTable
     {
       id: 'description',
       header: 'Descrição',
-      cell: (batch) => <div className={CELL_TEXT_CLASS}>{batch.description ?? '—'}</div>,
+      cell: (batch) => <BatchDescriptionCell description={batch.description} />,
     },
     {
       id: 'species',

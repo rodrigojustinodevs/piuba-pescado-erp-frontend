@@ -21,13 +21,23 @@ interface TransferTableProps {
   isDeleting?: boolean;
 }
 
+type BatchCellProps = { label: string };
+function BatchCell({ label }: Readonly<BatchCellProps>) {
+  return <div className="text-sm font-medium text-[#0F172A]">{label}</div>;
+}
+
+type TextCellProps = { text: string };
+function TextCell({ text }: Readonly<TextCellProps>) {
+  return <div className={CELL_TEXT_CLASS}>{text}</div>;
+}
+
 export function TransferTable({
   transfers,
   batchMap = {},
   tankMap = {},
   onDelete,
   isDeleting = false,
-}: TransferTableProps) {
+}: Readonly<TransferTableProps>) {
   const getBatchLabel = (batcheId: string) => batchMap[batcheId] ?? `${batcheId.slice(0, 8)}…`;
   const getTankLabel = (tankId: string) => tankMap[tankId] ?? `${tankId.slice(0, 8)}…`;
 
@@ -35,36 +45,32 @@ export function TransferTable({
     {
       id: 'batcheId',
       header: 'Lote',
-      cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A]">{getBatchLabel(row.batcheId)}</div>
-      ),
+      cell: (row) => <BatchCell label={getBatchLabel(row.batcheId)} />,
     },
     {
       id: 'originTankId',
       header: 'Origem',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{getTankLabel(row.originTankId)}</div>,
+      cell: (row) => <TextCell text={getTankLabel(row.originTankId)} />,
     },
     {
       id: 'destinationTankId',
       header: 'Destino',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{getTankLabel(row.destinationTankId)}</div>,
+      cell: (row) => <TextCell text={getTankLabel(row.destinationTankId)} />,
     },
     {
       id: 'quantity',
       header: 'Quantidade',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{row.quantity}</div>,
+      cell: (row) => <TextCell text={String(row.quantity)} />,
     },
     {
       id: 'description',
       header: 'Descrição',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{row.description || '—'}</div>,
+      cell: (row) => <TextCell text={row.description || '—'} />,
     },
     {
       id: 'createdAt',
       header: 'Criado em',
-      cell: (row) => (
-        <div className={CELL_TEXT_CLASS}>{row.createdAt ? formatDatePtBR(row.createdAt) : '—'}</div>
-      ),
+      cell: (row) => <TextCell text={row.createdAt ? formatDatePtBR(row.createdAt) : '—'} />,
     },
   ];
 

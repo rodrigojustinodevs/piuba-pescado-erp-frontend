@@ -2,7 +2,6 @@ import type {
   ApiTank,
   ApiTankListResponse,
   CreateTankData,
-  Tank,
   TankListResponse,
 } from '@/features/tank';
 import { mapApiTank, mapApiTankList } from '@/features/tank/utils/apiMapper';
