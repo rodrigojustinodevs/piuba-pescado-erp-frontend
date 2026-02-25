@@ -9,8 +9,8 @@ export interface HttpClientConfig {
 }
 
 export class HttpClient {
-  private baseUrl: string;
-  private tokenProvider?: TokenProvider;
+  private readonly baseUrl: string;
+  private readonly tokenProvider?: TokenProvider;
 
   constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl;

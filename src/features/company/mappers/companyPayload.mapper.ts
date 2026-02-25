@@ -15,26 +15,31 @@ type CompanyPayload = {
   addressZipCode?: string;
 };
 
+function assignIfDefined<T extends object, K extends keyof T>(
+  target: T,
+  key: K,
+  value: T[K] | undefined,
+): void {
+  if (value !== undefined) {
+    target[key] = value;
+  }
+}
+
 export function mapCompanyPayload(data: Partial<CreateCompanyData>): CompanyPayload {
   const payload: CompanyPayload = {};
 
-  if (data.name !== undefined) payload.name = data.name;
-  if (data.cnpj !== undefined) payload.cnpj = data.cnpj;
-  if (data.email !== undefined) payload.email = data.email;
-  if (data.phone !== undefined) payload.phone = data.phone;
-  if (data.active !== undefined) payload.active = data.active;
-
-  if (data.address) {
-    const { street, number, complement, neighborhood, city, state, zipCode } = data.address;
-
-    if (street !== undefined) payload.addressStreet = street;
-    if (number !== undefined) payload.addressNumber = number;
-    if (complement !== undefined) payload.addressComplement = complement;
-    if (neighborhood !== undefined) payload.addressNeighborhood = neighborhood;
-    if (city !== undefined) payload.addressCity = city;
-    if (state !== undefined) payload.addressState = state;
-    if (zipCode !== undefined) payload.addressZipCode = zipCode;
-  }
+  assignIfDefined(payload, 'name', data.name);
+  assignIfDefined(payload, 'cnpj', data.cnpj);
+  assignIfDefined(payload, 'email', data.email);
+  assignIfDefined(payload, 'phone', data.phone);
+  assignIfDefined(payload, 'active', data.active);
+  assignIfDefined(payload, 'addressStreet', data.address?.street);
+  assignIfDefined(payload, 'addressNumber', data.address?.number);
+  assignIfDefined(payload, 'addressComplement', data.address?.complement);
+  assignIfDefined(payload, 'addressNeighborhood', data.address?.neighborhood);
+  assignIfDefined(payload, 'addressCity', data.address?.city);
+  assignIfDefined(payload, 'addressState', data.address?.state);
+  assignIfDefined(payload, 'addressZipCode', data.address?.zipCode);
 
   return payload;
 }
