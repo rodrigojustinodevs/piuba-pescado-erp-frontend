@@ -31,6 +31,39 @@ function TextCell({ text }: Readonly<TextCellProps>) {
   return <div className={CELL_TEXT_CLASS}>{text}</div>;
 }
 
+function createBatchCellRenderer(batchMap: Record<string, string>) {
+  return function renderBatchCell(row: Transfer) {
+    const label = batchMap[row.batcheId] ?? `${row.batcheId.slice(0, 8)}…`;
+    return <BatchCell label={label} />;
+  };
+}
+
+function createOriginTankCellRenderer(tankMap: Record<string, string>) {
+  return function renderOriginTankCell(row: Transfer) {
+    const label = tankMap[row.originTankId] ?? `${row.originTankId.slice(0, 8)}…`;
+    return <TextCell text={label} />;
+  };
+}
+
+function createDestinationTankCellRenderer(tankMap: Record<string, string>) {
+  return function renderDestinationTankCell(row: Transfer) {
+    const label = tankMap[row.destinationTankId] ?? `${row.destinationTankId.slice(0, 8)}…`;
+    return <TextCell text={label} />;
+  };
+}
+
+function renderQuantityCell(row: Transfer) {
+  return <TextCell text={String(row.quantity)} />;
+}
+
+function renderDescriptionCell(row: Transfer) {
+  return <TextCell text={row.description || '—'} />;
+}
+
+function renderCreatedAtCell(row: Transfer) {
+  return <TextCell text={row.createdAt ? formatDatePtBR(row.createdAt) : '—'} />;
+}
+
 export function TransferTable({
   transfers,
   batchMap = {},
@@ -38,39 +71,40 @@ export function TransferTable({
   onDelete,
   isDeleting = false,
 }: Readonly<TransferTableProps>) {
-  const getBatchLabel = (batcheId: string) => batchMap[batcheId] ?? `${batcheId.slice(0, 8)}…`;
-  const getTankLabel = (tankId: string) => tankMap[tankId] ?? `${tankId.slice(0, 8)}…`;
+  const renderBatchCell = createBatchCellRenderer(batchMap);
+  const renderOriginTankCell = createOriginTankCellRenderer(tankMap);
+  const renderDestinationTankCell = createDestinationTankCellRenderer(tankMap);
 
   const columns: Array<DataTableColumn<Transfer>> = [
     {
       id: 'batcheId',
       header: 'Lote',
-      cell: (row) => <BatchCell label={getBatchLabel(row.batcheId)} />,
+      cell: renderBatchCell,
     },
     {
       id: 'originTankId',
       header: 'Origem',
-      cell: (row) => <TextCell text={getTankLabel(row.originTankId)} />,
+      cell: renderOriginTankCell,
     },
     {
       id: 'destinationTankId',
       header: 'Destino',
-      cell: (row) => <TextCell text={getTankLabel(row.destinationTankId)} />,
+      cell: renderDestinationTankCell,
     },
     {
       id: 'quantity',
       header: 'Quantidade',
-      cell: (row) => <TextCell text={String(row.quantity)} />,
+      cell: renderQuantityCell,
     },
     {
       id: 'description',
       header: 'Descrição',
-      cell: (row) => <TextCell text={row.description || '—'} />,
+      cell: renderDescriptionCell,
     },
     {
       id: 'createdAt',
       header: 'Criado em',
-      cell: (row) => <TextCell text={row.createdAt ? formatDatePtBR(row.createdAt) : '—'} />,
+      cell: renderCreatedAtCell,
     },
   ];
 

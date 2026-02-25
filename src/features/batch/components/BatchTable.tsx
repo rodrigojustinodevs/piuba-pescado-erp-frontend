@@ -18,8 +18,12 @@ type BatchDescriptionCellProps = {
   description: Batch['description'];
 };
 
-function BatchDescriptionCell({ description }: BatchDescriptionCellProps) {
+function BatchDescriptionCell({ description }: Readonly<BatchDescriptionCellProps>) {
   return <div className={CELL_TEXT_CLASS}>{description ?? '—'}</div>;
+}
+
+function renderBatchDescriptionCell(batch: Batch) {
+  return <BatchDescriptionCell description={batch.description} />;
 }
 
 export interface BatchTableProps {
@@ -40,7 +44,7 @@ export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTable
     {
       id: 'description',
       header: 'Descrição',
-      cell: (batch) => <BatchDescriptionCell description={batch.description} />,
+      cell: renderBatchDescriptionCell,
     },
     {
       id: 'species',

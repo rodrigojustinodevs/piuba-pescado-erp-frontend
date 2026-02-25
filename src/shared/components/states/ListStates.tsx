@@ -26,7 +26,10 @@ export function ListEmptyState({
   );
 }
 
-export function ListErrorState({ title, message }: { title: string; message: string }) {
+export function ListErrorState({
+  title,
+  message,
+}: Readonly<{ title: string; message: string }>) {
   return (
     <div className="p-6">
       <Alert type="error" title={title} message={message} />

@@ -18,7 +18,7 @@ export function ListSearchAndSortBar({
   searchPlaceholder,
   sortBy,
   onSort,
-}: ListSearchAndSortBarProps) {
+}: Readonly<ListSearchAndSortBarProps>) {
   return (
     <section className="flex flex-wrap items-center gap-3">
       <SearchField value={search} placeholder={searchPlaceholder} onChange={onSearchChange} />
@@ -33,7 +33,11 @@ type ListSummaryBarProps = {
   pluralLabel: string;
 };
 
-export function ListSummaryBar({ total, singularLabel, pluralLabel }: ListSummaryBarProps) {
+export function ListSummaryBar({
+  total,
+  singularLabel,
+  pluralLabel,
+}: Readonly<ListSummaryBarProps>) {
   return (
     <div className="flex items-center justify-between">
       <p className="text-sm text-slate-600">
