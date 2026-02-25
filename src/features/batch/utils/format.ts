@@ -2,6 +2,18 @@
  * Utilitários de formatação para o módulo Batch
  */
 
+import type { Batch } from '../types';
+
+/**
+ * Retorna o label para uso em selects/options (nome ou espécie + data de entrada)
+ */
+export function formatBatchOptionLabel(
+  batch: Pick<Batch, 'name' | 'species' | 'entryDate'>,
+): string {
+  const datePart = batch.entryDate?.split('T')[0] ?? '-';
+  return `${batch.name || batch.species} (${datePart})`;
+}
+
 /**
  * Extrai apenas a parte da data (YYYY-MM-DD) de uma string ISO
  * Evita problemas de conversão de timezone

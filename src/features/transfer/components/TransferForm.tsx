@@ -11,6 +11,7 @@ import {
 } from '../schemas';
 import type { Transfer } from '../types';
 import { useBatches } from '@/features/batch';
+import { formatBatchOptionLabel } from '@/features/batch/utils/format';
 import { useTanksWithoutBatches } from '@/features/tank';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
@@ -51,6 +52,22 @@ export function TransferForm({
 
   const isEditMode = mode === 'update';
   const schema = isEditMode ? updateTransferSchema : createTransferSchema;
+  const emptyValues: CreateTransferFormData = {
+    batcheId: '',
+    originTankId: '',
+    destinationTankId: '',
+    quantity: 0,
+    description: '',
+  };
+
+  const buildValuesFromInitial = (data: Transfer): UpdateTransferFormData => ({
+    id: data.id,
+    batcheId: data.batcheId,
+    originTankId: data.originTankId,
+    destinationTankId: data.destinationTankId,
+    quantity: data.quantity,
+    description: data.description,
+  });
 
   const {
     register,
@@ -64,34 +81,12 @@ export function TransferForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: initialData
-      ? {
-          id: initialData.id,
-          batcheId: initialData.batcheId,
-          originTankId: initialData.originTankId,
-          destinationTankId: initialData.destinationTankId,
-          quantity: initialData.quantity,
-          description: initialData.description,
-        }
-      : {
-          batcheId: '',
-          originTankId: '',
-          destinationTankId: '',
-          quantity: 0,
-          description: '',
-        },
+    defaultValues: initialData ? buildValuesFromInitial(initialData) : emptyValues,
   });
 
   useEffect(() => {
     if (initialData) {
-      reset({
-        id: initialData.id,
-        batcheId: initialData.batcheId,
-        originTankId: initialData.originTankId,
-        destinationTankId: initialData.destinationTankId,
-        quantity: initialData.quantity,
-        description: initialData.description,
-      });
+      reset(buildValuesFromInitial(initialData));
     }
   }, [initialData, reset]);
 
@@ -144,7 +139,7 @@ export function TransferForm({
                 placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
                 options={batches.map((batch) => ({
                   value: batch.id,
-                  label: `${batch.name || batch.species} (${batch.entryDate?.split('T')[0] ?? '-'})`,
+                  label: formatBatchOptionLabel(batch),
                 }))}
                 value={field.value || ''}
                 onChange={(e) => {

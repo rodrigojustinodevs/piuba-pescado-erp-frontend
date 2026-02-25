@@ -11,14 +11,21 @@ import { DashboardLayout } from '@/shared/components/Layout';
 import { Alert } from '@/shared/components/Alert';
 import { demoUser } from '@/shared/constants/demoUser';
 import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
-import {
-  ChevronRightIcon,
-  CircleIcon,
-  FilterIcon,
-  SpinnerIcon,
-} from '@/shared/components/icons/AppIcons';
+import { ListEmptyState, ListLoadingState } from '@/shared/components/states/ListStates';
+import { ChevronRightIcon, CircleIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
 
 const PER_PAGE = 25;
+
+function buildEntityMap<T extends { id: string }>(
+  items: T[] | undefined,
+  getLabel: (item: T) => string,
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  items?.forEach((item) => {
+    map[item.id] = getLabel(item);
+  });
+  return map;
+}
 
 export default function TransfersPage() {
   const listState = useListPageState({ initialSortBy: 'createdAt' });
@@ -35,19 +42,14 @@ export default function TransfersPage() {
   const { showError: showAlertError } = useAlertModal();
 
   const batchMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    batchesData?.batches?.forEach((b) => {
-      map[b.id] = b.name || b.species || b.id.slice(0, 8);
-    });
-    return map;
+    return buildEntityMap(
+      batchesData?.batches,
+      (batch) => batch.name || batch.species || batch.id.slice(0, 8),
+    );
   }, [batchesData?.batches]);
 
   const tankMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    tanksData?.tanks?.forEach((t) => {
-      map[t.id] = t.name || t.id.slice(0, 8);
-    });
-    return map;
+    return buildEntityMap(tanksData?.tanks, (tank) => tank.name || tank.id.slice(0, 8));
   }, [tanksData?.tanks]);
 
   const transfers = data?.transfers ?? [];
@@ -63,27 +65,12 @@ export default function TransfersPage() {
     );
   };
 
-  const renderLoading = () => (
-    <div className="p-8 text-center">
-      <div className="flex items-center justify-center gap-2 text-slate-500">
-        <SpinnerIcon className="w-5 h-5 animate-spin" />
-        <span>Carregando...</span>
-      </div>
-    </div>
-  );
-
-  const renderEmpty = () => (
-    <div className="p-8 text-center text-slate-500">
-      <p className="text-base">
-        {search
-          ? 'Nenhuma transferência encontrada com os filtros aplicados.'
-          : 'Nenhuma transferência cadastrada.'}
-      </p>
-      <p className="mt-1 text-sm">
-        {search ? 'Tente alterar a busca.' : 'Clique em Nova Transferência para criar a primeira.'}
-      </p>
-    </div>
-  );
+  const emptyTitle = search
+    ? 'Nenhuma transferência encontrada com os filtros aplicados.'
+    : 'Nenhuma transferência cadastrada.';
+  const emptySubtitle = search
+    ? 'Tente alterar a busca.'
+    : 'Clique em Nova Transferência para criar a primeira.';
 
   return (
     <DashboardLayout user={demoUser}>
@@ -116,7 +103,7 @@ export default function TransfersPage() {
         </div>
 
         <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          {isLoading && renderLoading()}
+          {isLoading && <ListLoadingState />}
 
           {error && (
             <div className="p-6">
@@ -131,7 +118,7 @@ export default function TransfersPage() {
           {!isLoading && !error && (
             <>
               {!transfers.length ? (
-                renderEmpty()
+                <ListEmptyState title={emptyTitle} subtitle={emptySubtitle} />
               ) : (
                 <TransferTable
                   transfers={transfers}

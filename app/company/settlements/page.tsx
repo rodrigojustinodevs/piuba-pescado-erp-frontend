@@ -9,12 +9,8 @@ import { DashboardLayout } from '@/shared/components/Layout';
 import { Alert } from '@/shared/components/Alert';
 import { demoUser } from '@/shared/constants/demoUser';
 import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
-import {
-  CircleIcon,
-  ChevronRightIcon,
-  FilterIcon,
-  SpinnerIcon,
-} from '@/shared/components/icons/AppIcons';
+import { ListEmptyState, ListLoadingState } from '@/shared/components/states/ListStates';
+import { CircleIcon, ChevronRightIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
 
 const PER_PAGE = 25;
 
@@ -40,27 +36,12 @@ export default function SettlementsPage() {
   const total = data?.total ?? 0;
   const limit = data?.limit ?? PER_PAGE;
 
-  const renderLoading = () => (
-    <div className="p-8 text-center">
-      <div className="flex items-center justify-center gap-2 text-slate-500">
-        <SpinnerIcon className="w-5 h-5 animate-spin" />
-        <span>Carregando...</span>
-      </div>
-    </div>
-  );
-
-  const renderEmpty = () => (
-    <div className="p-8 text-center text-slate-500">
-      <p className="text-base">
-        {search
-          ? 'Nenhum povoamento encontrado com os filtros aplicados.'
-          : 'Nenhum povoamento cadastrado.'}
-      </p>
-      <p className="mt-1 text-sm">
-        {search ? 'Tente alterar a busca.' : 'Clique em Novo Povoamento para criar o primeiro.'}
-      </p>
-    </div>
-  );
+  const emptyTitle = search
+    ? 'Nenhum povoamento encontrado com os filtros aplicados.'
+    : 'Nenhum povoamento cadastrado.';
+  const emptySubtitle = search
+    ? 'Tente alterar a busca.'
+    : 'Clique em Novo Povoamento para criar o primeiro.';
 
   return (
     <DashboardLayout user={demoUser}>
@@ -93,7 +74,7 @@ export default function SettlementsPage() {
         </div>
 
         <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          {isLoading && renderLoading()}
+          {isLoading && <ListLoadingState />}
 
           {error && (
             <div className="p-6">
@@ -108,7 +89,7 @@ export default function SettlementsPage() {
           {!isLoading && !error && (
             <>
               {!settlements.length ? (
-                renderEmpty()
+                <ListEmptyState title={emptyTitle} subtitle={emptySubtitle} />
               ) : (
                 <SettlementTable settlements={settlements} batchMap={batchMap} />
               )}
