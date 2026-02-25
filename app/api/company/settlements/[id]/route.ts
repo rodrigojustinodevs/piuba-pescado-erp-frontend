@@ -4,7 +4,9 @@ import type {
   UpdateSettlementData,
   ApiSettlementResponse,
 } from '@/features/settlement';
+import { withAuthGuard } from '@/features/auth/guards/withAuthGuard';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { HttpError } from '@/shared/lib/http/httpError';
 import { serverHttpClient } from '@/shared/lib/http';
 import { mapApiSettlement } from '@/features/settlement/utils/apiMapper';
 
@@ -18,9 +20,9 @@ const ENDPOINTS = {
 /**
  * Utilitário de transformação: API Backend -> Resposta Frontend
  */
-function createSettlementResponse(apiData: ApiSettlementResponse, status: number): NextResponse {
+function createSettlementResponse(apiData: ApiSettlementResponse): NextResponse {
   const mappedSettlement: Settlement = mapApiSettlement(apiData);
-  return NextResponse.json(mappedSettlement, { status });
+  return NextResponse.json(mappedSettlement, { status: 200 });
 }
 
 /**
@@ -36,6 +38,9 @@ async function settlementRouteRunner(
   try {
     return await handler(id);
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error(`[SETTLEMENT_ROUTE_ERROR] Erro ao ${action} (ID: ${id}):`, error);
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
@@ -43,21 +48,16 @@ async function settlementRouteRunner(
 
 // --- Route Handlers ---
 
-export async function GET(_req: NextRequest, context: RouteContext) {
+export const GET = withAuthGuard(async (_auth, _req: NextRequest, context: RouteContext) => {
   return settlementRouteRunner(context, 'buscar', async (id) => {
-    const result = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
+    const data = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
       method: 'GET',
     });
-
-    if (!result.ok) {
-      return NextResponse.json({ error: result.error }, { status: result.status });
-    }
-
-    return createSettlementResponse(result.data, result.status);
+    return createSettlementResponse(data);
   });
-}
+});
 
-export async function PUT(req: NextRequest, context: RouteContext) {
+export const PUT = withAuthGuard(async (_auth, req: NextRequest, context: RouteContext) => {
   return settlementRouteRunner(context, 'atualizar', async (id) => {
     const body = (await req.json().catch(() => null)) as UpdateSettlementData | null;
 
@@ -65,15 +65,10 @@ export async function PUT(req: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Payload inválido' }, { status: 400 });
     }
 
-    const result = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
+    const data = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
       method: 'PUT',
       body: JSON.stringify(body),
     });
-
-    if (!result.ok) {
-      return NextResponse.json({ error: result.error }, { status: result.status });
-    }
-
-    return createSettlementResponse(result.data, result.status);
+    return createSettlementResponse(data);
   });
-}
+});

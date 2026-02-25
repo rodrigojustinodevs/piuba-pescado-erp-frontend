@@ -1,6 +1,7 @@
 import { serverHttpClient } from '@/shared/lib/http';
 import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
-import { failureResponse, successResponse } from './responseEnvelope';
+import { withAuthGuard } from '@/features/auth/guards/withAuthGuard';
+import { successResponse } from './responseEnvelope';
 import { withErrorHandling } from './routeMiddleware';
 
 export type ListGetConfig<TApi, TFront> = {
@@ -11,22 +12,20 @@ export type ListGetConfig<TApi, TFront> = {
 };
 
 export function createListGetHandler<TApi, TFront>(config: ListGetConfig<TApi, TFront>) {
-  return withErrorHandling(async function GET(req: Request) {
+  const handler = withErrorHandling(async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const queryString = config.buildQueryString
       ? config.buildQueryString(searchParams)
       : buildPaginationQueryString(searchParams);
     const endpoint = queryString ? `${config.backendPath}?${queryString}` : config.backendPath;
-    const result = await serverHttpClient.request<TApi>(endpoint, {
+    const data = await serverHttpClient.request<TApi>(endpoint, {
       method: 'GET',
     });
 
-    if (!result.ok) {
-      return failureResponse(result.error, result.status);
-    }
-
-    return successResponse(config.mapResponse(result.data), result.status);
+    return successResponse(config.mapResponse(data), 200);
   }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request) => handler(req));
 }
 
 type ParamsContext<TParams extends Record<string, string>> = {
@@ -44,18 +43,21 @@ export function createDetailGetHandler<
   TFront,
   TParams extends Record<string, string> = Record<string, string>,
 >(config: DetailGetConfig<TApi, TFront, TParams>) {
-  return withErrorHandling(async function GET(_req: Request, routeContext: ParamsContext<TParams>) {
+  const handler = withErrorHandling(async function GET(
+    _req: Request,
+    routeContext: ParamsContext<TParams>,
+  ) {
     const params = await routeContext.params;
-    const result = await serverHttpClient.request<TApi>(config.backendPathBuilder(params), {
+    const data = await serverHttpClient.request<TApi>(config.backendPathBuilder(params), {
       method: 'GET',
     });
 
-    if (!result.ok) {
-      return failureResponse(result.error, result.status);
-    }
-
-    return successResponse(config.mapResponse(result.data), result.status);
+    return successResponse(config.mapResponse(data), 200);
   }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request, routeContext: ParamsContext<TParams>) =>
+    handler(req, routeContext),
+  );
 }
 
 export type PutConfig<TApi, TBody, TParams extends Record<string, string>> = {
@@ -70,22 +72,25 @@ export function createPutHandler<
   TBody,
   TParams extends Record<string, string> = Record<string, string>,
 >(config: PutConfig<TApi, TBody, TParams>) {
-  return withErrorHandling(async function PUT(req: Request, routeContext: ParamsContext<TParams>) {
+  const handler = withErrorHandling(async function PUT(
+    req: Request,
+    routeContext: ParamsContext<TParams>,
+  ) {
     const params = await routeContext.params;
     const payload = (await req.json()) as TBody;
     const requestBody = config.mapBody ? config.mapBody(payload) : payload;
-    const result = await serverHttpClient.request<TApi>(config.backendPathBuilder(params), {
+    const data = await serverHttpClient.request<TApi>(config.backendPathBuilder(params), {
       method: 'PUT',
       body: JSON.stringify(requestBody),
     });
 
-    if (!result.ok) {
-      return failureResponse(result.error, result.status);
-    }
-
-    const responseData = config.mapResponse ? config.mapResponse(result.data) : result.data;
-    return successResponse(responseData, result.status);
+    const responseData = config.mapResponse ? config.mapResponse(data) : data;
+    return successResponse(responseData, 200);
   }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request, routeContext: ParamsContext<TParams>) =>
+    handler(req, routeContext),
+  );
 }
 
 export type DeleteConfig<TParams extends Record<string, string>> = {
@@ -96,22 +101,21 @@ export type DeleteConfig<TParams extends Record<string, string>> = {
 export function createDeleteHandler<
   TParams extends Record<string, string> = Record<string, string>,
 >(config: DeleteConfig<TParams>) {
-  return withErrorHandling(async function DELETE(
+  const handler = withErrorHandling(async function DELETE(
     _req: Request,
     routeContext: ParamsContext<TParams>,
   ) {
     const params = await routeContext.params;
-    const result = await serverHttpClient.request(config.backendPathBuilder(params), {
+    await serverHttpClient.request(config.backendPathBuilder(params), {
       method: 'DELETE',
       expectJson: false,
     });
-
-    if (!result.ok) {
-      return failureResponse(result.error, result.status);
-    }
-
-    return successResponse(null, result.status);
+    return successResponse(null, 200);
   }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request, routeContext: ParamsContext<TParams>) =>
+    handler(req, routeContext),
+  );
 }
 
 export type UpsertMethod = 'POST' | 'PUT';
@@ -125,19 +129,17 @@ export type UpsertConfig<TApi, TBody> = {
 };
 
 export function createUpsertHandler<TApi, TBody>(config: UpsertConfig<TApi, TBody>) {
-  return withErrorHandling(async function UPSERT(req: Request) {
+  const handler = withErrorHandling(async function UPSERT(req: Request) {
     const payload = (await req.json()) as TBody;
     const requestBody = config.mapBody ? config.mapBody(payload) : payload;
-    const result = await serverHttpClient.request<TApi>(config.backendPath, {
+    const data = await serverHttpClient.request<TApi>(config.backendPath, {
       method: config.method,
       body: JSON.stringify(requestBody),
     });
 
-    if (!result.ok) {
-      return failureResponse(result.error, result.status);
-    }
-
-    const responseData = config.mapResponse ? config.mapResponse(result.data) : result.data;
-    return successResponse(responseData, result.status);
+    const responseData = config.mapResponse ? config.mapResponse(data) : data;
+    return successResponse(responseData, 200);
   }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request) => handler(req));
 }

@@ -8,6 +8,7 @@ import { DashboardLayout } from '@/shared/components/Layout';
 import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 import { BuildingIcon, PencilIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
+import { Breadcrumb } from '@/shared/components/ui';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
 export default function CompanyDetailPage() {
@@ -49,8 +50,13 @@ export default function CompanyDetailPage() {
   return (
     <DashboardLayout user={demoUser}>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
-        {/* Breadcrumb */}
-        <p className="text-sm text-slate-600 mb-4">Dashboard / Empresas / {company.name}</p>
+        <Breadcrumb
+          items={[
+            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Empresas', href: '/admin/companies' },
+            { label: company.name },
+          ]}
+        />
 
         {/* Main White Card */}
         <div className="rounded-2xl border border-slate-200 shadow-sm">

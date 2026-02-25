@@ -1,12 +1,10 @@
 import { HttpClient } from './httpClient';
-import { ServerTokenProvider } from './serverTokenProvider';
-
-export const serverHttpClient = new HttpClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005',
-  tokenProvider: new ServerTokenProvider(),
-});
+import { browserHttpClient } from './browserHttpClient';
+import { serverHttpClient } from './serverHttpClient';
 
 export { HttpClient } from './httpClient';
+export { browserHttpClient } from './browserHttpClient';
+export { serverHttpClient } from './serverHttpClient';
 export { ServerTokenProvider } from './serverTokenProvider';
 export type { TokenProvider } from './httpAuth';
-export type { HttpResult, HttpRequestOptions, HttpFailure, HttpSuccess } from './httpTypes';
+export type { HttpRequestOptions } from './httpTypes';

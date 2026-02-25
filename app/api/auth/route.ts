@@ -3,6 +3,7 @@ import { normalizeAuthUser, type AuthApiDataLike } from '@/features/auth/mappers
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { failureResponse, successResponse } from '@/shared/lib/api/responseEnvelope';
 import { HttpClient, serverHttpClient } from '@/shared/lib/http';
+import { HttpError } from '@/shared/lib/http/httpError';
 import { decodeJWT } from '@/shared/utils/jwt';
 const publicHttpClient = new HttpClient({
   baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005',
@@ -25,16 +26,12 @@ export async function POST(req: Request) {
       return failureResponse(ErrorMessages.LOGIN_REQUIRED_FIELDS, 400);
     }
 
-    const result = await publicHttpClient.request<LoginApiResponse>('/api/login', {
+    const data = await publicHttpClient.request<LoginApiResponse>('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-
-    const token = result.ok ? result.data.response?.token : null;
-
-    if (!result.ok || !token) {
-      return failureResponse(ErrorMessages.LOGIN_CREDENTIALS, 401);
-    }
+    const token = data.response?.token;
+    if (!token) return failureResponse(ErrorMessages.LOGIN_CREDENTIALS, 401);
 
     const cookieStore = await cookies();
     cookieStore.set({
@@ -49,12 +46,15 @@ export async function POST(req: Request) {
     return successResponse(
       {
         ok: true,
-        message: result.data.message || 'Login successful',
+        message: data.message || 'Login successful',
         token,
       },
       200,
     );
-  } catch {
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 401) {
+      return failureResponse(ErrorMessages.LOGIN_CREDENTIALS, 401);
+    }
     return failureResponse(ErrorMessages.LOGIN_SERVER_ERROR, 500);
   }
 }
@@ -69,17 +69,16 @@ export async function GET() {
     }
 
     const decodedToken = decodeJWT(token);
-    const backendResult = await serverHttpClient.request<AuthApiDataLike>('/api/auth/me', {
-      method: 'GET',
-    });
-
-    if (backendResult.ok) {
-      const user = normalizeAuthUser(backendResult.data, decodedToken);
+    try {
+      const data = await serverHttpClient.request<AuthApiDataLike>('/api/auth/me', {
+        method: 'GET',
+      });
+      const user = normalizeAuthUser(data, decodedToken);
+      return successResponse({ isAuthenticated: true, user }, 200);
+    } catch {
+      const user = normalizeAuthUser({}, decodedToken);
       return successResponse({ isAuthenticated: true, user }, 200);
     }
-
-    const user = normalizeAuthUser({}, decodedToken);
-    return successResponse({ isAuthenticated: true, user }, 200);
   } catch {
     return successResponse({ isAuthenticated: false }, 200);
   }

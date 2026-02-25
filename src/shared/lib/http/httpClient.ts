@@ -1,5 +1,6 @@
 import { extractErrorMessage } from './httpError';
-import { HttpRequestOptions, HttpResult } from './httpTypes';
+import { HttpError } from './httpError';
+import { HttpRequestOptions } from './httpTypes';
 import { TokenProvider } from './httpAuth';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 
@@ -7,6 +8,12 @@ export interface HttpClientConfig {
   baseUrl: string;
   tokenProvider?: TokenProvider;
 }
+
+type ApiEnvelope<T> = {
+  success: boolean;
+  data?: T;
+  error?: string;
+};
 
 export class HttpClient {
   private readonly baseUrl: string;
@@ -17,7 +24,7 @@ export class HttpClient {
     this.tokenProvider = config.tokenProvider;
   }
 
-  async request<T>(endpoint: string, options: HttpRequestOptions = {}): Promise<HttpResult<T>> {
+  async request<T>(endpoint: string, options: HttpRequestOptions = {}): Promise<T> {
     const { expectJson = true, headers: customHeaders, ...fetchInit } = options;
 
     const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
@@ -31,46 +38,62 @@ export class HttpClient {
     if (this.tokenProvider) {
       const token = await this.tokenProvider.getToken();
       if (!token) {
-        return {
-          ok: false,
-          error: ErrorMessages.UNAUTHORIZED,
-          status: 401,
-        };
+        throw new HttpError(ErrorMessages.UNAUTHORIZED, 401);
       }
 
       headers.set('Authorization', `Bearer ${token}`);
     }
 
-    try {
-      const response = await fetch(url, {
-        ...fetchInit,
-        headers,
-      });
+    const response = await fetch(url, {
+      ...fetchInit,
+      headers,
+    });
 
-      if (!response.ok) {
-        const message = await extractErrorMessage(response);
-        return { ok: false, error: message, status: response.status };
-      }
-
-      if (!expectJson || response.status === 204) {
-        return { ok: true, data: null as T, status: response.status };
-      }
-
-      const data = (await response.json()) as T;
-
-      return {
-        ok: true,
-        data,
-        status: response.status,
-      };
-    } catch (error) {
-      console.error('[HTTP_CLIENT_ERROR]', error);
-
-      return {
-        ok: false,
-        error: ErrorMessages.SERVER_FAILURE,
-        status: 500,
-      };
+    if (!response.ok) {
+      const message = await extractErrorMessage(response);
+      throw new HttpError(message, response.status);
     }
+
+    if (!expectJson || response.status === 204) {
+      return null as T;
+    }
+
+    const payload = (await response.json()) as ApiEnvelope<T> | T;
+
+    if (typeof payload === 'object' && payload !== null && 'success' in payload) {
+      const envelope = payload as ApiEnvelope<T>;
+
+      if (envelope.success === false) {
+        throw new HttpError(envelope.error || ErrorMessages.UNEXPECTED, response.status);
+      }
+
+      return envelope.data as T;
+    }
+
+    return payload as T;
+  }
+
+  get<T>(endpoint: string, options: HttpRequestOptions = {}) {
+    return this.request<T>(endpoint, { ...options, method: 'GET' });
+  }
+
+  post<T>(endpoint: string, body?: unknown, options: HttpRequestOptions = {}) {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'POST',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  put<T>(endpoint: string, body?: unknown, options: HttpRequestOptions = {}) {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PUT',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  delete<T>(endpoint: string, options: HttpRequestOptions = {}) {
+    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 }
