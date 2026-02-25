@@ -1,5 +1,4 @@
-import { extractErrorMessage } from './httpError';
-import { HttpError } from './httpError';
+import { HttpError, extractErrorMessage } from './httpError';
 import { HttpRequestOptions } from './httpTypes';
 import { TokenProvider } from './httpAuth';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
@@ -61,16 +60,14 @@ export class HttpClient {
     const payload = (await response.json()) as ApiEnvelope<T> | T;
 
     if (typeof payload === 'object' && payload !== null && 'success' in payload) {
-      const envelope = payload as ApiEnvelope<T>;
-
-      if (envelope.success === false) {
-        throw new HttpError(envelope.error || ErrorMessages.UNEXPECTED, response.status);
+      if (payload.success === false) {
+        throw new HttpError(payload.error || ErrorMessages.UNEXPECTED, response.status);
       }
 
-      return envelope.data as T;
+      return payload.data as T;
     }
 
-    return payload as T;
+    return payload;
   }
 
   get<T>(endpoint: string, options: HttpRequestOptions = {}) {
@@ -81,7 +78,7 @@ export class HttpClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : JSON.stringify(body),
     });
   }
 
@@ -89,7 +86,7 @@ export class HttpClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : JSON.stringify(body),
     });
   }
 

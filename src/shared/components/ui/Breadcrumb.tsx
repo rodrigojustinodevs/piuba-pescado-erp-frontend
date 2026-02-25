@@ -10,7 +10,7 @@ type BreadcrumbProps = {
   className?: string;
 };
 
-export function Breadcrumb({ items, className }: BreadcrumbProps) {
+export function Breadcrumb({ items, className }: Readonly<BreadcrumbProps>) {
   return (
     <nav
       aria-label="Breadcrumb"

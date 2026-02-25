@@ -2,7 +2,7 @@
 
 import { withPageAuth } from '@/features/auth/guards/withPageAuth';
 
-function AdminLayout({ children }: { children: React.ReactNode }) {
+function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <>{children}</>;
 }
 

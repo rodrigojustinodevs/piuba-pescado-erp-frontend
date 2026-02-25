@@ -84,7 +84,7 @@ export function CompaniesListView({
   filteredCompanies,
   stats,
   handleDelete,
-}: CompaniesListViewProps) {
+}: Readonly<CompaniesListViewProps>) {
   const getRowActions = useCallback(
     (company: Company) => [
       {
@@ -107,27 +107,29 @@ export function CompaniesListView({
     [handleDelete],
   );
 
-  const renderLoading = () => (
-    <div className="p-8 text-center flex justify-center items-center gap-2 text-slate-500">
-      <SpinnerIcon className="w-5 h-5 animate-spin" />
-      <span>Carregando...</span>
-    </div>
-  );
+  const renderTableContent = () => {
+    if (isLoading) {
+      return (
+        <div className="p-8 text-center flex justify-center items-center gap-2 text-slate-500">
+          <SpinnerIcon className="w-5 h-5 animate-spin" />
+          <span>Carregando...</span>
+        </div>
+      );
+    }
 
-  const renderError = () => (
-    <div className="p-8 text-center text-red-600">Erro ao carregar empresas. Tente novamente.</div>
-  );
+    if (error) {
+      return (
+        <div className="p-8 text-center text-red-600">
+          Erro ao carregar empresas. Tente novamente.
+        </div>
+      );
+    }
 
-  const renderEmpty = () => (
-    <div className="p-8 text-center text-slate-500">Nenhuma empresa encontrada.</div>
-  );
+    if (!filteredCompanies.length) {
+      return <div className="p-8 text-center text-slate-500">Nenhuma empresa encontrada.</div>;
+    }
 
-  let tableContent;
-  if (isLoading) tableContent = renderLoading();
-  else if (error) tableContent = renderError();
-  else if (!filteredCompanies.length) tableContent = renderEmpty();
-  else {
-    tableContent = (
+    return (
       <>
         <DataTable
           data={filteredCompanies}
@@ -146,7 +148,7 @@ export function CompaniesListView({
         )}
       </>
     );
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -183,7 +185,7 @@ export function CompaniesListView({
       </section>
 
       <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {tableContent}
+        {renderTableContent()}
       </main>
     </div>
   );
