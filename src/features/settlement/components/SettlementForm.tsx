@@ -11,6 +11,7 @@ import {
 } from '../schemas';
 import type { Settlement } from '../types';
 import { useBatches } from '@/features/batch';
+import { formatBatchOptionLabel } from '@/features/batch/utils/format';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
 
@@ -47,6 +48,21 @@ export function SettlementForm({
   const isEditMode = mode === 'update';
   const schema = isEditMode ? updateSettlementSchema : createSettlementSchema;
 
+  const emptyValues: CreateSettlementFormData = {
+    batcheId: '',
+    settlementDate: '',
+    quantity: 0,
+    averageWeight: 0,
+  };
+
+  const buildValuesFromInitial = (data: Settlement): UpdateSettlementFormData => ({
+    id: data.id,
+    batcheId: data.batcheId,
+    settlementDate: data.settlementDate?.split('T')[0] ?? '',
+    quantity: data.quantity,
+    averageWeight: data.averageWeight,
+  });
+
   const {
     register,
     handleSubmit,
@@ -57,31 +73,12 @@ export function SettlementForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: initialData
-      ? {
-          id: initialData.id,
-          batcheId: initialData.batcheId,
-          settlementDate: initialData.settlementDate?.split('T')[0] ?? '',
-          quantity: initialData.quantity,
-          averageWeight: initialData.averageWeight,
-        }
-      : {
-          batcheId: '',
-          settlementDate: '',
-          quantity: 0,
-          averageWeight: 0,
-        },
+    defaultValues: initialData ? buildValuesFromInitial(initialData) : emptyValues,
   });
 
   useEffect(() => {
     if (initialData) {
-      reset({
-        id: initialData.id,
-        batcheId: initialData.batcheId,
-        settlementDate: initialData.settlementDate?.split('T')[0] ?? '',
-        quantity: initialData.quantity,
-        averageWeight: initialData.averageWeight,
-      });
+      reset(buildValuesFromInitial(initialData));
     }
   }, [initialData, reset]);
 
@@ -107,7 +104,7 @@ export function SettlementForm({
                 placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
                 options={batches.map((batch) => ({
                   value: batch.id,
-                  label: `${batch.species} (${batch.entryDate?.split('T')[0] ?? '-'})`,
+                  label: formatBatchOptionLabel(batch),
                 }))}
                 value={field.value || ''}
                 onChange={(e) => field.onChange(e.target.value)}

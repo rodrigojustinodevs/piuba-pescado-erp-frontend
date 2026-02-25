@@ -9,6 +9,7 @@ import {
   ProductsIcon,
   ReportsIcon,
   SettlementIcon,
+  TransferIcon,
   SettingsIcon,
   TankIcon,
 } from './menuIcons';
@@ -107,6 +108,12 @@ export const defaultMenuItems: MenuItem[] = [
     label: 'Povoamentos',
     icon: <SettlementIcon />,
     href: '/company/settlements',
+  },
+  {
+    id: 'transferencias',
+    label: 'Transferências',
+    icon: <TransferIcon />,
+    href: '/company/transfers',
   },
   {
     id: 'configuracoes',

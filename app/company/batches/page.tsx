@@ -46,7 +46,9 @@ export default function BatchListPage() {
     data?.batches.filter((batch) => {
       const matchesSearch =
         !searchTerm ||
+        batch.name?.toLowerCase().includes(searchTerm) ||
         batch.species.toLowerCase().includes(searchTerm) ||
+        batch.description?.toLowerCase().includes(searchTerm) ||
         batch.tank?.name?.toLowerCase().includes(searchTerm);
       const matchesStatus = filter === 'all' || batch.status === filter;
       return matchesSearch && matchesStatus;
@@ -74,7 +76,7 @@ export default function BatchListPage() {
         <section className="flex flex-wrap items-center gap-3">
           <SearchField
             value={search}
-            placeholder="Buscar por espécie, tanque..."
+            placeholder="Buscar por nome, espécie, tanque..."
             onChange={setSearch}
           />
           <StatusFilterTabs<FilterType>

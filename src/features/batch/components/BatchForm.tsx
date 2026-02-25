@@ -59,6 +59,8 @@ export function BatchForm({
     defaultValues: initialData
       ? {
           id: initialData.id,
+          name: initialData.name ?? '',
+          description: initialData.description ?? '',
           tankId: initialData.tank?.id ?? '',
           entryDate: initialData.entryDate ? initialData.entryDate.split('T')[0] : '',
           initialQuantity: initialData.initialQuantity,
@@ -66,6 +68,8 @@ export function BatchForm({
           cultivation: initialData.cultivation,
         }
       : {
+          name: '',
+          description: '',
           tankId: '',
           entryDate: '',
           initialQuantity: 0,
@@ -78,6 +82,8 @@ export function BatchForm({
     if (initialData) {
       reset({
         id: initialData.id,
+        name: initialData.name ?? '',
+        description: initialData.description ?? '',
         tankId: initialData.tank?.id ?? '',
         entryDate: initialData.entryDate ? initialData.entryDate.split('T')[0] : '',
         initialQuantity: initialData.initialQuantity,
@@ -99,6 +105,24 @@ export function BatchForm({
         <h3 className="text-lg font-semibold text-gray-900">Informações do Lote</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Nome do Lote"
+            requiredIndicator
+            placeholder="Ex: Lote 01 - Tilápia"
+            disabled={isLoading}
+            {...register('name')}
+            error={errors.name?.message}
+          />
+
+          <Input
+            label="Descrição"
+            requiredIndicator
+            placeholder="Ex: Lote de alevinos recebidos em out/2024"
+            disabled={isLoading}
+            {...register('description')}
+            error={errors.description?.message}
+          />
+
           <Controller
             name="tankId"
             control={control}

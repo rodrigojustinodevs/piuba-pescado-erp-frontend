@@ -10,6 +10,7 @@ import {
   ProductsIcon,
   ReportsIcon,
   SettlementIcon,
+  TransferIcon,
   SettingsIcon,
   TankIcon,
 } from './menuIcons';
@@ -131,6 +132,14 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Povoamentos',
     icon: <SettlementIcon />,
     href: '/company/settlements',
+    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+    requiresCompany: true,
+  },
+  {
+    id: 'transferencias',
+    label: 'Transferências',
+    icon: <TransferIcon />,
+    href: '/company/transfers',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
   },

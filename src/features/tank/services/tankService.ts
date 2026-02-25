@@ -36,6 +36,18 @@ export const tankService = {
   },
 
   /**
+   * Lista tanques sem lotes vinculados (disponíveis para transferências).
+   * Endpoint: /api/company/tanks/without-batches (proxy Next).
+   */
+  async listWithoutBatches(params?: {
+    page?: number;
+    per_page?: number;
+  }): Promise<TankListResponse> {
+    const response = await tankApi.get<TankListResponse>('/without-batches', { params });
+    return response.data;
+  },
+
+  /**
    * Busca um tanque por ID
    */
   async getById(id: string): Promise<Tank> {
