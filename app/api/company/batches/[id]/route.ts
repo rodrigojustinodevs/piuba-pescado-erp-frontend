@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { Batch, UpdateBatchData, ApiBatchResponse } from '@/features/batch';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { serverHttpClient } from '@/shared/lib/http';
 import { mapApiBatch } from '@/features/batch/utils/apiMapper';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -22,7 +23,7 @@ async function withBatchId(
     return await handler(id);
   } catch (error) {
     console.error(`Erro ao ${actionLabel} lote:`, error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }
 
@@ -32,13 +33,11 @@ async function withBatchId(
  */
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   return withBatchId(params, 'buscar', async (id) => {
-    const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
+    const result = await serverHttpClient.request<ApiBatchResponse>(backendBatchPath(id), {
       method: 'GET',
-      withAuth: true,
-      errorFallback: 'Lote não encontrado',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return toBatchResponse(result);
   });
 }
@@ -50,14 +49,12 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 export async function PUT(req: NextRequest, { params }: RouteParams) {
   return withBatchId(params, 'atualizar', async (id) => {
     const data: Omit<UpdateBatchData, 'id'> = await req.json();
-    const result = await backendRequest<ApiBatchResponse>(backendBatchPath(id), {
+    const result = await serverHttpClient.request<ApiBatchResponse>(backendBatchPath(id), {
       method: 'PUT',
-      withAuth: true,
       body: JSON.stringify(data),
-      errorFallback: 'Erro ao atualizar lote',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return toBatchResponse(result);
   });
 }
@@ -68,14 +65,12 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
  */
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
   return withBatchId(params, 'deletar', async (id) => {
-    const result = await backendRequest(backendBatchPath(id), {
+    const result = await serverHttpClient.request(backendBatchPath(id), {
       method: 'DELETE',
-      withAuth: true,
       expectJson: false,
-      errorFallback: 'Erro ao deletar lote',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return NextResponse.json({ success: true }, { status: result.status });
   });
 }

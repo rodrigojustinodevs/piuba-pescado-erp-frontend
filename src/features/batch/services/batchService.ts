@@ -1,6 +1,29 @@
 import axios from 'axios';
 import type { BatchListResponse, CreateBatchData, UpdateBatchData, Batch } from '../types';
 
+type ApiEnvelope<T> =
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+function unwrapEnvelope<T>(payload: ApiEnvelope<T> | T): T {
+  if (
+    typeof payload === 'object' &&
+    payload !== null &&
+    'success' in payload &&
+    payload.success === true
+  ) {
+    return payload.data;
+  }
+
+  return payload as T;
+}
+
 /**
  * Cliente axios para listagem (plural: batches)
  */
@@ -24,8 +47,10 @@ export const batchService = {
     limit?: number;
     search?: string;
   }): Promise<BatchListResponse> {
-    const response = await batchesApi.get<BatchListResponse>('/', { params });
-    return response.data;
+    const response = await batchesApi.get<ApiEnvelope<BatchListResponse> | BatchListResponse>('/', {
+      params,
+    });
+    return unwrapEnvelope(response.data);
   },
 
   /**
@@ -33,8 +58,8 @@ export const batchService = {
    * Padronizado para /api/company/batches/[id].
    */
   async getById(id: string): Promise<Batch> {
-    const response = await batchesApi.get<Batch>(`/${id}`);
-    return response.data;
+    const response = await batchesApi.get<ApiEnvelope<Batch> | Batch>(`/${id}`);
+    return unwrapEnvelope(response.data);
   },
 
   /**
@@ -42,8 +67,8 @@ export const batchService = {
    * Padronizado para /api/company/batches.
    */
   async create(data: CreateBatchData): Promise<Batch> {
-    const response = await batchesApi.post<Batch>('/', data);
-    return response.data;
+    const response = await batchesApi.post<ApiEnvelope<Batch> | Batch>('/', data);
+    return unwrapEnvelope(response.data);
   },
 
   /**
@@ -52,8 +77,8 @@ export const batchService = {
    */
   async update(data: UpdateBatchData): Promise<Batch> {
     const { id, ...updateData } = data;
-    const response = await batchesApi.put<Batch>(`/${id}`, updateData);
-    return response.data;
+    const response = await batchesApi.put<ApiEnvelope<Batch> | Batch>(`/${id}`, updateData);
+    return unwrapEnvelope(response.data);
   },
 
   /**

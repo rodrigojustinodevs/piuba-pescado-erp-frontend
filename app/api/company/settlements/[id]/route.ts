@@ -4,8 +4,9 @@ import type {
   UpdateSettlementData,
   ApiSettlementResponse,
 } from '@/features/settlement';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { serverHttpClient } from '@/shared/lib/http';
 import { mapApiSettlement } from '@/features/settlement/utils/apiMapper';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
 
 // Tipagem rigorosa para as rotas do App Router
 type RouteContext = { params: Promise<{ id: string }> };
@@ -36,7 +37,7 @@ async function settlementRouteRunner(
     return await handler(id);
   } catch (error) {
     console.error(`[SETTLEMENT_ROUTE_ERROR] Erro ao ${action} (ID: ${id}):`, error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }
 
@@ -44,14 +45,12 @@ async function settlementRouteRunner(
 
 export async function GET(_req: NextRequest, context: RouteContext) {
   return settlementRouteRunner(context, 'buscar', async (id) => {
-    const result = await backendRequest<ApiSettlementResponse>(ENDPOINTS.details(id), {
+    const result = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
       method: 'GET',
-      withAuth: true,
-      errorFallback: 'Povoamento não encontrado',
     });
 
     if (!result.ok) {
-      return HttpResponses.fromApiError(result.error, result.status);
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
     return createSettlementResponse(result.data, result.status);
@@ -66,15 +65,13 @@ export async function PUT(req: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Payload inválido' }, { status: 400 });
     }
 
-    const result = await backendRequest<ApiSettlementResponse>(ENDPOINTS.details(id), {
+    const result = await serverHttpClient.request<ApiSettlementResponse>(ENDPOINTS.details(id), {
       method: 'PUT',
-      withAuth: true,
       body: JSON.stringify(body),
-      errorFallback: 'Erro ao atualizar povoamento',
     });
 
     if (!result.ok) {
-      return HttpResponses.fromApiError(result.error, result.status);
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
     return createSettlementResponse(result.data, result.status);

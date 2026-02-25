@@ -5,8 +5,8 @@ import type {
   TankListResponse,
 } from '@/features/tank';
 import { mapApiTank, mapApiTankList } from '@/features/tank/utils/apiMapper';
-import { createListGetHandler, createCreatePostHandler } from '../../_utils/proxyListRoute';
-import { buildPageLimitSearchQueryString } from '../../_utils/pagination';
+import { createListGetHandler, createUpsertHandler } from '@/shared/lib/api/routeFactories';
+import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
 
 const CONTEXT = 'Tanks API Proxy';
 
@@ -16,15 +16,14 @@ interface ApiTankResponse {
 
 export const GET = createListGetHandler<ApiTankListResponse, TankListResponse>({
   backendPath: '/api/company/tanks',
-  errorFallback: 'Erro ao listar tanques',
   mapResponse: mapApiTankList,
   context: CONTEXT,
-  buildQueryString: buildPageLimitSearchQueryString,
+  buildQueryString: buildPaginationQueryString,
 });
 
-export const POST = createCreatePostHandler<ApiTankResponse, CreateTankData>({
+export const POST = createUpsertHandler<ApiTankResponse, CreateTankData>({
   backendPath: '/api/company/tank',
-  errorFallback: 'Erro ao criar tanque',
+  method: 'POST',
   context: CONTEXT,
   mapResponse: (data) => mapApiTank(data.response),
 });

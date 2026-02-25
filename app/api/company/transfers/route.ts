@@ -5,11 +5,8 @@ import type {
   TransferListResponse,
 } from '@/features/transfer';
 import { mapApiTransferList } from '@/features/transfer';
-import {
-  createListGetHandler,
-  createCreatePostHandler,
-} from '../../_utils/proxyListRoute';
-import { buildPageLimitSearchQueryString } from '../../_utils/pagination';
+import { createListGetHandler, createUpsertHandler } from '@/shared/lib/api/routeFactories';
+import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
 
 const CONTEXT = 'Transfers API Proxy';
 
@@ -18,14 +15,13 @@ export const GET = createListGetHandler<
   TransferListResponse
 >({
   backendPath: '/api/company/transfers',
-  errorFallback: 'Falha na comunicação com o serviço de transferências',
   mapResponse: mapApiTransferList,
   context: CONTEXT,
-  buildQueryString: buildPageLimitSearchQueryString,
+  buildQueryString: buildPaginationQueryString,
 });
 
-export const POST = createCreatePostHandler<Transfer, CreateTransferData>({
+export const POST = createUpsertHandler<Transfer, CreateTransferData>({
   backendPath: '/api/company/transfer',
-  errorFallback: 'Erro ao criar transferência',
+  method: 'POST',
   context: CONTEXT,
 });

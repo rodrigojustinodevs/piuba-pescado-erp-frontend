@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ApiTransferResponse, Transfer, UpdateTransferData } from '@/features/transfer';
 import { mapApiTransfer } from '@/features/transfer';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { serverHttpClient } from '@/shared/lib/http';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -22,7 +23,7 @@ async function withTransferId(
     return await handler(id);
   } catch (error) {
     console.error(`Erro ao ${actionLabel} transferência:`, error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }
 
@@ -32,13 +33,11 @@ async function withTransferId(
  */
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   return withTransferId(params, 'buscar', async (id) => {
-    const result = await backendRequest<ApiTransferResponse>(backendTransferPath(id), {
+    const result = await serverHttpClient.request<ApiTransferResponse>(backendTransferPath(id), {
       method: 'GET',
-      withAuth: true,
-      errorFallback: 'Transferência não encontrada',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return toTransferResponse(result);
   });
 }
@@ -55,14 +54,12 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Payload inválido' }, { status: 400 });
     }
 
-    const result = await backendRequest<ApiTransferResponse>(backendTransferPath(id), {
+    const result = await serverHttpClient.request<ApiTransferResponse>(backendTransferPath(id), {
       method: 'PUT',
-      withAuth: true,
       body: JSON.stringify(body),
-      errorFallback: 'Erro ao atualizar transferência',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return toTransferResponse(result);
   });
 }
@@ -73,14 +70,12 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
  */
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
   return withTransferId(params, 'deletar', async (id) => {
-    const result = await backendRequest(backendTransferPath(id), {
+    const result = await serverHttpClient.request(backendTransferPath(id), {
       method: 'DELETE',
-      withAuth: true,
       expectJson: false,
-      errorFallback: 'Erro ao excluir transferência',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return NextResponse.json({ success: true }, { status: result.status });
   });
 }

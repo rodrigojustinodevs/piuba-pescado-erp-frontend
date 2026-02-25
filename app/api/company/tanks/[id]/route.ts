@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { UpdateTankData, Tank, ApiTank } from '@/features/tank';
 import { mapApiTank } from '@/features/tank/utils/apiMapper';
-import { backendRequest, HttpResponses } from '../../../_utils/backendProxy';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
+import { serverHttpClient } from '@/shared/lib/http';
 
 /**
  * Formato de resposta da API para operações individuais
@@ -31,7 +32,7 @@ async function withTankId(
     return await handler(id);
   } catch (error) {
     console.error(`Erro ao ${actionLabel} tanque:`, error);
-    return HttpResponses.serverError();
+    return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }
 
@@ -40,13 +41,11 @@ async function withTankId(
  */
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   return withTankId(params, 'buscar', async (id) => {
-    const result = await backendRequest<ApiTankResponse>(backendTankPath(id), {
+    const result = await serverHttpClient.request<ApiTankResponse>(backendTankPath(id), {
       method: 'GET',
-      withAuth: true,
-      errorFallback: 'Tanque não encontrado',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return toTankResponse(result);
   });
 }
@@ -58,14 +57,12 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   return withTankId(params, 'atualizar', async (id) => {
     const data: Omit<UpdateTankData, 'id'> = await req.json();
 
-    const result = await backendRequest<ApiTankResponse>(backendTankPath(id), {
+    const result = await serverHttpClient.request<ApiTankResponse>(backendTankPath(id), {
       method: 'PUT',
-      withAuth: true,
       body: JSON.stringify(data),
-      errorFallback: 'Erro ao atualizar tanque',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return toTankResponse(result);
   });
 }
@@ -75,14 +72,12 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
  */
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
   return withTankId(params, 'deletar', async (id) => {
-    const result = await backendRequest(backendTankPath(id), {
+    const result = await serverHttpClient.request(backendTankPath(id), {
       method: 'DELETE',
-      withAuth: true,
       expectJson: false,
-      errorFallback: 'Erro ao deletar tanque',
     });
 
-    if (!result.ok) return HttpResponses.fromApiError(result.error, result.status);
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status });
     return NextResponse.json({ success: true }, { status: result.status });
   });
 }
