@@ -5,6 +5,7 @@ import { useListPageState } from '@/shared/hooks/useListPageState';
 import { useDeleteTransfer, useTransfers } from '@/features/transfer';
 import { TransferTable } from '@/features/transfer/components';
 import { useBatches } from '@/features/batch';
+import { formatBatchShortLabel } from '@/features/batch/utils/format';
 import { useTanks } from '@/features/tank';
 import { useAlertModal } from '@/shared/components/AlertModal';
 import { DashboardLayout } from '@/shared/components/Layout';
@@ -13,19 +14,9 @@ import { demoUser } from '@/shared/constants/demoUser';
 import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
 import { ListEmptyState, ListLoadingState } from '@/shared/components/states/ListStates';
 import { ChevronRightIcon, CircleIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
+import { buildEntityMap } from '@/shared/utils/entityMap';
 
 const PER_PAGE = 25;
-
-function buildEntityMap<T extends { id: string }>(
-  items: T[] | undefined,
-  getLabel: (item: T) => string,
-): Record<string, string> {
-  const map: Record<string, string> = {};
-  items?.forEach((item) => {
-    map[item.id] = getLabel(item);
-  });
-  return map;
-}
 
 export default function TransfersPage() {
   const listState = useListPageState({ initialSortBy: 'createdAt' });
@@ -42,10 +33,7 @@ export default function TransfersPage() {
   const { showError: showAlertError } = useAlertModal();
 
   const batchMap = useMemo(() => {
-    return buildEntityMap(
-      batchesData?.batches,
-      (batch) => batch.name || batch.species || batch.id.slice(0, 8),
-    );
+    return buildEntityMap(batchesData?.batches, formatBatchShortLabel);
   }, [batchesData?.batches]);
 
   const tankMap = useMemo(() => {

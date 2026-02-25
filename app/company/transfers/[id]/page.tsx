@@ -5,12 +5,14 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTransfer } from '@/features/transfer';
 import { useBatches } from '@/features/batch';
+import { formatBatchShortLabel } from '@/features/batch/utils/format';
 import { useTanks } from '@/features/tank';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 import { CircleIcon } from '@/shared/components/icons/AppIcons';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
+import { buildEntityMap } from '@/shared/utils/entityMap';
 
 export default function TransferDetailPage() {
   const params = useParams();
@@ -21,19 +23,11 @@ export default function TransferDetailPage() {
   const { data: tanksData } = useTanks({ page: 1, limit: 1000 });
 
   const batchMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    batchesData?.batches?.forEach((b) => {
-      map[b.id] = b.name || b.species || b.id.slice(0, 8);
-    });
-    return map;
+    return buildEntityMap(batchesData?.batches, formatBatchShortLabel);
   }, [batchesData?.batches]);
 
   const tankMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    tanksData?.tanks?.forEach((t) => {
-      map[t.id] = t.name || t.id.slice(0, 8);
-    });
-    return map;
+    return buildEntityMap(tanksData?.tanks, (tank) => tank.name || tank.id.slice(0, 8));
   }, [tanksData?.tanks]);
 
   if (isLoading) {

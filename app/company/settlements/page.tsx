@@ -5,12 +5,14 @@ import { useListPageState } from '@/shared/hooks/useListPageState';
 import { useSettlements } from '@/features/settlement';
 import { SettlementTable } from '@/features/settlement/components';
 import { useBatches } from '@/features/batch';
+import { formatBatchShortLabel } from '@/features/batch/utils/format';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { Alert } from '@/shared/components/Alert';
 import { demoUser } from '@/shared/constants/demoUser';
 import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
 import { ListEmptyState, ListLoadingState } from '@/shared/components/states/ListStates';
 import { CircleIcon, ChevronRightIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
+import { buildEntityMap } from '@/shared/utils/entityMap';
 
 const PER_PAGE = 25;
 
@@ -25,11 +27,7 @@ export default function SettlementsPage() {
   const { data: batchesData } = useBatches({ page: 1, limit: 500 });
 
   const batchMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    batchesData?.batches?.forEach((b) => {
-      map[b.id] = b.name || b.species || b.id.slice(0, 8);
-    });
-    return map;
+    return buildEntityMap(batchesData?.batches, formatBatchShortLabel);
   }, [batchesData?.batches]);
 
   const settlements = data?.settlements ?? [];

@@ -15,6 +15,13 @@ export function formatBatchOptionLabel(
 }
 
 /**
+ * Retorna o nome de exibição curto de um lote.
+ */
+export function formatBatchShortLabel(batch: Pick<Batch, 'id' | 'name' | 'species'>): string {
+  return batch.name || batch.species || batch.id.slice(0, 8);
+}
+
+/**
  * Extrai apenas a parte da data (YYYY-MM-DD) de uma string ISO
  * Evita problemas de conversão de timezone
  */
