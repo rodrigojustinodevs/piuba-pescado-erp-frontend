@@ -16,11 +16,25 @@ export type {
 
 export { batchService } from './services/batchService';
 
-export { useBatches, useBatch, useCreateBatch, useUpdateBatch, useDeleteBatch } from './hooks';
-export type { UseBatchesParams } from './hooks';
+export {
+  useBatches,
+  useBatch,
+  useBatchesListPage,
+  useCreateBatch,
+  useUpdateBatch,
+  useDeleteBatch,
+} from './hooks';
+export type { UseBatchesParams, BatchStatusFilter } from './hooks';
 
-export { BatchStatusBadge, BatchTable, BatchForm } from './components';
-export type { BatchFormProps } from './components';
+export {
+  BatchStatusBadge,
+  BatchTable,
+  BatchesListView,
+  BatchDetailView,
+  BatchPageShell,
+  BatchForm,
+} from './components';
+export type { BatchFormProps, BatchesListViewProps, BatchDetailViewProps } from './components';
 
 export { createBatchSchema, updateBatchSchema } from './schemas';
 export type { CreateBatchFormData, UpdateBatchFormData } from './schemas';
