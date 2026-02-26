@@ -25,7 +25,7 @@ export function SettlementTable({
   batchMap = {},
   onDelete,
   isDeleting = false,
-}: SettlementTableProps) {
+}: Readonly<SettlementTableProps>) {
   const getBatchLabel = (batcheId: string) => batchMap[batcheId] ?? `${batcheId.slice(0, 8)}…`;
 
   const getRowLabel = (row: Settlement) =>
