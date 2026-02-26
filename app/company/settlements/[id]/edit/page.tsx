@@ -1,12 +1,14 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useSettlement, useUpdateSettlement } from '@/features/settlement';
-import { SettlementForm } from '@/features/settlement/components';
+import {
+  useSettlement,
+  useUpdateSettlement,
+  SettlementForm,
+  SettlementPageShell,
+} from '@/features/settlement';
+import type { UpdateSettlementFormData } from '@/features/settlement';
 import { DashboardLayout } from '@/shared/components/Layout';
-import { PageHeader } from '@/shared/components/ui';
-import { CircleIcon } from '@/shared/components/icons/AppIcons';
-import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 
 export default function SettlementEditPage() {
@@ -15,13 +17,13 @@ export default function SettlementEditPage() {
   const { data: settlement, isLoading } = useSettlement(id);
   const updateSettlement = useUpdateSettlement();
 
-  const onSubmit = (data: Parameters<typeof updateSettlement.mutate>[0]) => {
+  const onSubmit = (data: UpdateSettlementFormData) => {
     updateSettlement.mutate({ ...data, id });
   };
 
   if (isLoading) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <LoadingState />
       </DashboardLayout>
     );
@@ -29,22 +31,19 @@ export default function SettlementEditPage() {
 
   if (!settlement) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <NotFoundState message="Povoamento não encontrado." backHref="/company/settlements" />
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout user={demoUser}>
-      <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
-        <PageHeader
-          breadcrumb="Dashboard / Povoamentos / Editar"
-          title="Povoamento"
-          subtitle="Atualize as informações do povoamento"
-          icon={<CircleIcon className="h-6 w-6 text-[#0EA5A4]" />}
-        />
-
+    <DashboardLayout>
+      <SettlementPageShell
+        breadcrumb="Dashboard / Povoamentos / Editar"
+        title="Povoamento"
+        subtitle="Atualize as informações do povoamento"
+      >
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
           <SettlementForm
             mode="update"
@@ -54,7 +53,7 @@ export default function SettlementEditPage() {
             submitLabel="Atualizar Povoamento"
           />
         </div>
-      </div>
+      </SettlementPageShell>
     </DashboardLayout>
   );
 }
