@@ -3,8 +3,10 @@ import type { Company } from '@/features/company';
 
 type MapDictionary = Record<string, string>;
 
-export function buildTankTypeMap(tankTypes: TankType[] = []): MapDictionary {
-  return tankTypes.reduce((acc, type) => {
+export function buildTankTypeMap(tankTypes: unknown = []): MapDictionary {
+  const list = Array.isArray(tankTypes) ? (tankTypes as TankType[]) : [];
+
+  return list.reduce((acc, type) => {
     acc[type.id] = type.name;
     return acc;
   }, {} as MapDictionary);

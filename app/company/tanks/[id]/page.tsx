@@ -13,8 +13,6 @@ import { LoadingState, NotFoundState } from '@/shared/components/states/PageStat
 import { PencilIcon, TankDocumentIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
-// (formatadores movidos para src/shared/utils/dateFormat.ts)
-
 export default function TankDetailPage() {
   const params = useParams();
   const id = params.id as string;

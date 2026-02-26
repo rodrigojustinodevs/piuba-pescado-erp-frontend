@@ -1,27 +1,30 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useCreateTank } from '@/features/tank';
+import { TankPageShell, TankUpsertForm } from '@/features/tank/components';
 import { DashboardLayout } from '@/shared/components/Layout';
 import type { CreateTankFormData } from '@/features/tank';
 import { TankDocumentIcon } from '@/shared/components/icons/AppIcons';
-import { TankPageShell } from '../_components/TankPageShell';
-import { TankUpsertForm } from '../_components/TankUpsertForm';
 
 export default function NewTankPage() {
+  const router = useRouter();
   const createTank = useCreateTank();
 
   const onSubmit = (data: CreateTankFormData) => {
     // UI de fotos (não enviado no payload por enquanto)
-    createTank.mutate(data);
+    createTank.mutate(data, {
+      onSuccess: () => {
+        router.push('/company/tanks');
+      },
+      onError: (error) => {
+        console.error('[CreateTank]', error);
+      },
+    });
   };
 
   return (
-    <DashboardLayout
-      user={{
-        name: 'Usuário Demo',
-        email: 'demo@dev.com',
-      }}
-    >
+    <DashboardLayout>
       <TankPageShell
         breadcrumb="Dashboard / Tanques / Novo"
         title="Tanque"

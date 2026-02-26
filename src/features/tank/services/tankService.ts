@@ -1,89 +1,74 @@
-import axios from 'axios';
-import type {
-  Tank,
-  CreateTankData,
-  UpdateTankData,
-  TankListResponse,
-  TankType,
-  ApiTankTypeListResponse,
-} from '../types';
+import type { Tank, CreateTankData, UpdateTankData, TankListResponse, TankType } from '../types';
+import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 
-/**
- * Cliente axios configurado para a API de tanques
- * Usa a rota de proxy do Next.js que faz requisição para o backend
- */
-const tankApi = axios.create({
-  baseURL: '/api/company/tanks',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+type QueryValue = string | number | boolean | null | undefined;
 
-/**
- * Serviço de API para tanques
- */
+function buildQueryString(
+  params: Record<string, QueryValue>,
+  options?: { skipEmptyString?: boolean },
+): string {
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue;
+    const stringValue = String(value);
+    if (options?.skipEmptyString && stringValue === '') continue;
+    searchParams.set(key, stringValue);
+  }
+
+  return searchParams.toString();
+}
+
 export const tankService = {
-  /**
-   * Lista todos os tanques com paginação
-   */
   async list(params?: {
     page?: number;
     limit?: number;
     search?: string;
   }): Promise<TankListResponse> {
-    const response = await tankApi.get<TankListResponse>('/', { params });
-    return response.data;
+    const queryString = buildQueryString(
+      {
+        page: params?.page,
+        limit: params?.limit,
+        search: params?.search,
+      },
+      { skipEmptyString: true },
+    );
+    const endpoint = queryString ? `/api/company/tanks?${queryString}` : '/api/company/tanks';
+    return browserHttpClient.get<TankListResponse>(endpoint);
   },
 
-  /**
-   * Lista tanques sem lotes vinculados (disponíveis para transferências).
-   * Endpoint: /api/company/tanks/without-batches (proxy Next).
-   */
   async listWithoutBatches(params?: {
     page?: number;
     per_page?: number;
   }): Promise<TankListResponse> {
-    const response = await tankApi.get<TankListResponse>('/without-batches', { params });
-    return response.data;
+    const queryString = buildQueryString({
+      page: params?.page,
+      per_page: params?.per_page,
+    });
+    const endpoint = queryString
+      ? `/api/company/tanks/without-batches?${queryString}`
+      : '/api/company/tanks/without-batches';
+    return browserHttpClient.get<TankListResponse>(endpoint);
   },
 
-  /**
-   * Busca um tanque por ID
-   */
   async getById(id: string): Promise<Tank> {
-    const response = await tankApi.get<Tank>(`/${id}`);
-    return response.data;
+    return browserHttpClient.get<Tank>(`/api/company/tanks/${id}`);
   },
 
-  /**
-   * Cria um novo tanque
-   */
   async create(data: CreateTankData): Promise<Tank> {
-    const response = await tankApi.post<Tank>('/', data);
-    return response.data;
+    return browserHttpClient.post<Tank>('/api/company/tanks', data);
   },
 
-  /**
-   * Atualiza um tanque existente
-   */
   async update(data: UpdateTankData): Promise<Tank> {
     const { id, ...updateData } = data;
-    const response = await tankApi.put<Tank>(`/${id}`, updateData);
-    return response.data;
+    return browserHttpClient.put<Tank>(`/api/company/tanks/${id}`, updateData);
   },
 
-  /**
-   * Remove um tanque
-   */
   async delete(id: string): Promise<void> {
-    await tankApi.delete(`/${id}`);
+    await browserHttpClient.delete<null>(`/api/company/tanks/${id}`);
   },
 
-  /**
-   * Lista todos os tipos de tanque disponíveis
-   */
   async getTankTypes(): Promise<TankType[]> {
-    const response = await tankApi.get<ApiTankTypeListResponse>('/tank-types');
-    return response.data.response || [];
+    return browserHttpClient.get<TankType[]>('/api/company/tanks/tank-types');
   },
 };
