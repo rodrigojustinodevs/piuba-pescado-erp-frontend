@@ -72,3 +72,16 @@ export const PUT = withAuthGuard(async (_auth, req: NextRequest, context: RouteC
     return createSettlementResponse(data);
   });
 });
+
+/**
+ * DELETE /api/company/settlements/[id] - Remove um povoamento (proxy para backend)
+ */
+export const DELETE = withAuthGuard(async (_auth, _req: NextRequest, context: RouteContext) => {
+  return settlementRouteRunner(context, 'deletar', async (id) => {
+    await serverHttpClient.request(ENDPOINTS.details(id), {
+      method: 'DELETE',
+      expectJson: false,
+    });
+    return NextResponse.json({ success: true }, { status: 200 });
+  });
+});
