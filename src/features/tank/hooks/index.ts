@@ -6,3 +6,4 @@ export { useDeleteTank } from './useDeleteTank';
 export { useTankTypes } from './useTankTypes';
 export { useTankLookups } from './useTankLookups';
 export { useTanksWithoutBatches } from './useTanksWithoutBatches';
+export { useTanksListPage } from './useTanksListPage';

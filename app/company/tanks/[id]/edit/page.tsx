@@ -9,8 +9,7 @@ import { DashboardLayout } from '@/shared/components/Layout';
 import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 import { TankDocumentIcon } from '@/shared/components/icons/AppIcons';
-import { TankUpsertForm } from '../../_components/TankUpsertForm';
-import { TankPageShell } from '../../_components/TankPageShell';
+import { TankPageShell, TankUpsertForm } from '@/features/tank/components';
 
 export default function EditTankPage() {
   const params = useParams();
