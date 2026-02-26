@@ -9,6 +9,7 @@ import { serverHttpClient } from '@/shared/lib/http';
  * GET /api/company/tanks/tank-types - Lista tipos de tanque (proxy para backend)
  */
 export const GET = withAuthGuard(async (_auth) => {
+  void _auth;
   try {
     const data = await serverHttpClient.request<ApiTankTypeListResponse | TankType[]>(
       `/api/company/tank-types`,

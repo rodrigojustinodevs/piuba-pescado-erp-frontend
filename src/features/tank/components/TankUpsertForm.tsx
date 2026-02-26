@@ -19,6 +19,8 @@ type TankUpsertFormProps = {
   submittingLabel: string;
 };
 
+const PHOTO_SLOTS = ['photo-1', 'photo-2', 'photo-3', 'photo-4'] as const;
+
 function Spinner() {
   return (
     <svg className="h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +40,7 @@ export function TankUpsertForm({
   isSubmitting = false,
   submitLabel,
   submittingLabel,
-}: TankUpsertFormProps) {
+}: Readonly<TankUpsertFormProps>) {
   const { isMaster, user } = useAuthContext();
   const { data: companiesData } = useCompanies({ limit: 1000 });
   const companies = companiesData?.companies || [];
@@ -201,13 +203,13 @@ export function TankUpsertForm({
             </p>
 
             <div className="mt-4 grid grid-cols-2 gap-3">
-              {Array.from({ length: 4 }).map((_, i) => {
+              {PHOTO_SLOTS.map((slotId, i) => {
                 const file = photos[i];
                 const preview = previews[i];
 
                 return (
                   <label
-                    key={i}
+                    key={slotId}
                     className="group relative flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#0EA5A4]/40 bg-[#F8FAFC] px-3 py-4 cursor-pointer hover:bg-white transition"
                   >
                     <input

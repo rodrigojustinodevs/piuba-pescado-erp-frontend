@@ -1,25 +1,38 @@
 import type { Tank, CreateTankData, UpdateTankData, TankListResponse, TankType } from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 
+type QueryValue = string | number | boolean | null | undefined;
+
+function buildQueryString(
+  params: Record<string, QueryValue>,
+  options?: { skipEmptyString?: boolean },
+): string {
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue;
+    const stringValue = String(value);
+    if (options?.skipEmptyString && stringValue === '') continue;
+    searchParams.set(key, stringValue);
+  }
+
+  return searchParams.toString();
+}
+
 export const tankService = {
   async list(params?: {
     page?: number;
     limit?: number;
     search?: string;
   }): Promise<TankListResponse> {
-    const searchParams = new URLSearchParams();
-
-    if (params?.page !== undefined) {
-      searchParams.set('page', String(params.page));
-    }
-    if (params?.limit !== undefined) {
-      searchParams.set('limit', String(params.limit));
-    }
-    if (params?.search !== undefined && params.search !== '') {
-      searchParams.set('search', params.search);
-    }
-
-    const queryString = searchParams.toString();
+    const queryString = buildQueryString(
+      {
+        page: params?.page,
+        limit: params?.limit,
+        search: params?.search,
+      },
+      { skipEmptyString: true },
+    );
     const endpoint = queryString ? `/api/company/tanks?${queryString}` : '/api/company/tanks';
     return browserHttpClient.get<TankListResponse>(endpoint);
   },
@@ -28,16 +41,10 @@ export const tankService = {
     page?: number;
     per_page?: number;
   }): Promise<TankListResponse> {
-    const searchParams = new URLSearchParams();
-
-    if (params?.page !== undefined) {
-      searchParams.set('page', String(params.page));
-    }
-    if (params?.per_page !== undefined) {
-      searchParams.set('per_page', String(params.per_page));
-    }
-
-    const queryString = searchParams.toString();
+    const queryString = buildQueryString({
+      page: params?.page,
+      per_page: params?.per_page,
+    });
     const endpoint = queryString
       ? `/api/company/tanks/without-batches?${queryString}`
       : '/api/company/tanks/without-batches';
