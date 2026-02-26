@@ -1,4 +1,9 @@
 export { BatchStatusBadge } from './BatchStatusBadge';
 export { BatchTable } from './BatchTable';
+export { BatchesListView } from './BatchesListView';
+export type { BatchesListViewProps } from './BatchesListView';
+export { BatchDetailView } from './BatchDetailView';
+export type { BatchDetailViewProps } from './BatchDetailView';
+export { BatchPageShell } from './BatchPageShell';
 export { BatchForm } from './BatchForm';
 export type { BatchFormProps } from './BatchForm';
