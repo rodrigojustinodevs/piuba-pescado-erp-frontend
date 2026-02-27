@@ -1,7 +1,14 @@
-export { TransferTable } from './components';
-export { TransferForm } from './components';
+export {
+  TransferTable,
+  TransfersListView,
+  TransferDetailView,
+  TransferPageShell,
+  TransferForm,
+} from './components';
+export type { TransfersListViewProps, TransferDetailViewProps } from './components';
 export {
   useTransfers,
+  useTransfersListPage,
   useTransfer,
   useCreateTransfer,
   useUpdateTransfer,
