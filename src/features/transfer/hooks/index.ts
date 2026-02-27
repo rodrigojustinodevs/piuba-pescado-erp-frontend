@@ -1,4 +1,5 @@
 export { useTransfers } from './useTransfers';
+export { useTransfersListPage } from './useTransfersListPage';
 export { useCreateTransfer } from './useCreateTransfer';
 export { useTransfer } from './useTransfer';
 export { useUpdateTransfer } from './useUpdateTransfer';
