@@ -5,11 +5,11 @@ import type { Transfer, TransferListResponse } from '../types';
 import { TransferTable } from './TransferTable';
 import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
 import {
-  ChevronRightIcon,
-  CircleIcon,
-  FilterIcon,
-  SpinnerIcon,
-} from '@/shared/components/icons/AppIcons';
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
+import { ChevronRightIcon, CircleIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
 
 export type TransfersListViewProps = {
   page: number;
@@ -49,37 +49,31 @@ export function TransfersListView({
   isDeleting,
 }: Readonly<TransfersListViewProps>) {
   const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="p-8 text-center">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <SpinnerIcon className="w-5 h-5 animate-spin" />
-            <span>Carregando...</span>
-          </div>
-        </div>
-      );
-    }
+    if (isLoading) return <ListLoadingState />;
 
     if (error) {
       return (
-        <div className="p-8 text-center text-red-600">
-          Erro ao carregar transferências. Tente novamente mais tarde.
-        </div>
+        <ListErrorState
+          title="Erro ao carregar transferências"
+          message="Não foi possível carregar as transferências. Tente novamente mais tarde."
+        />
       );
     }
 
     if (!transfers.length) {
-      const emptyTitle = search
-        ? 'Nenhuma transferência encontrada com os filtros aplicados.'
-        : 'Nenhuma transferência cadastrada.';
-      const emptySubtitle = search
-        ? 'Tente alterar a busca.'
-        : 'Clique em Nova Transferência para criar a primeira.';
       return (
-        <div className="p-8 text-center text-slate-500">
-          <p className="text-base">{emptyTitle}</p>
-          <p className="mt-1 text-sm">{emptySubtitle}</p>
-        </div>
+        <ListEmptyState
+          title={
+            search
+              ? 'Nenhuma transferência encontrada com os filtros aplicados.'
+              : 'Nenhuma transferência cadastrada.'
+          }
+          subtitle={
+            search
+              ? 'Tente alterar a busca.'
+              : 'Clique em Nova Transferência para criar a primeira.'
+          }
+        />
       );
     }
 
