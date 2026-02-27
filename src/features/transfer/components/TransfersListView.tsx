@@ -3,13 +3,18 @@
 import { useCallback } from 'react';
 import type { Transfer, TransferListResponse } from '../types';
 import { TransferTable } from './TransferTable';
-import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
+import {
+  ListHeader,
+  ListSearchAndSortBar,
+  ListSummaryBar,
+  Pagination,
+} from '@/shared/components/list';
 import {
   ListEmptyState,
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
-import { ChevronRightIcon, CircleIcon, FilterIcon } from '@/shared/components/icons/AppIcons';
+import { CircleIcon } from '@/shared/components/icons/AppIcons';
 
 export type TransfersListViewProps = {
   page: number;
@@ -112,24 +117,19 @@ export function TransfersListView({
         ctaLabel="Nova Transferência"
       />
 
-      <section className="flex flex-wrap items-center gap-3">
-        <SearchField value={search} placeholder="Buscar transferência..." onChange={setSearch} />
-        <SortButton current={sortBy} onSort={handleSort} />
-      </section>
+      <ListSearchAndSortBar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Buscar transferência..."
+        sortBy={sortBy}
+        onSort={handleSort}
+      />
 
-      <section className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">
-          {total} {total === 1 ? 'transferência encontrada' : 'transferências encontradas'}
-        </p>
-        <button
-          type="button"
-          className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-        >
-          <FilterIcon className="h-4 w-4" />
-          Filtros avançados
-          <ChevronRightIcon className="h-4 w-4" />
-        </button>
-      </section>
+      <ListSummaryBar
+        total={total}
+        singularLabel="transferência encontrada"
+        pluralLabel="transferências encontradas"
+      />
 
       <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {renderContent()}
