@@ -18,7 +18,7 @@ export const GET = createListGetHandler<ApiBatchListResponse, BatchListResponse>
 });
 
 export const POST = createUpsertHandler<Batch, CreateBatchData>({
-  backendPath: '/api/company/batche',
+  backendPath: '/api/company/batch',
   method: 'POST',
   context: CONTEXT,
 });

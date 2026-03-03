@@ -15,8 +15,6 @@ const CELL_TEXT_CLASS = 'text-sm text-slate-600';
 
 interface TransferTableProps {
   transfers: Transfer[];
-  batchMap?: Record<string, string>;
-  tankMap?: Record<string, string>;
   onDelete: (id: string) => void;
   isDeleting?: boolean;
 }
@@ -31,25 +29,28 @@ function TextCell({ text }: Readonly<TextCellProps>) {
   return <div className={CELL_TEXT_CLASS}>{text}</div>;
 }
 
-function createBatchCellRenderer(batchMap: Record<string, string>) {
-  return function renderBatchCell(row: Transfer) {
-    const label = batchMap[row.batcheId] ?? `${row.batcheId.slice(0, 8)}…`;
-    return <BatchCell label={label} />;
-  };
+function getBatchLabel(row: Transfer): string {
+  if (row.batchName) return row.batchName;
+  if (row.batchId) return `${row.batchId.slice(0, 8)}…`;
+  return '—';
 }
 
-function createOriginTankCellRenderer(tankMap: Record<string, string>) {
-  return function renderOriginTankCell(row: Transfer) {
-    const label = tankMap[row.originTankId] ?? `${row.originTankId.slice(0, 8)}…`;
-    return <TextCell text={label} />;
-  };
+function getTankLabel(id: string, name?: string): string {
+  if (name) return name;
+  if (id) return `${id.slice(0, 8)}…`;
+  return '—';
 }
 
-function createDestinationTankCellRenderer(tankMap: Record<string, string>) {
-  return function renderDestinationTankCell(row: Transfer) {
-    const label = tankMap[row.destinationTankId] ?? `${row.destinationTankId.slice(0, 8)}…`;
-    return <TextCell text={label} />;
-  };
+function renderBatchCell(row: Transfer) {
+  return <BatchCell label={getBatchLabel(row)} />;
+}
+
+function renderOriginTankCell(row: Transfer) {
+  return <TextCell text={getTankLabel(row.originTankId, row.originTankName)} />;
+}
+
+function renderDestinationTankCell(row: Transfer) {
+  return <TextCell text={getTankLabel(row.destinationTankId, row.destinationTankName)} />;
 }
 
 function renderQuantityCell(row: Transfer) {
@@ -66,18 +67,12 @@ function renderCreatedAtCell(row: Transfer) {
 
 export function TransferTable({
   transfers,
-  batchMap = {},
-  tankMap = {},
   onDelete,
   isDeleting = false,
 }: Readonly<TransferTableProps>) {
-  const renderBatchCell = createBatchCellRenderer(batchMap);
-  const renderOriginTankCell = createOriginTankCellRenderer(tankMap);
-  const renderDestinationTankCell = createDestinationTankCellRenderer(tankMap);
-
   const columns: Array<DataTableColumn<Transfer>> = [
     {
-      id: 'batcheId',
+      id: 'batchId',
       header: 'Lote',
       cell: renderBatchCell,
     },

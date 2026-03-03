@@ -8,7 +8,7 @@ import { mapApiBatch } from '@/features/batch/utils/apiMapper';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-const backendBatchPath = (id: string) => `/api/company/batche/${id}`;
+const backendBatchPath = (id: string) => `/api/company/batch/${id}`;
 
 function toBatchResponse(data: ApiBatchResponse) {
   const batch: Batch = mapApiBatch(data);
@@ -34,7 +34,7 @@ async function withBatchId(
 
 /**
  * GET /api/company/batches/[id] - Busca um lote por ID (proxy para backend)
- * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
+ * Padronização: expomos plural, mas o backend usa /api/company/batch (singular).
  */
 export const GET = withAuthGuard(async (_auth, _req: NextRequest, { params }: RouteParams) => {
   return withBatchId(params, 'buscar', async (id) => {
@@ -47,7 +47,7 @@ export const GET = withAuthGuard(async (_auth, _req: NextRequest, { params }: Ro
 
 /**
  * PUT /api/company/batches/[id] - Atualiza um lote (proxy para backend)
- * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
+ * Padronização: expomos plural, mas o backend usa /api/company/batch (singular).
  */
 export const PUT = withAuthGuard(async (_auth, req: NextRequest, { params }: RouteParams) => {
   return withBatchId(params, 'atualizar', async (id) => {
@@ -62,7 +62,7 @@ export const PUT = withAuthGuard(async (_auth, req: NextRequest, { params }: Rou
 
 /**
  * DELETE /api/company/batches/[id] - Remove um lote (proxy para backend)
- * Padronização: expomos plural, mas o backend usa /api/company/batche (singular).
+ * Padronização: expomos plural, mas o backend usa /api/company/batch (singular).
  */
 export const DELETE = withAuthGuard(async (_auth, _req: NextRequest, { params }: RouteParams) => {
   return withBatchId(params, 'deletar', async (id) => {
