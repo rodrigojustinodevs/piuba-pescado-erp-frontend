@@ -33,8 +33,12 @@ export const BatchIcon = createStrokeIconNoProps(
   'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z',
 );
 
-export const SettlementIcon = createStrokeIconNoProps(
+export const StockingIcon = createStrokeIconNoProps(
   'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z',
 );
 
 export const TransferIcon = createStrokeIconNoProps('M7 7h10M7 17h10M11 3l-4 4 4 4M13 21l4-4-4-4');
+
+export const BiometryIcon = createStrokeIconNoProps(
+  'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+);

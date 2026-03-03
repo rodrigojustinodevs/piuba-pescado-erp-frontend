@@ -3,12 +3,13 @@
 import type { MenuItem } from './types';
 import {
   BatchIcon,
+  BiometryIcon,
   BuildingIcon,
   DashboardIcon,
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
-  SettlementIcon,
+  StockingIcon,
   TransferIcon,
   SettingsIcon,
   TankIcon,
@@ -104,10 +105,16 @@ export const defaultMenuItems: MenuItem[] = [
     href: '/company/batches',
   },
   {
+    id: 'biometrias',
+    label: 'Biometrias',
+    icon: <BiometryIcon />,
+    href: '/company/biometries',
+  },
+  {
     id: 'povoamentos',
     label: 'Povoamentos',
-    icon: <SettlementIcon />,
-    href: '/company/settlements',
+    icon: <StockingIcon />,
+    href: '/company/stockings',
   },
   {
     id: 'transferencias',

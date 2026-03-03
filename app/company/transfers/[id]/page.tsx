@@ -34,7 +34,7 @@ export default function TransferDetailPage() {
 
   const batchLabel = useMemo(() => {
     if (!transfer) return '—';
-    return batchMap[transfer.batcheId] ?? trunc8(transfer.batcheId);
+    return batchMap[transfer.batchId] ?? trunc8(transfer.batchId);
   }, [batchMap, transfer]);
 
   const originTankLabel = useMemo(() => {

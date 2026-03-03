@@ -1,23 +1,6 @@
 import type { Tank, CreateTankData, UpdateTankData, TankListResponse, TankType } from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
-
-type QueryValue = string | number | boolean | null | undefined;
-
-function buildQueryString(
-  params: Record<string, QueryValue>,
-  options?: { skipEmptyString?: boolean },
-): string {
-  const searchParams = new URLSearchParams();
-
-  for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null) continue;
-    const stringValue = String(value);
-    if (options?.skipEmptyString && stringValue === '') continue;
-    searchParams.set(key, stringValue);
-  }
-
-  return searchParams.toString();
-}
+import { buildQueryString } from '@/shared/utils/queryString';
 
 export const tankService = {
   async list(params?: {

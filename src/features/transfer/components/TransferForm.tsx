@@ -53,7 +53,7 @@ export function TransferForm({
   const isEditMode = mode === 'update';
   const schema = isEditMode ? updateTransferSchema : createTransferSchema;
   const emptyValues: CreateTransferFormData = {
-    batcheId: '',
+    batchId: '',
     originTankId: '',
     destinationTankId: '',
     quantity: 0,
@@ -62,7 +62,7 @@ export function TransferForm({
 
   const buildValuesFromInitial = (data: Transfer): UpdateTransferFormData => ({
     id: data.id,
-    batcheId: data.batcheId,
+    batchId: data.batchId,
     originTankId: data.originTankId,
     destinationTankId: data.destinationTankId,
     quantity: data.quantity,
@@ -92,9 +92,9 @@ export function TransferForm({
 
   const originTankId = watch('originTankId');
   const destinationTankId = watch('destinationTankId');
-  const batcheId = watch('batcheId');
+  const batchId = watch('batchId');
 
-  const selectedBatch = useMemo(() => batches.find((b) => b.id === batcheId), [batches, batcheId]);
+  const selectedBatch = useMemo(() => batches.find((b) => b.id === batchId), [batches, batchId]);
   const originTankLabel = selectedBatch?.tank?.name ?? '—';
 
   const destinationTanksWithCurrent = useMemo(() => {
@@ -129,7 +129,7 @@ export function TransferForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Controller
-            name="batcheId"
+            name="batchId"
             control={control}
             render={({ field }) => (
               <Select
@@ -137,16 +137,16 @@ export function TransferForm({
                 requiredIndicator
                 disabled={isLoadingBatches}
                 placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
-                options={batches.map((batch) => ({
-                  value: batch.id,
-                  label: formatBatchOptionLabel(batch),
+                options={batches.map((b) => ({
+                  value: b.id,
+                  label: formatBatchOptionLabel(b),
                 }))}
                 value={field.value || ''}
                 onChange={(e) => {
-                  const nextBatchId = e.target.value;
-                  field.onChange(nextBatchId);
+                  const nextId = e.target.value;
+                  field.onChange(nextId);
 
-                  const selectedBatch = batches.find((b) => b.id === nextBatchId);
+                  const selectedBatch = batches.find((b) => b.id === nextId);
                   const nextOriginTankId = selectedBatch?.tank?.id;
 
                   setValue('originTankId', nextOriginTankId ?? '', {
@@ -169,7 +169,7 @@ export function TransferForm({
                     });
                   }
                 }}
-                error={errors.batcheId?.message}
+                error={errors.batchId?.message}
               />
             )}
           />

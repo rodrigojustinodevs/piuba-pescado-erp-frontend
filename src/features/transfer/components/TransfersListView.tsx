@@ -29,8 +29,6 @@ export type TransfersListViewProps = {
   transfers: Transfer[];
   total: number;
   limit: number;
-  batchMap: Record<string, string>;
-  tankMap: Record<string, string>;
   handleDelete: (id: string) => void;
   isDeleting: boolean;
 };
@@ -48,8 +46,6 @@ export function TransfersListView({
   transfers,
   total,
   limit,
-  batchMap,
-  tankMap,
   handleDelete,
   isDeleting,
 }: Readonly<TransfersListViewProps>) {
@@ -84,13 +80,7 @@ export function TransfersListView({
 
     return (
       <>
-        <TransferTable
-          transfers={transfers}
-          batchMap={batchMap}
-          tankMap={tankMap}
-          onDelete={handleDelete}
-          isDeleting={isDeleting}
-        />
+        <TransferTable transfers={transfers} onDelete={handleDelete} isDeleting={isDeleting} />
 
         {data && total > limit && (
           <Pagination
