@@ -21,10 +21,6 @@ export const GET = createDetailGetHandler<ApiBiometryDetailEnvelope, Biometry, {
 export const PUT = createPutHandler<ApiBiometryDetailEnvelope, UpdateBiometryData, { id: string }>({
   backendPathBuilder: (params) => `/api/company/biometry/${params.id}`,
   context: CONTEXT,
-  mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
-    return rest;
-  },
+  mapBody: ({ id: _id, ...rest }) => rest,
   mapResponse: mapDetailResponse,
 });

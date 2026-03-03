@@ -21,47 +21,78 @@ interface StockingTableProps {
   isDeleting?: boolean;
 }
 
+type StockingRowProps = { row: Stocking; batchMap?: Record<string, string> };
+
+function getBatchLabel(row: Stocking, batchMap: Record<string, string> = {}): string {
+  if (row.batchName) return row.batchName;
+  if (row.batchId && batchMap[row.batchId]) return batchMap[row.batchId];
+  if (row.batchId) return `${row.batchId.slice(0, 8)}…`;
+  return '—';
+}
+
+function getRowLabel(row: Stocking, batchMap: Record<string, string> = {}): string {
+  return `${getBatchLabel(row, batchMap)} - ${formatDatePtBR(row.stockingDate)}`;
+}
+
+function StockingDateCell({ row }: Readonly<StockingRowProps>) {
+  return (
+    <div className="text-sm font-medium text-[#0F172A]">{formatDatePtBR(row.stockingDate)}</div>
+  );
+}
+
+function BatchCell({ row, batchMap }: Readonly<StockingRowProps>) {
+  return <div className={CELL_TEXT_CLASS}>{getBatchLabel(row, batchMap)}</div>;
+}
+
+function QuantityCell({ row }: Readonly<StockingRowProps>) {
+  return <div className={CELL_TEXT_CLASS}>{row.quantity}</div>;
+}
+
+function AverageWeightCell({ row }: Readonly<StockingRowProps>) {
+  return <div className={CELL_TEXT_CLASS}>{row.averageWeight}</div>;
+}
+
+function CreatedAtCell({ row }: Readonly<StockingRowProps>) {
+  return <div className={CELL_TEXT_CLASS}>{formatDatePtBR(row.createdAt)}</div>;
+}
+
+function buildColumns(batchMap: Record<string, string>): Array<DataTableColumn<Stocking>> {
+  return [
+    {
+      id: 'stockingDate',
+      header: 'Data do povoamento',
+      cell: (row) => <StockingDateCell row={row} batchMap={batchMap} />,
+    },
+    {
+      id: 'batchId',
+      header: 'Lote',
+      cell: (row) => <BatchCell row={row} batchMap={batchMap} />,
+    },
+    {
+      id: 'quantity',
+      header: 'Quantidade',
+      cell: (row) => <QuantityCell row={row} batchMap={batchMap} />,
+    },
+    {
+      id: 'averageWeight',
+      header: 'Peso médio (kg)',
+      cell: (row) => <AverageWeightCell row={row} batchMap={batchMap} />,
+    },
+    {
+      id: 'createdAt',
+      header: 'Criado em',
+      cell: (row) => <CreatedAtCell row={row} batchMap={batchMap} />,
+    },
+  ];
+}
+
 export function StockingTable({
   stockings,
   batchMap = {},
   onDelete,
   isDeleting = false,
 }: Readonly<StockingTableProps>) {
-  const getBatchLabel = (row: Stocking) =>
-    row.batchName ?? batchMap[row.batchId] ?? (row.batchId ? `${row.batchId.slice(0, 8)}…` : '—');
-
-  const getRowLabel = (row: Stocking) =>
-    `${getBatchLabel(row)} - ${formatDatePtBR(row.stockingDate)}`;
-
-  const columns: Array<DataTableColumn<Stocking>> = [
-    {
-      id: 'stockingDate',
-      header: 'Data do povoamento',
-      cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A]">{formatDatePtBR(row.stockingDate)}</div>
-      ),
-    },
-    {
-      id: 'batchId',
-      header: 'Lote',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{getBatchLabel(row)}</div>,
-    },
-    {
-      id: 'quantity',
-      header: 'Quantidade',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{row.quantity}</div>,
-    },
-    {
-      id: 'averageWeight',
-      header: 'Peso médio (kg)',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{row.averageWeight}</div>,
-    },
-    {
-      id: 'createdAt',
-      header: 'Criado em',
-      cell: (row) => <div className={CELL_TEXT_CLASS}>{formatDatePtBR(row.createdAt)}</div>,
-    },
-  ];
+  const columns = buildColumns(batchMap);
 
   if (stockings.length === 0) {
     return <div className="p-8 text-center text-slate-500">Nenhum povoamento encontrado.</div>;
@@ -84,7 +115,7 @@ export function StockingTable({
     if (onDelete) {
       baseActions.push({
         label: 'Excluir',
-        onClick: () => onDelete(row.id, getRowLabel(row)),
+        onClick: () => onDelete(row.id, getRowLabel(row, batchMap)),
         variant: 'danger',
         disabled: isDeleting,
         icon: isDeleting ? (
