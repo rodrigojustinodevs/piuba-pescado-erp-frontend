@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       return failureResponse(ErrorMessages.LOGIN_REQUIRED_FIELDS, 400);
     }
 
-    const data = await publicHttpClient.request<LoginApiResponse>('/api/auth/login', {
+    const data = await publicHttpClient.request<LoginApiResponse>('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });

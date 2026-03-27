@@ -10,7 +10,7 @@ import { mapApiStocking } from '@/features/stocking/utils/apiMapper';
 type RouteContext = { params: Promise<{ id: string }> };
 
 const ENDPOINTS = {
-  details: (id: string) => `/api/company/stocking/${id}`,
+  details: (id: string) => `/api/company/stockings/${id}`,
 };
 
 /**
