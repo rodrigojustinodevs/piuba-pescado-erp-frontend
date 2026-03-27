@@ -1,3 +1,4 @@
+export { BatchSelectField } from './BatchSelectField';
 export { BatchStatusBadge } from './BatchStatusBadge';
 export { BatchTable } from './BatchTable';
 export { BatchesListView } from './BatchesListView';

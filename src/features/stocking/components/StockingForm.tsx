@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   createStockingSchema,
@@ -10,10 +10,9 @@ import {
   type UpdateStockingFormData,
 } from '../schemas';
 import type { Stocking } from '../types';
-import { useBatches } from '@/features/batch';
-import { formatBatchOptionLabel } from '@/features/batch/utils/format';
+import { BatchSelectField, useBatches } from '@/features/batch';
 import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { Input } from '@/shared/components/ui';
 
 type StockingFormCommonProps = {
   isLoading?: boolean;
@@ -93,24 +92,11 @@ export function StockingForm({
         <h3 className="text-lg font-semibold text-gray-900">Informações do Povoamento</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Controller
-            name="batchId"
+          <BatchSelectField
             control={control}
-            render={({ field }) => (
-              <Select
-                label="Lote"
-                requiredIndicator
-                disabled={isLoadingBatches}
-                placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
-                options={batches.map((batch) => ({
-                  value: batch.id,
-                  label: formatBatchOptionLabel(batch),
-                }))}
-                value={field.value || ''}
-                onChange={(e) => field.onChange(e.target.value)}
-                error={errors.batchId?.message}
-              />
-            )}
+            batches={batches}
+            isLoadingBatches={isLoadingBatches}
+            error={errors.batchId?.message}
           />
 
           <Input

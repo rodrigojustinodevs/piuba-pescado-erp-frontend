@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { CreateFeedingData } from '../types';
 import { createFeedingSchema, type CreateFeedingFormData } from '../schemas';
-import { useBatches } from '@/features/batch';
-import { formatBatchOptionLabel } from '@/features/batch/utils/format';
+import { BatchSelectField, useBatches } from '@/features/batch';
 import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { Input } from '@/shared/components/ui';
 
 type FeedingFormProps = {
   initialValues?: CreateFeedingFormData;
@@ -88,24 +87,12 @@ export function FeedingForm({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Controller
-            name="batchId"
+          <BatchSelectField
             control={control}
-            render={({ field }) => (
-              <Select
-                label="Lote"
-                requiredIndicator
-                disabled={isLoadingBatches || isSubmitting}
-                placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
-                options={batches.map((batch) => ({
-                  value: batch.id,
-                  label: formatBatchOptionLabel(batch),
-                }))}
-                value={field.value}
-                onChange={(e) => field.onChange(e.target.value)}
-                error={errors.batchId?.message}
-              />
-            )}
+            batches={batches}
+            isLoadingBatches={isLoadingBatches}
+            disabled={isSubmitting}
+            error={errors.batchId?.message}
           />
 
           <Input
