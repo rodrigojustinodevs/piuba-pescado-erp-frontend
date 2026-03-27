@@ -27,6 +27,7 @@ export {
 export type { UseBatchesParams, BatchStatusFilter } from './hooks';
 
 export {
+  BatchSelectField,
   BatchStatusBadge,
   BatchTable,
   BatchesListView,
