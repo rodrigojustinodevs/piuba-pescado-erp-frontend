@@ -111,6 +111,12 @@ export const defaultMenuItems: MenuItem[] = [
     href: '/company/biometries',
   },
   {
+    id: 'alimentacoes',
+    label: 'Alimentações',
+    icon: <FeedingIcon />,
+    href: '/company/feedings',
+  },
+  {
     id: 'povoamentos',
     label: 'Povoamentos',
     icon: <StockingIcon />,
