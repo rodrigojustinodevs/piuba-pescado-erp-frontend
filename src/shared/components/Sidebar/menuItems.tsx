@@ -6,6 +6,8 @@ import {
   BiometryIcon,
   BuildingIcon,
   DashboardIcon,
+  FeedingIcon,
+  MortalityIcon,
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
@@ -103,6 +105,18 @@ export const defaultMenuItems: MenuItem[] = [
     label: 'Lotes',
     icon: <BatchIcon />,
     href: '/company/batches',
+    children: [
+      {
+        id: 'lotes',
+        label: 'Lotes',
+        href: '/company/batches',
+      },
+      {
+        id: 'mortalidades',
+        label: 'Mortalidades',
+        href: '/company/mortalities',
+      },
+    ],
   },
   {
     id: 'biometrias',

@@ -8,6 +8,7 @@ import {
   BuildingIcon,
   DashboardIcon,
   FeedingIcon,
+  MortalityIcon,
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
@@ -125,9 +126,22 @@ export const menuConfig: MenuItemWithAuth[] = [
     id: 'lotes',
     label: 'Lotes',
     icon: <BatchIcon />,
-    href: '/company/batches',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
+    children: [
+      {
+        id: 'lotes',
+        label: 'Lotes',
+        href: '/company/batches',
+        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+      },
+      {
+        id: 'mortalidades',
+        label: 'Mortalidades',
+        href: '/company/mortalities',
+        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+      },
+    ],
   },
   {
     id: 'biometrias',
