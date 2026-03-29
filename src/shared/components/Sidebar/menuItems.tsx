@@ -110,6 +110,11 @@ export const defaultMenuItems: MenuItem[] = [
         label: 'Sensores',
         href: '/company/sensors',
       },
+      {
+        id: 'leituras-sensores',
+        label: 'Leituras',
+        href: '/company/sensor-readings',
+      },
     ],
   },
   {
