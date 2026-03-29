@@ -115,6 +115,11 @@ export const defaultMenuItems: MenuItem[] = [
         label: 'Leituras',
         href: '/company/sensor-readings',
       },
+      {
+        id: 'qualidade-agua',
+        label: 'Qualidade da água',
+        href: '/company/water-qualities',
+      },
     ],
   },
   {

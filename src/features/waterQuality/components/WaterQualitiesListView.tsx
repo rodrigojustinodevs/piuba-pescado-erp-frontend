@@ -1,27 +1,27 @@
 'use client';
 
 import { useCallback } from 'react';
-import type { SensorReading, SensorReadingListResponse } from '../types';
-import { SensorReadingTable } from './SensorReadingTable';
+import type { WaterQuality, WaterQualityListResponse } from '../types';
+import { WaterQualityTable } from './WaterQualityTable';
 import { ListHeader, ListPageShell, SearchField, SortButton } from '@/shared/components/list';
-import { SensorReadingBarChartIcon } from '@/shared/components/icons/FeatureEntityIcons';
+import { WaterQualityDropletIcon } from '@/shared/components/icons/FeatureEntityIcons';
 
-export type SensorReadingsListViewProps = {
+export type WaterQualitiesListViewProps = {
   page: number;
   setPage: (next: number) => void;
   search: string;
   setSearch: (next: string) => void;
   sortBy: string;
   setSortBy: (next: string) => void;
-  data: SensorReadingListResponse | undefined;
+  data: WaterQualityListResponse | undefined;
   isLoading: boolean;
   error: unknown;
-  sensorReadings: SensorReading[];
+  waterQualities: WaterQuality[];
   handleDelete: (id: string, label: string) => void;
   isDeleting: boolean;
 };
 
-export function SensorReadingsListView({
+export function WaterQualitiesListView({
   page,
   setPage,
   search,
@@ -31,55 +31,51 @@ export function SensorReadingsListView({
   data,
   isLoading,
   error,
-  sensorReadings,
+  waterQualities,
   handleDelete,
   isDeleting,
-}: Readonly<SensorReadingsListViewProps>) {
+}: Readonly<WaterQualitiesListViewProps>) {
   const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
 
   return (
     <ListPageShell
       listHeader={
         <ListHeader
-          icon={<SensorReadingBarChartIcon />}
-          title="Leituras de sensores"
-          subtitle="Histórico de medições registradas pelos sensores"
-          ctaHref="/company/sensor-readings/create"
-          ctaLabel="Nova leitura"
+          icon={<WaterQualityDropletIcon />}
+          title="Qualidade da água"
+          subtitle="Medições de pH, oxigênio, temperatura e amônia por tanque"
+          ctaHref="/company/water-qualities/create"
+          ctaLabel="Nova medição"
         />
       }
       toolbar={
         <section className="flex flex-wrap items-center gap-3">
-          <SearchField
-            value={search}
-            placeholder="Buscar por tanque, tipo ou unidade..."
-            onChange={setSearch}
-          />
+          <SearchField value={search} placeholder="Buscar por tanque..." onChange={setSearch} />
           <SortButton current={sortBy} onSort={handleSort} value="measuredAt" label="Data" />
         </section>
       }
       total={data?.total ?? 0}
-      totalLabelSingular="leitura encontrada"
-      totalLabelPlural="leituras encontradas"
+      totalLabelSingular="registro encontrado"
+      totalLabelPlural="registros encontrados"
       isLoading={isLoading}
       error={error}
-      errorMessage="Erro ao carregar leituras."
-      isEmpty={!isLoading && !error && sensorReadings.length === 0}
-      emptyMessage="Nenhuma leitura encontrada."
+      errorMessage="Erro ao carregar qualidade da água."
+      isEmpty={!isLoading && !error && waterQualities.length === 0}
+      emptyMessage="Nenhum registro encontrado."
       pagination={
         data
           ? {
               page,
               limit: data.limit,
               total: data.total,
-              itemLabelPlural: 'leituras',
+              itemLabelPlural: 'registros',
               onPageChange: setPage,
             }
           : null
       }
     >
-      <SensorReadingTable
-        sensorReadings={sensorReadings}
+      <WaterQualityTable
+        waterQualities={waterQualities}
         onDelete={handleDelete}
         isDeleting={isDeleting}
       />
