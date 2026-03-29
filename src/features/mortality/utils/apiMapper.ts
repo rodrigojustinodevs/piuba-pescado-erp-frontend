@@ -4,6 +4,10 @@ import type {
   Mortality,
   MortalityListResponse,
 } from '../types';
+import {
+  extractListFromPagedApiResponse,
+  getApiPagedListMeta,
+} from '@/shared/utils/apiListResponse';
 
 export function mapApiMortality(api: ApiMortality): Mortality {
   return {
@@ -18,29 +22,10 @@ export function mapApiMortality(api: ApiMortality): Mortality {
   };
 }
 
-function extractList(apiData: ApiMortalityListResponse): ApiMortality[] {
-  const r = apiData.response;
-  if (Array.isArray(r)) return r;
-  if (r && typeof r === 'object' && 'data' in r && Array.isArray(r.data)) return r.data;
-  return [];
-}
-
-function normalizePage(value: number | undefined): number {
-  if (value == null || value < 1) return 1;
-  return value;
-}
-
-function normalizeLimit(value: number | undefined): number {
-  if (value == null || value < 1) return 25;
-  return value;
-}
-
 export function mapApiMortalityList(apiData: ApiMortalityListResponse): MortalityListResponse {
-  const mortalities: Mortality[] = extractList(apiData).map(mapApiMortality);
+  const mortalities: Mortality[] = extractListFromPagedApiResponse(apiData).map(mapApiMortality);
   return {
     mortalities,
-    total: apiData.pagination?.total ?? 0,
-    page: normalizePage(apiData.pagination?.current_page),
-    limit: normalizeLimit(apiData.pagination?.per_page),
+    ...getApiPagedListMeta(apiData),
   };
 }

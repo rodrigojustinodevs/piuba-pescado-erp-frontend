@@ -4,6 +4,10 @@ import type {
   SensorReading,
   SensorReadingListResponse,
 } from '../types';
+import {
+  extractListFromPagedApiResponse,
+  getApiPagedListMeta,
+} from '@/shared/utils/apiListResponse';
 
 export function mapApiSensorReading(api: ApiSensorReading): SensorReading {
   return {
@@ -23,31 +27,14 @@ export function mapApiSensorReading(api: ApiSensorReading): SensorReading {
   };
 }
 
-function extractList(apiData: ApiSensorReadingListResponse): ApiSensorReading[] {
-  const r = apiData.response;
-  if (Array.isArray(r)) return r;
-  if (r && typeof r === 'object' && 'data' in r && Array.isArray(r.data)) return r.data;
-  return [];
-}
-
-function normalizePage(value: number | undefined): number {
-  if (value == null || value < 1) return 1;
-  return value;
-}
-
-function normalizeLimit(value: number | undefined): number {
-  if (value == null || value < 1) return 25;
-  return value;
-}
-
 export function mapApiSensorReadingList(
   apiData: ApiSensorReadingListResponse,
 ): SensorReadingListResponse {
-  const sensorReadings: SensorReading[] = extractList(apiData).map(mapApiSensorReading);
+  const sensorReadings: SensorReading[] = extractListFromPagedApiResponse(apiData).map(
+    mapApiSensorReading,
+  );
   return {
     sensorReadings,
-    total: apiData.pagination?.total ?? 0,
-    page: normalizePage(apiData.pagination?.current_page),
-    limit: normalizeLimit(apiData.pagination?.per_page),
+    ...getApiPagedListMeta(apiData),
   };
 }

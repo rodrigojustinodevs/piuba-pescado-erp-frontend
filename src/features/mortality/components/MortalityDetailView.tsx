@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { Mortality } from '../types';
+import { DetailInfoField, DetailSummaryCard } from '@/shared/components/entityDetail';
 import { PencilIcon, SpinnerIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 import { formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 
@@ -9,16 +10,6 @@ export type MortalityDetailViewProps = {
   mortality: Mortality;
   onDelete?: (id: string, label: string) => void;
   isDeleting?: boolean;
-};
-
-type MetricCardProps = {
-  label: string;
-  value: string;
-};
-
-type InfoItemProps = {
-  label: string;
-  value: string;
 };
 
 function formatDate(value: string | null): string {
@@ -53,24 +44,6 @@ function formatDateTime(value: string | null): string {
 
 function formatNumber(value: number): string {
   return Number.isFinite(value) ? String(value) : '—';
-}
-
-function MetricCard({ label, value }: Readonly<MetricCardProps>) {
-  return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-      <p className="text-sm text-slate-600 mb-2">{label}</p>
-      <p className="text-2xl font-semibold text-[#0F172A]">{value}</p>
-    </div>
-  );
-}
-
-function InfoItem({ label, value }: Readonly<InfoItemProps>) {
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-      <p className="text-xs font-medium text-slate-600 uppercase mb-2">{label}</p>
-      <p className="text-sm font-medium text-[#0F172A]">{value}</p>
-    </div>
-  );
 }
 
 export function MortalityDetailView({
@@ -149,7 +122,7 @@ export function MortalityDetailView({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
           {metricCards.map((card) => (
-            <MetricCard key={card.label} label={card.label} value={card.value} />
+            <DetailSummaryCard key={card.label} label={card.label} value={card.value} />
           ))}
         </div>
 
@@ -161,7 +134,7 @@ export function MortalityDetailView({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {infoItems.map((item) => (
-              <InfoItem key={item.label} label={item.label} value={item.value} />
+              <DetailInfoField key={item.label} label={item.label} value={item.value} />
             ))}
           </div>
         </div>

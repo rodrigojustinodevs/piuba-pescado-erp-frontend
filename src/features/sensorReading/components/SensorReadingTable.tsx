@@ -1,34 +1,13 @@
 'use client';
 
 import type { SensorReading } from '../types';
+import { formatSensorReadingValue } from '../utils/formatSensorReadingDisplay';
 import { getSensorTypeLabel } from '@/features/sensor/utils/sensorDisplayLabels';
 import { DataTable, createCrudListRowActions, type DataTableColumn } from '@/shared/components/Table';
-
-function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
-}
-
-function formatValue(value: number, unit: string): string {
-  if (!Number.isFinite(value)) return '—';
-  const u = unit?.trim() ? ` ${unit}` : '';
-  return `${value}${u}`;
-}
+import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 
 function getRowLabel(row: SensorReading): string {
-  const v = formatValue(row.value, row.unit);
+  const v = formatSensorReadingValue(row.value, row.unit);
   return `${v} — ${row.tankName || 'Tanque'}`;
 }
 
@@ -48,7 +27,9 @@ export function SensorReadingTable({
       id: 'measuredAt',
       header: 'Medição',
       cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A]">{formatDateTime(row.measuredAt)}</div>
+        <div className="text-sm font-medium text-[#0F172A]">
+          {formatNullableDatePtBR(row.measuredAt, true)}
+        </div>
       ),
     },
     {
@@ -67,7 +48,7 @@ export function SensorReadingTable({
       id: 'value',
       header: 'Valor',
       cell: (row) => (
-        <div className="text-sm text-slate-600">{formatValue(row.value, row.unit)}</div>
+        <div className="text-sm text-slate-600">{formatSensorReadingValue(row.value, row.unit)}</div>
       ),
     },
     {
@@ -82,7 +63,9 @@ export function SensorReadingTable({
     {
       id: 'updatedAt',
       header: 'Atualizado em',
-      cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-500">{formatNullableDatePtBR(row.updatedAt, true)}</div>
+      ),
     },
   ];
 

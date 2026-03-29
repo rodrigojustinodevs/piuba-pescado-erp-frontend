@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import type { SensorReading } from '../types';
 import { getSensorTypeLabel } from '@/features/sensor/utils/sensorDisplayLabels';
+import { DetailInfoField, DetailSummaryCard } from '@/shared/components/entityDetail';
 import { PencilIcon, SpinnerIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
-import { formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
+import { formatNullableDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
+import { formatSensorReadingValue } from '../utils/formatSensorReadingDisplay';
 
 export type SensorReadingDetailViewProps = {
   reading: SensorReading;
@@ -12,36 +14,25 @@ export type SensorReadingDetailViewProps = {
   isDeleting?: boolean;
 };
 
-function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
-}
-
-function formatValue(value: number, unit: string): string {
-  if (!Number.isFinite(value)) return '—';
-  const u = unit?.trim() ? ` ${unit}` : '';
-  return `${value}${u}`;
-}
-
 export function SensorReadingDetailView({
   reading,
   onDelete,
   isDeleting = false,
 }: Readonly<SensorReadingDetailViewProps>) {
   const typeLabel = getSensorTypeLabel(reading.sensorType);
-  const titleLabel = `${formatValue(reading.value, reading.unit)} — ${reading.tankName || 'Tanque'}`;
+  const titleLabel = `${formatSensorReadingValue(reading.value, reading.unit)} — ${reading.tankName || 'Tanque'}`;
+  const measuredAt = formatNullableDatePtBR(reading.measuredAt, true);
+  const metricCards = [
+    { label: 'Valor', value: formatSensorReadingValue(reading.value, reading.unit) },
+    { label: 'Tanque', value: reading.tankName || '—' },
+    { label: 'Data da medição', value: measuredAt },
+    { label: 'Atualizado em', value: formatNullableDatePtBR(reading.updatedAt, true) },
+  ];
+  const infoItems = [
+    { label: 'OBSERVAÇÕES', value: reading.notes || '—' },
+    { label: 'CRIADO EM', value: formatNullableDatePtBR(reading.createdAt, true) },
+    { label: 'ÚLTIMA ATUALIZAÇÃO', value: formatRelativeDateTimePtBR(reading.updatedAt) },
+  ];
 
   return (
     <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
@@ -69,7 +60,7 @@ export function SensorReadingDetailView({
             <div>
               <h1 className="text-3xl font-semibold text-[#0F172A] mb-2">{titleLabel}</h1>
               <p className="text-sm text-slate-600">
-                Sensor: {typeLabel} · Medição: {formatDateTime(reading.measuredAt)}
+                Sensor: {typeLabel} · Medição: {measuredAt}
               </p>
             </div>
           </div>
@@ -101,22 +92,9 @@ export function SensorReadingDetailView({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Valor</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{formatValue(reading.value, reading.unit)}</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Tanque</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{reading.tankName || '—'}</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Data da medição</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{formatDateTime(reading.measuredAt)}</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Atualizado em</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{formatDateTime(reading.updatedAt)}</p>
-          </div>
+          {metricCards.map((card) => (
+            <DetailSummaryCard key={card.label} label={card.label} value={card.value} />
+          ))}
         </div>
 
         <div className="mb-8 mr-8 ml-8 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -126,20 +104,9 @@ export function SensorReadingDetailView({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">OBSERVAÇÕES</p>
-              <p className="text-sm font-medium text-[#0F172A]">{reading.notes || '—'}</p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">CRIADO EM</p>
-              <p className="text-sm font-medium text-[#0F172A]">{formatDateTime(reading.createdAt)}</p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">ÚLTIMA ATUALIZAÇÃO</p>
-              <p className="text-sm font-medium text-[#0F172A]">
-                {formatRelativeDateTimePtBR(reading.updatedAt)}
-              </p>
-            </div>
+            {infoItems.map((item) => (
+              <DetailInfoField key={item.label} label={item.label} value={item.value} />
+            ))}
           </div>
         </div>
       </div>
