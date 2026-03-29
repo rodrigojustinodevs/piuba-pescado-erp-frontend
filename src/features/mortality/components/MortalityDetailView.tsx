@@ -11,6 +11,16 @@ export type MortalityDetailViewProps = {
   isDeleting?: boolean;
 };
 
+type MetricCardProps = {
+  label: string;
+  value: string;
+};
+
+type InfoItemProps = {
+  label: string;
+  value: string;
+};
+
 function formatDate(value: string | null): string {
   if (!value) return '—';
   try {
@@ -45,12 +55,42 @@ function formatNumber(value: number): string {
   return Number.isFinite(value) ? String(value) : '—';
 }
 
+function MetricCard({ label, value }: Readonly<MetricCardProps>) {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
+      <p className="text-sm text-slate-600 mb-2">{label}</p>
+      <p className="text-2xl font-semibold text-[#0F172A]">{value}</p>
+    </div>
+  );
+}
+
+function InfoItem({ label, value }: Readonly<InfoItemProps>) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+      <p className="text-xs font-medium text-slate-600 uppercase mb-2">{label}</p>
+      <p className="text-sm font-medium text-[#0F172A]">{value}</p>
+    </div>
+  );
+}
+
 export function MortalityDetailView({
   mortality,
   onDelete,
   isDeleting = false,
 }: Readonly<MortalityDetailViewProps>) {
   const titleLabel = mortality.batchName || `Mortalidade ${formatDate(mortality.mortalityDate)}`;
+  const metricCards = [
+    { label: 'Lote', value: mortality.batchName || '—' },
+    { label: 'Data da mortalidade', value: formatDate(mortality.mortalityDate) },
+    { label: 'Quantidade', value: formatNumber(mortality.quantity) },
+    { label: 'Atualizado em', value: formatDateTime(mortality.updatedAt) },
+  ];
+  const infoItems = [
+    { label: 'LOTE', value: mortality.batchName || '—' },
+    { label: 'CAUSA', value: mortality.cause || '—' },
+    { label: 'CRIADO EM', value: formatDateTime(mortality.createdAt) },
+    { label: 'ÚLTIMA ATUALIZAÇÃO', value: formatRelativeDateTimePtBR(mortality.updatedAt) },
+  ];
 
   return (
     <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
@@ -108,22 +148,9 @@ export function MortalityDetailView({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Lote</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{mortality.batchName || '—'}</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Data da mortalidade</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{formatDate(mortality.mortalityDate)}</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Quantidade</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{formatNumber(mortality.quantity)}</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
-            <p className="text-sm text-slate-600 mb-2">Atualizado em</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{formatDateTime(mortality.updatedAt)}</p>
-          </div>
+          {metricCards.map((card) => (
+            <MetricCard key={card.label} label={card.label} value={card.value} />
+          ))}
         </div>
 
         <div className="mb-8 mr-8 ml-8 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -133,26 +160,9 @@ export function MortalityDetailView({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">LOTE</p>
-              <p className="text-sm font-medium text-[#0F172A]">{mortality.batchName || '—'}</p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">CAUSA</p>
-              <p className="text-sm font-medium text-[#0F172A]">{mortality.cause || '—'}</p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">CRIADO EM</p>
-              <p className="text-sm font-medium text-[#0F172A]">
-                {formatDateTime(mortality.createdAt)}
-              </p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">ÚLTIMA ATUALIZAÇÃO</p>
-              <p className="text-sm font-medium text-[#0F172A]">
-                {formatRelativeDateTimePtBR(mortality.updatedAt)}
-              </p>
-            </div>
+            {infoItems.map((item) => (
+              <InfoItem key={item.label} label={item.label} value={item.value} />
+            ))}
           </div>
         </div>
       </div>

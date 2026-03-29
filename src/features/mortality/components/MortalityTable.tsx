@@ -10,35 +10,32 @@ import {
   type DataTableColumn,
 } from '@/shared/components/Table';
 
-function formatDate(value: string | null): string {
+function formatPtBRDate(value: string | null, withTime = false): string {
   if (!value) return '—';
   try {
     const d = new Date(value);
     if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleDateString('pt-BR', {
+    const options: Intl.DateTimeFormatOptions = {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
-    });
+    };
+    if (withTime) {
+      options.hour = '2-digit';
+      options.minute = '2-digit';
+    }
+    return withTime ? d.toLocaleString('pt-BR', options) : d.toLocaleDateString('pt-BR', options);
   } catch {
     return value;
   }
 }
 
+function formatDate(value: string | null): string {
+  return formatPtBRDate(value);
+}
+
 function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value);
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
+  return formatPtBRDate(value, true);
 }
 
 function formatNumber(value: number): string {
