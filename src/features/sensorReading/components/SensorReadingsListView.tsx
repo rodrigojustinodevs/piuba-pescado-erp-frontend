@@ -1,27 +1,27 @@
 'use client';
 
 import { useCallback } from 'react';
-import type { Sensor, SensorListResponse } from '../types';
-import { SensorTable } from './SensorTable';
+import type { SensorReading, SensorReadingListResponse } from '../types';
+import { SensorReadingTable } from './SensorReadingTable';
 import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
 import { ChevronRightIcon, FilterIcon, SpinnerIcon } from '@/shared/components/icons/AppIcons';
 
-export type SensorsListViewProps = {
+export type SensorReadingsListViewProps = {
   page: number;
   setPage: (next: number) => void;
   search: string;
   setSearch: (next: string) => void;
   sortBy: string;
   setSortBy: (next: string) => void;
-  data: SensorListResponse | undefined;
+  data: SensorReadingListResponse | undefined;
   isLoading: boolean;
   error: unknown;
-  sensors: Sensor[];
+  sensorReadings: SensorReading[];
   handleDelete: (id: string, label: string) => void;
   isDeleting: boolean;
 };
 
-export function SensorsListView({
+export function SensorReadingsListView({
   page,
   setPage,
   search,
@@ -31,10 +31,10 @@ export function SensorsListView({
   data,
   isLoading,
   error,
-  sensors,
+  sensorReadings,
   handleDelete,
   isDeleting,
-}: Readonly<SensorsListViewProps>) {
+}: Readonly<SensorReadingsListViewProps>) {
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -48,22 +48,26 @@ export function SensorsListView({
     }
 
     if (error) {
-      return <div className="p-8 text-center text-red-600">Erro ao carregar sensores.</div>;
+      return <div className="p-8 text-center text-red-600">Erro ao carregar leituras.</div>;
     }
 
-    if (!sensors.length) {
-      return <div className="p-8 text-center text-slate-500">Nenhum sensor encontrado.</div>;
+    if (!sensorReadings.length) {
+      return <div className="p-8 text-center text-slate-500">Nenhuma leitura encontrada.</div>;
     }
 
     return (
       <>
-        <SensorTable sensors={sensors} onDelete={handleDelete} isDeleting={isDeleting} />
+        <SensorReadingTable
+          sensorReadings={sensorReadings}
+          onDelete={handleDelete}
+          isDeleting={isDeleting}
+        />
         {data && data.total > data.limit && (
           <Pagination
             page={page}
             limit={data.limit}
             total={data.total}
-            itemLabelPlural="sensores"
+            itemLabelPlural="leituras"
             onPageChange={setPage}
           />
         )}
@@ -88,33 +92,28 @@ export function SensorsListView({
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M8 14s1.5 2 4 2 4-2 4-2m-8 4s1.5 2 4 2 4-2 4-2M6 6h12M6 10h12"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
             />
           </svg>
         }
-        title="Sensores"
-        subtitle="Monitore os sensores instalados nos tanques"
-        ctaHref="/company/sensors/create"
-        ctaLabel="Novo Sensor"
+        title="Leituras de sensores"
+        subtitle="Histórico de medições registradas pelos sensores"
+        ctaHref="/company/sensor-readings/create"
+        ctaLabel="Nova leitura"
       />
 
       <section className="flex flex-wrap items-center gap-3">
         <SearchField
           value={search}
-          placeholder="Buscar por tipo, status ou tanque..."
+          placeholder="Buscar por tanque, tipo ou unidade..."
           onChange={setSearch}
         />
-        <SortButton
-          current={sortBy}
-          onSort={handleSort}
-          value="installationDate"
-          label="Instalação"
-        />
+        <SortButton current={sortBy} onSort={handleSort} value="measuredAt" label="Data" />
       </section>
 
       <section className="flex items-center justify-between">
         <p className="text-sm text-slate-600">
-          {data?.total ?? 0} {data?.total === 1 ? 'sensor encontrado' : 'sensores encontrados'}
+          {data?.total ?? 0} {data?.total === 1 ? 'leitura encontrada' : 'leituras encontradas'}
         </p>
         <button
           type="button"
