@@ -3,40 +3,10 @@
 import type { Mortality } from '../types';
 import {
   DataTable,
-  EditIcon,
-  EyeIcon,
-  SpinnerIcon,
-  TrashIcon,
+  createCrudListRowActions,
   type DataTableColumn,
 } from '@/shared/components/Table';
-
-function formatPtBRDate(value: string | null, withTime = false): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return value;
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    };
-    if (withTime) {
-      options.hour = '2-digit';
-      options.minute = '2-digit';
-    }
-    return withTime ? d.toLocaleString('pt-BR', options) : d.toLocaleDateString('pt-BR', options);
-  } catch {
-    return value;
-  }
-}
-
-function formatDate(value: string | null): string {
-  return formatPtBRDate(value);
-}
-
-function formatDateTime(value: string | null): string {
-  return formatPtBRDate(value, true);
-}
+import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 
 function formatNumber(value: number): string {
   return Number.isFinite(value) ? String(value) : '—';
@@ -49,7 +19,7 @@ interface MortalityTableProps {
 }
 
 function getRowLabel(row: Mortality): string {
-  return `${row.batchName || 'Lote'} - ${formatDate(row.mortalityDate)}`;
+  return `${row.batchName || 'Lote'} - ${formatNullableDatePtBR(row.mortalityDate)}`;
 }
 
 export function MortalityTable({
@@ -68,7 +38,9 @@ export function MortalityTable({
     {
       id: 'mortalityDate',
       header: 'Data',
-      cell: (row) => <div className="text-sm text-slate-600">{formatDate(row.mortalityDate)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-600">{formatNullableDatePtBR(row.mortalityDate)}</div>
+      ),
     },
     {
       id: 'quantity',
@@ -87,7 +59,9 @@ export function MortalityTable({
     {
       id: 'updatedAt',
       header: 'Atualizado em',
-      cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-500">{formatNullableDatePtBR(row.updatedAt, true)}</div>
+      ),
     },
   ];
 
@@ -96,35 +70,12 @@ export function MortalityTable({
       data={mortalities}
       columns={columns}
       getRowId={(row) => row.id}
-      rowActions={(row) => {
-        const actions = [
-          {
-            label: 'Ver detalhes',
-            href: `/company/mortalities/${row.id}`,
-            icon: <EyeIcon className="h-4 w-4" />,
-          },
-          {
-            label: 'Editar',
-            href: `/company/mortalities/${row.id}/edit`,
-            icon: <EditIcon className="h-4 w-4" />,
-          },
-        ];
-        if (!onDelete) return actions;
-        return [
-          ...actions,
-          {
-            label: 'Excluir',
-            onClick: () => onDelete(row.id, getRowLabel(row)),
-            variant: 'danger' as const,
-            disabled: isDeleting,
-            icon: isDeleting ? (
-              <SpinnerIcon className="h-4 w-4 animate-spin" />
-            ) : (
-              <TrashIcon className="h-4 w-4" />
-            ),
-          },
-        ];
-      }}
+      rowActions={createCrudListRowActions({
+        basePath: '/company/mortalities',
+        onDelete,
+        getRowLabel,
+        isDeleting,
+      })}
       emptyState={
         <div className="p-8 text-center text-slate-500">
           Nenhum registro de mortalidade encontrado.
