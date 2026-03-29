@@ -50,3 +50,7 @@ export const FeedingIcon = createStrokeIconNoProps(
 export const MortalityIcon = createStrokeIconNoProps(
   'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6',
 );
+
+export const SensorIcon = createStrokeIconNoProps(
+  'M8 14s1.5 2 4 2 4-2 4-2m-8 4s1.5 2 4 2 4-2 4-2M6 6h12M6 10h12',
+);
