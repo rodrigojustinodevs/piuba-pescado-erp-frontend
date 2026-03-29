@@ -7,10 +7,10 @@ import {
   BuildingIcon,
   DashboardIcon,
   FeedingIcon,
-  MortalityIcon,
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
+  SensorIcon,
   StockingIcon,
   TransferIcon,
   SettingsIcon,
@@ -99,6 +99,18 @@ export const defaultMenuItems: MenuItem[] = [
     label: 'Tanques',
     icon: <TankIcon />,
     href: '/company/tanks',
+    children: [
+      {
+        id: 'tanques',
+        label: 'Tanques',
+        href: '/company/tanks',
+      },
+      {
+        id: 'sensores',
+        label: 'Sensores',
+        href: '/company/sensors',
+      },
+    ],
   },
   {
     id: 'lotes',

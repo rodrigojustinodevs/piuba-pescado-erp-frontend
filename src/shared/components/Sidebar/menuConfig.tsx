@@ -8,10 +8,10 @@ import {
   BuildingIcon,
   DashboardIcon,
   FeedingIcon,
-  MortalityIcon,
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
+  SensorIcon,
   StockingIcon,
   TransferIcon,
   SettingsIcon,
@@ -121,6 +121,18 @@ export const menuConfig: MenuItemWithAuth[] = [
     href: '/company/tanks',
     allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
     requiresCompany: true,
+    children: [
+      {
+        id: 'tanques',
+        label: 'Tanques',
+        href: '/company/tanks',
+      },
+      {
+        id: 'sensores',
+        label: 'Sensores',
+        href: '/company/sensors',
+      },
+    ],
   },
   {
     id: 'lotes',
