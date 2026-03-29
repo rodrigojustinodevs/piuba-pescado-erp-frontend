@@ -2,30 +2,12 @@
 
 import type { WaterQuality } from '../types';
 import {
-  DetailInfoField,
-  DetailInfoSection,
   DetailPageHero,
-  DetailSummaryCard,
+  EntityDetailMetricsBody,
   EntityDetailShell,
 } from '@/shared/components/entityDetail';
+import { WaterQualityDropletIcon } from '@/shared/components/icons/FeatureEntityIcons';
 import { formatNullableDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
-
-const waterDropIcon = (
-  <svg
-    className="h-8 w-8 text-[#0EA5A4]"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    aria-hidden
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 3c-4.5 5.5-8 9.5-8 13a8 8 0 1016 0c0-3.5-3.5-7.5-8-13z"
-    />
-  </svg>
-);
 
 export type WaterQualityDetailViewProps = {
   record: WaterQuality;
@@ -59,7 +41,7 @@ export function WaterQualityDetailView({
   return (
     <EntityDetailShell breadcrumb={<>Dashboard / Qualidade da água / {titleLabel}</>}>
       <DetailPageHero
-        icon={waterDropIcon}
+        icon={<WaterQualityDropletIcon />}
         title={titleLabel}
         subtitle={
           <>
@@ -71,19 +53,11 @@ export function WaterQualityDetailView({
         isDeleting={isDeleting}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
-        {metricCards.map((card) => (
-          <DetailSummaryCard key={card.label} label={card.label} value={card.value} />
-        ))}
-      </div>
-
-      <DetailInfoSection title="Detalhes">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {infoItems.map((item) => (
-            <DetailInfoField key={item.label} label={item.label} value={item.value} />
-          ))}
-        </div>
-      </DetailInfoSection>
+      <EntityDetailMetricsBody
+        metricCards={metricCards}
+        infoSectionTitle="Detalhes"
+        infoItems={infoItems}
+      />
     </EntityDetailShell>
   );
 }

@@ -6,3 +6,5 @@ export { DetailPageHero } from './DetailPageHero';
 export type { DetailPageHeroProps } from './DetailPageHero';
 export { EntityDetailShell } from './EntityDetailShell';
 export type { EntityDetailShellProps } from './EntityDetailShell';
+export { EntityDetailMetricsBody } from './EntityDetailMetricsBody';
+export type { DetailLabeledValue, EntityDetailMetricsBodyProps } from './EntityDetailMetricsBody';

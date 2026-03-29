@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTanks } from '@/features/tank';
-import { FormActions } from '@/shared/components/form';
+import { FormActions, FormCardSection } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
+import { toMeasuredAtBackendString } from '@/shared/utils/datetimeForm';
 import type { CreateWaterQualityData } from '../types';
 import { createWaterQualitySchema, type CreateWaterQualityFormData } from '../schemas';
 
@@ -17,21 +18,7 @@ type WaterQualityFormProps = {
   submittingLabel: string;
 };
 
-/** Formato esperado pelo backend: `YYYY-MM-DD HH:mm:ss` */
-function toMeasuredAtString(value: string): string {
-  if (!value) return '';
-  const d = new Date(value);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
-export function toDateTimeLocalValue(value: string | null): string {
-  if (!value) return '';
-  const d = new Date(value.replace(' ', 'T'));
-  if (Number.isNaN(d.getTime())) return '';
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+export { toDateTimeLocalInputValue as toDateTimeLocalValue } from '@/shared/utils/datetimeForm';
 
 export function WaterQualityForm({
   initialValues,
@@ -75,7 +62,7 @@ export function WaterQualityForm({
         const notesTrimmed = data.notes?.trim();
         onSubmit({
           tankId: data.tankId,
-          measuredAt: toMeasuredAtString(data.measuredAt),
+          measuredAt: toMeasuredAtBackendString(data.measuredAt),
           ph: data.ph,
           dissolvedOxygen: data.dissolvedOxygen,
           temperature: data.temperature,
@@ -86,14 +73,17 @@ export function WaterQualityForm({
         });
       })}
     >
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-[#0F172A]">Parâmetros da água</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Informe o tanque, data da medição e os valores analisados.
-          </p>
-        </div>
-
+      <FormCardSection
+        title="Parâmetros da água"
+        description="Informe o tanque, data da medição e os valores analisados."
+        footer={
+          <FormActions
+            submitLabel={submitLabel}
+            loadingLabel={submittingLabel}
+            isLoading={isSubmitting}
+          />
+        }
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Select
             label="Tanque"
@@ -185,15 +175,7 @@ export function WaterQualityForm({
             />
           </div>
         </div>
-
-        <div className="mt-8">
-          <FormActions
-            submitLabel={submitLabel}
-            loadingLabel={submittingLabel}
-            isLoading={isSubmitting}
-          />
-        </div>
-      </div>
+      </FormCardSection>
     </form>
   );
 }

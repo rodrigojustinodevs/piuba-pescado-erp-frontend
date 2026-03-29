@@ -15,6 +15,8 @@ export { Switch } from './Switch';
 
 export { FormActions } from './FormActions';
 export type { FormActionsProps } from './FormActions';
+export { FormCardSection } from './FormCardSection';
+export type { FormCardSectionProps } from './FormCardSection';
 
 // Tipos
 export type {
