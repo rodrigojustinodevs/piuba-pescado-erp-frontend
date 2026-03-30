@@ -83,6 +83,12 @@ export const menuConfig: MenuItemWithAuth[] = [
         href: '/dashboard/movimentacoes',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
+      {
+        id: 'compras',
+        label: 'Compras',
+        href: '/company/purchases',
+        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+      },
     ],
   },
   {

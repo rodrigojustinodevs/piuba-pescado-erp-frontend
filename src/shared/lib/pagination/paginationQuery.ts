@@ -46,3 +46,18 @@ export function buildPaginationQueryString(
 
   return params.toString();
 }
+
+/** Repassa chaves extras da request (ex.: `company_id` para admin escolher empresa). */
+export function buildPaginationQueryStringWithPassthrough(
+  searchParams: URLSearchParams,
+  options: PaginationOptions & { passthrough?: string[] } = {},
+): string {
+  const { passthrough = [], ...paginationOpts } = options;
+  const baseQs = buildPaginationQueryString(searchParams, paginationOpts);
+  const out = new URLSearchParams(baseQs);
+  for (const key of passthrough) {
+    const v = searchParams.get(key)?.trim();
+    if (v) out.set(key, v);
+  }
+  return out.toString();
+}

@@ -69,6 +69,11 @@ export const defaultMenuItems: MenuItem[] = [
         label: 'Movimentações',
         href: '/dashboard/movimentacoes',
       },
+      {
+        id: 'compras',
+        label: 'Compras',
+        href: '/company/purchases',
+      },
     ],
   },
   {

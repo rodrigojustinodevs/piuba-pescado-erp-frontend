@@ -11,6 +11,7 @@ export type DetailPageHeroProps = {
   editHref: string;
   onDeleteClick?: () => void;
   isDeleting?: boolean;
+  extraActions?: ReactNode;
 };
 
 export function DetailPageHero({
@@ -20,6 +21,7 @@ export function DetailPageHero({
   editHref,
   onDeleteClick,
   isDeleting = false,
+  extraActions,
 }: Readonly<DetailPageHeroProps>) {
   return (
     <div className="flex items-start justify-between mb-8 bg-white rounded-t-2xl border border-slate-200 shadow-sm p-8">
@@ -34,6 +36,7 @@ export function DetailPageHero({
       </div>
 
       <div className="flex items-center gap-3">
+        {extraActions}
         {onDeleteClick ? (
           <button
             type="button"
