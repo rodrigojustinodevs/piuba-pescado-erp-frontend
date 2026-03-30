@@ -45,7 +45,7 @@ export interface WaterQuality {
   updatedAt: string;
 }
 
-/** Payload enviado ao backend em POST /api/company/water-quality */
+/** Payload enviado em POST /api/company/water-qualities */
 export interface CreateWaterQualityData {
   tankId: string;
   measuredAt: string;

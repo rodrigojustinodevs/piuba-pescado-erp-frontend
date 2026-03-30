@@ -21,7 +21,7 @@ export const sensorService = {
   },
 
   async create(data: CreateSensorData): Promise<Sensor> {
-    return browserHttpClient.post<Sensor>('/api/company/sensor', data);
+    return browserHttpClient.post<Sensor>('/api/company/sensors', data);
   },
 
   async getById(id: string): Promise<Sensor> {
