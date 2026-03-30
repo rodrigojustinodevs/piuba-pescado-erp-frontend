@@ -7,7 +7,7 @@ import {
   EntityDetailShell,
 } from '@/shared/components/entityDetail';
 import { BuildingIcon } from '@/shared/components/Sidebar/menuIcons';
-import { formatNullableDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
+import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 
 type SupplierDetailViewProps = {
   supplier: Supplier;
@@ -31,10 +31,6 @@ export function SupplierDetailView({
     { label: 'E-MAIL', value: supplier.email || '—' },
     { label: 'CRIADO EM', value: formatNullableDatePtBR(supplier.createdAt, true) },
     { label: 'ATUALIZADO EM', value: formatNullableDatePtBR(supplier.updatedAt, true) },
-    {
-      label: 'ÚLTIMA ATUALIZAÇÃO',
-      value: supplier.updatedAt ? formatRelativeDateTimePtBR(supplier.updatedAt) : '—',
-    },
   ];
 
   return (
@@ -42,7 +38,11 @@ export function SupplierDetailView({
       <DetailPageHero
         icon={<BuildingIcon />}
         title={titleLabel}
-        subtitle={<>Contato: {supplier.contact || '—'} · Telefone: {supplier.phone || '—'}</>}
+        subtitle={
+          <>
+            Contato: {supplier.contact || '—'} · Telefone: {supplier.phone || '—'}
+          </>
+        }
         editHref={`/company/suppliers/${supplier.id}/edit`}
         onDeleteClick={onDelete ? () => onDelete(supplier.id, titleLabel) : undefined}
         isDeleting={isDeleting}
