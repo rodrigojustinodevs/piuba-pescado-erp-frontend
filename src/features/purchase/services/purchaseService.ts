@@ -28,7 +28,7 @@ export const purchaseService = {
   },
 
   async create(data: CreatePurchaseData): Promise<Purchase> {
-    return browserHttpClient.post<Purchase>('/api/company/purchase', data);
+    return browserHttpClient.post<Purchase>('/api/company/purchases', data);
   },
 
   async getById(id: string): Promise<Purchase> {

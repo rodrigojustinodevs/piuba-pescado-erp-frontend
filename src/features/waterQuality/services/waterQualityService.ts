@@ -28,7 +28,7 @@ export const waterQualityService = {
   },
 
   async create(data: CreateWaterQualityData): Promise<WaterQuality> {
-    return browserHttpClient.post<WaterQuality>('/api/company/water-quality', data);
+    return browserHttpClient.post<WaterQuality>('/api/company/water-qualities', data);
   },
 
   async getById(id: string): Promise<WaterQuality> {

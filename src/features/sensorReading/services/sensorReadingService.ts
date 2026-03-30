@@ -28,7 +28,7 @@ export const sensorReadingService = {
   },
 
   async create(data: CreateSensorReadingData): Promise<SensorReading> {
-    return browserHttpClient.post<SensorReading>('/api/company/sensor-reading', data);
+    return browserHttpClient.post<SensorReading>('/api/company/sensor-readings', data);
   },
 
   async getById(id: string): Promise<SensorReading> {

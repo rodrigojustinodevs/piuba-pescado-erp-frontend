@@ -70,7 +70,7 @@ export interface PurchaseListResponse {
   limit: number;
 }
 
-/** Item enviado em POST /api/company/purchase */
+/** Item enviado em POST /api/company/purchases */
 export interface CreatePurchaseItemData {
   supplyId: string;
   quantity: number;
