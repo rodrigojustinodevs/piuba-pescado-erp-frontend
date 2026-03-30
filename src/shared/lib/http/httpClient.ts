@@ -90,6 +90,14 @@ export class HttpClient {
     });
   }
 
+  patch<T>(endpoint: string, body?: unknown, options: HttpRequestOptions = {}) {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  }
+
   delete<T>(endpoint: string, options: HttpRequestOptions = {}) {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
