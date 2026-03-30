@@ -74,6 +74,11 @@ export const defaultMenuItems: MenuItem[] = [
         label: 'Compras',
         href: '/company/purchases',
       },
+      {
+        id: 'fornecedores',
+        label: 'Fornecedores',
+        href: '/company/suppliers',
+      },
     ],
   },
   {
