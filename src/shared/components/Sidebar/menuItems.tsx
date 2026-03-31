@@ -79,6 +79,11 @@ export const defaultMenuItems: MenuItem[] = [
         label: 'Fornecedores',
         href: '/company/suppliers',
       },
+      {
+        id: 'estoques',
+        label: 'Estoques',
+        href: '/company/stocks',
+      },
     ],
   },
   {

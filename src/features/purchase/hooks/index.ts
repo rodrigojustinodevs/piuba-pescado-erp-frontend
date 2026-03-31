@@ -3,6 +3,7 @@ export { usePurchasesListPage } from './usePurchasesListPage';
 export { useCreatePurchase } from './useCreatePurchase';
 export { usePurchaseSuppliers } from './usePurchaseSuppliers';
 export { usePurchaseSupplies } from './usePurchaseSupplies';
+export { usePurchaseLookupOptions } from './usePurchaseLookupOptions';
 export { usePurchase } from './usePurchase';
 export { useUpdatePurchase } from './useUpdatePurchase';
 export { useDeletePurchase } from './useDeletePurchase';
