@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCompanies } from '@/features/company';
-import { usePurchaseSuppliers, usePurchaseSupplies } from '@/features/purchase';
+import { usePurchaseLookupOptions } from '@/features/purchase/hooks/usePurchaseLookupOptions';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
@@ -76,27 +76,8 @@ export function StockForm({
     if (initialValues) reset(initialValues);
   }, [initialValues, reset]);
 
-  const selectedCompanyId = useWatch({ control, name: 'companyId' });
-  const effectiveCompanyId =
-    (showCompanySelect ? selectedCompanyId : user?.companyId)?.trim() || '';
-
-  const { data: suppliersData, isLoading: loadingSuppliers } = usePurchaseSuppliers(
-    !!effectiveCompanyId,
-    effectiveCompanyId,
-  );
-  const { data: suppliesData, isLoading: loadingSupplies } = usePurchaseSupplies(
-    !!effectiveCompanyId,
-    effectiveCompanyId,
-  );
-
-  const supplierOptions = useMemo(
-    () => (suppliersData?.suppliers ?? []).map((s) => ({ value: s.id, label: s.name })),
-    [suppliersData?.suppliers],
-  );
-  const supplyOptions = useMemo(
-    () => (suppliesData?.supplies ?? []).map((s) => ({ value: s.id, label: s.name })),
-    [suppliesData?.supplies],
-  );
+  const { effectiveCompanyId, loadingSuppliers, supplierOptions, loadingSupplies, supplyOptions } =
+    usePurchaseLookupOptions({ control, showCompanySelect, companyIdFieldName: 'companyId' });
 
   const prevCompanyForReset = useRef<string | undefined>(undefined);
   useEffect(() => {

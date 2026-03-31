@@ -11,8 +11,7 @@ import { Input, Select } from '@/shared/components/ui';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
 import type { CreatePurchaseData } from '../types';
 import { createPurchaseFormSchema, type CreatePurchaseFormData } from '../schemas';
-import { usePurchaseSuppliers } from '../hooks/usePurchaseSuppliers';
-import { usePurchaseSupplies } from '../hooks/usePurchaseSupplies';
+import { usePurchaseLookupOptions } from '../hooks/usePurchaseLookupOptions';
 import { getPurchaseStatusLabel } from '../utils/purchaseStatusLabels';
 import { formatPurchaseMoney } from '../utils/formatPurchaseMoney';
 import { z } from 'zod';
@@ -107,10 +106,6 @@ export function PurchaseForm({
     },
   });
 
-  const selectedCompanyId = useWatch({ control, name: 'companyId' });
-  const effectiveCompanyId =
-    (showCompanySelect ? selectedCompanyId : user?.companyId)?.trim() || '';
-
   const { data: companiesData, isLoading: loadingCompanies } = useCompanies({
     page: 1,
     limit: 500,
@@ -121,23 +116,14 @@ export function PurchaseForm({
     [companiesData?.companies],
   );
 
-  const { data: suppliersData, isLoading: loadingSuppliers } = usePurchaseSuppliers(
-    !!effectiveCompanyId,
+  const {
     effectiveCompanyId,
-  );
-  const { data: suppliesData, isLoading: loadingSupplies } = usePurchaseSupplies(
-    !!effectiveCompanyId,
-    effectiveCompanyId,
-  );
-
-  const supplierOptions = useMemo(
-    () => (suppliersData?.suppliers ?? []).map((s) => ({ value: s.id, label: s.name })),
-    [suppliersData?.suppliers],
-  );
-  const supplyOptions = useMemo(
-    () => (suppliesData?.supplies ?? []).map((s) => ({ value: s.id, label: s.name })),
-    [suppliesData?.supplies],
-  );
+    suppliesData,
+    loadingSuppliers,
+    supplierOptions,
+    loadingSupplies,
+    supplyOptions,
+  } = usePurchaseLookupOptions({ control, showCompanySelect, companyIdFieldName: 'companyId' });
 
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
