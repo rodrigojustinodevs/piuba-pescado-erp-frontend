@@ -57,3 +57,16 @@ export function TrashIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function AdjustIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 7h11a4 4 0 110 8H4m0-8l3-3M4 7l3 3m13 7H9a4 4 0 110-8h11m0 8l-3 3m3-3l-3-3"
+      />
+    </svg>
+  );
+}

@@ -95,6 +95,12 @@ export const menuConfig: MenuItemWithAuth[] = [
         href: '/company/suppliers',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
+      {
+        id: 'estoques',
+        label: 'Estoques',
+        href: '/company/stocks',
+        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+      },
     ],
   },
   {
