@@ -3,12 +3,12 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useCompanies } from '@/features/company';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
 import { maskPhone } from '@/shared/utils/phoneMask';
+import { addRequiredCompanyIssue } from '@/shared/utils/zod';
 import type { CreateSupplierData } from '../types';
 import { createSupplierFormSchema, type CreateSupplierFormData } from '../schemas';
 
@@ -34,11 +34,7 @@ export function SupplierForm({
     () =>
       createSupplierFormSchema.superRefine((data, ctx) => {
         if (showCompanySelect && !data.companyId?.trim()) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Selecione a empresa',
-            path: ['companyId'],
-          });
+          addRequiredCompanyIssue(ctx);
         }
       }),
     [showCompanySelect],

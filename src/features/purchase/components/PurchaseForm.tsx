@@ -8,6 +8,7 @@ import { useCompanies } from '@/features/company';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
+import { addRequiredCompanyIssue } from '@/shared/utils/zod';
 import type { CreatePurchaseData } from '../types';
 import { createPurchaseFormSchema, type CreatePurchaseFormData } from '../schemas';
 import { usePurchaseSuppliers } from '../hooks/usePurchaseSuppliers';
@@ -74,11 +75,7 @@ export function PurchaseForm({
     () =>
       createPurchaseFormSchema.superRefine((data, ctx) => {
         if (showCompanySelect && !data.companyId?.trim()) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Selecione a empresa',
-            path: ['companyId'],
-          });
+          addRequiredCompanyIssue(ctx);
         }
       }),
     [showCompanySelect],

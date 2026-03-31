@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useCompanies } from '@/features/company';
 import { usePurchaseSuppliers, usePurchaseSupplies } from '@/features/purchase';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
+import { addRequiredCompanyIssue } from '@/shared/utils/zod';
 import type { CreateStockData } from '../types';
 import { createStockFormSchema, type CreateStockFormData } from '../schemas';
 
@@ -34,11 +34,7 @@ export function StockForm({
     () =>
       createStockFormSchema.superRefine((data, ctx) => {
         if (showCompanySelect && !data.companyId?.trim()) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Selecione a empresa',
-            path: ['companyId'],
-          });
+          addRequiredCompanyIssue(ctx);
         }
       }),
     [showCompanySelect],
