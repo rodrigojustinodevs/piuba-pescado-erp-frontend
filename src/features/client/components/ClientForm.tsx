@@ -11,6 +11,7 @@ import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { maskPhone } from '@/shared/utils/phoneMask';
 import { FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
+import type { FormSubmitProps } from '@/shared/components/form/types';
 import type { CreateClientData } from '../types';
 import {
   clientPersonTypeValues,
@@ -19,12 +20,9 @@ import {
   type CreateClientFormData,
 } from '../schemas';
 
-type ClientFormProps = {
+type ClientFormProps = FormSubmitProps & {
   initialValues?: CreateClientFormData;
   onSubmit: (data: CreateClientData) => void;
-  isSubmitting?: boolean;
-  submitLabel: string;
-  submittingLabel: string;
 };
 
 export function ClientForm({

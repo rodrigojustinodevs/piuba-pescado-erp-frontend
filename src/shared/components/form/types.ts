@@ -206,3 +206,13 @@ export interface SwitchProps
    */
   checked?: boolean;
 }
+
+/**
+ * Props base para rótulos/estado de submit em formulários.
+ * Usado por formulários de features (ClientForm, SupplierForm, etc.).
+ */
+export interface FormSubmitProps {
+  isSubmitting?: boolean;
+  submitLabel: string;
+  submittingLabel: string;
+}
