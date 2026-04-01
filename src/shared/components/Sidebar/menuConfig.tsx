@@ -23,13 +23,23 @@ export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   children?: MenuItemWithAuth[];
 }
 
+const ROLES_ALL: UserRoleType[] = [
+  UserRole.MASTER,
+  UserRole.COMPANY_ADMIN,
+  UserRole.MANAGER,
+  UserRole.OPERATOR,
+];
+const ROLES_COMPANY_ALL: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR];
+const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MANAGER];
+const REQUIRES_COMPANY = true;
+
 export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'dashboard',
     label: 'Dashboard',
     icon: <DashboardIcon />,
     href: '/dashboard',
-    allowedRoles: [UserRole.MASTER, UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+    allowedRoles: ROLES_ALL,
   },
   {
     id: 'empresas',
@@ -42,26 +52,26 @@ export const menuConfig: MenuItemWithAuth[] = [
     id: 'vendas',
     label: 'Vendas',
     icon: <OrdersIcon />,
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
     children: [
       {
         id: 'pedidos',
         label: 'Pedidos',
         href: '/dashboard/pedidos',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+        allowedRoles: ROLES_COMPANY_ALL,
       },
       {
         id: 'orcamentos',
         label: 'Orçamentos',
         href: '/dashboard/orcamentos',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
       {
         id: 'clientes',
         label: 'Clientes',
         href: '/dashboard/clientes',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
     ],
   },
@@ -69,38 +79,38 @@ export const menuConfig: MenuItemWithAuth[] = [
     id: 'estoque',
     label: 'Estoque',
     icon: <ProductsIcon />,
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+    requiresCompany: REQUIRES_COMPANY,
     children: [
       {
         id: 'produtos-insumos',
         label: 'Produtos',
         href: '/company/supplies',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
       {
         id: 'compras',
         label: 'Compras',
         href: '/company/purchases',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
       {
         id: 'fornecedores',
         label: 'Fornecedores',
         href: '/company/suppliers',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
       {
         id: 'estoques',
         label: 'Estoques',
         href: '/company/stocks',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
       {
         id: 'estoques-transacoes',
         label: 'Movimentações de estoque',
         href: '/company/stocks-transations',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
     ],
   },
@@ -108,14 +118,14 @@ export const menuConfig: MenuItemWithAuth[] = [
     id: 'relatorios',
     label: 'Relatórios',
     icon: <ReportsIcon />,
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+    requiresCompany: REQUIRES_COMPANY,
     children: [
       {
         id: 'vendas',
         label: 'Relatório de Vendas',
         href: '/dashboard/relatorios/vendas',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
       {
         id: 'estoque',
@@ -130,8 +140,8 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Tanques',
     icon: <TankIcon />,
     href: '/company/tanks',
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
     children: [
       {
         id: 'tanques',
@@ -159,20 +169,20 @@ export const menuConfig: MenuItemWithAuth[] = [
     id: 'lotes',
     label: 'Lotes',
     icon: <BatchIcon />,
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
     children: [
       {
         id: 'lotes',
         label: 'Lotes',
         href: '/company/batches',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+        allowedRoles: ROLES_COMPANY_ALL,
       },
       {
         id: 'mortalidades',
         label: 'Mortalidades',
         href: '/company/mortalities',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
+        allowedRoles: ROLES_COMPANY_ALL,
       },
     ],
   },
@@ -181,39 +191,39 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Biometrias',
     icon: <BiometryIcon />,
     href: '/company/biometries',
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
   },
   {
     id: 'alimentacoes',
     label: 'Alimentações',
     icon: <FeedingIcon />,
     href: '/company/feedings',
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
   },
   {
     id: 'povoamentos',
     label: 'Povoamentos',
     icon: <StockingIcon />,
     href: '/company/stockings',
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
   },
   {
     id: 'transferencias',
     label: 'Transferências',
     icon: <TransferIcon />,
     href: '/company/transfers',
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
   },
   {
     id: 'configuracoes',
     label: 'Configurações',
     icon: <SettingsIcon />,
     href: '/dashboard/configuracoes',
-    allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
-    requiresCompany: true,
+    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+    requiresCompany: REQUIRES_COMPANY,
   },
 ];
