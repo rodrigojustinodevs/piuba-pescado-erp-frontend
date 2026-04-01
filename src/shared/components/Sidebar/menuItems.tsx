@@ -28,6 +28,12 @@ export const defaultMenuItems: MenuItem[] = [
     href: '/dashboard',
   },
   {
+    id: 'empresas',
+    label: 'Empresas',
+    icon: <BuildingIcon />,
+    href: '/admin/companies',
+  },
+  {
     id: 'vendas',
     label: 'Vendas',
     icon: <OrdersIcon />,
@@ -55,14 +61,9 @@ export const defaultMenuItems: MenuItem[] = [
     icon: <ProductsIcon />,
     children: [
       {
-        id: 'produtos',
+        id: 'produtos-insumos',
         label: 'Produtos',
-        href: '/dashboard/produtos',
-      },
-      {
-        id: 'categorias',
-        label: 'Categorias',
-        href: '/dashboard/categorias',
+        href: '/company/supplies',
       },
       {
         id: 'compras',
@@ -102,12 +103,6 @@ export const defaultMenuItems: MenuItem[] = [
         href: '/dashboard/relatorios/estoque',
       },
     ],
-  },
-  {
-    id: 'empresas',
-    label: 'Empresas',
-    icon: <BuildingIcon />,
-    href: '/admin/companies',
   },
   {
     id: 'tanques',

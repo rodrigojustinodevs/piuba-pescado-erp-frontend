@@ -32,6 +32,13 @@ export const menuConfig: MenuItemWithAuth[] = [
     allowedRoles: [UserRole.MASTER, UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR],
   },
   {
+    id: 'empresas',
+    label: 'Empresas',
+    icon: <BuildingIcon />,
+    href: '/admin/companies',
+    allowedRoles: [UserRole.MASTER],
+  },
+  {
     id: 'vendas',
     label: 'Vendas',
     icon: <OrdersIcon />,
@@ -66,16 +73,10 @@ export const menuConfig: MenuItemWithAuth[] = [
     requiresCompany: true,
     children: [
       {
-        id: 'produtos',
+        id: 'produtos-insumos',
         label: 'Produtos',
-        href: '/dashboard/produtos',
+        href: '/company/supplies',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
-      },
-      {
-        id: 'categorias',
-        label: 'Categorias',
-        href: '/dashboard/categorias',
-        allowedRoles: [UserRole.COMPANY_ADMIN],
       },
       {
         id: 'compras',
@@ -123,13 +124,6 @@ export const menuConfig: MenuItemWithAuth[] = [
         allowedRoles: [UserRole.COMPANY_ADMIN],
       },
     ],
-  },
-  {
-    id: 'empresas',
-    label: 'Empresas',
-    icon: <BuildingIcon />,
-    href: '/admin/companies',
-    allowedRoles: [UserRole.MASTER],
   },
   {
     id: 'tanques',

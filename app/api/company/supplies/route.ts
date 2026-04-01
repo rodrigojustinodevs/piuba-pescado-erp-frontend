@@ -1,13 +1,13 @@
-import type { ApiNamedListResponse, SupplyListResponse } from '@/features/purchase/types';
-import { mapSupplyListResponse } from '@/features/purchase/utils/mapNamedListResponse';
+import type { ApiSupplyListResponse, SupplyListResponse } from '@/features/supply/types';
+import { mapApiSupplyList } from '@/features/supply/utils/apiMapper';
 import { createListGetHandler } from '@/shared/lib/api/routeFactories';
 import { buildPaginationQueryStringWithPassthrough } from '@/shared/lib/pagination/paginationQuery';
 
 const CONTEXT = 'Supplies API Proxy';
 
-export const GET = createListGetHandler<ApiNamedListResponse, SupplyListResponse>({
+export const GET = createListGetHandler<ApiSupplyListResponse, SupplyListResponse>({
   backendPath: '/api/company/supplies',
-  mapResponse: mapSupplyListResponse,
+  mapResponse: mapApiSupplyList,
   context: CONTEXT,
   buildQueryString: (searchParams) =>
     buildPaginationQueryStringWithPassthrough(searchParams, {

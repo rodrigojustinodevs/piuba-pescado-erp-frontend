@@ -1,4 +1,5 @@
 import type { SupplierListResponse, SupplyListResponse } from '../types';
+import type { SupplyListResponse as SupplyFeatureListResponse } from '@/features/supply/types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { buildQueryString } from '@/shared/utils/queryString';
 
@@ -26,6 +27,16 @@ export const purchaseLookupService = {
       },
       { skipEmptyString: true },
     );
-    return browserHttpClient.get<SupplyListResponse>(`/api/company/supplies?${qs}`);
+    const full = await browserHttpClient.get<SupplyFeatureListResponse>(`/api/company/supplies?${qs}`);
+    return {
+      supplies: (full.supplies ?? []).map((s) => ({
+        id: s.id,
+        name: s.name,
+        unit: s.defaultUnit?.trim() ? s.defaultUnit : 'unit',
+      })),
+      total: full.total,
+      page: full.page,
+      limit: full.limit,
+    };
   },
 };
