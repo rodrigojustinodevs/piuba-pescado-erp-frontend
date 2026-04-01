@@ -29,7 +29,11 @@ const ROLES_ALL: UserRoleType[] = [
   UserRole.MANAGER,
   UserRole.OPERATOR,
 ];
-const ROLES_COMPANY_ALL: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MANAGER, UserRole.OPERATOR];
+const ROLES_COMPANY_ALL: UserRoleType[] = [
+  UserRole.COMPANY_ADMIN,
+  UserRole.MANAGER,
+  UserRole.OPERATOR,
+];
 const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MANAGER];
 const REQUIRES_COMPANY = true;
 
@@ -70,7 +74,7 @@ export const menuConfig: MenuItemWithAuth[] = [
       {
         id: 'clientes',
         label: 'Clientes',
-        href: '/dashboard/clientes',
+        href: '/company/clients',
         allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
     ],
