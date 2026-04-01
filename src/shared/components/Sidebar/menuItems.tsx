@@ -51,7 +51,7 @@ export const defaultMenuItems: MenuItem[] = [
       {
         id: 'clientes',
         label: 'Clientes',
-        href: '/dashboard/clientes',
+        href: '/company/clients',
       },
     ],
   },
