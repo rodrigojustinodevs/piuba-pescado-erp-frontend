@@ -3,11 +3,10 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
 import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
+import { withRequiredCompany } from '@/shared/utils/zod';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { maskPhone } from '@/shared/utils/phoneMask';
 import { FormActions } from '@/shared/components/form';
@@ -39,12 +38,7 @@ export function ClientForm({
   const showCompanySelect = isMaster();
 
   const resolverSchema = useMemo(
-    () =>
-      createClientFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
+    () => withRequiredCompany(createClientFormSchema, showCompanySelect),
     [showCompanySelect],
   );
 
