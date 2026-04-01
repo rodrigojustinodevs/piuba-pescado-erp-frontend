@@ -10,6 +10,7 @@ import { withRequiredCompany } from '@/shared/utils/zod';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { maskPhone } from '@/shared/utils/phoneMask';
 import { FormActions } from '@/shared/components/form';
+import { CompanyAndNameFields } from '@/shared/components/form/CompanyAndNameFields';
 import { Input, Select } from '@/shared/components/ui';
 import type { FormSubmitProps } from '@/shared/components/form/types';
 import type { CreateClientData } from '../types';
@@ -115,27 +116,15 @@ export function ClientForm({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {showCompanySelect ? (
-              <div className="md:col-span-2">
-                <Select
-                  label="Empresa"
-                  requiredIndicator
-                  disabled={isSubmitting || loadingCompanies}
-                  options={companyOptions}
-                  placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-                  {...register('companyId')}
-                  error={errors.companyId?.message}
-                />
-              </div>
-            ) : null}
-
-            <Input
-              label="Nome"
-              requiredIndicator
-              type="text"
-              disabled={isSubmitting}
-              {...register('name')}
-              error={errors.name?.message}
+            <CompanyAndNameFields
+              showCompanySelect={showCompanySelect}
+              isSubmitting={isSubmitting}
+              loadingCompanies={loadingCompanies}
+              companyOptions={companyOptions}
+              companySelectProps={register('companyId')}
+              companyError={errors.companyId?.message}
+              nameInputProps={register('name')}
+              nameError={errors.name?.message}
             />
 
             <Select
