@@ -28,7 +28,8 @@ export function StockEditForm({
   submittingLabel,
 }: Readonly<StockEditFormProps>) {
   const { user } = useAuthContext();
-  const cid = (lookupCompanyId?.trim() || user?.companyId?.trim() || '').trim();
+  void lookupCompanyId;
+  void user;
   const { data: suppliersData, isLoading: loadingSuppliers } = useSuppliers();
   const supplierOptions = [
     { value: '', label: 'Sem fornecedor' },

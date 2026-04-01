@@ -78,12 +78,6 @@ export const menuConfig: MenuItemWithAuth[] = [
         allowedRoles: [UserRole.COMPANY_ADMIN],
       },
       {
-        id: 'movimentacoes',
-        label: 'Movimentações',
-        href: '/dashboard/movimentacoes',
-        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
-      },
-      {
         id: 'compras',
         label: 'Compras',
         href: '/company/purchases',
@@ -99,6 +93,12 @@ export const menuConfig: MenuItemWithAuth[] = [
         id: 'estoques',
         label: 'Estoques',
         href: '/company/stocks',
+        allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
+      },
+      {
+        id: 'estoques-transacoes',
+        label: 'Movimentações de estoque',
+        href: '/company/stocks-transations',
         allowedRoles: [UserRole.COMPANY_ADMIN, UserRole.MANAGER],
       },
     ],
