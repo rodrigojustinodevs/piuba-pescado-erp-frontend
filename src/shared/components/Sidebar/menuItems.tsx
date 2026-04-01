@@ -65,11 +65,6 @@ export const defaultMenuItems: MenuItem[] = [
         href: '/dashboard/categorias',
       },
       {
-        id: 'movimentacoes',
-        label: 'Movimentações',
-        href: '/dashboard/movimentacoes',
-      },
-      {
         id: 'compras',
         label: 'Compras',
         href: '/company/purchases',
@@ -83,6 +78,11 @@ export const defaultMenuItems: MenuItem[] = [
         id: 'estoques',
         label: 'Estoques',
         href: '/company/stocks',
+      },
+      {
+        id: 'estoques-transacoes',
+        label: 'Movimentações de estoque',
+        href: '/company/stocks-transations',
       },
     ],
   },
