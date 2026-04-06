@@ -168,7 +168,9 @@ const translators: Translator[] = [
 
   // Transição de status
   (msg) => {
-    const m = msg.match(/Cannot transition sale from \[?(.+?)\]?\s+to\s+\[?(.+?)\]?/i);
+    const m = msg.match(
+      /^Cannot transition sale from \[?([^\]\s]+)\]?\s+to\s+\[?([^\]\s]+)\]?\.?$/i,
+    );
 
     if (!m) return null;
 
