@@ -118,6 +118,62 @@ export function createDeleteHandler<
   );
 }
 
+/** DELETE em recurso aninhado com resposta JSON mapeada (ex.: cancelar com venda atualizada). */
+export type DetailDeleteJsonConfig<TApi, TParams extends Record<string, string>> = {
+  backendPathBuilder: (params: TParams) => string;
+  context: string;
+  mapResponse: (data: TApi) => unknown;
+};
+
+export function createDetailDeleteJsonHandler<
+  TApi,
+  TParams extends Record<string, string> = Record<string, string>,
+>(config: DetailDeleteJsonConfig<TApi, TParams>) {
+  const handler = withErrorHandling(async function DELETE(
+    _req: Request,
+    routeContext: ParamsContext<TParams>,
+  ) {
+    const params = await routeContext.params;
+    const data = await serverHttpClient.request<TApi>(config.backendPathBuilder(params), {
+      method: 'DELETE',
+    });
+    return successResponse(config.mapResponse(data), 200);
+  }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request, routeContext: ParamsContext<TParams>) =>
+    handler(req, routeContext),
+  );
+}
+
+export type DetailPostConfig<TApi, TParams extends Record<string, string>> = {
+  backendPathBuilder: (params: TParams) => string;
+  context: string;
+  mapResponse?: (data: TApi) => unknown;
+};
+
+/** POST sem corpo útil (ex.: cancelar recurso) com path dinâmico por `params`. */
+export function createDetailPostHandler<
+  TApi,
+  TParams extends Record<string, string> = Record<string, string>,
+>(config: DetailPostConfig<TApi, TParams>) {
+  const handler = withErrorHandling(async function POST(
+    _req: Request,
+    routeContext: ParamsContext<TParams>,
+  ) {
+    const params = await routeContext.params;
+    const data = await serverHttpClient.request<TApi>(config.backendPathBuilder(params), {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+    const responseData = config.mapResponse ? config.mapResponse(data) : data;
+    return successResponse(responseData, 200);
+  }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request, routeContext: ParamsContext<TParams>) =>
+    handler(req, routeContext),
+  );
+}
+
 export type UpsertMethod = 'POST' | 'PUT';
 
 export type UpsertConfig<TApi, TBody> = {

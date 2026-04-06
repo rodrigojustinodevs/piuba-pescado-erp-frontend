@@ -7,14 +7,22 @@ import type {
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 
 export const stockingService = {
-  async list(params?: { page?: number; per_page?: number }): Promise<StockingListResponse> {
+  async list(params?: {
+    page?: number;
+    perPage?: number;
+    batchId?: string;
+  }): Promise<StockingListResponse> {
     const searchParams = new URLSearchParams();
 
     if (params?.page !== undefined) {
       searchParams.set('page', String(params.page));
     }
-    if (params?.per_page !== undefined) {
-      searchParams.set('per_page', String(params.per_page));
+    if (params?.perPage !== undefined) {
+      searchParams.set('perPage', String(params.perPage));
+    }
+    const batchId = params?.batchId?.trim();
+    if (batchId) {
+      searchParams.set('batchId', batchId);
     }
 
     const queryString = searchParams.toString();
