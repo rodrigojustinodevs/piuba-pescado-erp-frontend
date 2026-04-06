@@ -57,33 +57,124 @@ const EXACT_MAP: Record<string, string> = {
   'The selected company does not exist.': 'A empresa selecionada não existe.',
 };
 
+function parseClientIdForMissingCpfOrAddress(message: string): string | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the client (id:';
+  const suffix = ') does not have cpf/cnpj and/or address';
+
+  if (!lower.startsWith(prefix)) return null;
+  if (!lower.endsWith(suffix) && !lower.endsWith(`${suffix}.`)) return null;
+
+  const closeParenIndex = source.indexOf(')');
+  if (closeParenIndex < 0) return null;
+
+  const idStart = source.indexOf(':') + 1;
+  if (idStart <= 0 || idStart >= closeParenIndex) return null;
+
+  const clientId = source.slice(idStart, closeParenIndex).trim();
+  return clientId || null;
+}
+
+function parseClientCreditLimitExceeded(
+  message: string,
+): { clientId: string; limit: string; currentExposure: string } | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the client (id:';
+  const middle = ') has exceeded the credit limit.';
+  const limitTag = 'limit:';
+  const exposureTag = '| current exposure:';
+
+  if (!lower.startsWith(prefix)) return null;
+  const middleIndex = lower.indexOf(middle);
+  if (middleIndex < 0) return null;
+
+  const clientId = source.slice(prefix.length, middleIndex).trim();
+  if (!clientId) return null;
+
+  const afterMiddle = source.slice(middleIndex + middle.length).trim();
+  const afterMiddleLower = afterMiddle.toLowerCase();
+  if (!afterMiddleLower.startsWith(limitTag)) return null;
+
+  const exposureIndex = afterMiddleLower.indexOf(exposureTag);
+  if (exposureIndex < 0) return null;
+
+  const limit = afterMiddle.slice(limitTag.length, exposureIndex).trim();
+  const currentExposure = afterMiddle.slice(exposureIndex + exposureTag.length).trim();
+  if (!limit || !currentExposure) return null;
+
+  return { clientId, limit, currentExposure };
+}
+
+function parseInsufficientBiomass(
+  message: string,
+): { stockingId: string; available: string; requested: string } | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'insufficient biomass in the batch/stocking (id:';
+  const middle = ').';
+  const availableTag = 'available:';
+  const requestedTag = '| requested:';
+
+  if (!lower.startsWith(prefix)) return null;
+  const middleIndex = lower.indexOf(middle);
+  if (middleIndex < 0) return null;
+
+  const stockingId = source.slice(prefix.length, middleIndex).trim();
+  if (!stockingId) return null;
+
+  const afterMiddle = source.slice(middleIndex + middle.length).trim();
+  const afterMiddleLower = afterMiddle.toLowerCase();
+  if (!afterMiddleLower.startsWith(availableTag)) return null;
+
+  const requestedIndex = afterMiddleLower.indexOf(requestedTag);
+  if (requestedIndex < 0) return null;
+
+  const available = afterMiddle.slice(availableTag.length, requestedIndex).trim();
+  const requested = afterMiddle.slice(requestedIndex + requestedTag.length).trim();
+  if (!available || !requested) return null;
+
+  return { stockingId, available, requested };
+}
+
+function parseClosedStockingId(message: string): string | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the stocking (id:';
+  const suffix = ') has already been closed';
+
+  if (!lower.startsWith(prefix)) return null;
+  if (!lower.endsWith(suffix) && !lower.endsWith(`${suffix}.`)) return null;
+
+  const suffixStart = lower.lastIndexOf(suffix);
+  if (suffixStart < prefix.length) return null;
+
+  const stockingId = source.slice(prefix.length, suffixStart).trim();
+  return stockingId || null;
+}
+
 function tryTranslateDynamicPattern(message: string): string | null {
   let m: RegExpMatchArray | null;
 
-  m = message.match(
-    /^The client \(id:\s*([^)]+)\) does not have CPF\/CNPJ and\/or address\.?/i,
-  );
-  if (m) {
-    return `O cliente (id: ${m[1].trim()}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
+  const clientIdMissingCpfOrAddress = parseClientIdForMissingCpfOrAddress(message);
+  if (clientIdMissingCpfOrAddress) {
+    return `O cliente (id: ${clientIdMissingCpfOrAddress}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
   }
 
-  m = message.match(
-    /^The client \(id:\s*([^)]+)\) has exceeded the credit limit\.\s*Limit:\s*(.+?)\s*\|\s*Current exposure:\s*(.+)$/i,
-  );
-  if (m) {
-    return `O cliente (id: ${m[1].trim()}) excedeu o limite de crédito. Limite: ${m[2].trim()} | Exposição atual: ${m[3].trim()}`;
+  const creditLimitExceeded = parseClientCreditLimitExceeded(message);
+  if (creditLimitExceeded) {
+    return `O cliente (id: ${creditLimitExceeded.clientId}) excedeu o limite de crédito. Limite: ${creditLimitExceeded.limit} | Exposição atual: ${creditLimitExceeded.currentExposure}`;
   }
 
-  m = message.match(
-    /^Insufficient biomass in the batch\/stocking \(id:\s*([^)]+)\)\.\s*Available:\s*(.+?)\s*\|\s*Requested:\s*(.+)$/i,
-  );
-  if (m) {
-    return `Biomassa insuficiente no lote/povoamento (id: ${m[1].trim()}). Disponível: ${m[2].trim()} | Solicitado: ${m[3].trim()}`;
+  const insufficientBiomass = parseInsufficientBiomass(message);
+  if (insufficientBiomass) {
+    return `Biomassa insuficiente no lote/povoamento (id: ${insufficientBiomass.stockingId}). Disponível: ${insufficientBiomass.available} | Solicitado: ${insufficientBiomass.requested}`;
   }
 
-  m = message.match(/^The stocking \(id:\s*([^)]+)\) has already been closed/i);
-  if (m) {
-    return `O povoamento (id: ${m[1].trim()}) já foi encerrado. Não é possível registrar novas vendas.`;
+  const closedStockingId = parseClosedStockingId(message);
+  if (closedStockingId) {
+    return `O povoamento (id: ${closedStockingId}) já foi encerrado. Não é possível registrar novas vendas.`;
   }
 
   if (/^Could not resolve a company/i.test(message)) {

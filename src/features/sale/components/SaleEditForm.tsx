@@ -3,8 +3,9 @@
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Checkbox, FormActions, TextArea } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { Checkbox, FormActions } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
+import { SaleEditableFields } from './SaleEditableFields';
 import type { UpdateSaleData } from '../types';
 import {
   saleUpdateStatusValues,
@@ -40,6 +41,32 @@ export function SaleEditForm({
     { value: saleUpdateStatusValues[0], label: 'Pendente' },
     { value: saleUpdateStatusValues[1], label: 'Confirmado' },
   ];
+  const readOnlyFields = [
+    {
+      key: 'clientName',
+      label: 'Cliente',
+      value: readOnlyContext.clientName,
+      className: 'bg-slate-50 text-slate-600 cursor-not-allowed',
+    },
+    {
+      key: 'batchName',
+      label: 'Lote',
+      value: readOnlyContext.batchName,
+      className: 'bg-slate-50 text-slate-600 cursor-not-allowed',
+    },
+    {
+      key: 'stockingId',
+      label: 'Povoamento',
+      value: readOnlyContext.stockingId,
+      className: 'bg-slate-50 text-slate-600 cursor-not-allowed font-mono text-xs',
+    },
+    {
+      key: 'financialCategoryId',
+      label: 'Categoria financeira',
+      value: readOnlyContext.financialCategoryId,
+      className: 'bg-slate-50 text-slate-600 cursor-not-allowed font-mono text-xs',
+    },
+  ] as const;
 
   const {
     register,
@@ -90,42 +117,18 @@ export function SaleEditForm({
         <div className="mb-8 pb-8 border-b border-slate-200">
           <p className="text-sm font-medium text-[#0F172A] mb-4">Vínculos (somente leitura)</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
-              label="Cliente"
-              type="text"
-              disabled
-              readOnly
-              value={readOnlyContext.clientName || '—'}
-              onChange={() => {}}
-              className="bg-slate-50 text-slate-600 cursor-not-allowed"
-            />
-            <Input
-              label="Lote"
-              type="text"
-              disabled
-              readOnly
-              value={readOnlyContext.batchName || '—'}
-              onChange={() => {}}
-              className="bg-slate-50 text-slate-600 cursor-not-allowed"
-            />
-            <Input
-              label="Povoamento"
-              type="text"
-              disabled
-              readOnly
-              value={readOnlyContext.stockingId || '—'}
-              onChange={() => {}}
-              className="bg-slate-50 text-slate-600 cursor-not-allowed font-mono text-xs"
-            />
-            <Input
-              label="Categoria financeira"
-              type="text"
-              disabled
-              readOnly
-              value={readOnlyContext.financialCategoryId || '—'}
-              onChange={() => {}}
-              className="bg-slate-50 text-slate-600 cursor-not-allowed font-mono text-xs"
-            />
+            {readOnlyFields.map((field) => (
+              <Input
+                key={field.key}
+                label={field.label}
+                type="text"
+                disabled
+                readOnly
+                value={field.value || '—'}
+                onChange={() => {}}
+                className={field.className}
+              />
+            ))}
           </div>
         </div>
 
@@ -143,47 +146,19 @@ export function SaleEditForm({
             error={errors.totalWeight?.message}
           />
 
-          <Input
-            label="Preço por kg"
-            requiredIndicator
-            type="number"
-            step={0.01}
-            min={0}
-            disabled={isSubmitting}
-            {...register('pricePerKg', { valueAsNumber: true })}
-            error={errors.pricePerKg?.message}
+          <SaleEditableFields
+            isSubmitting={isSubmitting}
+            statusOptions={statusOptions}
+            pricePerKgMin={0}
+            pricePerKgRegister={register('pricePerKg', { valueAsNumber: true })}
+            saleDateRegister={register('saleDate')}
+            statusRegister={register('status')}
+            notesRegister={register('notes')}
+            pricePerKgError={errors.pricePerKg?.message}
+            saleDateError={errors.saleDate?.message}
+            statusError={errors.status?.message}
+            notesError={errors.notes?.message}
           />
-
-          <Input
-            label="Data da venda"
-            requiredIndicator
-            type="date"
-            disabled={isSubmitting}
-            {...register('saleDate')}
-            error={errors.saleDate?.message}
-          />
-
-          <Select
-            label="Status"
-            requiredIndicator
-            disabled={isSubmitting}
-            options={statusOptions}
-            {...register('status')}
-            error={errors.status?.message}
-          />
-
-          <div className="md:col-span-2 w-full min-w-0">
-            <TextArea
-              label="Observações"
-              disabled={isSubmitting}
-              placeholder="Observações da venda"
-              rows={4}
-              className="w-full"
-              inputClassName="w-full min-h-[100px]"
-              {...register('notes')}
-              error={errors.notes?.message}
-            />
-          </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-slate-200">

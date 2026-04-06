@@ -6,8 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useClients } from '@/features/client';
 import { useBatches } from '@/features/batch';
 import { useStockings } from '@/features/stocking';
-import { Checkbox, FormActions, TextArea } from '@/shared/components/form';
+import { Checkbox, FormActions } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
+import { SaleEditableFields } from './SaleEditableFields';
 import type { CreateSaleData } from '../types';
 import { createSaleFormSchema, saleStatusValues, type CreateSaleFormData } from '../schemas';
 
@@ -196,47 +197,19 @@ export function SaleForm({
             error={errors.totalWeight?.message}
           />
 
-          <Input
-            label="Preço por kg"
-            requiredIndicator
-            type="number"
-            step={0.01}
-            min={0.01}
-            disabled={isSubmitting}
-            {...register('pricePerKg', { valueAsNumber: true })}
-            error={errors.pricePerKg?.message}
+          <SaleEditableFields
+            isSubmitting={isSubmitting}
+            statusOptions={statusOptions}
+            pricePerKgMin={0.01}
+            pricePerKgRegister={register('pricePerKg', { valueAsNumber: true })}
+            saleDateRegister={register('saleDate')}
+            statusRegister={register('status')}
+            notesRegister={register('notes')}
+            pricePerKgError={errors.pricePerKg?.message}
+            saleDateError={errors.saleDate?.message}
+            statusError={errors.status?.message}
+            notesError={errors.notes?.message}
           />
-
-          <Input
-            label="Data da venda"
-            requiredIndicator
-            type="date"
-            disabled={isSubmitting}
-            {...register('saleDate')}
-            error={errors.saleDate?.message}
-          />
-
-          <Select
-            label="Status"
-            requiredIndicator
-            disabled={isSubmitting}
-            options={statusOptions}
-            {...register('status')}
-            error={errors.status?.message}
-          />
-
-          <div className="md:col-span-2 w-full min-w-0">
-            <TextArea
-              label="Observações"
-              disabled={isSubmitting}
-              placeholder="Observações da venda"
-              rows={4}
-              className="w-full"
-              inputClassName="w-full min-h-[100px]"
-              {...register('notes')}
-              error={errors.notes?.message}
-            />
-          </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-slate-200">
