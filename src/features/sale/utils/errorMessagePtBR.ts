@@ -1,10 +1,10 @@
 /**
  * Tradução de mensagens de erro da API de Sales (EN → PT-BR)
- * Estratégia:
- * 1. Normaliza mensagem
- * 2. Tenta match exato (O(1))
- * 3. Executa pipeline de translators (pattern-based)
- * 4. Fallback → mensagem original
+ * Padrões aplicados:
+ * - Regex seguras (anti-ReDoS)
+ * - Uso de RegExp.exec()
+ * - Pipeline de translators (extensível)
+ * - Fast-path com EXACT_MAP
  */
 
 // ==============================
@@ -16,7 +16,7 @@ function normalizeMessage(message: string): string {
 }
 
 // ==============================
-// STATUS MAPPING
+// STATUS
 // ==============================
 
 const SALE_STATUS_LABEL_PT = {
@@ -32,7 +32,7 @@ function statusLabelPt(value: string): string {
 }
 
 // ==============================
-// EXACT MATCH MAP (FAST PATH)
+// EXACT MAP (FAST PATH)
 // ==============================
 
 const EXACT_MAP = Object.freeze({
@@ -82,14 +82,15 @@ const EXACT_MAP = Object.freeze({
 } as const);
 
 // ==============================
-// HELPERS
+// TYPES
 // ==============================
 
 type Translator = (message: string) => string | null;
 
-/**
- * Extrai substring entre dois delimitadores (case insensitive)
- */
+// ==============================
+// HELPERS
+// ==============================
+
 function extractBetween(message: string, start: string, end: string): string | null {
   const lower = message.toLowerCase();
 
@@ -102,11 +103,39 @@ function extractBetween(message: string, start: string, end: string): string | n
 }
 
 // ==============================
+// REGEX (PRECOMPILED / SAFE)
+// ==============================
+
+const CREDIT_LIMIT_REGEX =
+  /^the client \(id:(.+?)\) has exceeded the credit limit\. limit:(.+?)\| current exposure:(.+)$/i;
+
+const BIOMASS_REGEX =
+  /^insufficient biomass in the batch\/stocking \(id:(.+?)\)\. available:(.+?)\| requested:(.+)$/i;
+
+const COMPANY_NOT_FOUND_REGEX = /^Company \[(.+?)\] not found/i;
+
+const TRANSITION_REGEX =
+  /^Cannot transition sale from \[?(pending|confirmed|cancelled)\]?\s+to\s+\[?(pending|confirmed|cancelled)\]?\.?$/i;
+
+const NUMERIC_RULES: Array<[RegExp, string]> = [
+  [/^The total weight must be at least ([\d.,]+)\.?$/i, 'O peso total deve ser no mínimo %s.'],
+  [
+    /^The total weight may not be greater than ([\d.,]+)\.?$/i,
+    'O peso total não pode ser maior que %s.',
+  ],
+  [/^The price per kg must be at least ([\d.,]+)\.?$/i, 'O preço por kg deve ser no mínimo %s.'],
+  [
+    /^The price per kg may not be greater than ([\d.,]+)\.?$/i,
+    'O preço por kg não pode ser maior que %s.',
+  ],
+];
+
+// ==============================
 // TRANSLATORS PIPELINE
 // ==============================
 
 const translators: Translator[] = [
-  // CPF/CNPJ ou endereço ausente
+  // CPF/CNPJ ou endereço
   (msg) => {
     const id = extractBetween(msg, 'the client (id:', ') does not have cpf/cnpj');
 
@@ -117,10 +146,7 @@ const translators: Translator[] = [
 
   // Crédito excedido
   (msg) => {
-    const match = msg.match(
-      /^the client \(id:(.+?)\) has exceeded the credit limit\. limit:(.+?)\| current exposure:(.+)$/i,
-    );
-
+    const match = CREDIT_LIMIT_REGEX.exec(msg);
     if (!match) return null;
 
     const [, clientId, limit, exposure] = match;
@@ -128,12 +154,9 @@ const translators: Translator[] = [
     return `O cliente (id: ${clientId.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()}`;
   },
 
-  // Biomassa insuficiente
+  // Biomassa
   (msg) => {
-    const match = msg.match(
-      /^insufficient biomass in the batch\/stocking \(id:(.+?)\)\. available:(.+?)\| requested:(.+)$/i,
-    );
-
+    const match = BIOMASS_REGEX.exec(msg);
     if (!match) return null;
 
     const [, id, available, requested] = match;
@@ -160,49 +183,36 @@ const translators: Translator[] = [
 
   // Empresa não encontrada
   (msg) => {
-    const m = msg.match(/^Company \[(.+?)\] not found/i);
-    if (!m) return null;
+    const match = COMPANY_NOT_FOUND_REGEX.exec(msg);
+    if (!match) return null;
 
-    return `A empresa “${m[1].trim()}” não foi encontrada ou não está acessível.`;
+    return `A empresa “${match[1].trim()}” não foi encontrada ou não está acessível.`;
   },
 
-  // Transição de status
+  // Transição de status (SAFE)
   (msg) => {
-    const m = msg.match(
-      /^Cannot transition sale from \[?([^\]\s]+)\]?\s+to\s+\[?([^\]\s]+)\]?\.?$/i,
-    );
+    const match = TRANSITION_REGEX.exec(msg);
+    if (!match) return null;
 
-    if (!m) return null;
+    const [, from, to] = match;
 
     return `Não é possível alterar o status da venda de “${statusLabelPt(
-      m[1],
-    )}” para “${statusLabelPt(m[2])}”.`;
+      from,
+    )}” para “${statusLabelPt(to)}”.`;
   },
 
   // Regras numéricas
   (msg) => {
-    const rules: Array<[RegExp, string]> = [
-      [/total weight must be at least ([\d.,]+)/i, 'O peso total deve ser no mínimo %s.'],
-      [
-        /total weight may not be greater than ([\d.,]+)/i,
-        'O peso total não pode ser maior que %s.',
-      ],
-      [/price per kg must be at least ([\d.,]+)/i, 'O preço por kg deve ser no mínimo %s.'],
-      [
-        /price per kg may not be greater than ([\d.,]+)/i,
-        'O preço por kg não pode ser maior que %s.',
-      ],
-    ];
-
-    for (const [regex, template] of rules) {
-      const m = msg.match(regex);
-      if (m) return template.replace('%s', m[1]);
+    for (const [regex, template] of NUMERIC_RULES) {
+      const match = regex.exec(msg);
+      if (match) {
+        return template.replace('%s', match[1]);
+      }
     }
-
     return null;
   },
 
-  // Laravel fallback (exists validation)
+  // Laravel fallback
   (msg) => {
     const map: Record<string, string> = {
       'The selected client id is invalid.': 'O cliente informado não foi encontrado.',
@@ -225,17 +235,17 @@ export function translateSaleApiErrorMessagePtBR(message: string): string {
 
   if (!normalized) return message;
 
-  // 1. Exact match (fast path)
+  // Fast path
   const exact = EXACT_MAP[normalized as keyof typeof EXACT_MAP];
 
   if (exact) return exact;
 
-  // 2. Pipeline (dynamic rules)
+  // Pipeline
   for (const translator of translators) {
     const result = translator(normalized);
     if (result) return result;
   }
 
-  // 3. Fallback
+  // Fallback
   return message;
 }
