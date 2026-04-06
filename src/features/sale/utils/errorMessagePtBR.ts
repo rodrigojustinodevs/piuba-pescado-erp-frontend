@@ -1,17 +1,41 @@
-/** Rótulos PT para status de venda (valores da API em inglês). */
-const SALE_STATUS_LABEL_PT: Record<string, string> = {
+/**
+ * Tradução de mensagens de erro da API de Sales (EN → PT-BR)
+ * Estratégia:
+ * 1. Normaliza mensagem
+ * 2. Tenta match exato (O(1))
+ * 3. Executa pipeline de translators (pattern-based)
+ * 4. Fallback → mensagem original
+ */
+
+// ==============================
+// NORMALIZATION
+// ==============================
+
+function normalizeMessage(message: string): string {
+  return message?.trim?.().replace(/\.\.$/, '.') ?? '';
+}
+
+// ==============================
+// STATUS MAPPING
+// ==============================
+
+const SALE_STATUS_LABEL_PT = {
   pending: 'pendente',
   confirmed: 'confirmado',
   cancelled: 'cancelado',
-};
+} as const;
 
 function statusLabelPt(value: string): string {
-  const key = value.trim().toLowerCase();
-  return SALE_STATUS_LABEL_PT[key] ?? value;
+  return (
+    SALE_STATUS_LABEL_PT[value.trim().toLowerCase() as keyof typeof SALE_STATUS_LABEL_PT] ?? value
+  );
 }
 
-const EXACT_MAP: Record<string, string> = {
-  // POST — SaleStoreRequest (custom)
+// ==============================
+// EXACT MATCH MAP (FAST PATH)
+// ==============================
+
+const EXACT_MAP = Object.freeze({
   'The client is required.': 'O cliente é obrigatório.',
   'The client informed was not found.': 'O cliente informado não foi encontrado.',
 
@@ -40,208 +64,176 @@ const EXACT_MAP: Record<string, string> = {
 
   'The needs invoice field must be true or false.':
     'O campo “necessita nota fiscal” deve ser verdadeiro ou falso.',
+
   'The total harvest field must be true or false.':
     'O campo “colheita total” deve ser verdadeiro ou falso.',
 
-  // PUT — SaleUpdateRequest
   'The notes must not exceed 1000 characters.':
     'As observações não podem ter mais de 1000 caracteres.',
 
-  // Regras de negócio / domínio (texto fixo em inglês)
   'It is not possible to edit the values of a sale with registered receipts.':
     'Não é possível alterar os valores de uma venda com recebimentos registrados.',
 
-  // Laravel — company / UUID (comuns neste contexto)
   'The company id must be a valid UUID.': 'O ID da empresa deve ser um UUID válido.',
+
   'The selected company id is invalid.': 'A empresa selecionada não existe.',
+
   'The selected company does not exist.': 'A empresa selecionada não existe.',
-};
+} as const);
 
-function parseClientIdForMissingCpfOrAddress(message: string): string | null {
-  const source = message.trim();
-  const lower = source.toLowerCase();
-  const prefix = 'the client (id:';
-  const suffix = ') does not have cpf/cnpj and/or address';
+// ==============================
+// HELPERS
+// ==============================
 
-  if (!lower.startsWith(prefix)) return null;
-  if (!lower.endsWith(suffix) && !lower.endsWith(`${suffix}.`)) return null;
+type Translator = (message: string) => string | null;
 
-  const closeParenIndex = source.indexOf(')');
-  if (closeParenIndex < 0) return null;
+/**
+ * Extrai substring entre dois delimitadores (case insensitive)
+ */
+function extractBetween(message: string, start: string, end: string): string | null {
+  const lower = message.toLowerCase();
 
-  const idStart = source.indexOf(':') + 1;
-  if (idStart <= 0 || idStart >= closeParenIndex) return null;
+  const s = lower.indexOf(start);
+  const e = lower.indexOf(end);
 
-  const clientId = source.slice(idStart, closeParenIndex).trim();
-  return clientId || null;
+  if (s === -1 || e === -1 || e <= s) return null;
+
+  return message.slice(s + start.length, e).trim();
 }
 
-function parseClientCreditLimitExceeded(
-  message: string,
-): { clientId: string; limit: string; currentExposure: string } | null {
-  const source = message.trim();
-  const lower = source.toLowerCase();
-  const prefix = 'the client (id:';
-  const middle = ') has exceeded the credit limit.';
-  const limitTag = 'limit:';
-  const exposureTag = '| current exposure:';
+// ==============================
+// TRANSLATORS PIPELINE
+// ==============================
 
-  if (!lower.startsWith(prefix)) return null;
-  const middleIndex = lower.indexOf(middle);
-  if (middleIndex < 0) return null;
+const translators: Translator[] = [
+  // CPF/CNPJ ou endereço ausente
+  (msg) => {
+    const id = extractBetween(msg, 'the client (id:', ') does not have cpf/cnpj');
 
-  const clientId = source.slice(prefix.length, middleIndex).trim();
-  if (!clientId) return null;
+    if (!id) return null;
 
-  const afterMiddle = source.slice(middleIndex + middle.length).trim();
-  const afterMiddleLower = afterMiddle.toLowerCase();
-  if (!afterMiddleLower.startsWith(limitTag)) return null;
+    return `O cliente (id: ${id}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
+  },
 
-  const exposureIndex = afterMiddleLower.indexOf(exposureTag);
-  if (exposureIndex < 0) return null;
+  // Crédito excedido
+  (msg) => {
+    const match = msg.match(
+      /^the client \(id:(.+?)\) has exceeded the credit limit\. limit:(.+?)\| current exposure:(.+)$/i,
+    );
 
-  const limit = afterMiddle.slice(limitTag.length, exposureIndex).trim();
-  const currentExposure = afterMiddle.slice(exposureIndex + exposureTag.length).trim();
-  if (!limit || !currentExposure) return null;
+    if (!match) return null;
 
-  return { clientId, limit, currentExposure };
-}
+    const [, clientId, limit, exposure] = match;
 
-function parseInsufficientBiomass(
-  message: string,
-): { stockingId: string; available: string; requested: string } | null {
-  const source = message.trim();
-  const lower = source.toLowerCase();
-  const prefix = 'insufficient biomass in the batch/stocking (id:';
-  const middle = ').';
-  const availableTag = 'available:';
-  const requestedTag = '| requested:';
+    return `O cliente (id: ${clientId.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()}`;
+  },
 
-  if (!lower.startsWith(prefix)) return null;
-  const middleIndex = lower.indexOf(middle);
-  if (middleIndex < 0) return null;
+  // Biomassa insuficiente
+  (msg) => {
+    const match = msg.match(
+      /^insufficient biomass in the batch\/stocking \(id:(.+?)\)\. available:(.+?)\| requested:(.+)$/i,
+    );
 
-  const stockingId = source.slice(prefix.length, middleIndex).trim();
-  if (!stockingId) return null;
+    if (!match) return null;
 
-  const afterMiddle = source.slice(middleIndex + middle.length).trim();
-  const afterMiddleLower = afterMiddle.toLowerCase();
-  if (!afterMiddleLower.startsWith(availableTag)) return null;
+    const [, id, available, requested] = match;
 
-  const requestedIndex = afterMiddleLower.indexOf(requestedTag);
-  if (requestedIndex < 0) return null;
+    return `Biomassa insuficiente no lote/povoamento (id: ${id.trim()}). Disponível: ${available.trim()} | Solicitado: ${requested.trim()}`;
+  },
 
-  const available = afterMiddle.slice(availableTag.length, requestedIndex).trim();
-  const requested = afterMiddle.slice(requestedIndex + requestedTag.length).trim();
-  if (!available || !requested) return null;
+  // Povoamento encerrado
+  (msg) => {
+    const id = extractBetween(msg, 'the stocking (id:', ') has already been closed');
 
-  return { stockingId, available, requested };
-}
+    if (!id) return null;
 
-function parseClosedStockingId(message: string): string | null {
-  const source = message.trim();
-  const lower = source.toLowerCase();
-  const prefix = 'the stocking (id:';
-  const suffix = ') has already been closed';
+    return `O povoamento (id: ${id}) já foi encerrado. Não é possível registrar novas vendas.`;
+  },
 
-  if (!lower.startsWith(prefix)) return null;
-  if (!lower.endsWith(suffix) && !lower.endsWith(`${suffix}.`)) return null;
+  // Empresa não resolvida
+  (msg) => {
+    if (/^Could not resolve a company/i.test(msg)) {
+      return 'Não foi possível identificar a empresa para esta operação.';
+    }
+    return null;
+  },
 
-  const suffixStart = lower.lastIndexOf(suffix);
-  if (suffixStart < prefix.length) return null;
+  // Empresa não encontrada
+  (msg) => {
+    const m = msg.match(/^Company \[(.+?)\] not found/i);
+    if (!m) return null;
 
-  const stockingId = source.slice(prefix.length, suffixStart).trim();
-  return stockingId || null;
-}
-
-function tryTranslateDynamicPattern(message: string): string | null {
-  let m: RegExpMatchArray | null;
-
-  const clientIdMissingCpfOrAddress = parseClientIdForMissingCpfOrAddress(message);
-  if (clientIdMissingCpfOrAddress) {
-    return `O cliente (id: ${clientIdMissingCpfOrAddress}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
-  }
-
-  const creditLimitExceeded = parseClientCreditLimitExceeded(message);
-  if (creditLimitExceeded) {
-    return `O cliente (id: ${creditLimitExceeded.clientId}) excedeu o limite de crédito. Limite: ${creditLimitExceeded.limit} | Exposição atual: ${creditLimitExceeded.currentExposure}`;
-  }
-
-  const insufficientBiomass = parseInsufficientBiomass(message);
-  if (insufficientBiomass) {
-    return `Biomassa insuficiente no lote/povoamento (id: ${insufficientBiomass.stockingId}). Disponível: ${insufficientBiomass.available} | Solicitado: ${insufficientBiomass.requested}`;
-  }
-
-  const closedStockingId = parseClosedStockingId(message);
-  if (closedStockingId) {
-    return `O povoamento (id: ${closedStockingId}) já foi encerrado. Não é possível registrar novas vendas.`;
-  }
-
-  if (/^Could not resolve a company/i.test(message)) {
-    return 'Não foi possível identificar a empresa para esta operação.';
-  }
-
-  m = message.match(/^Company \[(.+?)\] not found or not accessible\.?$/i);
-  if (m) {
     return `A empresa “${m[1].trim()}” não foi encontrada ou não está acessível.`;
-  }
+  },
 
-  m = message.match(/^Cannot transition sale from \[(.+?)\] to \[(.+?)\]\.?$/i);
-  if (m) {
-    return `Não é possível alterar o status da venda de “${statusLabelPt(m[1])}” para “${statusLabelPt(m[2])}”.`;
-  }
+  // Transição de status
+  (msg) => {
+    const m = msg.match(/Cannot transition sale from \[?(.+?)\]?\s+to\s+\[?(.+?)\]?/i);
 
-  m = message.match(/^Cannot transition sale from (\S+)\s+to\s+(\S+)\.?$/i);
-  if (m) {
-    return `Não é possível alterar o status da venda de “${statusLabelPt(m[1])}” para “${statusLabelPt(m[2])}”.`;
-  }
+    if (!m) return null;
 
-  m = message.match(/^The total weight must be at least ([0-9][0-9.,]*)\.?$/i);
-  if (m) {
-    return `O peso total deve ser no mínimo ${m[1]}.`;
-  }
+    return `Não é possível alterar o status da venda de “${statusLabelPt(
+      m[1],
+    )}” para “${statusLabelPt(m[2])}”.`;
+  },
 
-  m = message.match(/^The total weight may not be greater than ([0-9][0-9.,]*)\.?$/i);
-  if (m) {
-    return `O peso total não pode ser maior que ${m[1]}.`;
-  }
+  // Regras numéricas
+  (msg) => {
+    const rules: Array<[RegExp, string]> = [
+      [/total weight must be at least ([\d.,]+)/i, 'O peso total deve ser no mínimo %s.'],
+      [
+        /total weight may not be greater than ([\d.,]+)/i,
+        'O peso total não pode ser maior que %s.',
+      ],
+      [/price per kg must be at least ([\d.,]+)/i, 'O preço por kg deve ser no mínimo %s.'],
+      [
+        /price per kg may not be greater than ([\d.,]+)/i,
+        'O preço por kg não pode ser maior que %s.',
+      ],
+    ];
 
-  m = message.match(/^The price per kg must be at least ([0-9][0-9.,]*)\.?$/i);
-  if (m) {
-    return `O preço por kg deve ser no mínimo ${m[1]}.`;
-  }
+    for (const [regex, template] of rules) {
+      const m = msg.match(regex);
+      if (m) return template.replace('%s', m[1]);
+    }
 
-  m = message.match(/^The price per kg may not be greater than ([0-9][0-9.,]*)\.?$/i);
-  if (m) {
-    return `O preço por kg não pode ser maior que ${m[1]}.`;
-  }
+    return null;
+  },
 
-  // exists / UUID — Laravel
-  m = message.match(/^The selected client id is invalid\.?$/i);
-  if (m) return 'O cliente informado não foi encontrado.';
+  // Laravel fallback (exists validation)
+  (msg) => {
+    const map: Record<string, string> = {
+      'The selected client id is invalid.': 'O cliente informado não foi encontrado.',
+      'The selected batch id is invalid.': 'O lote informado não foi encontrado.',
+      'The selected stocking id is invalid.': 'O povoamento informado não foi encontrado.',
+      'The selected financial category id is invalid.':
+        'A categoria financeira informada não foi encontrada.',
+    };
 
-  m = message.match(/^The selected batch id is invalid\.?$/i);
-  if (m) return 'O lote informado não foi encontrado.';
+    return map[msg] ?? null;
+  },
+];
 
-  m = message.match(/^The selected stocking id is invalid\.?$/i);
-  if (m) return 'O povoamento informado não foi encontrado.';
-
-  m = message.match(/^The selected financial category id is invalid\.?$/i);
-  if (m) return 'A categoria financeira informada não foi encontrada.';
-
-  return null;
-}
+// ==============================
+// MAIN FUNCTION
+// ==============================
 
 export function translateSaleApiErrorMessagePtBR(message: string): string {
-  const normalized = message?.trim?.() ?? '';
+  const normalized = normalizeMessage(message);
+
   if (!normalized) return message;
 
-  const withoutDoubleDot = normalized.replace(/\.\.$/, '.');
-  const exact = EXACT_MAP[normalized] ?? EXACT_MAP[withoutDoubleDot];
+  // 1. Exact match (fast path)
+  const exact = EXACT_MAP[normalized as keyof typeof EXACT_MAP];
+
   if (exact) return exact;
 
-  const dynamic = tryTranslateDynamicPattern(normalized);
-  if (dynamic) return dynamic;
+  // 2. Pipeline (dynamic rules)
+  for (const translator of translators) {
+    const result = translator(normalized);
+    if (result) return result;
+  }
 
+  // 3. Fallback
   return message;
 }

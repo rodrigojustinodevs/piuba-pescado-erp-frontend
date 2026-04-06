@@ -25,8 +25,7 @@ export const PUT = createPutHandler<ApiSaleDetailEnvelope, UpdateSaleData, { id:
   backendPathBuilder: (params) => `/api/company/sale/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     return {
       total_weight: rest.totalWeight,
       price_per_kg: rest.pricePerKg,

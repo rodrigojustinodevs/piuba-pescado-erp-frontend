@@ -1,4 +1,8 @@
-import type { ApiWaterQuality, UpdateWaterQualityData, WaterQuality } from '@/features/waterQuality/types';
+import type {
+  ApiWaterQuality,
+  UpdateWaterQualityData,
+  WaterQuality,
+} from '@/features/waterQuality/types';
 import {
   mapApiWaterQuality,
   mapCreateWaterQualityToApiPayload,
@@ -36,8 +40,7 @@ export const PUT = createPutHandler<
   backendPathBuilder: (params) => `/api/company/water-quality/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     return mapCreateWaterQualityToApiPayload(rest);
   },
   mapResponse: mapDetailResponse,

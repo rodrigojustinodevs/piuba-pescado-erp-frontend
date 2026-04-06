@@ -1,6 +1,10 @@
 import type { ApiMortality, Mortality, UpdateMortalityData } from '@/features/mortality/types';
 import { mapApiMortality } from '@/features/mortality/utils/apiMapper';
-import { createDeleteHandler, createDetailGetHandler, createPutHandler } from '@/shared/lib/api/routeFactories';
+import {
+  createDeleteHandler,
+  createDetailGetHandler,
+  createPutHandler,
+} from '@/shared/lib/api/routeFactories';
 
 const CONTEXT = 'Mortalities API Proxy';
 
@@ -17,12 +21,15 @@ export const GET = createDetailGetHandler<ApiMortalityDetailEnvelope, Mortality,
   mapResponse: mapDetailResponse,
 });
 
-export const PUT = createPutHandler<ApiMortalityDetailEnvelope, UpdateMortalityData, { id: string }>({
+export const PUT = createPutHandler<
+  ApiMortalityDetailEnvelope,
+  UpdateMortalityData,
+  { id: string }
+>({
   backendPathBuilder: (params) => `/api/company/mortality/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     return rest;
   },
   mapResponse: mapDetailResponse,

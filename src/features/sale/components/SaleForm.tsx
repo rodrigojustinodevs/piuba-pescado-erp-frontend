@@ -113,11 +113,13 @@ export function SaleForm({
   }, [initialValues, reset]);
 
   const hasBatchSelected = Boolean(batchIdWatch.trim());
-  const stockingPlaceholder = !hasBatchSelected
-    ? 'Selecione o lote primeiro'
-    : isLoadingStockings
-      ? 'Carregando povoamentos...'
-      : 'Selecione o povoamento';
+  let stockingPlaceholder = 'Selecione o povoamento';
+  if (isLoadingStockings) {
+    stockingPlaceholder = 'Carregando povoamentos...';
+  }
+  if (!hasBatchSelected) {
+    stockingPlaceholder = 'Selecione o lote primeiro';
+  }
 
   return (
     <form

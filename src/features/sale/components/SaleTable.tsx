@@ -59,6 +59,61 @@ function canCancelSale(row: Sale): boolean {
   return row.status?.toLowerCase() !== 'cancelled';
 }
 
+const SALE_COLUMNS: Array<DataTableColumn<Sale>> = [
+  {
+    id: 'saleDate',
+    header: 'Data',
+    cell: (row) => (
+      <div className="text-sm font-medium text-[#0F172A]">{formatCalendarDatePtBR(row.saleDate)}</div>
+    ),
+  },
+  {
+    id: 'clientName',
+    header: 'Cliente',
+    cell: (row) => <div className="text-sm text-slate-600">{row.clientName || '—'}</div>,
+  },
+  {
+    id: 'batchName',
+    header: 'Lote',
+    cell: (row) => <div className="text-sm text-slate-600">{row.batchName || '—'}</div>,
+  },
+  {
+    id: 'totalWeight',
+    header: 'Peso total',
+    cell: (row) => (
+      <div className="text-sm text-slate-600 tabular-nums">
+        {row.totalWeight} kg
+      </div>
+    ),
+  },
+  {
+    id: 'pricePerKg',
+    header: 'Preço/kg',
+    cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.pricePerKg)}</div>,
+  },
+  {
+    id: 'totalRevenue',
+    header: 'Receita total',
+    cell: (row) => (
+      <div className="text-sm font-medium text-[#0F172A] tabular-nums">{formatMoney(row.totalRevenue)}</div>
+    ),
+  },
+  {
+    id: 'status',
+    header: 'Status',
+    cell: (row) => (
+      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(row.status)}`}>
+        {row.statusLabel || row.status}
+      </span>
+    ),
+  },
+  {
+    id: 'updatedAt',
+    header: 'Atualizado em',
+    cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+  },
+];
+
 export function SaleTable({
   sales,
   onDelete,
@@ -66,62 +121,7 @@ export function SaleTable({
   onCancel,
   isCancelling = false,
 }: Readonly<SaleTableProps>) {
-  const columns: Array<DataTableColumn<Sale>> = [
-    {
-      id: 'saleDate',
-      header: 'Data',
-      cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A]">{formatCalendarDatePtBR(row.saleDate)}</div>
-      ),
-    },
-    {
-      id: 'clientName',
-      header: 'Cliente',
-      cell: (row) => <div className="text-sm text-slate-600">{row.clientName || '—'}</div>,
-    },
-    {
-      id: 'batchName',
-      header: 'Lote',
-      cell: (row) => <div className="text-sm text-slate-600">{row.batchName || '—'}</div>,
-    },
-    {
-      id: 'totalWeight',
-      header: 'Peso total',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">
-          {row.totalWeight} kg
-        </div>
-      ),
-    },
-    {
-      id: 'pricePerKg',
-      header: 'Preço/kg',
-      cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.pricePerKg)}</div>,
-    },
-    {
-      id: 'totalRevenue',
-      header: 'Receita total',
-      cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A] tabular-nums">{formatMoney(row.totalRevenue)}</div>
-      ),
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      cell: (row) => (
-        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(row.status)}`}>
-          {row.statusLabel || row.status}
-        </span>
-      ),
-    },
-    {
-      id: 'updatedAt',
-      header: 'Atualizado em',
-      cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
-    },
-  ];
-
-  const baseRowActions = createCrudListRowActions({
+  const baseRowActions = createCrudListRowActions<Sale>({
     basePath: '/company/sales',
     onDelete,
     isDeleting,
@@ -151,7 +151,7 @@ export function SaleTable({
   return (
     <DataTable
       data={sales}
-      columns={columns}
+      columns={SALE_COLUMNS}
       getRowId={(row) => row.id}
       rowActions={rowActions}
       emptyState={<div className="p-8 text-center text-slate-500">Nenhuma venda encontrada.</div>}
