@@ -25,8 +25,7 @@ export const PUT = createPutHandler<ApiClientDetailEnvelope, UpdateClientData, {
   backendPathBuilder: (params) => `/api/company/client/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     const body = {
       company_id: rest.companyId?.trim() ? rest.companyId.trim() : undefined,
       name: rest.name.trim(),
@@ -51,4 +50,3 @@ export const DELETE = createDeleteHandler<{ id: string }>({
   backendPathBuilder: (params) => `/api/company/client/${params.id}`,
   context: CONTEXT,
 });
-

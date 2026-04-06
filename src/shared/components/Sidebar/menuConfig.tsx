@@ -77,6 +77,12 @@ export const menuConfig: MenuItemWithAuth[] = [
         href: '/company/clients',
         allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
       },
+      {
+        id: 'vendas-erp',
+        label: 'Vendas',
+        href: '/company/sales',
+        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+      },
     ],
   },
   {

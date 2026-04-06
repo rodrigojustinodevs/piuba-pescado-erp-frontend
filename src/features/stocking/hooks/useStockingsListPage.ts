@@ -12,7 +12,7 @@ export function useStockingsListPage() {
   const listState = useListPageState({ initialSortBy: 'stockingDate' });
   const { page, setPage, search, setSearch, sortBy, setSortBy } = listState;
 
-  const { data, isLoading, error } = useStockings({ page, per_page: PER_PAGE });
+  const { data, isLoading, error } = useStockings({ page, perPage: PER_PAGE });
   const deleteStocking = useDeleteStocking();
   const { showError } = useAlertModal();
 

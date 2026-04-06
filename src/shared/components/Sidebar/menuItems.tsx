@@ -53,6 +53,11 @@ export const defaultMenuItems: MenuItem[] = [
         label: 'Clientes',
         href: '/company/clients',
       },
+      {
+        id: 'vendas-erp',
+        label: 'Vendas',
+        href: '/company/sales',
+      },
     ],
   },
   {

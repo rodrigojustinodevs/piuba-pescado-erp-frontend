@@ -2,13 +2,16 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { PencilIcon, SpinnerIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
+import { BanIcon, SpinnerIcon } from '@/shared/components/Table';
+import { PencilIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 
 export type DetailPageHeroProps = {
   icon: ReactNode;
   title: string;
   subtitle: ReactNode;
   editHref: string;
+  onCancelClick?: () => void;
+  isCancelling?: boolean;
   onDeleteClick?: () => void;
   isDeleting?: boolean;
   extraActions?: ReactNode;
@@ -19,6 +22,8 @@ export function DetailPageHero({
   title,
   subtitle,
   editHref,
+  onCancelClick,
+  isCancelling = false,
   onDeleteClick,
   isDeleting = false,
   extraActions,
@@ -37,6 +42,21 @@ export function DetailPageHero({
 
       <div className="flex items-center gap-3">
         {extraActions}
+        {onCancelClick ? (
+          <button
+            type="button"
+            onClick={onCancelClick}
+            disabled={isCancelling}
+            className="flex items-center gap-2 rounded-lg border border-amber-200 bg-white px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isCancelling ? (
+              <SpinnerIcon className="h-4 w-4 animate-spin" />
+            ) : (
+              <BanIcon className="h-4 w-4" />
+            )}
+            Cancelar venda
+          </button>
+        ) : null}
         {onDeleteClick ? (
           <button
             type="button"
