@@ -106,15 +106,6 @@ function extractBetween(message: string, start: string, end: string): string | n
 // REGEX (SAFE)
 // ==============================
 
-const CREDIT_LIMIT_BY_ID_REGEX =
-  /^the client \(id:\s*([^)]+)\) has exceeded the credit limit\.\s*limit:\s*([^|]+)\|\s*current exposure:\s*([^\r\n]+)$/i;
-
-const CREDIT_LIMIT_BY_NAME_REGEX =
-  /^the client \(name:\s*([^)]+)\) has exceeded the credit limit\.\s*limit:\s*([^|]+)\s*\|\s*current exposure:\s*([^|]+)\s*\|\s*new sale:\s*([^|]+)\s*\|\s*total:\s*([^\r\n]+)$/i;
-
-const BIOMASS_REGEX =
-  /^insufficient biomass in the batch\/stocking \(id:\s*([^)]+)\)\.\s*available:\s*([^|]+)\|\s*requested:\s*([^\r\n]+)$/i;
-
 const COMPANY_NOT_FOUND_REGEX = /^Company \[([^\]]+)\] not found/i;
 
 const TRANSITION_REGEX =
@@ -132,6 +123,114 @@ const NUMERIC_RULES: Array<[RegExp, string]> = [
     'O preço por kg não pode ser maior que %s.',
   ],
 ];
+
+function parseCreditLimitByName(message: string): {
+  name: string;
+  limit: string;
+  exposure: string;
+  newSale: string;
+  total: string;
+} | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the client (name:';
+  const middle = ') has exceeded the credit limit.';
+  const limitTag = 'limit:';
+  const exposureTag = '| current exposure:';
+  const newSaleTag = '| new sale:';
+  const totalTag = '| total:';
+
+  if (!lower.startsWith(prefix)) return null;
+
+  const middleIdx = lower.indexOf(middle);
+  if (middleIdx < 0) return null;
+
+  const name = source.slice(prefix.length, middleIdx).trim();
+  if (!name) return null;
+
+  const details = source.slice(middleIdx + middle.length).trim();
+  const detailsLower = details.toLowerCase();
+  if (!detailsLower.startsWith(limitTag)) return null;
+
+  const exposureIdx = detailsLower.indexOf(exposureTag);
+  if (exposureIdx < 0) return null;
+  const newSaleIdx = detailsLower.indexOf(newSaleTag, exposureIdx + exposureTag.length);
+  if (newSaleIdx < 0) return null;
+  const totalIdx = detailsLower.indexOf(totalTag, newSaleIdx + newSaleTag.length);
+  if (totalIdx < 0) return null;
+
+  const limit = details.slice(limitTag.length, exposureIdx).trim();
+  const exposure = details.slice(exposureIdx + exposureTag.length, newSaleIdx).trim();
+  const newSale = details.slice(newSaleIdx + newSaleTag.length, totalIdx).trim();
+  const total = details.slice(totalIdx + totalTag.length).trim();
+  if (!limit || !exposure || !newSale || !total) return null;
+
+  return { name, limit, exposure, newSale, total };
+}
+
+function parseCreditLimitById(message: string): { id: string; limit: string; exposure: string } | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the client (id:';
+  const middle = ') has exceeded the credit limit.';
+  const limitTag = 'limit:';
+  const exposureTag = '| current exposure:';
+
+  if (!lower.startsWith(prefix)) return null;
+
+  const middleIdx = lower.indexOf(middle);
+  if (middleIdx < 0) return null;
+
+  const id = source.slice(prefix.length, middleIdx).trim();
+  if (!id) return null;
+
+  const details = source.slice(middleIdx + middle.length).trim();
+  const detailsLower = details.toLowerCase();
+  if (!detailsLower.startsWith(limitTag)) return null;
+
+  const exposureIdx = detailsLower.indexOf(exposureTag);
+  if (exposureIdx < 0) return null;
+
+  const limit = details.slice(limitTag.length, exposureIdx).trim();
+  const exposure = details.slice(exposureIdx + exposureTag.length).trim();
+  if (!limit || !exposure) return null;
+
+  return { id, limit, exposure };
+}
+
+function parseInsufficientBiomass(message: string): {
+  id: string;
+  available: string;
+  requested: string;
+} | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'insufficient biomass in the batch/stocking (id:';
+  const middle = ').';
+  const availableTag = 'available:';
+  const requestedTag = '| requested:';
+
+  if (!lower.startsWith(prefix)) return null;
+
+  const middleIdx = lower.indexOf(middle);
+  if (middleIdx < 0) return null;
+
+  const id = source.slice(prefix.length, middleIdx).trim();
+  if (!id) return null;
+
+  const details = source.slice(middleIdx + middle.length).trim();
+  const detailsLower = details.toLowerCase();
+  if (!detailsLower.startsWith(availableTag)) return null;
+
+  const requestedIdx = detailsLower.indexOf(requestedTag);
+  if (requestedIdx < 0) return null;
+
+  const available = details.slice(availableTag.length, requestedIdx).trim();
+  const requested = details.slice(requestedIdx + requestedTag.length).trim();
+  if (!available || !requested) return null;
+
+  return { id, available, requested };
+}
 
 // ==============================
 // TRANSLATORS
@@ -152,30 +251,24 @@ const translators: Translator[] = [
   },
 
   (msg) => {
-    const match = CREDIT_LIMIT_BY_NAME_REGEX.exec(msg);
-    if (!match) return null;
+    const parsed = parseCreditLimitByName(msg);
+    if (!parsed) return null;
 
-    const [, name, limit, exposure, newSale, total] = match;
-
-    return `O cliente (nome: ${name.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()} | Nova venda: ${newSale.trim()} | Total: ${total.trim()}`;
+    return `O cliente (nome: ${parsed.name}) excedeu o limite de crédito. Limite: ${parsed.limit} | Exposição atual: ${parsed.exposure} | Nova venda: ${parsed.newSale} | Total: ${parsed.total}`;
   },
 
   (msg) => {
-    const match = CREDIT_LIMIT_BY_ID_REGEX.exec(msg);
-    if (!match) return null;
+    const parsed = parseCreditLimitById(msg);
+    if (!parsed) return null;
 
-    const [, id, limit, exposure] = match;
-
-    return `O cliente (id: ${id.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()}`;
+    return `O cliente (id: ${parsed.id}) excedeu o limite de crédito. Limite: ${parsed.limit} | Exposição atual: ${parsed.exposure}`;
   },
 
   (msg) => {
-    const match = BIOMASS_REGEX.exec(msg);
-    if (!match) return null;
+    const parsed = parseInsufficientBiomass(msg);
+    if (!parsed) return null;
 
-    const [, id, available, requested] = match;
-
-    return `Biomassa insuficiente no lote/povoamento (id: ${id.trim()}). Disponível: ${available.trim()} | Solicitado: ${requested.trim()}`;
+    return `Biomassa insuficiente no lote/povoamento (id: ${parsed.id}). Disponível: ${parsed.available} | Solicitado: ${parsed.requested}`;
   },
 
   (msg) => {
