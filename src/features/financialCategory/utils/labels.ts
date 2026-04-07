@@ -1,4 +1,4 @@
-import type { FinancialCategory, FinancialCategoryStatus, FinancialCategoryType } from '../types';
+import type { FinancialCategory } from '../types';
 
 const TYPE_LABELS: Record<string, string> = {
   revenue: 'Receita',
@@ -35,11 +35,11 @@ function normalizeLabelToPt(
   return map[key] ?? null;
 }
 
-export function labelFinancialCategoryType(type: FinancialCategoryType | string): string {
+export function labelFinancialCategoryType(type: string): string {
   return TYPE_LABELS[type] ?? type;
 }
 
-export function labelFinancialCategoryStatus(status: FinancialCategoryStatus | string): string {
+export function labelFinancialCategoryStatus(status: string): string {
   return STATUS_LABELS[status] ?? status;
 }
 

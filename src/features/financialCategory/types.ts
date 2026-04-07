@@ -3,15 +3,12 @@ import type { ApiPagination } from '@/shared/types/api';
 export type FinancialCategoryTypeStrict = 'revenue' | 'expense' | 'investment';
 export type FinancialCategoryStatusStrict = 'active' | 'inactive';
 
-export type FinancialCategoryType = string;
-export type FinancialCategoryStatus = string;
-
 export interface ApiFinancialCategory {
   id: string;
   name: string;
-  type: FinancialCategoryType;
+  type: string;
   typeLabel?: string | null;
-  status: FinancialCategoryStatus;
+  status: string;
   statusLabel?: string | null;
   company?: {
     id?: string;
@@ -31,9 +28,9 @@ export type ApiFinancialCategoryListResponse = {
 export interface FinancialCategory {
   id: string;
   name: string;
-  type: FinancialCategoryType;
+  type: string;
   typeLabel: string;
-  status: FinancialCategoryStatus;
+  status: string;
   statusLabel: string;
   companyId: string;
   companyName: string;

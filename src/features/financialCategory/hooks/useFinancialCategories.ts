@@ -1,15 +1,14 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { FinancialCategoryStatus, FinancialCategoryType } from '../types';
 import { financialCategoryService } from '../services/financialCategoryService';
 
 interface UseFinancialCategoriesParams {
   page?: number;
   limit?: number;
   companyId?: string;
-  type?: FinancialCategoryType;
-  status?: FinancialCategoryStatus;
+  type?: string;
+  status?: string;
   enabled?: boolean;
 }
 

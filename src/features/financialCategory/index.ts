@@ -3,8 +3,6 @@ export type {
   ApiFinancialCategoryListResponse,
   FinancialCategory,
   FinancialCategoryListResponse,
-  FinancialCategoryStatus,
-  FinancialCategoryType,
   CreateFinancialCategoryData,
   UpdateFinancialCategoryData,
   FinancialCategoryTypeStrict,

@@ -2,8 +2,6 @@ import type {
   CreateFinancialCategoryData,
   FinancialCategory,
   FinancialCategoryListResponse,
-  FinancialCategoryStatus,
-  FinancialCategoryType,
   UpdateFinancialCategoryData,
 } from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
@@ -14,8 +12,8 @@ export const financialCategoryService = {
     page?: number;
     limit?: number;
     companyId?: string;
-    type?: FinancialCategoryType;
-    status?: FinancialCategoryStatus;
+    type?: string;
+    status?: string;
   }): Promise<FinancialCategoryListResponse> {
     const queryString = buildQueryString(
       {
