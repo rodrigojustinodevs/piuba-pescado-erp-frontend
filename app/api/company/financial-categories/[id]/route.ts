@@ -12,7 +12,9 @@ import {
 
 const CONTEXT = 'Financial Category detail API Proxy';
 
-type ApiFinancialCategoryDetailEnvelope = { response?: ApiFinancialCategory } | ApiFinancialCategory;
+type ApiFinancialCategoryDetailEnvelope =
+  | { response?: ApiFinancialCategory }
+  | ApiFinancialCategory;
 
 function mapDetailResponse(data: ApiFinancialCategoryDetailEnvelope): FinancialCategory {
   const api = 'response' in data && data.response != null ? data.response : data;
@@ -37,8 +39,7 @@ export const PUT = createPutHandler<
   backendPathBuilder: (params) => `/api/company/financial-category/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     const body: Record<string, unknown> = {
       name: rest.name.trim(),
       type: rest.type,

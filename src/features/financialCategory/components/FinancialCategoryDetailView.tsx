@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { FinancialCategory } from '../types';
 import { displayFinancialCategoryStatus, displayFinancialCategoryType } from '../utils/labels';
 import { BanIcon, SpinnerIcon } from '@/shared/components/Table';
@@ -10,6 +11,7 @@ import {
 } from '@/shared/components/entityDetail';
 import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
+
 type FinancialCategoryDetailViewProps = {
   category: FinancialCategory;
   onDelete?: (id: string, label: string) => void;
@@ -30,45 +32,67 @@ export function FinancialCategoryDetailView({
   isDeactivating = false,
 }: Readonly<FinancialCategoryDetailViewProps>) {
   const titleLabel = category.name || 'Categoria financeira';
+
   const metricCards = [
     { label: 'Nome', value: category.name || '—' },
     { label: 'Empresa', value: category.companyName || '—' },
     { label: 'Tipo', value: displayFinancialCategoryType(category) },
     { label: 'Status', value: displayFinancialCategoryStatus(category) },
   ];
+
   const infoItems = [
-    { label: 'CRIADO EM', value: formatNullableDatePtBR(category.createdAt, true) },
-    { label: 'ATUALIZADO EM', value: formatNullableDatePtBR(category.updatedAt, true) },
+    {
+      label: 'CRIADO EM',
+      value: formatNullableDatePtBR(category.createdAt, true),
+    },
+    {
+      label: 'ATUALIZADO EM',
+      value: formatNullableDatePtBR(category.updatedAt, true),
+    },
   ];
 
   const isActive = category.status?.toLowerCase?.() === 'active';
-  const extraActions = isActive ? (
-    onDeactivate ? (
+
+  /**
+   * 🔥 Refatoração: extraído do ternário aninhado
+   */
+  function renderExtraActions(): ReactNode {
+    if (isActive) {
+      if (!onDeactivate) return null;
+
+      return (
+        <button
+          type="button"
+          onClick={() => onDeactivate(category.id, titleLabel)}
+          disabled={isDeactivating}
+          className="flex items-center gap-2 rounded-lg border border-amber-200 bg-white px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isDeactivating ? (
+            <SpinnerIcon className="h-4 w-4 animate-spin" />
+          ) : (
+            <BanIcon className="h-4 w-4" />
+          )}
+          Inativar
+        </button>
+      );
+    }
+
+    if (!onActivate) return null;
+
+    return (
       <button
         type="button"
-        onClick={() => onDeactivate(category.id, titleLabel)}
-        disabled={isDeactivating}
-        className="flex items-center gap-2 rounded-lg border border-amber-200 bg-white px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={() => onActivate(category.id, titleLabel)}
+        disabled={isActivating}
+        className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isDeactivating ? (
-          <SpinnerIcon className="h-4 w-4 animate-spin" />
-        ) : (
-          <BanIcon className="h-4 w-4" />
-        )}
-        Inativar
+        {isActivating ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : null}
+        Ativar
       </button>
-    ) : null
-  ) : onActivate ? (
-    <button
-      type="button"
-      onClick={() => onActivate(category.id, titleLabel)}
-      disabled={isActivating}
-      className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {isActivating ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : null}
-      Ativar
-    </button>
-  ) : null;
+    );
+  }
+
+  const extraActions = renderExtraActions();
 
   return (
     <EntityDetailShell breadcrumb={<>Dashboard / Categorias financeiras / {titleLabel}</>}>
@@ -86,7 +110,12 @@ export function FinancialCategoryDetailView({
         isDeleting={isDeleting}
         extraActions={extraActions}
       />
-      <EntityDetailMetricsBody metricCards={metricCards} infoSectionTitle="Detalhes" infoItems={infoItems} />
+
+      <EntityDetailMetricsBody
+        metricCards={metricCards}
+        infoSectionTitle="Detalhes"
+        infoItems={infoItems}
+      />
     </EntityDetailShell>
   );
 }

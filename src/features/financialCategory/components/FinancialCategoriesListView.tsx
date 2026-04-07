@@ -4,22 +4,25 @@ import { useCallback, useMemo } from 'react';
 import type {
   FinancialCategory,
   FinancialCategoryListResponse,
-  FinancialCategoryStatus,
-  FinancialCategoryType,
+  FinancialCategoryStatusStrict,
+  FinancialCategoryTypeStrict,
 } from '../types';
 import { FinancialCategoryTable } from './FinancialCategoryTable';
 import { ListHeader, ListPageShell, SortButton } from '@/shared/components/list';
 import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
 import { Select } from '@/shared/components/ui';
 
-const TYPE_OPTIONS: Array<{ value: FinancialCategoryType | 'all'; label: string }> = [
+type TypeFilter = FinancialCategoryTypeStrict | 'all';
+type StatusFilter = FinancialCategoryStatusStrict | 'all';
+
+const TYPE_OPTIONS: Array<{ value: TypeFilter; label: string }> = [
   { value: 'all', label: 'Todos os tipos' },
   { value: 'revenue', label: 'Receita' },
   { value: 'expense', label: 'Despesa' },
   { value: 'investment', label: 'Investimento' },
 ];
 
-const STATUS_OPTIONS: Array<{ value: FinancialCategoryStatus | 'all'; label: string }> = [
+const STATUS_OPTIONS: Array<{ value: StatusFilter; label: string }> = [
   { value: 'all', label: 'Todos os status' },
   { value: 'active', label: 'Ativo' },
   { value: 'inactive', label: 'Inativo' },
@@ -30,10 +33,10 @@ export type FinancialCategoriesListViewProps = {
   setPage: (next: number) => void;
   sortBy: string;
   setSortBy: (next: string) => void;
-  type: FinancialCategoryType | 'all';
-  setType: (next: FinancialCategoryType | 'all') => void;
-  status: FinancialCategoryStatus | 'all';
-  setStatus: (next: FinancialCategoryStatus | 'all') => void;
+  type: TypeFilter;
+  setType: (next: TypeFilter) => void;
+  status: StatusFilter;
+  setStatus: (next: StatusFilter) => void;
   data: FinancialCategoryListResponse | undefined;
   isLoading: boolean;
   error: unknown;
@@ -95,7 +98,7 @@ export function FinancialCategoriesListView({
               labelInline={true}
               options={typeOptions}
               value={type}
-              onChange={(e) => setType(e.target.value as FinancialCategoryType | 'all')}
+              onChange={(e) => setType(e.target.value as TypeFilter)}
             />
           </div>
           <div className="min-w-[220px]">
@@ -104,7 +107,7 @@ export function FinancialCategoriesListView({
               labelInline={true}
               options={statusOptions}
               value={status}
-              onChange={(e) => setStatus(e.target.value as FinancialCategoryStatus | 'all')}
+              onChange={(e) => setStatus(e.target.value as StatusFilter)}
             />
           </div>
           <SortButton current={sortBy} onSort={handleSort} value="name" label="Nome" />

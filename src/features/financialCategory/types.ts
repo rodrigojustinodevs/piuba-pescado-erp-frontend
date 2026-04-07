@@ -1,7 +1,10 @@
 import type { ApiPagination } from '@/shared/types/api';
 
-export type FinancialCategoryType = 'revenue' | 'expense' | 'investment' | string;
-export type FinancialCategoryStatus = 'active' | 'inactive' | string;
+export type FinancialCategoryTypeStrict = 'revenue' | 'expense' | 'investment';
+export type FinancialCategoryStatusStrict = 'active' | 'inactive';
+
+export type FinancialCategoryType = string;
+export type FinancialCategoryStatus = string;
 
 export interface ApiFinancialCategory {
   id: string;
@@ -44,9 +47,6 @@ export interface FinancialCategoryListResponse {
   page: number;
   limit: number;
 }
-
-export type FinancialCategoryTypeStrict = 'revenue' | 'expense' | 'investment';
-export type FinancialCategoryStatusStrict = 'active' | 'inactive';
 
 /** Payload de criação; `companyId` apenas para master (admin). */
 export interface CreateFinancialCategoryData {

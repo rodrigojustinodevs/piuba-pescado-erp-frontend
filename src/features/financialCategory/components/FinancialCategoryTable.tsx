@@ -43,6 +43,116 @@ export type FinancialCategoryTableProps = {
   isDeactivating?: boolean;
 };
 
+const FINANCIAL_CATEGORY_COLUMNS: Array<DataTableColumn<FinancialCategory>> = [
+  {
+    id: 'name',
+    header: 'Categoria',
+    cell: (row) => <div className="text-sm font-medium text-[#0F172A]">{row.name}</div>,
+  },
+  {
+    id: 'typeLabel',
+    header: 'Tipo',
+    cell: (row) => (
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getFinancialCategoryTypeBadgeClassNames(row.type)}`}
+      >
+        {displayFinancialCategoryType(row)}
+      </span>
+    ),
+  },
+  {
+    id: 'statusLabel',
+    header: 'Status',
+    cell: (row) => (
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(row.status)}`}
+      >
+        {displayFinancialCategoryStatus(row)}
+      </span>
+    ),
+  },
+  {
+    id: 'companyName',
+    header: 'Empresa',
+    cell: (row) => <div className="text-sm text-slate-600">{row.companyName || '—'}</div>,
+  },
+  {
+    id: 'updatedAt',
+    header: 'Atualizado em',
+    cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+  },
+];
+
+type RowActionsConfig = {
+  onDelete?: (id: string, label: string) => void;
+  isDeleting: boolean;
+  onActivate?: (id: string, label: string) => void;
+  isActivating: boolean;
+  onDeactivate?: (id: string, label: string) => void;
+  isDeactivating: boolean;
+};
+
+function buildRowActions(row: FinancialCategory, config: RowActionsConfig): DataTableAction[] {
+  const { onDelete, isDeleting, onActivate, isActivating, onDeactivate, isDeactivating } = config;
+  const actions: DataTableAction[] = [
+    {
+      label: 'Ver detalhes',
+      href: `/company/financial-categories/${row.id}`,
+      icon: <EyeIcon className="h-4 w-4" />,
+    },
+    {
+      label: 'Editar',
+      href: `/company/financial-categories/${row.id}/edit`,
+      icon: <EditIcon className="h-4 w-4" />,
+    },
+  ];
+
+  const isActive = row.status?.toLowerCase?.() === 'active';
+  const rowLabel = row.name || row.id;
+
+  if (onActivate && !isActive) {
+    actions.push({
+      label: isActivating ? 'Ativando...' : 'Ativar',
+      onClick: () => onActivate(row.id, rowLabel),
+      disabled: isActivating,
+      icon: isActivating ? (
+        <SpinnerIcon className="h-4 w-4 animate-spin" />
+      ) : (
+        <EnableIcon className="h-4 w-4" />
+      ),
+    });
+  }
+
+  if (onDeactivate && isActive) {
+    actions.push({
+      label: isDeactivating ? 'Inativando...' : 'Inativar',
+      onClick: () => onDeactivate(row.id, rowLabel),
+      disabled: isDeactivating,
+      icon: isDeactivating ? (
+        <SpinnerIcon className="h-4 w-4 animate-spin" />
+      ) : (
+        <BanIcon className="h-4 w-4" />
+      ),
+    });
+  }
+
+  if (onDelete) {
+    actions.push({
+      label: 'Excluir',
+      onClick: () => onDelete(row.id, rowLabel),
+      variant: 'danger',
+      disabled: isDeleting,
+      icon: isDeleting ? (
+        <SpinnerIcon className="h-4 w-4 animate-spin" />
+      ) : (
+        <TrashIcon className="h-4 w-4" />
+      ),
+    });
+  }
+
+  return actions;
+}
+
 export function FinancialCategoryTable({
   financialCategories,
   onDelete,
@@ -52,110 +162,21 @@ export function FinancialCategoryTable({
   onDeactivate,
   isDeactivating = false,
 }: Readonly<FinancialCategoryTableProps>) {
-  const columns: Array<DataTableColumn<FinancialCategory>> = [
-    {
-      id: 'name',
-      header: 'Categoria',
-      cell: (row) => <div className="text-sm font-medium text-[#0F172A]">{row.name}</div>,
-    },
-    {
-      id: 'typeLabel',
-      header: 'Tipo',
-      cell: (row) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getFinancialCategoryTypeBadgeClassNames(row.type)}`}
-        >
-          {displayFinancialCategoryType(row)}
-        </span>
-      ),
-    },
-    {
-      id: 'statusLabel',
-      header: 'Status',
-      cell: (row) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(row.status)}`}
-        >
-          {displayFinancialCategoryStatus(row)}
-        </span>
-      ),
-    },
-    {
-      id: 'companyName',
-      header: 'Empresa',
-      cell: (row) => <div className="text-sm text-slate-600">{row.companyName || '—'}</div>,
-    },
-    {
-      id: 'updatedAt',
-      header: 'Atualizado em',
-      cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
-    },
-  ];
+  const rowActionsConfig: RowActionsConfig = {
+    onDelete,
+    isDeleting,
+    onActivate,
+    isActivating,
+    onDeactivate,
+    isDeactivating,
+  };
 
   return (
     <DataTable
       data={financialCategories}
-      columns={columns}
+      columns={FINANCIAL_CATEGORY_COLUMNS}
       getRowId={(row) => row.id}
-      rowActions={(row): DataTableAction[] => {
-        const actions: DataTableAction[] = [
-          {
-            label: 'Ver detalhes',
-            href: `/company/financial-categories/${row.id}`,
-            icon: <EyeIcon className="h-4 w-4" />,
-          },
-          {
-            label: 'Editar',
-            href: `/company/financial-categories/${row.id}/edit`,
-            icon: <EditIcon className="h-4 w-4" />,
-          },
-        ];
-
-        const isActive = row.status?.toLowerCase?.() === 'active';
-        const rowLabel = row.name || row.id;
-
-        if (onActivate && !isActive) {
-          actions.push({
-            label: isActivating ? 'Ativando...' : 'Ativar',
-            onClick: () => onActivate(row.id, rowLabel),
-            disabled: isActivating,
-            icon: isActivating ? (
-              <SpinnerIcon className="h-4 w-4 animate-spin" />
-            ) : (
-              <EnableIcon className="h-4 w-4" />
-            ),
-          });
-        }
-
-        if (onDeactivate && isActive) {
-          actions.push({
-            label: isDeactivating ? 'Inativando...' : 'Inativar',
-            onClick: () => onDeactivate(row.id, rowLabel),
-            disabled: isDeactivating,
-            icon: isDeactivating ? (
-              <SpinnerIcon className="h-4 w-4 animate-spin" />
-            ) : (
-              <BanIcon className="h-4 w-4" />
-            ),
-          });
-        }
-
-        if (onDelete) {
-          actions.push({
-            label: 'Excluir',
-            onClick: () => onDelete(row.id, rowLabel),
-            variant: 'danger',
-            disabled: isDeleting,
-            icon: isDeleting ? (
-              <SpinnerIcon className="h-4 w-4 animate-spin" />
-            ) : (
-              <TrashIcon className="h-4 w-4" />
-            ),
-          });
-        }
-
-        return actions;
-      }}
+      rowActions={(row) => buildRowActions(row, rowActionsConfig)}
       emptyState={
         <div className="p-8 text-center text-slate-500">
           Nenhuma categoria financeira encontrada.

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import type { FinancialCategoryStatus, FinancialCategoryType } from '../types';
+import type { FinancialCategoryStatusStrict, FinancialCategoryTypeStrict } from '../types';
 import { useFinancialCategories } from './useFinancialCategories';
 import { useActivateFinancialCategory } from './useActivateFinancialCategory';
 import { useDeactivateFinancialCategory } from './useDeactivateFinancialCategory';
@@ -10,13 +10,15 @@ import { useAlertModal } from '@/shared/components/AlertModal';
 import { useListPageState } from '@/shared/hooks/useListPageState';
 
 const PER_PAGE = 25;
+type TypeFilter = FinancialCategoryTypeStrict | 'all';
+type StatusFilter = FinancialCategoryStatusStrict | 'all';
 
 export function useFinancialCategoriesListPage() {
   const listState = useListPageState({ initialSortBy: 'name' });
   const { page, setPage, sortBy, setSortBy } = listState;
 
-  const [type, setType] = useState<FinancialCategoryType | 'all'>('all');
-  const [status, setStatus] = useState<FinancialCategoryStatus | 'all'>('all');
+  const [type, setType] = useState<TypeFilter>('all');
+  const [status, setStatus] = useState<StatusFilter>('all');
 
   const deleteCategory = useDeleteFinancialCategory();
   const activateCategory = useActivateFinancialCategory();

@@ -238,11 +238,6 @@ function parseInsufficientBiomass(message: string): {
 
 const translators: Translator[] = [
   (msg) => {
-    if (msg.length > 2000) return null;
-    return null;
-  },
-
-  (msg) => {
     const id = extractBetween(msg, 'the client (id:', ') does not have cpf/cnpj');
 
     if (!id) return null;
@@ -335,8 +330,9 @@ export function translateSaleApiErrorMessagePtBR(message: string): string {
   const normalized = normalizeMessage(message);
 
   if (!normalized) return message;
+  if (normalized.length > 2000) return message;
 
-  const exact = EXACT_MAP[normalized as keyof typeof EXACT_MAP];
+  const exact = EXACT_MAP[normalized];
 
   if (exact) return exact;
 
