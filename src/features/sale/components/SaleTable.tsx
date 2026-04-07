@@ -10,6 +10,7 @@ import {
   type DataTableColumn,
 } from '@/shared/components/Table';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
+import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
 
 function formatMoney(value: number): string {
   if (!Number.isFinite(value)) return '—';
@@ -30,20 +31,6 @@ function formatDateTime(value: string | null): string {
     });
   } catch {
     return value;
-  }
-}
-
-function statusBadge(status: string): string {
-  const k = status?.toLowerCase?.() ?? '';
-  switch (k) {
-    case 'confirmed':
-      return 'bg-emerald-100 text-emerald-700';
-    case 'pending':
-      return 'bg-amber-100 text-amber-700';
-    case 'cancelled':
-      return 'bg-rose-100 text-rose-700';
-    default:
-      return 'bg-slate-100 text-slate-700';
   }
 }
 
@@ -102,7 +89,9 @@ const SALE_COLUMNS: Array<DataTableColumn<Sale>> = [
     id: 'status',
     header: 'Status',
     cell: (row) => (
-      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(row.status)}`}>
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(row.status)}`}
+      >
         {row.statusLabel || row.status}
       </span>
     ),

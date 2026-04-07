@@ -12,22 +12,7 @@ import {
   type DataTableAction,
   type DataTableColumn,
 } from '@/shared/components/Table';
-
-function getStatusBadgeClass(status: string): string {
-  const normalized = status?.toLowerCase?.() ?? '';
-  switch (normalized) {
-    case 'confirmed':
-      return 'bg-blue-100 text-blue-700 ring-blue-200';
-    case 'received':
-      return 'bg-emerald-100 text-emerald-700 ring-emerald-200';
-    case 'cancelled':
-      return 'bg-rose-100 text-rose-700 ring-rose-200';
-    case 'draft':
-      return 'bg-slate-100 text-slate-700 ring-slate-200';
-    default:
-      return 'bg-slate-100 text-slate-700 ring-slate-200';
-  }
-}
+import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
 
 function formatDate(value: string | null): string {
   if (!value) return '—';
@@ -111,7 +96,7 @@ export function PurchaseTable({
       header: 'Status',
       cell: (row) => (
         <span
-          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${getStatusBadgeClass(row.status)}`}
+          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${getStatusBadgeClassNames(row.status, { variant: 'ring' })}`}
         >
           {getPurchaseStatusLabel(row.status)}
         </span>

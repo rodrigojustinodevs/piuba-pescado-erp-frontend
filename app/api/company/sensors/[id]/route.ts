@@ -21,8 +21,7 @@ export const PUT = createPutHandler<ApiSensorDetailEnvelope, UpdateSensorData, {
   backendPathBuilder: (params) => `/api/company/sensor/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     return rest;
   },
   mapResponse: mapDetailResponse,

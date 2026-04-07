@@ -106,8 +106,13 @@ function extractBetween(message: string, start: string, end: string): string | n
 // REGEX (PRECOMPILED / SAFE)
 // ==============================
 
-const CREDIT_LIMIT_REGEX =
+/** Formato legado: id + limit + exposure */
+const CREDIT_LIMIT_BY_ID_REGEX =
   /^the client \(id:(.+?)\) has exceeded the credit limit\. limit:(.+?)\| current exposure:(.+)$/i;
+
+/** Formato atual: nome + limit + exposure + nova venda + total */
+const CREDIT_LIMIT_BY_NAME_REGEX =
+  /^the client \(name:\s*(.+?)\) has exceeded the credit limit\.\s*limit:\s*(.+?)\s*\|\s*current exposure:\s*(.+?)\s*\|\s*new sale:\s*(.+?)\s*\|\s*total:\s*(.+)$/i;
 
 const BIOMASS_REGEX =
   /^insufficient biomass in the batch\/stocking \(id:(.+?)\)\. available:(.+?)\| requested:(.+)$/i;
@@ -144,9 +149,19 @@ const translators: Translator[] = [
     return `O cliente (id: ${id}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
   },
 
-  // Crédito excedido
+  // Crédito excedido (nome + detalhes da venda)
   (msg) => {
-    const match = CREDIT_LIMIT_REGEX.exec(msg);
+    const match = CREDIT_LIMIT_BY_NAME_REGEX.exec(msg);
+    if (!match) return null;
+
+    const [, name, limit, exposure, newSale, total] = match;
+
+    return `O cliente (nome: ${name.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()} | Nova venda: ${newSale.trim()} | Total: ${total.trim()}`;
+  },
+
+  // Crédito excedido (id — legado)
+  (msg) => {
+    const match = CREDIT_LIMIT_BY_ID_REGEX.exec(msg);
     if (!match) return null;
 
     const [, clientId, limit, exposure] = match;

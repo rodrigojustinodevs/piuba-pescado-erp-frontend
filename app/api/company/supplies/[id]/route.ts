@@ -24,8 +24,7 @@ export const PUT = createPutHandler<ApiSupplyDetailEnvelope, UpdateSupplyData, {
   backendPathBuilder: (params) => `/api/company/supply/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     const category = rest.category?.trim() ? rest.category.trim() : null;
     const body = {
       ...rest,
