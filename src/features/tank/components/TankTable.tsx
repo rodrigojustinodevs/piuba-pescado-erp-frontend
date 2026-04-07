@@ -2,7 +2,8 @@
 
 import type { Tank } from '../types';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { formatCapacityLiters, getStatusBadgeClass } from '../utils/format';
+import { formatCapacityLiters } from '../utils/format';
+import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
 import { getCompanyName, getTankTypeLabel } from '../utils/lookups';
 import {
   DataTable,
@@ -72,9 +73,7 @@ export function TankTable({
       header: 'Status',
       cell: (tank) => (
         <span
-          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeClass(
-            tank.status,
-          )}`}
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(tank.status)}`}
         >
           {tank.status === 'active' ? 'Ativo' : 'Inativo'}
         </span>

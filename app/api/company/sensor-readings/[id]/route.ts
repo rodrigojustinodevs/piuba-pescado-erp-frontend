@@ -33,8 +33,7 @@ export const PUT = createPutHandler<
   backendPathBuilder: (params) => `/api/company/sensor-reading/${params.id}`,
   context: CONTEXT,
   mapBody: (payload) => {
-    const { id, ...rest } = payload;
-    void id;
+    const { ...rest } = payload;
     return rest;
   },
   mapResponse: mapDetailResponse,

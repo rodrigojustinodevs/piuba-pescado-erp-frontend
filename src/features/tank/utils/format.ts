@@ -13,10 +13,3 @@ export function formatCapacityLiters(capacity?: Tank['capacityLiters']) {
     }) + ' L'
   );
 }
-
-/**
- * Retorna classes utilitárias para badge de status.
- */
-export function getStatusBadgeClass(status: Tank['status']) {
-  return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-}

@@ -1,10 +1,10 @@
 /**
  * Tradução de mensagens de erro da API de Sales (EN → PT-BR)
- * Padrões aplicados:
- * - Regex seguras (anti-ReDoS)
+ * HARDENING:
+ * - Anti-ReDoS (sem backtracking exponencial)
+ * - Regex restritivas por delimitador
  * - Uso de RegExp.exec()
- * - Pipeline de translators (extensível)
- * - Fast-path com EXACT_MAP
+ * - Pipeline extensível
  */
 
 // ==============================
@@ -32,10 +32,10 @@ function statusLabelPt(value: string): string {
 }
 
 // ==============================
-// EXACT MAP (FAST PATH)
+// EXACT MAP
 // ==============================
 
-const EXACT_MAP = Object.freeze({
+const EXACT_MAP: Record<string, string> = Object.freeze({
   'The client is required.': 'O cliente é obrigatório.',
   'The client informed was not found.': 'O cliente informado não foi encontrado.',
 
@@ -79,7 +79,7 @@ const EXACT_MAP = Object.freeze({
   'The selected company id is invalid.': 'A empresa selecionada não existe.',
 
   'The selected company does not exist.': 'A empresa selecionada não existe.',
-} as const);
+});
 
 // ==============================
 // TYPES
@@ -103,16 +103,10 @@ function extractBetween(message: string, start: string, end: string): string | n
 }
 
 // ==============================
-// REGEX (PRECOMPILED / SAFE)
+// REGEX (SAFE)
 // ==============================
 
-const CREDIT_LIMIT_REGEX =
-  /^the client \(id:(.+?)\) has exceeded the credit limit\. limit:(.+?)\| current exposure:(.+)$/i;
-
-const BIOMASS_REGEX =
-  /^insufficient biomass in the batch\/stocking \(id:(.+?)\)\. available:(.+?)\| requested:(.+)$/i;
-
-const COMPANY_NOT_FOUND_REGEX = /^Company \[(.+?)\] not found/i;
+const COMPANY_NOT_FOUND_REGEX = /^Company \[([^\]]+)\] not found/i;
 
 const TRANSITION_REGEX =
   /^Cannot transition sale from \[?(pending|confirmed|cancelled)\]?\s+to\s+\[?(pending|confirmed|cancelled)\]?\.?$/i;
@@ -130,12 +124,119 @@ const NUMERIC_RULES: Array<[RegExp, string]> = [
   ],
 ];
 
+function parseCreditLimitByName(message: string): {
+  name: string;
+  limit: string;
+  exposure: string;
+  newSale: string;
+  total: string;
+} | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the client (name:';
+  const middle = ') has exceeded the credit limit.';
+  const limitTag = 'limit:';
+  const exposureTag = '| current exposure:';
+  const newSaleTag = '| new sale:';
+  const totalTag = '| total:';
+
+  if (!lower.startsWith(prefix)) return null;
+
+  const middleIdx = lower.indexOf(middle);
+  if (middleIdx < 0) return null;
+
+  const name = source.slice(prefix.length, middleIdx).trim();
+  if (!name) return null;
+
+  const details = source.slice(middleIdx + middle.length).trim();
+  const detailsLower = details.toLowerCase();
+  if (!detailsLower.startsWith(limitTag)) return null;
+
+  const exposureIdx = detailsLower.indexOf(exposureTag);
+  if (exposureIdx < 0) return null;
+  const newSaleIdx = detailsLower.indexOf(newSaleTag, exposureIdx + exposureTag.length);
+  if (newSaleIdx < 0) return null;
+  const totalIdx = detailsLower.indexOf(totalTag, newSaleIdx + newSaleTag.length);
+  if (totalIdx < 0) return null;
+
+  const limit = details.slice(limitTag.length, exposureIdx).trim();
+  const exposure = details.slice(exposureIdx + exposureTag.length, newSaleIdx).trim();
+  const newSale = details.slice(newSaleIdx + newSaleTag.length, totalIdx).trim();
+  const total = details.slice(totalIdx + totalTag.length).trim();
+  if (!limit || !exposure || !newSale || !total) return null;
+
+  return { name, limit, exposure, newSale, total };
+}
+
+function parseCreditLimitById(message: string): { id: string; limit: string; exposure: string } | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'the client (id:';
+  const middle = ') has exceeded the credit limit.';
+  const limitTag = 'limit:';
+  const exposureTag = '| current exposure:';
+
+  if (!lower.startsWith(prefix)) return null;
+
+  const middleIdx = lower.indexOf(middle);
+  if (middleIdx < 0) return null;
+
+  const id = source.slice(prefix.length, middleIdx).trim();
+  if (!id) return null;
+
+  const details = source.slice(middleIdx + middle.length).trim();
+  const detailsLower = details.toLowerCase();
+  if (!detailsLower.startsWith(limitTag)) return null;
+
+  const exposureIdx = detailsLower.indexOf(exposureTag);
+  if (exposureIdx < 0) return null;
+
+  const limit = details.slice(limitTag.length, exposureIdx).trim();
+  const exposure = details.slice(exposureIdx + exposureTag.length).trim();
+  if (!limit || !exposure) return null;
+
+  return { id, limit, exposure };
+}
+
+function parseInsufficientBiomass(message: string): {
+  id: string;
+  available: string;
+  requested: string;
+} | null {
+  const source = message.trim();
+  const lower = source.toLowerCase();
+  const prefix = 'insufficient biomass in the batch/stocking (id:';
+  const middle = ').';
+  const availableTag = 'available:';
+  const requestedTag = '| requested:';
+
+  if (!lower.startsWith(prefix)) return null;
+
+  const middleIdx = lower.indexOf(middle);
+  if (middleIdx < 0) return null;
+
+  const id = source.slice(prefix.length, middleIdx).trim();
+  if (!id) return null;
+
+  const details = source.slice(middleIdx + middle.length).trim();
+  const detailsLower = details.toLowerCase();
+  if (!detailsLower.startsWith(availableTag)) return null;
+
+  const requestedIdx = detailsLower.indexOf(requestedTag);
+  if (requestedIdx < 0) return null;
+
+  const available = details.slice(availableTag.length, requestedIdx).trim();
+  const requested = details.slice(requestedIdx + requestedTag.length).trim();
+  if (!available || !requested) return null;
+
+  return { id, available, requested };
+}
+
 // ==============================
-// TRANSLATORS PIPELINE
+// TRANSLATORS
 // ==============================
 
 const translators: Translator[] = [
-  // CPF/CNPJ ou endereço
   (msg) => {
     const id = extractBetween(msg, 'the client (id:', ') does not have cpf/cnpj');
 
@@ -144,52 +245,49 @@ const translators: Translator[] = [
     return `O cliente (id: ${id}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
   },
 
-  // Crédito excedido
   (msg) => {
-    const match = CREDIT_LIMIT_REGEX.exec(msg);
-    if (!match) return null;
+    const parsed = parseCreditLimitByName(msg);
+    if (!parsed) return null;
 
-    const [, clientId, limit, exposure] = match;
-
-    return `O cliente (id: ${clientId.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()}`;
+    return `O cliente (nome: ${parsed.name}) excedeu o limite de crédito. Limite: ${parsed.limit} | Exposição atual: ${parsed.exposure} | Nova venda: ${parsed.newSale} | Total: ${parsed.total}`;
   },
 
-  // Biomassa
   (msg) => {
-    const match = BIOMASS_REGEX.exec(msg);
-    if (!match) return null;
+    const parsed = parseCreditLimitById(msg);
+    if (!parsed) return null;
 
-    const [, id, available, requested] = match;
-
-    return `Biomassa insuficiente no lote/povoamento (id: ${id.trim()}). Disponível: ${available.trim()} | Solicitado: ${requested.trim()}`;
+    return `O cliente (id: ${parsed.id}) excedeu o limite de crédito. Limite: ${parsed.limit} | Exposição atual: ${parsed.exposure}`;
   },
 
-  // Povoamento encerrado
+  (msg) => {
+    const parsed = parseInsufficientBiomass(msg);
+    if (!parsed) return null;
+
+    return `Biomassa insuficiente no lote/povoamento (id: ${parsed.id}). Disponível: ${parsed.available} | Solicitado: ${parsed.requested}`;
+  },
+
   (msg) => {
     const id = extractBetween(msg, 'the stocking (id:', ') has already been closed');
 
     if (!id) return null;
 
-    return `O povoamento (id: ${id}) já foi encerrado. Não é possível registrar novas vendas.`;
+    return `O povoamento (id: ${id}) já foi encerrado.`;
   },
 
-  // Empresa não resolvida
   (msg) => {
     if (/^Could not resolve a company/i.test(msg)) {
-      return 'Não foi possível identificar a empresa para esta operação.';
+      return 'Não foi possível identificar a empresa.';
     }
     return null;
   },
 
-  // Empresa não encontrada
   (msg) => {
     const match = COMPANY_NOT_FOUND_REGEX.exec(msg);
     if (!match) return null;
 
-    return `A empresa “${match[1].trim()}” não foi encontrada ou não está acessível.`;
+    return `A empresa “${match[1].trim()}” não foi encontrada.`;
   },
 
-  // Transição de status (SAFE)
   (msg) => {
     const match = TRANSITION_REGEX.exec(msg);
     if (!match) return null;
@@ -201,7 +299,6 @@ const translators: Translator[] = [
     )}” para “${statusLabelPt(to)}”.`;
   },
 
-  // Regras numéricas
   (msg) => {
     for (const [regex, template] of NUMERIC_RULES) {
       const match = regex.exec(msg);
@@ -212,7 +309,6 @@ const translators: Translator[] = [
     return null;
   },
 
-  // Laravel fallback
   (msg) => {
     const map: Record<string, string> = {
       'The selected client id is invalid.': 'O cliente informado não foi encontrado.',
@@ -227,25 +323,23 @@ const translators: Translator[] = [
 ];
 
 // ==============================
-// MAIN FUNCTION
+// MAIN
 // ==============================
 
 export function translateSaleApiErrorMessagePtBR(message: string): string {
   const normalized = normalizeMessage(message);
 
   if (!normalized) return message;
+  if (normalized.length > 2000) return message;
 
-  // Fast path
-  const exact = EXACT_MAP[normalized as keyof typeof EXACT_MAP];
+  const exact = EXACT_MAP[normalized];
 
   if (exact) return exact;
 
-  // Pipeline
   for (const translator of translators) {
     const result = translator(normalized);
     if (result) return result;
   }
 
-  // Fallback
   return message;
 }

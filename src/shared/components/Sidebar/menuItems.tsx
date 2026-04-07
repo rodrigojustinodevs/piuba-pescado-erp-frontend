@@ -15,6 +15,7 @@ import {
   TransferIcon,
   SettingsIcon,
   TankIcon,
+  MoneyIcon,
 } from './menuIcons';
 
 /**
@@ -57,6 +58,28 @@ export const defaultMenuItems: MenuItem[] = [
         id: 'vendas-erp',
         label: 'Vendas',
         href: '/company/sales',
+      },
+    ],
+  },
+  {
+    id: 'financeiro',
+    label: 'Financeiro',
+    icon: <MoneyIcon />,
+    children: [
+      {
+        id: 'categorias-financeiras',
+        label: 'Categorias financeiras',
+        href: '/company/financial-categories',
+      },
+      {
+        id: 'contas-financeiras',
+        label: 'Contas financeiras',
+        href: '/company/financial-accounts',
+      },
+      {
+        id: 'transacoes-financeiras',
+        label: 'Transações financeiras',
+        href: '/company/financial-transactions',
       },
     ],
   },
