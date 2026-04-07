@@ -1,10 +1,10 @@
 /**
  * Tradução de mensagens de erro da API de Sales (EN → PT-BR)
- * Padrões aplicados:
- * - Regex seguras (anti-ReDoS)
+ * HARDENING:
+ * - Anti-ReDoS (sem backtracking exponencial)
+ * - Regex restritivas por delimitador
  * - Uso de RegExp.exec()
- * - Pipeline de translators (extensível)
- * - Fast-path com EXACT_MAP
+ * - Pipeline extensível
  */
 
 // ==============================
@@ -32,10 +32,10 @@ function statusLabelPt(value: string): string {
 }
 
 // ==============================
-// EXACT MAP (FAST PATH)
+// EXACT MAP
 // ==============================
 
-const EXACT_MAP = Object.freeze({
+const EXACT_MAP: Record<string, string> = Object.freeze({
   'The client is required.': 'O cliente é obrigatório.',
   'The client informed was not found.': 'O cliente informado não foi encontrado.',
 
@@ -79,7 +79,7 @@ const EXACT_MAP = Object.freeze({
   'The selected company id is invalid.': 'A empresa selecionada não existe.',
 
   'The selected company does not exist.': 'A empresa selecionada não existe.',
-} as const);
+});
 
 // ==============================
 // TYPES
@@ -103,21 +103,19 @@ function extractBetween(message: string, start: string, end: string): string | n
 }
 
 // ==============================
-// REGEX (PRECOMPILED / SAFE)
+// REGEX (SAFE)
 // ==============================
 
-/** Formato legado: id + limit + exposure */
 const CREDIT_LIMIT_BY_ID_REGEX =
-  /^the client \(id:(.+?)\) has exceeded the credit limit\. limit:(.+?)\| current exposure:(.+)$/i;
+  /^the client \(id:\s*([^)]+)\) has exceeded the credit limit\.\s*limit:\s*([^|]+)\|\s*current exposure:\s*([^\r\n]+)$/i;
 
-/** Formato atual: nome + limit + exposure + nova venda + total */
 const CREDIT_LIMIT_BY_NAME_REGEX =
-  /^the client \(name:\s*(.+?)\) has exceeded the credit limit\.\s*limit:\s*(.+?)\s*\|\s*current exposure:\s*(.+?)\s*\|\s*new sale:\s*(.+?)\s*\|\s*total:\s*(.+)$/i;
+  /^the client \(name:\s*([^)]+)\) has exceeded the credit limit\.\s*limit:\s*([^|]+)\s*\|\s*current exposure:\s*([^|]+)\s*\|\s*new sale:\s*([^|]+)\s*\|\s*total:\s*([^\r\n]+)$/i;
 
 const BIOMASS_REGEX =
-  /^insufficient biomass in the batch\/stocking \(id:(.+?)\)\. available:(.+?)\| requested:(.+)$/i;
+  /^insufficient biomass in the batch\/stocking \(id:\s*([^)]+)\)\.\s*available:\s*([^|]+)\|\s*requested:\s*([^\r\n]+)$/i;
 
-const COMPANY_NOT_FOUND_REGEX = /^Company \[(.+?)\] not found/i;
+const COMPANY_NOT_FOUND_REGEX = /^Company \[([^\]]+)\] not found/i;
 
 const TRANSITION_REGEX =
   /^Cannot transition sale from \[?(pending|confirmed|cancelled)\]?\s+to\s+\[?(pending|confirmed|cancelled)\]?\.?$/i;
@@ -136,11 +134,15 @@ const NUMERIC_RULES: Array<[RegExp, string]> = [
 ];
 
 // ==============================
-// TRANSLATORS PIPELINE
+// TRANSLATORS
 // ==============================
 
 const translators: Translator[] = [
-  // CPF/CNPJ ou endereço
+  (msg) => {
+    if (msg.length > 2000) return null;
+    return null;
+  },
+
   (msg) => {
     const id = extractBetween(msg, 'the client (id:', ') does not have cpf/cnpj');
 
@@ -149,7 +151,6 @@ const translators: Translator[] = [
     return `O cliente (id: ${id}) não possui CPF/CNPJ e/ou endereço cadastrado.`;
   },
 
-  // Crédito excedido (nome + detalhes da venda)
   (msg) => {
     const match = CREDIT_LIMIT_BY_NAME_REGEX.exec(msg);
     if (!match) return null;
@@ -159,17 +160,15 @@ const translators: Translator[] = [
     return `O cliente (nome: ${name.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()} | Nova venda: ${newSale.trim()} | Total: ${total.trim()}`;
   },
 
-  // Crédito excedido (id — legado)
   (msg) => {
     const match = CREDIT_LIMIT_BY_ID_REGEX.exec(msg);
     if (!match) return null;
 
-    const [, clientId, limit, exposure] = match;
+    const [, id, limit, exposure] = match;
 
-    return `O cliente (id: ${clientId.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()}`;
+    return `O cliente (id: ${id.trim()}) excedeu o limite de crédito. Limite: ${limit.trim()} | Exposição atual: ${exposure.trim()}`;
   },
 
-  // Biomassa
   (msg) => {
     const match = BIOMASS_REGEX.exec(msg);
     if (!match) return null;
@@ -179,32 +178,28 @@ const translators: Translator[] = [
     return `Biomassa insuficiente no lote/povoamento (id: ${id.trim()}). Disponível: ${available.trim()} | Solicitado: ${requested.trim()}`;
   },
 
-  // Povoamento encerrado
   (msg) => {
     const id = extractBetween(msg, 'the stocking (id:', ') has already been closed');
 
     if (!id) return null;
 
-    return `O povoamento (id: ${id}) já foi encerrado. Não é possível registrar novas vendas.`;
+    return `O povoamento (id: ${id}) já foi encerrado.`;
   },
 
-  // Empresa não resolvida
   (msg) => {
     if (/^Could not resolve a company/i.test(msg)) {
-      return 'Não foi possível identificar a empresa para esta operação.';
+      return 'Não foi possível identificar a empresa.';
     }
     return null;
   },
 
-  // Empresa não encontrada
   (msg) => {
     const match = COMPANY_NOT_FOUND_REGEX.exec(msg);
     if (!match) return null;
 
-    return `A empresa “${match[1].trim()}” não foi encontrada ou não está acessível.`;
+    return `A empresa “${match[1].trim()}” não foi encontrada.`;
   },
 
-  // Transição de status (SAFE)
   (msg) => {
     const match = TRANSITION_REGEX.exec(msg);
     if (!match) return null;
@@ -216,7 +211,6 @@ const translators: Translator[] = [
     )}” para “${statusLabelPt(to)}”.`;
   },
 
-  // Regras numéricas
   (msg) => {
     for (const [regex, template] of NUMERIC_RULES) {
       const match = regex.exec(msg);
@@ -227,7 +221,6 @@ const translators: Translator[] = [
     return null;
   },
 
-  // Laravel fallback
   (msg) => {
     const map: Record<string, string> = {
       'The selected client id is invalid.': 'O cliente informado não foi encontrado.',
@@ -242,7 +235,7 @@ const translators: Translator[] = [
 ];
 
 // ==============================
-// MAIN FUNCTION
+// MAIN
 // ==============================
 
 export function translateSaleApiErrorMessagePtBR(message: string): string {
@@ -250,17 +243,14 @@ export function translateSaleApiErrorMessagePtBR(message: string): string {
 
   if (!normalized) return message;
 
-  // Fast path
   const exact = EXACT_MAP[normalized as keyof typeof EXACT_MAP];
 
   if (exact) return exact;
 
-  // Pipeline
   for (const translator of translators) {
     const result = translator(normalized);
     if (result) return result;
   }
 
-  // Fallback
   return message;
 }
