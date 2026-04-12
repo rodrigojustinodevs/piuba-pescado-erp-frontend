@@ -14,6 +14,7 @@ export {
   useFeeding,
   useCreateFeeding,
   useUpdateFeeding,
+  useFeedingStocks,
 } from './hooks';
 export {
   FeedingTable,
@@ -23,3 +24,4 @@ export {
   FeedingPageShell,
 } from './components';
 export { feedingService } from './services/feedingService';
+export { feedingLookupService } from './services/feedingLookupService';

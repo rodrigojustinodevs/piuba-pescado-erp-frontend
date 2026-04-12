@@ -25,3 +25,23 @@ export const updateBatchSchema = createBatchSchema.partial().extend({
  */
 export type CreateBatchFormData = z.infer<typeof createBatchSchema>;
 export type UpdateBatchFormData = z.infer<typeof updateBatchSchema>;
+
+const distributionRowSchema = z.object({
+  tankId: z.string().min(1, 'Tanque é obrigatório'),
+  quantity: z.number().positive('Quantidade deve ser maior que zero'),
+  averageWeight: z.number().positive('Peso médio deve ser maior que zero'),
+});
+
+export const batchDistributionSchema = z.object({
+  supplierId: z.string().min(1, 'Fornecedor é obrigatório'),
+  totalCost: z.number().min(0, 'Custo total não pode ser negativo'),
+  entryDate: z.string().min(1, 'Data de entrada é obrigatória'),
+  species: z.string().min(1, 'Espécie é obrigatória'),
+  cultivation: z.string().min(1, 'Tipo de cultivo é obrigatório'),
+  notes: z.string().optional(),
+  distribution: z
+    .array(distributionRowSchema)
+    .min(1, 'Informe pelo menos uma linha de distribuição'),
+});
+
+export type BatchDistributionFormData = z.infer<typeof batchDistributionSchema>;

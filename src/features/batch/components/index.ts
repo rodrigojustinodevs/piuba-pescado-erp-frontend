@@ -8,3 +8,4 @@ export type { BatchDetailViewProps } from './BatchDetailView';
 export { BatchPageShell } from './BatchPageShell';
 export { BatchForm } from './BatchForm';
 export type { BatchFormProps } from './BatchForm';
+export { BatchDistributionForm } from './BatchDistributionForm';

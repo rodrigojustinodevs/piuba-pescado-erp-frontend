@@ -1,5 +1,11 @@
 import axios from 'axios';
-import type { BatchListResponse, CreateBatchData, UpdateBatchData, Batch } from '../types';
+import type {
+  Batch,
+  BatchDistributionPayload,
+  BatchListResponse,
+  CreateBatchData,
+  UpdateBatchData,
+} from '../types';
 
 type ApiEnvelope<T> =
   | {
@@ -87,5 +93,14 @@ export const batchService = {
    */
   async delete(id: string): Promise<void> {
     await batchesApi.delete(`/${id}`);
+  },
+
+  /**
+   * Entrada de lote com distribuição entre tanques.
+   * POST /api/company/batches/distribution → backend company/batches/distribution
+   */
+  async distribute(data: BatchDistributionPayload): Promise<unknown> {
+    const response = await batchesApi.post<ApiEnvelope<unknown> | unknown>('/distribution', data);
+    return unwrapEnvelope(response.data);
   },
 };

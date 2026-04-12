@@ -6,3 +6,4 @@ export { useBatch } from './useBatch';
 export { useCreateBatch } from './useCreateBatch';
 export { useUpdateBatch } from './useUpdateBatch';
 export { useDeleteBatch } from './useDeleteBatch';
+export { useDistributeBatch } from './useDistributeBatch';

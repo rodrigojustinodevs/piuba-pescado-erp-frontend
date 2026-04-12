@@ -7,6 +7,7 @@ export type ApiFeedingDetail = {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
+  stockId?: string;
   stockReductionQuantity: number;
   createdAt: string | null;
   updatedAt: string;
@@ -21,6 +22,7 @@ export function mapApiFeeding(api: ApiFeeding): Feeding {
     feedingDate: api.feedingDate,
     quantityProvided: api.quantityProvided,
     feedType: api.feedType,
+    stockId: api.stockId ?? '',
     stockReductionQuantity: api.stockReductionQuantity,
     createdAt: api.createdAt ?? null,
     updatedAt: api.updatedAt,
@@ -35,6 +37,7 @@ export function mapApiFeedingDetail(api: ApiFeedingDetail): Feeding {
     feedingDate: api.feedingDate,
     quantityProvided: api.quantityProvided,
     feedType: api.feedType,
+    stockId: api.stockId ?? '',
     stockReductionQuantity: api.stockReductionQuantity,
     createdAt: api.createdAt ?? null,
     updatedAt: api.updatedAt,

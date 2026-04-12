@@ -11,6 +11,7 @@ export interface Feeding {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
+  stockId: string;
   stockReductionQuantity: number;
   createdAt: string | null;
   updatedAt: string;
@@ -28,6 +29,7 @@ export interface ApiFeeding {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
+  stockId?: string;
   stockReductionQuantity: number;
   createdAt: string | null;
   updatedAt: string;
@@ -50,6 +52,7 @@ export interface CreateFeedingData {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
+  stockId: string;
   stockReductionQuantity: number;
 }
 

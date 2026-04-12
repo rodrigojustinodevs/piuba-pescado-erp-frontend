@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useFeeding, useUpdateFeeding } from '@/features/feeding';
 import type { CreateFeedingFormData } from '@/features/feeding/schemas';
+import type { CreateFeedingData } from '@/features/feeding/types';
 import { FeedingForm, FeedingPageShell } from '@/features/feeding/components';
 import { toDateTimeLocalValue } from '@/features/feeding/components/FeedingForm';
 import { FeedingIcon } from '@/shared/components/Sidebar/menuIcons';
@@ -16,13 +17,7 @@ export default function EditFeedingPage() {
   const { data: feeding, isLoading } = useFeeding(id);
   const updateFeeding = useUpdateFeeding();
 
-  const onSubmit = (data: {
-    batchId: string;
-    feedingDate: string;
-    quantityProvided: number;
-    feedType: string;
-    stockReductionQuantity: number;
-  }) => {
+  const onSubmit = (data: CreateFeedingData) => {
     updateFeeding.mutate({ ...data, id });
   };
 
@@ -33,6 +28,7 @@ export default function EditFeedingPage() {
       feedingDate: toDateTimeLocalValue(feeding.feedingDate),
       quantityProvided: feeding.quantityProvided,
       feedType: feeding.feedType,
+      stockId: feeding.stockId,
       stockReductionQuantity: feeding.stockReductionQuantity,
     };
   }, [feeding]);
@@ -67,7 +63,7 @@ export default function EditFeedingPage() {
       >
         <FeedingForm
           initialValues={initialValues}
-          onSubmit={(data) => onSubmit({ ...data, id })}
+          onSubmit={onSubmit}
           isSubmitting={updateFeeding.isPending}
           submitLabel="Atualizar Alimentação"
           submittingLabel="Atualizando..."
