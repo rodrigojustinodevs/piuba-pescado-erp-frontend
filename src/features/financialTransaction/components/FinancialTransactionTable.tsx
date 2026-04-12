@@ -3,38 +3,11 @@
 import type { FinancialTransaction } from '../types';
 import { DataTable, type DataTableColumn } from '@/shared/components/Table';
 import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
+import { formatCalendarDatePtBR, formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 
 function formatMoney(value: number): string {
   if (!Number.isFinite(value)) return '—';
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
-
-function formatDate(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value.includes('T') ? value : `${value}T12:00:00`);
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  } catch {
-    return value;
-  }
-}
-
-function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value.replace(' ', 'T'));
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
 }
 
 function getTypeBadgeClassName(type: string): string {
@@ -60,7 +33,9 @@ export function FinancialTransactionTable({
     {
       id: 'dueDate',
       header: 'Vencimento',
-      cell: (row) => <div className="text-sm font-medium text-[#0F172A]">{formatDate(row.dueDate)}</div>,
+      cell: (row) => (
+        <div className="text-sm font-medium text-[#0F172A]">{formatCalendarDatePtBR(row.dueDate)}</div>
+      ),
     },
     {
       id: 'type',
@@ -102,7 +77,9 @@ export function FinancialTransactionTable({
     {
       id: 'updatedAt',
       header: 'Atualizado em',
-      cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-500">{formatNullableDatePtBR(row.updatedAt, true)}</div>
+      ),
     },
   ];
 

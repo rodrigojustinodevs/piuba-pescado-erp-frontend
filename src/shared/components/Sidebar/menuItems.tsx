@@ -36,7 +36,7 @@ export const defaultMenuItems: MenuItem[] = [
     href: '/company/tanks',
     children: [
       {
-        id: 'tanques',
+        id: 'viveiros-listagem',
         label: 'Viveiros',
         href: '/company/tanks',
       },
