@@ -3,11 +3,25 @@ import type {
   ApiFinancialTransactionListResponse,
   FinancialTransaction,
   FinancialTransactionListResponse,
+  FinancialTransactionStatus,
+  FinancialTransactionType,
 } from '../types';
 import {
   extractListFromPagedApiResponse,
   getApiPagedListMeta,
 } from '@/shared/utils/apiListResponse';
+
+function mapApiFinancialType(raw: string | undefined | null): FinancialTransactionType {
+  const k = (raw ?? '').toLowerCase();
+  if (k === 'revenue' || k === 'expense' || k === 'investment') return k;
+  return 'other';
+}
+
+function mapApiFinancialStatus(raw: string | undefined | null): FinancialTransactionStatus {
+  const k = (raw ?? '').toLowerCase();
+  if (k === 'pending' || k === 'paid' || k === 'cancelled') return k;
+  return 'other';
+}
 
 function normalizeTypeLabel(item: Pick<ApiFinancialTransaction, 'type' | 'typeLabel'>): string {
   const key = item.type?.toLowerCase?.() ?? '';
@@ -28,9 +42,9 @@ function normalizeStatusLabel(item: Pick<ApiFinancialTransaction, 'status' | 'st
 export function mapApiFinancialTransaction(api: ApiFinancialTransaction): FinancialTransaction {
   return {
     id: api.id,
-    type: api.type,
+    type: mapApiFinancialType(api.type),
     typeLabel: normalizeTypeLabel(api),
-    status: api.status,
+    status: mapApiFinancialStatus(api.status),
     statusLabel: normalizeStatusLabel(api),
     amount: api.amount,
     dueDate: api.dueDate ?? null,

@@ -1,13 +1,15 @@
 import type { ApiPagination } from '@/shared/types/api';
 
-export type FinancialTransactionType = 'revenue' | 'expense' | 'investment' | string;
-export type FinancialTransactionStatus = 'pending' | 'paid' | 'cancelled' | string;
+/** Valores conhecidos; `other` quando a API enviar outro código. */
+export type FinancialTransactionType = 'revenue' | 'expense' | 'investment' | 'other';
+
+export type FinancialTransactionStatus = 'pending' | 'paid' | 'cancelled' | 'other';
 
 export interface ApiFinancialTransaction {
   id: string;
-  type: FinancialTransactionType;
+  type: string;
   typeLabel?: string | null;
-  status: FinancialTransactionStatus;
+  status: string;
   statusLabel?: string | null;
   amount: number;
   dueDate: string | null;

@@ -99,8 +99,8 @@ export const batchService = {
    * Entrada de lote com distribuição entre tanques.
    * POST /api/company/batches/distribution → backend company/batches/distribution
    */
-  async distribute(data: BatchDistributionPayload): Promise<unknown> {
-    const response = await batchesApi.post<ApiEnvelope<unknown> | unknown>('/distribution', data);
+  async distribute(data: BatchDistributionPayload): Promise<Batch> {
+    const response = await batchesApi.post<ApiEnvelope<Batch> | Batch>('/distribution', data);
     return unwrapEnvelope(response.data);
   },
 };
