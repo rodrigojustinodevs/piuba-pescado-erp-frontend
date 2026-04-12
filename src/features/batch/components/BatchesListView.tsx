@@ -120,6 +120,8 @@ export function BatchesListView({
         subtitle="Gerencie e acompanhe os lotes de cultivo"
         ctaHref="/company/batches/create"
         ctaLabel="Novo Lote"
+        secondaryCtaHref="/company/batches/distribution"
+        secondaryCtaLabel="Entrada com distribuição"
       />
 
       <section className="flex flex-wrap items-center gap-3">

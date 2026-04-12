@@ -66,3 +66,21 @@ export interface BatchListResponse {
   page: number;
   limit: number;
 }
+
+/** Item de distribuição do lote entre tanques (POST batches/distribution) */
+export interface BatchDistributionItem {
+  tankId: string;
+  quantity: number;
+  averageWeight: number;
+}
+
+/** Corpo da entrada de lote com distribuição */
+export interface BatchDistributionPayload {
+  supplierId: string;
+  totalCost: number;
+  entryDate: string;
+  species: string;
+  cultivation: string;
+  notes?: string;
+  distribution: BatchDistributionItem[];
+}

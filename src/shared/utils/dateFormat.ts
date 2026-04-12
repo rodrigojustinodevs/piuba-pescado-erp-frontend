@@ -11,6 +11,10 @@ function parseDateForDisplay(value: string): Date {
   if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
     return new Date(`${trimmed}T12:00:00`);
   }
+  // API comum: "YYYY-MM-DD HH:mm:ss" (sem "T") — normaliza para ISO localmente parseável.
+  if (/^\d{4}-\d{2}-\d{2} .+/.test(trimmed)) {
+    return new Date(trimmed.replace(' ', 'T'));
+  }
   return new Date(trimmed);
 }
 

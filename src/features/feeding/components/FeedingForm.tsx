@@ -5,9 +5,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { CreateFeedingData } from '../types';
 import { createFeedingSchema, type CreateFeedingFormData } from '../schemas';
+import { useFeedingStocks } from '../hooks/useFeedingStocks';
 import { BatchSelectField, useBatches } from '@/features/batch';
 import { FormActions } from '@/shared/components/form';
-import { Input } from '@/shared/components/ui';
+import { Input, Select } from '@/shared/components/ui';
 
 type FeedingFormProps = {
   initialValues?: CreateFeedingFormData;
@@ -45,6 +46,11 @@ export function FeedingForm({
     page: 1,
     limit: 1000,
   });
+  const { data: stocksData, isLoading: isLoadingStocks } = useFeedingStocks(true);
+  const stockOptions = (stocksData?.stocks ?? []).map((stock) => ({
+    value: stock.id,
+    label: stock.unit?.trim() ? `${stock.supplyName} (${stock.unit})` : stock.supplyName,
+  }));
 
   const {
     register,
@@ -61,6 +67,7 @@ export function FeedingForm({
       feedingDate: '',
       quantityProvided: 0,
       feedType: '',
+      stockId: '',
       stockReductionQuantity: 0,
     },
   });
@@ -123,6 +130,16 @@ export function FeedingForm({
             placeholder="Ex.: Ração 40%"
             {...register('feedType')}
             error={errors.feedType?.message}
+          />
+
+          <Select
+            label="Estoque"
+            requiredIndicator
+            disabled={isSubmitting || isLoadingStocks}
+            options={stockOptions}
+            placeholder={isLoadingStocks ? 'Carregando estoques...' : 'Selecione um estoque'}
+            {...register('stockId')}
+            error={errors.stockId?.message}
           />
 
           <Input

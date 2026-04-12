@@ -1,19 +1,24 @@
 'use client';
 
 import type { MenuItem } from './types';
+import {
+  administracaoSubmenuItems,
+  comercialSubmenuItems,
+  financeiroSubmenuItems,
+  insumosEstoqueSubmenuItems,
+  producaoSubmenuItems,
+  relatoriosSubmenuItems,
+  viveirosSubmenuItems,
+} from './menuSubtrees';
 import { UserRole, type UserRoleType } from '@/shared/types/auth';
 import {
   BatchIcon,
-  BiometryIcon,
   BuildingIcon,
   DashboardIcon,
-  FeedingIcon,
   MoneyIcon,
   OrdersIcon,
   ProductsIcon,
   ReportsIcon,
-  StockingIcon,
-  TransferIcon,
   SettingsIcon,
   TankIcon,
 } from './menuIcons';
@@ -38,6 +43,34 @@ const ROLES_COMPANY_ALL: UserRoleType[] = [
 const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MANAGER];
 const REQUIRES_COMPANY = true;
 
+function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
+  return items.map((item) => ({
+    ...item,
+    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+  }));
+}
+
+function comercialChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
+  return items.map((item) => ({
+    ...item,
+    allowedRoles: item.id === 'pedidos' ? ROLES_COMPANY_ALL : ROLES_COMPANY_ADMIN_MANAGER,
+  }));
+}
+
+function relatoriosChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
+  return items.map((item) => ({
+    ...item,
+    allowedRoles: item.id === 'estoque' ? [UserRole.COMPANY_ADMIN] : ROLES_COMPANY_ADMIN_MANAGER,
+  }));
+}
+
+function administracaoChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
+  return items.map((item) => ({
+    ...item,
+    allowedRoles: item.id === 'integracoes-iot' ? [UserRole.MASTER] : ROLES_COMPANY_ADMIN_MANAGER,
+  }));
+}
+
 export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'dashboard',
@@ -48,43 +81,36 @@ export const menuConfig: MenuItemWithAuth[] = [
   },
   {
     id: 'empresas',
-    label: 'Empresas',
+    label: 'Empresas/Fazendas',
     icon: <BuildingIcon />,
     href: '/admin/companies',
     allowedRoles: [UserRole.MASTER],
   },
   {
-    id: 'vendas',
-    label: 'Vendas',
-    icon: <OrdersIcon />,
+    id: 'viveiros',
+    label: 'Viveiros',
+    icon: <TankIcon />,
+    href: '/company/tanks',
     allowedRoles: ROLES_COMPANY_ALL,
     requiresCompany: REQUIRES_COMPANY,
-    children: [
-      {
-        id: 'pedidos',
-        label: 'Pedidos',
-        href: '/dashboard/pedidos',
-        allowedRoles: ROLES_COMPANY_ALL,
-      },
-      {
-        id: 'orcamentos',
-        label: 'Orçamentos',
-        href: '/dashboard/orcamentos',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'clientes',
-        label: 'Clientes',
-        href: '/company/clients',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'vendas-erp',
-        label: 'Vendas',
-        href: '/company/sales',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-    ],
+    children: childrenAllCompanyAdminManager(viveirosSubmenuItems),
+  },
+  {
+    id: 'producao',
+    label: 'Produção',
+    icon: <BatchIcon />,
+    href: '/company/production',
+    allowedRoles: ROLES_COMPANY_ALL,
+    requiresCompany: REQUIRES_COMPANY,
+    children: childrenAllCompanyAdminManager(producaoSubmenuItems),
+  },
+  {
+    id: 'insumos-estoque',
+    label: 'Insumos & Estoque',
+    icon: <ProductsIcon />,
+    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+    requiresCompany: REQUIRES_COMPANY,
+    children: childrenAllCompanyAdminManager(insumosEstoqueSubmenuItems),
   },
   {
     id: 'financeiro',
@@ -92,65 +118,15 @@ export const menuConfig: MenuItemWithAuth[] = [
     icon: <MoneyIcon />,
     allowedRoles: [UserRole.COMPANY_ADMIN],
     requiresCompany: REQUIRES_COMPANY,
-    children: [
-      {
-        id: 'categorias-financeiras',
-        label: 'Categorias financeiras',
-        href: '/company/financial-categories',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'contas-financeiras',
-        label: 'Contas financeiras',
-        href: '/company/financial-accounts',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'transacoes-financeiras',
-        label: 'Transações financeiras',
-        href: '/company/financial-transactions',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-    ],
+    children: childrenAllCompanyAdminManager(financeiroSubmenuItems),
   },
   {
-    id: 'estoque',
-    label: 'Estoque',
-    icon: <ProductsIcon />,
-    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+    id: 'comercial',
+    label: 'Comercial',
+    icon: <OrdersIcon />,
+    allowedRoles: ROLES_COMPANY_ALL,
     requiresCompany: REQUIRES_COMPANY,
-    children: [
-      {
-        id: 'produtos-insumos',
-        label: 'Produtos',
-        href: '/company/supplies',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'compras',
-        label: 'Compras',
-        href: '/company/purchases',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'fornecedores',
-        label: 'Fornecedores',
-        href: '/company/suppliers',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'estoques',
-        label: 'Estoques',
-        href: '/company/stocks',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'estoques-transacoes',
-        label: 'Movimentações de estoque',
-        href: '/company/stocks-transations',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-    ],
+    children: comercialChildrenWithAuth(comercialSubmenuItems),
   },
   {
     id: 'relatorios',
@@ -158,110 +134,15 @@ export const menuConfig: MenuItemWithAuth[] = [
     icon: <ReportsIcon />,
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
     requiresCompany: REQUIRES_COMPANY,
-    children: [
-      {
-        id: 'vendas',
-        label: 'Relatório de Vendas',
-        href: '/dashboard/relatorios/vendas',
-        allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-      },
-      {
-        id: 'estoque',
-        label: 'Relatório de Estoque',
-        href: '/dashboard/relatorios/estoque',
-        allowedRoles: [UserRole.COMPANY_ADMIN],
-      },
-    ],
+    children: relatoriosChildrenWithAuth(relatoriosSubmenuItems),
   },
   {
-    id: 'tanques',
-    label: 'Tanques',
-    icon: <TankIcon />,
-    href: '/company/tanks',
-    allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-    children: [
-      {
-        id: 'tanques',
-        label: 'Tanques',
-        href: '/company/tanks',
-      },
-      {
-        id: 'sensores',
-        label: 'Sensores',
-        href: '/company/sensors',
-      },
-      {
-        id: 'leituras-sensores',
-        label: 'Leituras',
-        href: '/company/sensor-readings',
-      },
-      {
-        id: 'qualidade-agua',
-        label: 'Qualidade da água',
-        href: '/company/water-qualities',
-      },
-    ],
-  },
-  {
-    id: 'lotes',
-    label: 'Lotes',
-    icon: <BatchIcon />,
-    allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-    children: [
-      {
-        id: 'lotes',
-        label: 'Lotes',
-        href: '/company/batches',
-        allowedRoles: ROLES_COMPANY_ALL,
-      },
-      {
-        id: 'mortalidades',
-        label: 'Mortalidades',
-        href: '/company/mortalities',
-        allowedRoles: ROLES_COMPANY_ALL,
-      },
-    ],
-  },
-  {
-    id: 'biometrias',
-    label: 'Biometrias',
-    icon: <BiometryIcon />,
-    href: '/company/biometries',
-    allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-  },
-  {
-    id: 'alimentacoes',
-    label: 'Alimentações',
-    icon: <FeedingIcon />,
-    href: '/company/feedings',
-    allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-  },
-  {
-    id: 'povoamentos',
-    label: 'Povoamentos',
-    icon: <StockingIcon />,
-    href: '/company/stockings',
-    allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-  },
-  {
-    id: 'transferencias',
-    label: 'Transferências',
-    icon: <TransferIcon />,
-    href: '/company/transfers',
-    allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-  },
-  {
-    id: 'configuracoes',
-    label: 'Configurações',
+    id: 'administracao',
+    label: 'Administração',
     icon: <SettingsIcon />,
     href: '/dashboard/configuracoes',
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
     requiresCompany: REQUIRES_COMPANY,
+    children: administracaoChildrenWithAuth(administracaoSubmenuItems),
   },
 ];
