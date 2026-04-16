@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useCreateCompany } from '@/features/company';
+import { CreateCompanyData, useCreateCompany } from '@/features/company';
 import { CompanyForm } from '@/features/company/components';
 import { DashboardLayout } from '@/shared/components/Layout';
 import type { CreateCompanyFormData } from '@/features/company';
@@ -189,7 +189,7 @@ export default function NewCompanyPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <CompanyForm
-                onSubmit={handleSubmit}
+                onSubmit={(data) => createCompany.mutate(data as CreateCompanyData)}
                 isLoading={createCompany.isPending}
                 submitLabel="Salvar e continuar →"
                 currentStep={currentStep}

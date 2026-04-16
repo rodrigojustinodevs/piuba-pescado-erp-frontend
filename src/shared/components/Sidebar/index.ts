@@ -3,6 +3,14 @@
  */
 
 export { Sidebar } from './Sidebar';
+export {
+  SidebarProvider,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  useSidebar,
+} from './Sidebar';
 export type { SidebarProps, MenuItem } from './types';
 export { MenuItem as MenuItemComponent } from './MenuItem';
 export { Dropdown } from './Dropdown';

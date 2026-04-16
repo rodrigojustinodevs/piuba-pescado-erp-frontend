@@ -1,8 +1,33 @@
 'use client';
 
-import { useEffect, useRef, useState, ReactNode } from 'react';
+import { useMemo, useState, ReactNode } from 'react';
+
 import Link from 'next/link';
-import { createPortal } from 'react-dom';
+import { ChevronLeft, ChevronRight, Eye, MoreHorizontal } from 'lucide-react';
+
+import { Card, CardContent } from '@/shared/components/ui/Card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/shared/components/ui/Table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/components/DropdownMenu/dropdown-menu';
+import { Button } from '@/shared/components/ui/Button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/Select';
 
 export type DataTableAlign = 'left' | 'right' | 'center';
 
@@ -31,160 +56,18 @@ export type DataTableProps<T> = {
   getRowId: (row: T) => string;
   rowActions?: (row: T) => DataTableAction[];
   emptyState?: ReactNode;
+  showPagination?: boolean;
+  initialPerPage?: number;
+  perPageOptions?: number[];
 };
 
-const KebabIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-    />
-  </svg>
-);
+const PER_PAGE_OPTIONS = [10, 25, 50];
 
-interface ActionMenuProps {
-  actions: DataTableAction[];
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-function ActionMenu({ actions, triggerRef, isOpen, onClose }: ActionMenuProps) {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-
-  useEffect(() => {
-    if (isOpen && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      const MENU_WIDTH = 192;
-
-      let left = rect.left + rect.width - MENU_WIDTH;
-      if (left < 10) left = 10;
-
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const top = spaceBelow < 200 ? rect.top - 10 : rect.bottom + 5;
-
-      setTimeout(() => {
-        setPosition({ top: top + window.scrollY, left: left + window.scrollX });
-      }, 0);
-    }
-  }, [isOpen, triggerRef]);
-
-  // Click Outside & Esc
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target as Node) &&
-        !triggerRef.current?.contains(e.target as Node)
-      ) {
-        onClose();
-      }
-    };
-
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEsc);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEsc);
-    };
-  }, [isOpen, onClose, triggerRef]);
-
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div
-      ref={menuRef}
-      role="menu"
-      className="fixed z-50 w-48 rounded-lg border border-slate-200 bg-white py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100"
-      style={{ top: position.top, left: position.left }}
-    >
-      {actions.map((action, idx) => {
-        const key = action.id ?? `action-${idx}`;
-        const className = `
-          flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors
-          ${action.variant === 'danger' ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'}
-          ${action.disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
-        `;
-
-        if (action.href) {
-          return (
-            <Link
-              key={key}
-              href={action.href}
-              className={className}
-              role="menuitem"
-              onClick={onClose}
-            >
-              {action.icon && <span className="w-4 h-4">{action.icon}</span>}
-              {action.label}
-            </Link>
-          );
-        }
-
-        return (
-          <button
-            key={key}
-            onClick={() => {
-              action.onClick?.();
-              onClose();
-            }}
-            disabled={action.disabled}
-            className={className}
-            role="menuitem"
-          >
-            {action.icon && <span className="w-4 h-4">{action.icon}</span>}
-            {action.label}
-          </button>
-        );
-      })}
-    </div>,
-    document.body,
-  );
-}
-
-function ActionCell({ actions }: { actions: DataTableAction[] }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  if (!actions.length) return <td className="px-6 py-4" />;
-
-  return (
-    <td className="px-6 py-4 whitespace-nowrap text-right">
-      <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`p-1.5 rounded-lg transition-colors ${
-          isOpen
-            ? 'bg-slate-100 text-slate-600'
-            : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-        }`}
-        aria-label="Opções"
-        aria-haspopup="true"
-        aria-expanded={isOpen}
-      >
-        <KebabIcon />
-      </button>
-
-      {isOpen && (
-        <ActionMenu
-          actions={actions}
-          triggerRef={triggerRef}
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-        />
-      )}
-    </td>
-  );
-}
+const ALIGN_CLASS: Record<DataTableAlign, string> = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
 
 export function DataTable<T>({
   data,
@@ -192,7 +75,26 @@ export function DataTable<T>({
   getRowId,
   rowActions,
   emptyState,
+  showPagination = true,
+  initialPerPage = 25,
+  perPageOptions = PER_PAGE_OPTIONS,
 }: DataTableProps<T>) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(initialPerPage);
+  const hasActionsColumn = Boolean(rowActions);
+  const totalColumns = columns.length + (hasActionsColumn ? 1 : 0);
+
+  const totalPages = useMemo(() => {
+    if (!showPagination) return 1;
+    return Math.max(1, Math.ceil(data.length / perPage));
+  }, [showPagination, data.length, perPage]);
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
+  const paginated = useMemo(() => {
+    if (!showPagination) return data;
+    return data.slice((safeCurrentPage - 1) * perPage, safeCurrentPage * perPage);
+  }, [showPagination, data, safeCurrentPage, perPage]);
+
   if (data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center text-slate-500 bg-slate-50/50 rounded-lg border border-dashed border-slate-200">
@@ -202,54 +104,150 @@ export function DataTable<T>({
   }
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-500 border-b border-slate-200">
-            <tr>
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
               {columns.map((col) => (
-                <th
+                <TableHead
                   key={col.id}
-                  scope="col"
-                  className={
-                    col.headerClassName ??
-                    `px-6 py-3 font-medium uppercase tracking-wider text-${col.align ?? 'left'}`
-                  }
+                  className={`${ALIGN_CLASS[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
                 >
                   {col.header}
-                </th>
+                </TableHead>
               ))}
-              {rowActions && (
-                <th scope="col" className="px-6 py-3 w-[1%] whitespace-nowrap">
-                  <span className="sr-only">Ações</span>
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 bg-white">
-            {data.map((row) => {
-              const rowId = getRowId(row);
-              return (
-                <tr key={rowId} className="hover:bg-slate-50/80 transition-colors">
+              {hasActionsColumn && <TableHead className="w-[50px]"></TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginated.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={totalColumns}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  Nenhum registro encontrado.
+                </TableCell>
+              </TableRow>
+            ) : (
+              paginated.map((row) => (
+                <TableRow key={getRowId(row)} className="group">
                   {columns.map((col) => (
-                    <td
-                      key={col.id}
-                      className={
-                        col.cellClassName ??
-                        `px-6 py-4 whitespace-nowrap text-${col.align ?? 'left'} text-slate-700`
-                      }
+                    <TableCell
+                      key={`${getRowId(row)}-${col.id}`}
+                      className={`${ALIGN_CLASS[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
                     >
                       {col.cell(row)}
-                    </td>
+                    </TableCell>
                   ))}
+                  {hasActionsColumn && (
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {rowActions?.(row).map((action, index) => {
+                            const key = action.id ?? `${action.label}-${index}`;
+                            const className = `gap-2 ${
+                              action.variant === 'danger' ? 'text-destructive' : ''
+                            }`;
 
-                  {rowActions && <ActionCell actions={rowActions(row)} />}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                            if (action.href) {
+                              return (
+                                <DropdownMenuItem
+                                  key={key}
+                                  className={className}
+                                  onClick={() => action.onClick?.()}
+                                >
+                                  {action.icon}
+                                  {action.label}
+                                </DropdownMenuItem>
+                              );
+                            }
+
+                            return (
+                              <DropdownMenuItem
+                                key={key}
+                                className={className}
+                                disabled={action.disabled}
+                                onClick={action.onClick}
+                              >
+                                {action.icon}
+                                {action.label}
+                              </DropdownMenuItem>
+                            );
+                          })}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+
+      {showPagination && (
+        <div className="flex flex-col items-center justify-between gap-4 border-t px-4 py-3 sm:flex-row">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Exibir</span>
+            <Select
+              value={String(perPage)}
+              onValueChange={(value) => {
+                setPerPage(Number(value));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="h-8 w-[70px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {perPageOptions.map((option) => (
+                  <SelectItem key={option} value={String(option)}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span>
+              de {data.length} {data.length === 1 ? 'resultado' : 'resultados'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              disabled={safeCurrentPage <= 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm">
+              Página {safeCurrentPage} de {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              disabled={safeCurrentPage >= totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }

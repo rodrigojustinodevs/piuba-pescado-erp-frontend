@@ -1,12 +1,46 @@
 'use client';
-
-import { useState } from 'react';
-import { Sidebar, type SidebarProps } from '../Sidebar';
+import Link from 'next/link';
+import { isValidElement, cloneElement } from 'react';
+import { usePathname } from 'next/navigation';
+import { ChevronRight, Fish } from "lucide-react"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  SidebarHeader,
+  SidebarInset,
+  SidebarProvider,
+  useSidebar,
+} from "../Sidebar/Sidebar";
 import { menuConfig } from '../Sidebar/menuConfig';
 import { useMenuAuthorization } from '../Sidebar/hooks/useMenuAuthorization';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { Header, type HeaderProps } from '../Header';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/shared/components/ui/Collapsible";
+import type { MenuItem, SidebarProps } from '../Sidebar/types';
 
+function renderMenuIcon(icon?: MenuItem['icon']) {
+  if (!icon) return null;
+
+  if (isValidElement(icon)) {
+    return cloneElement(icon, {
+      className: 'h-4 w-4',
+    });
+  }
+
+  const Icon = icon;
+  return <Icon className="h-4 w-4" />;
+}
 interface DashboardLayoutProps {
   children: React.ReactNode;
   menuItems?: SidebarProps['items'];
@@ -14,55 +48,120 @@ interface DashboardLayoutProps {
   headerProps?: HeaderProps;
 }
 
+function SidebarItemWithChildren({ item, pathname }: { item: MenuItem; pathname: string }) {
+  const hasActiveChild = item.children?.some((child) => child.href === pathname) ?? false;
+
+  return (
+    <Collapsible defaultOpen={hasActiveChild} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton tooltip={item.label} isActive={hasActiveChild}>
+            {renderMenuIcon(item.icon)}
+            <span className="flex-1">{item.label}</span>
+            <ChevronRight className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {item.children?.map((child) => (
+              <SidebarMenuSubItem key={child.id}>
+                <SidebarMenuSubButton asChild isActive={pathname === child.href}>
+                  <Link href={child.href ?? "/"} className="transition-colors duration-150">
+                    <span>{child.label}</span>
+                  </Link>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
+function SidebarItemSimple({ item, pathname }: { item: MenuItem; pathname: string }) {
+  const active = pathname === item.href;
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
+        <Link href={item.href ?? "/"} className="transition-colors duration-150">
+          {renderMenuIcon(item.icon)}
+          <span>{item.label}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+
 export function DashboardLayout({
   children,
   menuItems,
-  user: userProp,
   headerProps,
 }: DashboardLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
-  // Obtém o usuário do contexto de autenticação
-  const { user: contextUser } = useAuthContext();
-
-  // Usa o usuário do contexto ou o passado como prop (fallback)
-  const user = contextUser || userProp;
-
   // Filtra itens de menu baseado nas permissões do usuário
   const authorizedMenuItems = useMenuAuthorization(menuConfig);
   // Se menuItems for passado como prop, usa ele diretamente (sem filtro de autorização)
   const menuItemsToUse = menuItems ?? authorizedMenuItems;
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: '#f9fafb' }}>
-      {/* Sidebar */}
-      <Sidebar
-        items={menuItemsToUse}
-        isOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-        isCollapsed={isSidebarCollapsed}
-        onCollapseToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        user={
-          user
-            ? {
-                name: user.name || user.email,
-                email: user.email,
-              }
-            : undefined
-        }
-      />
+    <SidebarProvider>
+      <div className="flex min-h-svh w-full">
+        <DashboardSidebar menuItems={menuItemsToUse} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <Header {...headerProps} onMenuClick={() => setIsSidebarOpen((open) => !open)} />
+        {/* Área principal: SidebarInset é o par peer do Sidebar (shadcn) e ocupa o restante da largura */}
+        <SidebarInset className="min-h-0 flex-1 flex-col overflow-hidden">
+          <Header {...headerProps} />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-4 lg:p-8">{children}</div>
-        </main>
+          <div className="min-h-0 flex-1 overflow-y-auto bg-[#f9fafb]">
+            <div className="w-full p-4 lg:p-8">{children}</div>
+          </div>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
+  );
+}
+
+
+
+function DashboardSidebar({
+  menuItems,
+}: {
+  menuItems: SidebarProps['items'];
+}) {
+  const pathname = usePathname();
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
+
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="p-4">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+            <Fish className="h-5 w-5" />
+          </div>
+          {!isCollapsed && (
+            <span className="text-lg font-bold tracking-tight text-sidebar-foreground">
+              Piúba Pescado
+            </span>
+          )}
+        </Link>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.map((item) =>
+                item.children && item.children.length > 0 ? (
+                  <SidebarItemWithChildren key={item.id} item={item} pathname={pathname} />
+                ) : (
+                  <SidebarItemSimple key={item.id} item={item} pathname={pathname} />
+                )
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 }

@@ -21,8 +21,8 @@ export interface Company {
   };
   active: boolean;
   status: 'active' | 'inactive';
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateCompanyData {
