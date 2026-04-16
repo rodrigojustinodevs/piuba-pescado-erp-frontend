@@ -29,11 +29,11 @@ import { STATES_LIST } from '@/shared/types';
 export type CompanyDialogMode = 'create' | 'edit' | 'view';
 
 interface CompanyCreateDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSuccess?: () => void;
-  mode?: CompanyDialogMode;
-  company?: Company | null;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
+  readonly onSuccess?: () => void;
+  readonly mode?: CompanyDialogMode;
+  readonly company?: Company | null;
 }
 
 const initialForm: CreateCompanyFormData = {
@@ -143,12 +143,23 @@ export function CompanyCreateDialog({
     onOpenChange(value);
   }
 
-  const title = isView ? 'Detalhes da Empresa' : isEdit ? 'Editar Empresa' : 'Nova Empresa';
-  const description = isView
-    ? 'Visualização das informações da empresa.'
-    : isEdit
-      ? 'Atualize os dados da empresa abaixo.'
-      : 'Preencha os dados para cadastrar uma nova empresa ou fazenda.';
+  let title: string;
+  if (isView) {
+    title = 'Detalhes da Empresa';
+  } else if (isEdit) {
+    title = 'Editar Empresa';
+  } else {
+    title = 'Nova Empresa';
+  }
+
+  let description: string;
+  if (isView) {
+    description = 'Visualização das informações da empresa.';
+  } else if (isEdit) {
+    description = 'Atualize os dados da empresa abaixo.';
+  } else {
+    description = 'Preencha os dados para cadastrar uma nova empresa ou fazenda.';
+  }
 
   // ---------- View mode ----------
   if (isView && company) {
@@ -389,17 +400,14 @@ export function CompanyCreateDialog({
   );
 }
 
-function InfoRow({
-  icon,
-  label,
-  value,
-  className,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  className?: string;
-}) {
+interface InfoRowProps {
+  readonly icon: ReactNode;
+  readonly label: string;
+  readonly value: string;
+  readonly className?: string;
+}
+
+function InfoRow({ icon, label, value, className }: Readonly<InfoRowProps>) {
   return (
     <div className={`space-y-1 ${className ?? ''}`}>
       <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">

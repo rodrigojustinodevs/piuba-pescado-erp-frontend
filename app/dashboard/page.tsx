@@ -43,13 +43,6 @@ export default function DashboardPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
-  const stats = [
-    { label: 'Total Sales', value: '$560K', accent: 'indigo' as const },
-    { label: 'Total Profit', value: '$185K', accent: 'teal' as const },
-    { label: 'Total Cost', value: '$375K', accent: 'blue' as const },
-    { label: 'Revenue', value: '$742K', accent: 'teal' as const },
-    { label: 'Today', value: '$4600', accent: 'teal' as const },
-  ];
   const iconMap = { Container, Fish, Thermometer, Waves } as const;
 
   const statusColors: Record<string, string> = {

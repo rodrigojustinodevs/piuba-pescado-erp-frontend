@@ -26,9 +26,6 @@ export function ListHeader({
   dialogOpen?: boolean;
   setDialogOpen: (open: boolean) => void;
 }) {
-  const handleOpenChange = (open: boolean) => {
-    setDialogOpen(open);
-  };
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">

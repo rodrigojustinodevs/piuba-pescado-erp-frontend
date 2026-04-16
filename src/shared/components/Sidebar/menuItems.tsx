@@ -11,17 +11,9 @@ import {
 } from 'lucide-react';
 
 import type { MenuItem } from './types';
-import {
-  administracaoSubmenuItems,
-  comercialSubmenuItems,
-  financeiroSubmenuItems,
-  insumosEstoqueSubmenuItems,
-  producaoSubmenuItems,
-  relatoriosSubmenuItems,
-  viveirosSubmenuItems,
-} from './menuSubtrees';
+import * as menuSubtrees from './menuSubtrees';
 
-export type { MenuItem };
+export type { MenuItem } from './types';
 export {
   administracaoSubmenuItems,
   comercialSubmenuItems,
@@ -30,7 +22,7 @@ export {
   producaoSubmenuItems,
   relatoriosSubmenuItems,
   viveirosSubmenuItems,
-};
+} from './menuSubtrees';
 
 export const menuItems: MenuItem[] = [
   {
@@ -49,42 +41,42 @@ export const menuItems: MenuItem[] = [
     id: 'viveiros',
     label: 'Viveiros',
     icon: Container,
-    children: viveirosSubmenuItems,
+    children: menuSubtrees.viveirosSubmenuItems,
   },
   {
     id: 'producao',
     label: 'Produção',
     icon: Fish,
-    children: producaoSubmenuItems,
+    children: menuSubtrees.producaoSubmenuItems,
   },
   {
     id: 'insumos-estoque',
     label: 'Insumos & Estoque',
     icon: PackageSearch,
-    children: insumosEstoqueSubmenuItems,
+    children: menuSubtrees.insumosEstoqueSubmenuItems,
   },
   {
     id: 'financeiro',
     label: 'Financeiro',
     icon: CircleDollarSign,
-    children: financeiroSubmenuItems,
+    children: menuSubtrees.financeiroSubmenuItems,
   },
   {
     id: 'comercial',
     label: 'Comercial',
     icon: ShoppingCart,
-    children: comercialSubmenuItems,
+    children: menuSubtrees.comercialSubmenuItems,
   },
   {
     id: 'relatorios',
     label: 'Relatórios',
     icon: FileText,
-    children: relatoriosSubmenuItems,
+    children: menuSubtrees.relatoriosSubmenuItems,
   },
   {
     id: 'administracao',
     label: 'Administração',
     icon: Settings,
-    children: administracaoSubmenuItems,
+    children: menuSubtrees.administracaoSubmenuItems,
   },
 ];

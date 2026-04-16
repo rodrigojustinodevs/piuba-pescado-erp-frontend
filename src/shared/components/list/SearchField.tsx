@@ -1,6 +1,5 @@
 'use client';
 
-import { SearchIcon } from '@/shared/components/icons/AppIcons';
 import { Input } from '../ui/Input';
 import { Search } from 'lucide-react';
 

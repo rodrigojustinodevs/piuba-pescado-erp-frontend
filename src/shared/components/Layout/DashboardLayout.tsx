@@ -48,7 +48,12 @@ interface DashboardLayoutProps {
   headerProps?: HeaderProps;
 }
 
-function SidebarItemWithChildren({ item, pathname }: { item: MenuItem; pathname: string }) {
+interface SidebarItemNavProps {
+  readonly item: MenuItem;
+  readonly pathname: string;
+}
+
+function SidebarItemWithChildren({ item, pathname }: Readonly<SidebarItemNavProps>) {
   const hasActiveChild = item.children?.some((child) => child.href === pathname) ?? false;
 
   return (
@@ -79,7 +84,7 @@ function SidebarItemWithChildren({ item, pathname }: { item: MenuItem; pathname:
   );
 }
 
-function SidebarItemSimple({ item, pathname }: { item: MenuItem; pathname: string }) {
+function SidebarItemSimple({ item, pathname }: Readonly<SidebarItemNavProps>) {
   const active = pathname === item.href;
   return (
     <SidebarMenuItem>
@@ -124,11 +129,11 @@ export function DashboardLayout({
 
 
 
-function DashboardSidebar({
-  menuItems,
-}: {
-  menuItems: SidebarProps['items'];
-}) {
+interface DashboardSidebarProps {
+  readonly menuItems: SidebarProps['items'];
+}
+
+function DashboardSidebar({ menuItems }: Readonly<DashboardSidebarProps>) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
