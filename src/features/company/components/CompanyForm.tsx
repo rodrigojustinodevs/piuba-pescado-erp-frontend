@@ -2,12 +2,17 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createCompanySchema, type CreateCompanyFormData } from '../schemas';
+import {
+  createCompanySchema,
+  updateCompanySchema,
+  type CreateCompanyFormData,
+  type UpdateCompanyFormData,
+} from '../schemas';
 import type { Company } from '../types';
 
 interface CompanyFormProps {
   initialData?: Company;
-  onSubmit: (data: CreateCompanyFormData) => void;
+  onSubmit: (data: CreateCompanyFormData | UpdateCompanyFormData) => void;
   isLoading?: boolean;
   submitLabel?: string;
   currentStep?: number;
@@ -37,7 +42,7 @@ export function CompanyForm({
     trigger,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(createCompanySchema),
+    resolver: zodResolver(isEditMode ? updateCompanySchema : createCompanySchema),
     defaultValues: initialData
       ? {
           name: initialData.name,

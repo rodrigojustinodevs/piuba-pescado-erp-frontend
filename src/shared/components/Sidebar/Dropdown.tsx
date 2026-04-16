@@ -66,6 +66,10 @@ export function Dropdown({
 
   const isActive = hasActiveDescendant(item);
   const isActuallyExpanded = isExpanded || (!isCollapsed && isActive);
+  const itemStateClasses =
+    isActuallyExpanded || isActive
+      ? 'bg-[color:var(--sidebar-accent)] text-[color:var(--sidebar-accent-foreground)]'
+      : 'text-white/85 hover:bg-white/10 hover:text-white';
 
   const handleClick = () => {
     if (hasChildren) {
@@ -78,10 +82,10 @@ export function Dropdown({
   // Item "folha" (sem filhos): link / ação
   if (!hasChildren) {
     const leafActive = item.href ? isRouteActive(item.href) : false;
-    const leafClasses = `group relative w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
+    const leafClasses = `group relative w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${
       leafActive
-        ? 'bg-emerald-50 text-emerald-700'
-        : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+        ? 'bg-[color:var(--sidebar-accent)] text-[color:var(--sidebar-accent-foreground)]'
+        : 'text-white/85 hover:bg-white/10 hover:text-white'
     }`;
 
     const leafContent = (
@@ -92,20 +96,20 @@ export function Dropdown({
       >
         {item.icon && (
           <span
-            className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
+            className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
               leafActive
-                ? 'bg-emerald-100/70 text-emerald-700'
-                : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800'
+                ? 'text-[color:var(--sidebar-accent-foreground)]'
+                : 'text-white/70 group-hover:text-white'
             }`}
           >
-            <span className="w-5 h-5">{item.icon}</span>
+            <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
           </span>
         )}
         {!isCollapsed && (
           <>
             <span className="flex-1">{item.label}</span>
             {item.badge && (
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/15 text-white/90">
                 {item.badge}
               </span>
             )}
@@ -143,31 +147,29 @@ export function Dropdown({
     <div ref={dropdownRef} className="w-full group relative">
       <button
         onClick={handleClick}
-        className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
-          isActuallyExpanded || isActive
-            ? 'bg-emerald-50 text-emerald-700'
-            : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-        } ${isCollapsed ? 'justify-center' : ''}`}
+        className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${itemStateClasses} ${
+          isCollapsed ? 'justify-center' : ''
+        }`}
         style={!isCollapsed ? { paddingLeft: `${paddingLeft + 1}rem` } : undefined}
         title={isCollapsed ? item.label : undefined}
       >
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
           {item.icon && (
             <span
-              className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
+              className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
                 isExpanded || isActive
-                  ? 'bg-emerald-100/70 text-emerald-700'
-                  : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800'
+                  ? 'text-[color:var(--sidebar-accent-foreground)]'
+                  : 'text-white/70 group-hover:text-white'
               }`}
             >
-              <span className="w-5 h-5">{item.icon}</span>
+              <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
             </span>
           )}
           {!isCollapsed && (
             <>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
+                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/15 text-white/90">
                   {item.badge}
                 </span>
               )}
@@ -184,7 +186,7 @@ export function Dropdown({
       </button>
       {/* Tooltip no hover quando colapsado */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+        <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
           {item.label}
         </div>
       )}

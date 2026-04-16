@@ -2,10 +2,12 @@
  * Tipos para o menu lateral
  */
 
+import { LucideIcon } from "lucide-react";
+
 export interface MenuItem {
   id: string;
   label: string;
-  icon?: React.ReactNode;
+  icon?: LucideIcon;
   href?: string;
   onClick?: () => void;
   badge?: string | number;

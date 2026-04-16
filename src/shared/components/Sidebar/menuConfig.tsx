@@ -11,17 +11,18 @@ import {
   viveirosSubmenuItems,
 } from './menuSubtrees';
 import { UserRole, type UserRoleType } from '@/shared/types/auth';
+
 import {
-  BatchIcon,
-  BuildingIcon,
-  DashboardIcon,
-  MoneyIcon,
-  OrdersIcon,
-  ProductsIcon,
-  ReportsIcon,
-  SettingsIcon,
-  TankIcon,
-} from './menuIcons';
+  LayoutDashboard,
+  Container,
+  Fish,
+  FileText,
+  Settings,
+  Building,
+  PackageSearch,
+  CircleDollarSign,
+  ShoppingCart,
+} from "lucide-react";
 
 export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   allowedRoles?: UserRoleType[];
@@ -75,21 +76,21 @@ export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'dashboard',
     label: 'Dashboard',
-    icon: <DashboardIcon />,
+    icon: LayoutDashboard,
     href: '/dashboard',
     allowedRoles: ROLES_ALL,
   },
   {
     id: 'empresas',
     label: 'Empresas/Fazendas',
-    icon: <BuildingIcon />,
+    icon: Building,
     href: '/admin/companies',
     allowedRoles: [UserRole.MASTER],
   },
   {
     id: 'viveiros',
     label: 'Viveiros',
-    icon: <TankIcon />,
+    icon: Container,
     href: '/company/tanks',
     allowedRoles: ROLES_COMPANY_ALL,
     requiresCompany: REQUIRES_COMPANY,
@@ -98,7 +99,7 @@ export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'producao',
     label: 'Produção',
-    icon: <BatchIcon />,
+    icon: Fish,
     href: '/company/production',
     allowedRoles: ROLES_COMPANY_ALL,
     requiresCompany: REQUIRES_COMPANY,
@@ -107,7 +108,7 @@ export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'insumos-estoque',
     label: 'Insumos & Estoque',
-    icon: <ProductsIcon />,
+    icon: PackageSearch,
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
     requiresCompany: REQUIRES_COMPANY,
     children: childrenAllCompanyAdminManager(insumosEstoqueSubmenuItems),
@@ -115,7 +116,7 @@ export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'financeiro',
     label: 'Financeiro',
-    icon: <MoneyIcon />,
+    icon: CircleDollarSign,
     allowedRoles: [UserRole.COMPANY_ADMIN],
     requiresCompany: REQUIRES_COMPANY,
     children: childrenAllCompanyAdminManager(financeiroSubmenuItems),
@@ -123,15 +124,15 @@ export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'comercial',
     label: 'Comercial',
-    icon: <OrdersIcon />,
+    icon: ShoppingCart,
     allowedRoles: ROLES_COMPANY_ALL,
     requiresCompany: REQUIRES_COMPANY,
     children: comercialChildrenWithAuth(comercialSubmenuItems),
   },
   {
     id: 'relatorios',
-    label: 'Relatórios',
-    icon: <ReportsIcon />,
+    label: 'Relatóriosa',
+    icon: FileText,
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
     requiresCompany: REQUIRES_COMPANY,
     children: relatoriosChildrenWithAuth(relatoriosSubmenuItems),
@@ -139,7 +140,7 @@ export const menuConfig: MenuItemWithAuth[] = [
   {
     id: 'administracao',
     label: 'Administração',
-    icon: <SettingsIcon />,
+    icon: Settings,
     href: '/dashboard/configuracoes',
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
     requiresCompany: REQUIRES_COMPANY,

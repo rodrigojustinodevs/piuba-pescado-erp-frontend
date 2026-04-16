@@ -6,8 +6,12 @@ export function getCalendarDateSortTime(value: string | null | undefined): numbe
 }
 
 /** Data só com dia (YYYY-MM-DD): evita UTC meia-noite que exibe “um dia a menos” em pt-BR. */
-function parseDateForDisplay(value: string): Date {
+function parseDateForDisplay(value: string | null | undefined): Date {
+  if (typeof value !== 'string') return new Date(Number.NaN);
+
   const trimmed = value.trim();
+  if (!trimmed) return new Date(Number.NaN);
+
   if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
     return new Date(`${trimmed}T12:00:00`);
   }

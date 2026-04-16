@@ -17,22 +17,21 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
   const isActive = item.href
     ? pathname === item.href || pathname.startsWith(`${item.href}/`)
     : false;
+  const itemStateClasses = isActive
+    ? 'bg-[color:var(--sidebar-accent)] text-[color:var(--sidebar-accent-foreground)]'
+    : 'text-white/85 hover:bg-white/10 hover:text-white';
 
   // Se está colapsado e tem filhos, não mostra dropdown
   if (isCollapsed && item.children && item.children.length > 0) {
     return (
       <div className="group relative" title={item.label}>
         <div
-          className={`flex items-center justify-center px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
-            isActive
-              ? 'bg-emerald-50 text-emerald-700'
-              : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-          }`}
+          className={`flex items-center justify-center px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${itemStateClasses}`}
         >
           {item.icon && <span className="w-5 h-5">{item.icon}</span>}
         </div>
         {/* Tooltip no hover quando colapsado */}
-        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+        <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
           {item.label}
         </div>
       </div>
@@ -47,28 +46,24 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
   // Item simples com link ou onClick
   const content = (
     <div
-      className={`group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-colors ${
-        isActive
-          ? 'bg-emerald-50 text-emerald-700'
-          : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-      } ${isCollapsed ? 'justify-center' : ''}`}
+      className={`group relative flex items-center gap-3 px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${itemStateClasses} ${
+        isCollapsed ? 'justify-center' : ''
+      }`}
     >
       {item.icon && (
         <span
-          className={`grid h-9 w-9 place-items-center rounded-xl flex-shrink-0 transition-colors ${
-            isActive
-              ? 'bg-emerald-100/70 text-emerald-700'
-              : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200/70 group-hover:text-slate-800'
+          className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
+            isActive ? 'text-[color:var(--sidebar-accent-foreground)]' : 'text-white/70 group-hover:text-white'
           }`}
         >
-          <span className="w-5 h-5">{item.icon}</span>
+          <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
         </span>
       )}
       {!isCollapsed && (
         <>
           <span className="flex-1">{item.label}</span>
           {item.badge && (
-            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
+            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/15 text-white/90">
               {item.badge}
             </span>
           )}
@@ -76,7 +71,7 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
       )}
       {/* Tooltip no hover quando colapsado */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+        <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
           {item.label}
         </div>
       )}

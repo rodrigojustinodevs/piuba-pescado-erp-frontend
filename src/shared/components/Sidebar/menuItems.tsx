@@ -1,7 +1,20 @@
-'use client';
+import {
+  LayoutDashboard,
+  Container,
+  Fish,
+  PackageSearch,
+  CircleDollarSign,
+  ShoppingCart,
+  FileText,
+  Settings,
+  Building,
+} from 'lucide-react';
 
 import type { MenuItem } from './types';
-import {
+import * as menuSubtrees from './menuSubtrees';
+
+export type { MenuItem } from './types';
+export {
   administracaoSubmenuItems,
   comercialSubmenuItems,
   financeiroSubmenuItems,
@@ -10,77 +23,60 @@ import {
   relatoriosSubmenuItems,
   viveirosSubmenuItems,
 } from './menuSubtrees';
-import {
-  BatchIcon,
-  BuildingIcon,
-  DashboardIcon,
-  OrdersIcon,
-  ProductsIcon,
-  ReportsIcon,
-  SettingsIcon,
-  TankIcon,
-  MoneyIcon,
-} from './menuIcons';
 
-/**
- * Itens de menu padrão - pode ser customizado
- */
-export const defaultMenuItems: MenuItem[] = [
+export const menuItems: MenuItem[] = [
   {
     id: 'dashboard',
     label: 'Dashboard',
-    icon: <DashboardIcon />,
-    href: '/dashboard',
+    icon: LayoutDashboard,
+    href: '/',
   },
   {
     id: 'empresas',
     label: 'Empresas/Fazendas',
-    icon: <BuildingIcon />,
-    href: '/admin/companies',
+    icon: Building,
+    href: '/empresas',
   },
   {
     id: 'viveiros',
     label: 'Viveiros',
-    icon: <TankIcon />,
-    href: '/company/tanks',
-    children: viveirosSubmenuItems,
+    icon: Container,
+    children: menuSubtrees.viveirosSubmenuItems,
   },
   {
     id: 'producao',
     label: 'Produção',
-    icon: <BatchIcon />,
-    href: '/company/production',
-    children: producaoSubmenuItems,
+    icon: Fish,
+    children: menuSubtrees.producaoSubmenuItems,
   },
   {
     id: 'insumos-estoque',
     label: 'Insumos & Estoque',
-    icon: <ProductsIcon />,
-    children: insumosEstoqueSubmenuItems,
+    icon: PackageSearch,
+    children: menuSubtrees.insumosEstoqueSubmenuItems,
   },
   {
     id: 'financeiro',
     label: 'Financeiro',
-    icon: <MoneyIcon />,
-    children: financeiroSubmenuItems,
+    icon: CircleDollarSign,
+    children: menuSubtrees.financeiroSubmenuItems,
   },
   {
     id: 'comercial',
     label: 'Comercial',
-    icon: <OrdersIcon />,
-    children: comercialSubmenuItems,
+    icon: ShoppingCart,
+    children: menuSubtrees.comercialSubmenuItems,
   },
   {
     id: 'relatorios',
     label: 'Relatórios',
-    icon: <ReportsIcon />,
-    children: relatoriosSubmenuItems,
+    icon: FileText,
+    children: menuSubtrees.relatoriosSubmenuItems,
   },
   {
     id: 'administracao',
     label: 'Administração',
-    icon: <SettingsIcon />,
-    href: '/dashboard/configuracoes',
-    children: administracaoSubmenuItems,
+    icon: Settings,
+    children: menuSubtrees.administracaoSubmenuItems,
   },
 ];

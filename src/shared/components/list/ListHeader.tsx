@@ -1,8 +1,9 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import Link from 'next/link';
-import { PlusIcon } from '@/shared/components/icons/AppIcons';
+import { Plus } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 export function ListHeader({
   icon,
@@ -12,6 +13,8 @@ export function ListHeader({
   ctaLabel,
   secondaryCtaHref,
   secondaryCtaLabel,
+  dialogOpen,
+  setDialogOpen,
 }: {
   icon: ReactNode;
   title: string;
@@ -20,6 +23,8 @@ export function ListHeader({
   ctaLabel?: string;
   secondaryCtaHref?: string;
   secondaryCtaLabel?: string;
+  dialogOpen?: boolean;
+  setDialogOpen: (open: boolean) => void;
 }) {
   return (
     <div className="flex items-center justify-between gap-4">
@@ -37,7 +42,7 @@ export function ListHeader({
             href={secondaryCtaHref}
             className="flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 transition-colors shrink-0"
           >
-            <PlusIcon className="h-5 w-5" />
+            <Plus className="h-5 w-5" />
             {secondaryCtaLabel}
           </Link>
         ) : null}
@@ -46,11 +51,17 @@ export function ListHeader({
             href={ctaHref}
             className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] transition-colors shrink-0"
           >
-            <PlusIcon className="h-5 w-5" />
+            <Plus className="h-5 w-5" />
             {ctaLabel}
           </Link>
         ) : null}
       </div>
+      {dialogOpen && (
+        <Button className="gap-2" onClick={() => setDialogOpen(true)}>
+          <Plus className="h-4 w-4" />
+          Nova Empresa
+        </Button>
+      )}
     </div>
   );
 }

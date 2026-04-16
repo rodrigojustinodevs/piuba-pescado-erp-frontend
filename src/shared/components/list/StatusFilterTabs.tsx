@@ -1,5 +1,13 @@
 'use client';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/Select';
+
 type DefaultFilterType = 'all' | 'active' | 'inactive';
 
 export type StatusFilterTabsOption<T extends string> = {
@@ -38,34 +46,22 @@ export function StatusFilterTabs<T extends string = DefaultFilterType>({
     ] satisfies Array<StatusFilterTabsOption<T>>);
 
   return (
-    <div className="flex items-center gap-2 shrink-0">
-      {computedOptions.map((opt) => {
-        const selected = filter === opt.value;
-        const hasBadge = (opt.badgeCount ?? 0) > 0;
-
-        return (
-          <button
-            key={opt.value}
-            onClick={() => onChange(opt.value)}
-            className={`${hasBadge ? 'relative' : ''} px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-              selected
-                ? 'bg-[#0EA5A4] text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
-            }`}
-          >
+    <Select
+      value={filter}
+      onValueChange={(v) => {
+        onChange(v as T);
+      }}
+    >
+      <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectValue placeholder="Status" />
+      </SelectTrigger>
+      <SelectContent>
+        {computedOptions.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
             {opt.label}
-            {hasBadge && (
-              <span
-                className={`ml-2 inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                  selected ? 'bg-white/20 text-white' : 'bg-[#0EA5A4] text-white'
-                }`}
-              >
-                {opt.badgeCount}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

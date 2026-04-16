@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useCreateCompany } from '@/features/company';
+import { CreateCompanyData, useCreateCompany } from '@/features/company';
 import { CompanyForm } from '@/features/company/components';
 import { DashboardLayout } from '@/shared/components/Layout';
-import type { CreateCompanyFormData } from '@/features/company';
 
 export default function NewCompanyPage() {
   const createCompany = useCreateCompany();
@@ -17,17 +16,8 @@ export default function NewCompanyPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const formTotalSteps = 3;
 
-  const handleSubmit = (data: CreateCompanyFormData) => {
-    createCompany.mutate(data);
-  };
-
   return (
-    <DashboardLayout
-      user={{
-        name: 'Usuário Demo',
-        email: 'demo@dev.com',
-      }}
-    >
+    <DashboardLayout>
       <div className="rounded-2xl bg-[#F8FAFC] p-4 lg:p-6">
         <div className="space-y-6">
           <div className="space-y-1">
@@ -189,7 +179,7 @@ export default function NewCompanyPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <CompanyForm
-                onSubmit={handleSubmit}
+                onSubmit={(data) => createCompany.mutate(data as CreateCompanyData)}
                 isLoading={createCompany.isPending}
                 submitLabel="Salvar e continuar →"
                 currentStep={currentStep}
