@@ -1,4 +1,11 @@
-import type { Tank, CreateTankData, UpdateTankData, TankListResponse, TankType } from '../types';
+import type {
+  Tank,
+  CreateTankData,
+  UpdateTankData,
+  TankListResponse,
+  ApiTankTypeListResponse,
+  TankTypeListResponse,
+} from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { buildQueryString } from '@/shared/utils/queryString';
 
@@ -22,11 +29,13 @@ export const tankService = {
 
   async listWithoutBatches(params?: {
     page?: number;
-    per_page?: number;
+    perPage?: number;
+    companyId?: string;
   }): Promise<TankListResponse> {
     const queryString = buildQueryString({
       page: params?.page,
-      per_page: params?.per_page,
+      perPage: params?.perPage,
+      companyId: params?.companyId,
     });
     const endpoint = queryString
       ? `/api/company/tanks/without-batches?${queryString}`
@@ -51,7 +60,7 @@ export const tankService = {
     await browserHttpClient.delete<null>(`/api/company/tanks/${id}`);
   },
 
-  async getTankTypes(): Promise<TankType[]> {
-    return browserHttpClient.get<TankType[]>('/api/company/tanks/tank-types');
+  async getTankTypes(): Promise<TankTypeListResponse> {
+    return browserHttpClient.get<TankTypeListResponse>('/api/company/tanks/tank-types');
   },
 };

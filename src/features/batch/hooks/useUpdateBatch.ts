@@ -25,7 +25,7 @@ export function useUpdateBatch() {
       showSuccess('Lote atualizado com sucesso!');
 
       // Redireciona para a página de detalhes
-      router.push(`/company/batches/${data.id}`);
+      router.push(`/company/batches`);
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar lote. Tente novamente.');

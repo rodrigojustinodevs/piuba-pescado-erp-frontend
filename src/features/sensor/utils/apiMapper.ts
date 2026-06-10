@@ -3,12 +3,19 @@ import type { ApiSensor, ApiSensorListResponse, Sensor, SensorListResponse } fro
 export function mapApiSensor(api: ApiSensor): Sensor {
   return {
     id: api.id,
+    name: api.name,
+    serialNumber: api.serialNumber,
+    company: api.company,
     sensorType: api.sensorType,
     installationDate: api.installationDate,
     status: api.status,
-    tankId: api.tankId ?? api.tank?.id ?? '',
-    tankName: api.tank?.name ?? '',
-    createdAt: api.createdAt ?? null,
+    battery: api.battery,
+    tankId: api.tankId,
+    lastReading: api.lastReading,
+    unit: api.unit,
+    notes: api.notes ?? null,
+    tank: api.tank,
+    createdAt: api.createdAt,
     updatedAt: api.updatedAt,
   };
 }

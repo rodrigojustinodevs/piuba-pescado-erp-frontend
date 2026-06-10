@@ -22,5 +22,6 @@ export {
   SensorReadingForm,
   SensorReadingDetailView,
   SensorReadingPageShell,
+  SensorReadingDialog,
 } from './components';
 export { sensorReadingService } from './services/sensorReadingService';

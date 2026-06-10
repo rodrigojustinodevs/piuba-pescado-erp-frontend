@@ -1,106 +1,141 @@
 'use client';
 
-import type { WaterQuality } from '../types';
-import { DataTable, createCrudListRowActions, type DataTableColumn } from '@/shared/components/Table';
-
-function getRowLabel(row: WaterQuality): string {
-  return `${row.tankName || 'Tanque'} · pH ${row.ph}`;
-}
-
-function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value.replace(' ', 'T'));
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
-}
+import type { Quality, WaterQuality } from '../types';
+import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
+import { SensorType, sensorTypeLabels } from '../../sensor/types';
+import { Minus, Radio, TrendingDown, TrendingUp, type LucideIcon } from 'lucide-react';
+import { Badge } from '@/shared/components/ui/Badge';
 
 interface WaterQualityTableProps {
   waterQualities: WaterQuality[];
-  onDelete?: (id: string, label: string) => void;
-  isDeleting?: boolean;
+  rowActions: (waterQuality: WaterQuality) => DataTableAction[];
+  typeIcon: Record<SensorType, LucideIcon>;
+  idealRanges: Record<
+    SensorType,
+    { min: number; max: number; critical: { min: number; max: number } }
+  >;
+  qualityConfig: Record<
+    Quality,
+    {
+      label: string;
+      variant: 'default' | 'secondary' | 'destructive';
+      className: string;
+      icon: LucideIcon;
+    }
+  >;
+  getTrend: () => 'up' | 'down' | 'stable';
 }
 
 export function WaterQualityTable({
   waterQualities,
-  onDelete,
-  isDeleting = false,
+  rowActions,
+  typeIcon,
+  idealRanges,
+  qualityConfig,
+  getTrend,
 }: Readonly<WaterQualityTableProps>) {
   const columns: Array<DataTableColumn<WaterQuality>> = [
     {
-      id: 'measuredAt',
-      header: 'Medição',
-      cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A]">{formatDateTime(row.measuredAt)}</div>
-      ),
+      id: 'sensor',
+      header: 'Parâmetro',
+      cellClassName: 'text-sm',
+      cell: (row) => {
+        return (
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
+              {(() => {
+                const Icon = typeIcon[row.tank?.sensor?.sensorType as SensorType] ?? Radio;
+                return <Icon className="h-3.5 w-3.5" />;
+              })()}
+            </div>
+            <div>
+              <div className="font-medium">
+                {sensorTypeLabels[row.tank?.sensor?.sensorType as SensorType]}
+              </div>
+              <div className="text-xs text-muted-foreground">{row.company?.name}</div>
+            </div>
+          </div>
+        );
+      },
     },
     {
       id: 'tankName',
-      header: 'Tanque',
-      cell: (row) => <div className="text-sm text-slate-600">{row.tankName || '—'}</div>,
+      header: 'Viveiro',
+      cellClassName: 'font-medium',
+      cell: (row) => {
+        return row.tank?.name || '—';
+      },
     },
     {
-      id: 'ph',
-      header: 'pH',
-      cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{row.ph}</div>,
+      id: 'lastReading',
+      header: 'Leitura',
+      cell: (row) => {
+        return row.tank?.sensor?.lastReading !== null ? (
+          <span className="font-mono font-semibold">
+            {row.tank?.sensor?.lastReading} {row.tank?.sensor?.unit}
+          </span>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        );
+      },
     },
     {
-      id: 'dissolvedOxygen',
-      header: 'O₂ dissolvido',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">{row.dissolvedOxygen}</div>
-      ),
+      id: 'idealRange',
+      header: 'Faixa Ideal',
+      cellClassName: 'font-mono text-sm text-muted-foreground',
+      cell: (row) => {
+        const sensorType = row.tank?.sensor?.sensorType as SensorType;
+        const range = idealRanges[sensorType];
+        if (!range) {
+          return <span className="text-muted-foreground">—</span>;
+        }
+        return (
+          <>
+            <span className="font-mono text-sm text-muted-foreground">
+              {range.min} – {range.max} {row.tank?.sensor?.unit}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {range.critical.min} – {range.critical.max} {row.tank?.sensor?.unit}
+            </span>
+          </>
+        );
+      },
     },
     {
-      id: 'temperature',
-      header: 'Temperatura (°C)',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">{row.temperature}</div>
-      ),
+      id: 'trend',
+      header: 'Tendência',
+      cellClassName: 'max-w-[220px]',
+      cell: () => {
+        const trend = getTrend();
+        const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
+        return (
+          <TrendIcon
+            className={
+              'h-4 w-4 ' +
+              (trend === 'up'
+                ? 'text-emerald-500'
+                : trend === 'down'
+                  ? 'text-red-500'
+                  : 'text-muted-foreground')
+            }
+          />
+        );
+      },
     },
     {
-      id: 'ammonia',
-      header: 'Amônia',
-      cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{row.ammonia}</div>,
-    },
-    {
-      id: 'salinity',
-      header: 'Salinidade',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">{row.salinity || '—'}</div>
-      ),
-    },
-    {
-      id: 'turbidity',
-      header: 'Turbidez',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">{row.turbidity || '—'}</div>
-      ),
-    },
-    {
-      id: 'notes',
-      header: 'Observações',
-      cell: (row) => (
-        <div className="text-sm text-slate-500 max-w-[160px] truncate" title={row.notes ?? ''}>
-          {row.notes || '—'}
-        </div>
-      ),
-    },
-    {
-      id: 'updatedAt',
-      header: 'Atualizado em',
-      cell: (row) => (
-        <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>
-      ),
+      id: 'quality',
+      header: 'Qualidade',
+      cellClassName: 'max-w-[220px]',
+      cell: (row) => {
+        const cfg = qualityConfig[row.quality as Quality];
+        const QIcon = cfg.icon;
+        return (
+          <Badge variant="outline" className={cfg.className}>
+            <QIcon className="mr-1 h-3 w-3" />
+            {cfg.label}
+          </Badge>
+        );
+      },
     },
   ];
 
@@ -109,15 +144,9 @@ export function WaterQualityTable({
       data={waterQualities}
       columns={columns}
       getRowId={(row) => row.id}
-      rowActions={createCrudListRowActions({
-        basePath: '/company/water-qualities',
-        onDelete,
-        getRowLabel,
-        isDeleting,
-      })}
-      emptyState={
-        <div className="p-8 text-center text-slate-500">Nenhum registro encontrado.</div>
-      }
+      rowActions={rowActions}
+      emptyState={<div className="p-8 text-center text-slate-500">Nenhuma medição encontrada.</div>}
+      showPagination={false}
     />
   );
 }

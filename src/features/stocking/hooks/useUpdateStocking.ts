@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { stockingService } from '../services/stockingService';
 import type { UpdateStockingData } from '../types';
 
-export function useUpdateStocking() {
+type UseUpdateStockingOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateStocking(options: UseUpdateStockingOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,9 @@ export function useUpdateStocking() {
       queryClient.invalidateQueries({ queryKey: ['stockings', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['stockings', 'detail', data.id] });
       showSuccess('Povoamento atualizado com sucesso!');
-      router.push('/company/stockings');
+      if (!options.skipNavigateToList) {
+        router.push('/company/stockings');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar povoamento. Tente novamente.');

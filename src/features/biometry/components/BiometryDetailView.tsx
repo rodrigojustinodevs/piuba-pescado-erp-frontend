@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import type { Biometry } from '../types';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
-import { PencilIcon } from '@/shared/components/icons/AppIcons';
 
 export type BiometryDetailViewProps = {
   biometry: Biometry;
@@ -11,6 +9,16 @@ export type BiometryDetailViewProps = {
 
 function formatNumber(value: number): string {
   return Number.isFinite(value) ? String(value) : '—';
+}
+
+function formatSampleWeight(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) return '—';
+  return formatNumber(value);
+}
+
+function formatSampleQuantity(value: number): string {
+  if (!Number.isFinite(value) || value <= 0) return '—';
+  return String(Math.trunc(value));
 }
 
 export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProps>) {
@@ -22,7 +30,7 @@ export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProp
 
       <div className="rounded-2xl border border-slate-200 shadow-sm">
         {/* Header */}
-        <div className="flex items-start justify-between mb-8 bg-white rounded-t-2xl border border-slate-200 shadow-sm p-8">
+        <div className="flex items-start mb-8 bg-white rounded-t-2xl border border-slate-200 shadow-sm p-8">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#0EA5A4]/10 border-2 border-[#0EA5A4]/20">
               <svg
@@ -48,19 +56,10 @@ export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProp
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/company/biometries/${biometry.id}/edit`}
-              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition"
-            >
-              <PencilIcon className="h-4 w-4" />
-              Editar
-            </Link>
-          </div>
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 p-8">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
             <p className="text-sm text-slate-600 mb-2">Lote</p>
             <p className="text-2xl font-semibold text-[#0F172A]">{biometry.batchName || '—'}</p>
@@ -75,6 +74,18 @@ export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProp
             <p className="text-sm text-slate-600 mb-2">Peso médio</p>
             <p className="text-2xl font-semibold text-[#0F172A]">
               {formatNumber(biometry.averageWeight)}
+            </p>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
+            <p className="text-sm text-slate-600 mb-2">Peso da amostra</p>
+            <p className="text-2xl font-semibold text-[#0F172A]">
+              {formatSampleWeight(biometry.sampleWeight)}
+            </p>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
+            <p className="text-sm text-slate-600 mb-2">Qtd. na amostra</p>
+            <p className="text-2xl font-semibold text-[#0F172A]">
+              {formatSampleQuantity(biometry.sampleQuantity)}
             </p>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
@@ -109,6 +120,18 @@ export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProp
                   <p className="text-xs font-medium text-slate-600 uppercase mb-2">PESO MÉDIO</p>
                   <p className="text-sm font-medium text-[#0F172A]">
                     {formatNumber(biometry.averageWeight)}
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">PESO DA AMOSTRA</p>
+                  <p className="text-sm font-medium text-[#0F172A]">
+                    {formatSampleWeight(biometry.sampleWeight)}
+                  </p>
+                </div>
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">QTD. AMOSTRA</p>
+                  <p className="text-sm font-medium text-[#0F172A]">
+                    {formatSampleQuantity(biometry.sampleQuantity)}
                   </p>
                 </div>
               </div>

@@ -3,7 +3,7 @@
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
 import type { Batch } from '../types';
 import { formatBatchOptionLabel } from '../utils/format';
-import { Select } from '@/shared/components/ui';
+import { Select } from '@/shared/components/form';
 
 type BatchSelectFieldProps<TFieldValues extends FieldValues & { batchId: string }> = {
   control: Control<TFieldValues>;
@@ -31,13 +31,16 @@ export function BatchSelectField<TFieldValues extends FieldValues & { batchId: s
       render={({ field }) => (
         <Select
           label="Lote"
-          requiredIndicator
+          required
           disabled={isLoadingBatches || disabled}
           placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
           options={batches.map((batch) => ({
             value: batch.id,
             label: formatBatchOptionLabel(batch),
           }))}
+          name={field.name}
+          ref={field.ref}
+          onBlur={field.onBlur}
           value={field.value ?? ''}
           onChange={(e) => field.onChange(e.target.value)}
           error={error}

@@ -1,46 +1,126 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { Sensor, SensorListResponse } from '../types';
-import { SensorTable } from './SensorTable';
-import { ListHeader, Pagination, SearchField, SortButton } from '@/shared/components/list';
-import { ChevronRightIcon, FilterIcon, SpinnerIcon } from '@/shared/components/icons/AppIcons';
-
-export type SensorsListViewProps = {
-  page: number;
-  setPage: (next: number) => void;
-  search: string;
-  setSearch: (next: string) => void;
-  sortBy: string;
-  setSortBy: (next: string) => void;
-  data: SensorListResponse | undefined;
-  isLoading: boolean;
-  error: unknown;
-  sensors: Sensor[];
-  handleDelete: (id: string, label: string) => void;
-  isDeleting: boolean;
-};
+import { useCallback, useState } from 'react';
+import type {
+  Sensor,
+  SensorDialogMode,
+  SensorsListViewProps,
+  SensorType,
+  SensorTypeFilter,
+} from '../types';
+import { SensorCards } from './SensorCards';
+import { SensorDialog } from './SensorDialog';
+import { ListHeader, Pagination, SearchField, StatusFilterTabs } from '@/shared/components/list';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import {
+  Activity,
+  BatteryLow,
+  Eye,
+  Pencil,
+  Radio,
+  Trash,
+  WifiOff,
+  RadioTower,
+  Loader2,
+  FlaskConical,
+  Gauge,
+  Ruler,
+  Wind,
+  Wrench,
+  LucideIcon,
+  Thermometer,
+} from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/src/shared/components/ui/Select';
+import { useAuthContext } from '@/src/shared/contexts/AuthContext';
+import { StatusFilter } from '@/src/shared/hooks/useListPageState';
 
 export function SensorsListView({
   page,
   setPage,
   search,
   setSearch,
-  sortBy,
-  setSortBy,
+  filter,
+  setFilter,
+  sensorTypeFilter,
+  setSensorTypeFilter,
   data,
   isLoading,
   error,
-  sensors,
+  filteredSensors,
+  stats,
   handleDelete,
   isDeleting,
 }: Readonly<SensorsListViewProps>) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<SensorDialogMode>('create');
+  const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null);
+  const openSensorDialog = useCallback((mode: SensorDialogMode, sensor: Sensor | null = null) => {
+    setDialogMode(mode);
+    setSelectedSensor(sensor);
+    setDialogOpen(true);
+  }, []);
+
+  const handleSensorDelete = useCallback(
+    (id: string, label: string) => {
+      handleDelete(id, label);
+    },
+    [handleDelete],
+  );
+
+  const getRowActions = useCallback(
+    (sensor: Sensor) => [
+      {
+        label: 'Ver detalhes',
+        onClick: () => openSensorDialog('view', sensor),
+        icon: <Eye className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        onClick: () => openSensorDialog('edit', sensor),
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: 'Excluir',
+        onClick: () =>
+          handleSensorDelete(sensor.id, `${sensor.name} — ${sensor.tank?.name || 'Tanque'}`),
+        disabled: isDeleting,
+        variant: 'danger' as const,
+        icon: <Trash className="h-4 w-4" />,
+      },
+    ],
+    [handleSensorDelete, isDeleting, openSensorDialog],
+  );
+
+  const statusConfig: Record<
+    string,
+    { label: string; variant: 'default' | 'secondary' | 'destructive'; icon: typeof Activity }
+  > = {
+    online: { label: 'Online', variant: 'default', icon: Activity },
+    offline: { label: 'Offline', variant: 'destructive', icon: WifiOff },
+    maintenance: { label: 'Manutenção', variant: 'secondary', icon: Wrench },
+  };
+
+  const typeIcon: Record<SensorType, LucideIcon> = {
+    temperature: Thermometer,
+    ph: FlaskConical,
+    oxygen: Wind,
+    ammonia: Gauge,
+    etc: Ruler,
+  };
+  const { isMaster } = useAuthContext();
+
   const renderContent = () => {
     if (isLoading) {
       return (
         <div className="p-8 text-center">
           <div className="flex items-center justify-center gap-2 text-slate-500">
-            <SpinnerIcon className="w-5 h-5 animate-spin" />
+            <Loader2 className="w-5 h-5 animate-spin" />
             <span>Carregando...</span>
           </div>
         </div>
@@ -51,14 +131,21 @@ export function SensorsListView({
       return <div className="p-8 text-center text-red-600">Erro ao carregar sensores.</div>;
     }
 
-    if (!sensors.length) {
+    if (!filteredSensors.length) {
       return <div className="p-8 text-center text-slate-500">Nenhum sensor encontrado.</div>;
     }
 
     return (
       <>
-        <SensorTable sensors={sensors} onDelete={handleDelete} isDeleting={isDeleting} />
-        {data && data.total > data.limit && (
+        <SensorCards
+          sensors={filteredSensors}
+          rowActions={getRowActions}
+          isMaster={isMaster()}
+          statusConfig={statusConfig}
+          typeIcon={typeIcon}
+          openSensorDialog={openSensorDialog}
+        />
+        {data && (
           <Pagination
             page={page}
             limit={data.limit}
@@ -71,64 +158,131 @@ export function SensorsListView({
     );
   };
 
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
-
   return (
     <div className="space-y-6">
       <ListHeader
-        icon={
-          <svg
-            className="h-8 w-8 text-[#0EA5A4]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 14s1.5 2 4 2 4-2 4-2m-8 4s1.5 2 4 2 4-2 4-2M6 6h12M6 10h12"
-            />
-          </svg>
-        }
-        title="Sensores"
-        subtitle="Monitore os sensores instalados nos tanques"
-        ctaHref="/company/sensors/create"
-        ctaLabel="Novo Sensor"
+        icon={<RadioTower className="h-8 w-8 text-[#0EA5A4]" />}
+        title="Sensores IoT"
+        subtitle="Acompanhe o status e as últimas leituras dos sensores instalados nos viveiros."
+        dialogOpen
+        dialogLabel="Novo Sensor"
+        setDialogOpen={() => openSensorDialog('create')}
       />
 
-      <section className="flex flex-wrap items-center gap-3">
-        <SearchField
-          value={search}
-          placeholder="Buscar por tipo, status ou tanque..."
-          onChange={setSearch}
-        />
-        <SortButton
-          current={sortBy}
-          onSort={handleSort}
-          value="installationDate"
-          label="Instalação"
-        />
-      </section>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total de Sensores
+            </CardTitle>
+            <Radio className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data?.total}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Online</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {(data?.sensors ?? []).filter((s) => s.status === 'active').length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Offline</CardTitle>
+            <WifiOff className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {(data?.sensors ?? []).filter((s) => s.status !== 'active').length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Bateria Baixa
+            </CardTitle>
+            <BatteryLow className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {(data?.sensors ?? []).filter((s) => s.battery !== null && s.battery < 20).length}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-      <section className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">
-          {data?.total ?? 0} {data?.total === 1 ? 'sensor encontrado' : 'sensores encontrados'}
-        </p>
-        <button
-          type="button"
-          className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-        >
-          <FilterIcon className="h-4 w-4" />
-          Filtros avançados
-          <ChevronRightIcon className="h-4 w-4" />
-        </button>
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Lista de Sensores</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="relative flex-1">
+              <SearchField
+                search={search}
+                setSearch={setSearch}
+                setCurrentPage={setPage}
+                placeholder="Buscar por tipo ou tanque..."
+              />
+            </div>
+            <Select
+              value={sensorTypeFilter}
+              onValueChange={(v) => {
+                setSensorTypeFilter(v as SensorTypeFilter);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Tipo de Sensor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Tipos</SelectItem>
+                <SelectItem value="ph">pH</SelectItem>
+                <SelectItem value="temperature">Temperatura</SelectItem>
+                <SelectItem value="dissolved_oxygen">Oxigênio Dissolvido</SelectItem>
+                <SelectItem value="ammonia">Amônia</SelectItem>
+                <SelectItem value="etc">Outros</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={filter}
+              onValueChange={(v) => {
+                setFilter(v as StatusFilter);
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os Status</SelectItem>
+                <SelectItem value="online">Online</SelectItem>
+                <SelectItem value="offline">Offline</SelectItem>
+                <SelectItem value="maintenance">Manutenção</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {renderContent()}
+        </CardContent>
+      </Card>
 
-      <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {renderContent()}
-      </main>
+      <SensorDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedSensor(null);
+          setDialogOpen(open);
+        }}
+        onSuccess={() => {
+          setDialogOpen(false);
+        }}
+        mode={dialogMode}
+        sensor={selectedSensor}
+      />
     </div>
   );
 }

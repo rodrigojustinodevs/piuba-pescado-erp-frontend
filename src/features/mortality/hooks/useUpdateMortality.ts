@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { mortalityService } from '../services/mortalityService';
 import type { UpdateMortalityData } from '../types';
 
-export function useUpdateMortality() {
+type UseUpdateMortalityOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateMortality(options: UseUpdateMortalityOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,9 @@ export function useUpdateMortality() {
       queryClient.invalidateQueries({ queryKey: ['mortalities', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['mortalities', 'detail', data.id] });
       showSuccess('Mortalidade atualizada com sucesso!');
-      router.push('/company/mortalities');
+      if (!options.skipNavigateToList) {
+        router.push('/company/mortalities');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar mortalidade. Tente novamente.');

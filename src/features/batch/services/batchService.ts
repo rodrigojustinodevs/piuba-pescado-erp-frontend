@@ -52,9 +52,11 @@ export const batchService = {
     page?: number;
     limit?: number;
     search?: string;
+    companyId?: string;
   }): Promise<BatchListResponse> {
+    const { companyId, ...rest } = params ?? {};
     const response = await batchesApi.get<ApiEnvelope<BatchListResponse> | BatchListResponse>('/', {
-      params,
+      params: { ...rest, ...(companyId ? { companyId: companyId } : {}) },
     });
     return unwrapEnvelope(response.data);
   },

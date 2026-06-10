@@ -5,6 +5,7 @@ export type {
   ApiFeedingListResponse,
   CreateFeedingData,
   UpdateFeedingData,
+  FeedingDialogMode,
 } from './types';
 export { createFeedingSchema } from './schemas';
 export type { CreateFeedingFormData } from './schemas';
@@ -14,7 +15,10 @@ export {
   useFeeding,
   useCreateFeeding,
   useUpdateFeeding,
+  useDeleteFeeding,
   useFeedingStocks,
+  type UseCreateFeedingOptions,
+  type UseUpdateFeedingOptions,
 } from './hooks';
 export {
   FeedingTable,
@@ -22,6 +26,9 @@ export {
   FeedingDetailView,
   FeedingForm,
   FeedingPageShell,
+  FeedingDialog,
+  FeedingViewDialogContent,
 } from './components';
 export { feedingService } from './services/feedingService';
 export { feedingLookupService } from './services/feedingLookupService';
+export { FEED_TYPE_OPTIONS, FEED_TYPE_SELECT_OPTIONS } from './constants';

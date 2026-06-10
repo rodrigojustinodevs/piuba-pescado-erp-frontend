@@ -6,12 +6,17 @@ import type { ApiListResponse } from '@/shared/types/api';
 
 export interface Feeding {
   id: string;
-  batchId: string;
-  batchName: string;
+  batch: {
+    id: string;
+    name: string;
+  };
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
-  stockId: string;
+  stock: {
+    id: string;
+    name: string;
+  };
   stockReductionQuantity: number;
   createdAt: string | null;
   updatedAt: string;
@@ -29,7 +34,10 @@ export interface ApiFeeding {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
-  stockId?: string;
+  stock: {
+    id: string;
+    name: string;
+  };
   stockReductionQuantity: number;
   createdAt: string | null;
   updatedAt: string;
@@ -62,3 +70,5 @@ export interface CreateFeedingData {
 export interface UpdateFeedingData extends CreateFeedingData {
   id: string;
 }
+
+export type FeedingDialogMode = 'create' | 'edit' | 'view';

@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { transferService } from '../services/transferService';
 import type { CreateTransferData } from '../types';
 
-export function useCreateTransfer() {
+type UseCreateTransferOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useCreateTransfer({ skipNavigateToList }: UseCreateTransferOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -16,7 +20,9 @@ export function useCreateTransfer() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transfers', 'list'] });
       showSuccess('Transferência criada com sucesso!');
-      router.push('/company/transfers');
+      if (!skipNavigateToList) {
+        router.push('/company/transfers');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao criar transferência. Tente novamente.');

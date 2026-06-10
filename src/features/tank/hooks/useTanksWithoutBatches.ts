@@ -5,7 +5,8 @@ import { tankService } from '../services/tankService';
 
 interface UseTanksWithoutBatchesParams {
   page?: number;
-  per_page?: number;
+  perPage?: number;
+  companyId?: string;
   enabled?: boolean;
 }
 
@@ -14,12 +15,13 @@ interface UseTanksWithoutBatchesParams {
  */
 export function useTanksWithoutBatches({
   page = 1,
-  per_page = 15,
+  perPage = 15,
+  companyId,
   enabled = true,
 }: UseTanksWithoutBatchesParams = {}) {
   return useQuery({
-    queryKey: ['tanks', 'without-batches', page, per_page],
-    queryFn: () => tankService.listWithoutBatches({ page, per_page }),
+    queryKey: ['tanks', 'without-batches', page, perPage, companyId],
+    queryFn: () => tankService.listWithoutBatches({ page, perPage, companyId }),
     enabled,
     staleTime: 1000 * 60 * 5,
   });

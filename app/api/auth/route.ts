@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     if (!email || !password) {
       return failureResponse(ErrorMessages.LOGIN_REQUIRED_FIELDS, 400);
     }
-
+    console.log('publicHttpClient', publicHttpClient);
     const data = await publicHttpClient.request<LoginApiResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -52,6 +52,7 @@ export async function POST(req: Request) {
       200,
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof HttpError && error.status === 401) {
       return failureResponse(ErrorMessages.LOGIN_CREDENTIALS, 401);
     }

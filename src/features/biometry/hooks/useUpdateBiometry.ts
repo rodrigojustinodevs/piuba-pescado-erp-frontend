@@ -6,10 +6,14 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { biometryService } from '../services/biometryService';
 import type { UpdateBiometryData } from '../types';
 
+type UseUpdateBiometryOptions = {
+  skipNavigateToList?: boolean;
+};
+
 /**
  * Hook para atualizar uma biometria
  */
-export function useUpdateBiometry() {
+export function useUpdateBiometry(options: UseUpdateBiometryOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -20,7 +24,9 @@ export function useUpdateBiometry() {
       queryClient.invalidateQueries({ queryKey: ['biometries', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['biometries', 'detail', data.id] });
       showSuccess('Biometria atualizada com sucesso!');
-      router.push('/company/biometries');
+      if (!options.skipNavigateToList) {
+        router.push('/company/biometries');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar biometria. Tente novamente.');

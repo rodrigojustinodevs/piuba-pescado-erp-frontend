@@ -9,8 +9,8 @@ export const feedingLookupService = {
     const qs = buildQueryString(
       {
         page: 1,
-        per_page: LOOKUP_LIMIT,
-        ...(companyId?.trim() ? { company_id: companyId.trim() } : {}),
+        perPage: LOOKUP_LIMIT,
+        ...(companyId?.trim() ? { companyId: companyId.trim() } : {}),
       },
       { skipEmptyString: true },
     );

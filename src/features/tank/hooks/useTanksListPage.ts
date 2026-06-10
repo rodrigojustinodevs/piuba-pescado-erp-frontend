@@ -3,7 +3,6 @@
 import { useCallback, useMemo } from 'react';
 import { useDeleteTank } from './useDeleteTank';
 import { useTanks } from './useTanks';
-import { useTankLookups } from './useTankLookups';
 import { useListPageState, type StatusFilter } from '@/shared/hooks/useListPageState';
 import { useAlertModal } from '@/shared/components/AlertModal';
 
@@ -12,14 +11,14 @@ export function useTanksListPage() {
   const { page, setPage, search, setSearch, filter, setFilter, sortBy, setSortBy } = listState;
 
   const { data, isLoading, error } = useTanks({ page, limit: 10, search });
-  const { tankTypeMap = {}, companyMap = {} } = useTankLookups();
   const deleteTank = useDeleteTank();
   const { showError } = useAlertModal();
 
   const filteredTanks = useMemo(() => {
     const list = data?.tanks ?? [];
     if (filter === 'active') return list.filter((t) => t.status === 'active');
-    if (filter === 'inactive') return list.filter((t) => t.status !== 'active');
+    if (filter === 'inactive') return list.filter((t) => t.status === 'inactive');
+    if (filter === 'maintenance') return list.filter((t) => t.status === 'maintenance');
     return list;
   }, [data?.tanks, filter]);
 
@@ -59,7 +58,5 @@ export function useTanksListPage() {
     stats,
     handleDelete,
     isDeleting: deleteTank.isPending,
-    tankTypeMap,
-    companyMap,
   };
 }

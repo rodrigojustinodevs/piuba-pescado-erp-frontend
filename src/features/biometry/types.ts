@@ -10,6 +10,8 @@ export interface Biometry {
   batchName: string;
   biometryDate: string;
   averageWeight: number;
+  sampleWeight: number;
+  sampleQuantity: number;
   fcr: number;
   createdAt: string;
   updatedAt: string;
@@ -26,6 +28,8 @@ export interface ApiBiometry {
   };
   biometryDate: string;
   averageWeight: number;
+  sampleWeight?: number;
+  sampleQuantity?: number;
   fcr: number;
   createdAt: string;
   updatedAt: string;
@@ -53,6 +57,8 @@ export interface CreateBiometryData {
   batchId: string;
   biometryDate: string;
   averageWeight: number;
+  sampleWeight: number;
+  sampleQuantity: number;
   fcr: number;
 }
 
@@ -62,3 +68,6 @@ export interface CreateBiometryData {
 export interface UpdateBiometryData extends CreateBiometryData {
   id: string;
 }
+
+/** Modos do dialog de biometria (lista / CRUD em modal) */
+export type BiometryDialogMode = 'create' | 'edit' | 'view';

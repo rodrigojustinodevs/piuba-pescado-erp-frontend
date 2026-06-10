@@ -16,7 +16,7 @@ export function useDeleteWaterQuality() {
       queryClient.invalidateQueries({ queryKey: ['waterQualities', 'list'] });
       queryClient.removeQueries({ queryKey: ['waterQualities', 'detail', deletedId] });
       showSuccess('Medição excluída com sucesso!');
-      router.push('/company/water-qualities');
+      router.refresh();
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao excluir medição. Tente novamente.');

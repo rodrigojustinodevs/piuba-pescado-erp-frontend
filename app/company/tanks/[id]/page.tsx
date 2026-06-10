@@ -2,11 +2,10 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useTank, useDeleteTank, useTankLookups } from '@/features/tank';
+import { useTank, useDeleteTank } from '@/features/tank';
 import { useAlertModal } from '@/shared/components/AlertModal';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { formatCapacityLiters } from '@/features/tank/utils/format';
-import { getCompanyName, getTankTypeLabel } from '@/features/tank/utils/lookups';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
@@ -18,7 +17,6 @@ export default function TankDetailPage() {
   const id = params.id as string;
   const { isMaster } = useAuthContext();
   const { data: tank, isLoading, error } = useTank(id);
-  const { companyMap, tankTypeMap } = useTankLookups();
   const deleteTank = useDeleteTank();
   const { showError } = useAlertModal();
 
@@ -51,8 +49,6 @@ export default function TankDetailPage() {
     );
   }
 
-  const companyName = getCompanyName(companyMap, tank.companyId);
-  const tankType = getTankTypeLabel(tankTypeMap, tank.tankTypeId);
   const capacity = formatCapacityLiters(tank.capacityLiters);
 
   return (
@@ -73,7 +69,7 @@ export default function TankDetailPage() {
                 <h1 className="text-3xl font-semibold text-[#0F172A] mb-2">{tank.name}</h1>
                 <div className="flex items-center gap-3">
                   {isMaster() && (
-                    <span className="text-sm text-[#0F172A]">Empresa: {companyName}</span>
+                    <span className="text-sm text-[#0F172A]">Empresa: {tank.company.name}</span>
                   )}
                   <span
                     className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${

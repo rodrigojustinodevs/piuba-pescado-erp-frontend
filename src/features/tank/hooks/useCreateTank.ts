@@ -16,15 +16,15 @@ export function useCreateTank() {
 
   return useMutation({
     mutationFn: (data: CreateTankData) => tankService.create(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalida a lista de tanques
       queryClient.invalidateQueries({ queryKey: ['tanks', 'list'] });
 
       // Mostra mensagem de sucesso
       showSuccess('Tanque criado com sucesso!');
 
-      // Redireciona para a página de detalhes
-      router.push(`/company/tanks/${data.id}`);
+      // Redireciona para a página de lista de tanques
+      router.push(`/company/tanks`);
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao criar tanque. Tente novamente.');

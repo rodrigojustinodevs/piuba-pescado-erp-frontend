@@ -22,7 +22,8 @@ import {
   PackageSearch,
   CircleDollarSign,
   ShoppingCart,
-} from "lucide-react";
+  Droplets,
+} from 'lucide-react';
 
 export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   allowedRoles?: UserRoleType[];
@@ -32,16 +33,23 @@ export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
 
 const ROLES_ALL: UserRoleType[] = [
   UserRole.MASTER,
+  UserRole.MASTER_ADMIN,
   UserRole.COMPANY_ADMIN,
   UserRole.MANAGER,
   UserRole.OPERATOR,
 ];
 const ROLES_COMPANY_ALL: UserRoleType[] = [
+  UserRole.MASTER,
+  UserRole.MASTER_ADMIN,
   UserRole.COMPANY_ADMIN,
   UserRole.MANAGER,
   UserRole.OPERATOR,
 ];
-const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MANAGER];
+const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [
+  UserRole.COMPANY_ADMIN,
+  UserRole.MANAGER,
+  UserRole.MASTER_ADMIN,
+];
 const REQUIRES_COMPANY = true;
 
 function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
@@ -55,6 +63,13 @@ function comercialChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({
     ...item,
     allowedRoles: item.id === 'pedidos' ? ROLES_COMPANY_ALL : ROLES_COMPANY_ADMIN_MANAGER,
+  }));
+}
+
+function tanksChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
+  return items.map((item) => ({
+    ...item,
+    allowedRoles: ROLES_COMPANY_ALL,
   }));
 }
 
@@ -85,7 +100,7 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Empresas/Fazendas',
     icon: Building,
     href: '/admin/companies',
-    allowedRoles: [UserRole.MASTER],
+    allowedRoles: [UserRole.MASTER_ADMIN, UserRole.MASTER],
   },
   {
     id: 'viveiros',
@@ -93,8 +108,7 @@ export const menuConfig: MenuItemWithAuth[] = [
     icon: Container,
     href: '/company/tanks',
     allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
-    children: childrenAllCompanyAdminManager(viveirosSubmenuItems),
+    children: tanksChildrenWithAuth(viveirosSubmenuItems),
   },
   {
     id: 'producao',
@@ -102,22 +116,20 @@ export const menuConfig: MenuItemWithAuth[] = [
     icon: Fish,
     href: '/company/production',
     allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
     children: childrenAllCompanyAdminManager(producaoSubmenuItems),
   },
   {
     id: 'insumos-estoque',
     label: 'Insumos & Estoque',
     icon: PackageSearch,
-    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-    requiresCompany: REQUIRES_COMPANY,
+    allowedRoles: ROLES_COMPANY_ALL,
     children: childrenAllCompanyAdminManager(insumosEstoqueSubmenuItems),
   },
   {
     id: 'financeiro',
     label: 'Financeiro',
     icon: CircleDollarSign,
-    allowedRoles: [UserRole.COMPANY_ADMIN],
+    allowedRoles: ROLES_COMPANY_ALL,
     requiresCompany: REQUIRES_COMPANY,
     children: childrenAllCompanyAdminManager(financeiroSubmenuItems),
   },

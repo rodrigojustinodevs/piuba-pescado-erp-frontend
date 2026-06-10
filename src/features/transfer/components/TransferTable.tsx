@@ -1,33 +1,17 @@
 'use client';
 
-import type { Transfer } from '../types';
-import { formatDatePtBR } from '@/shared/utils/dateFormat';
-import {
-  DataTable,
-  EditIcon,
-  EyeIcon,
-  SpinnerIcon,
-  TrashIcon,
-  type DataTableColumn,
-} from '@/shared/components/Table';
+import { STATUS_LABELS, type Transfer, type TransferStatus } from '../types';
+import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
+import { formatNumber } from '@/shared/utils/numberFormat';
+import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
+import { ArrowRight } from 'lucide-react';
+import { Badge } from '@/src/shared/components/ui/Badge';
 
-const CELL_TEXT_CLASS = 'text-sm text-slate-600';
-
-interface TransferTableProps {
-  transfers: Transfer[];
-  onDelete: (id: string) => void;
-  isDeleting?: boolean;
-}
-
-type BatchCellProps = { label: string };
-function BatchCell({ label }: Readonly<BatchCellProps>) {
-  return <div className="text-sm font-medium text-[#0F172A]">{label}</div>;
-}
-
-type TextCellProps = { text: string };
-function TextCell({ text }: Readonly<TextCellProps>) {
-  return <div className={CELL_TEXT_CLASS}>{text}</div>;
-}
+const STATUS_STYLES: Record<TransferStatus, string> = {
+  completed: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30',
+  scheduled: 'bg-sky-500/15 text-sky-700 border-sky-500/30',
+  cancelled: 'bg-destructive/15 text-destructive border-destructive/40',
+};
 
 function getBatchLabel(row: Transfer): string {
   if (row.batchName) return row.batchName;
@@ -41,68 +25,81 @@ function getTankLabel(id: string, name?: string): string {
   return '—';
 }
 
-function renderBatchCell(row: Transfer) {
-  return <BatchCell label={getBatchLabel(row)} />;
+interface TransferTableProps {
+  transfers: Transfer[];
+  getRowActions: (row: Transfer) => DataTableAction[];
 }
 
-function renderOriginTankCell(row: Transfer) {
-  return <TextCell text={getTankLabel(row.originTankId, row.originTankName)} />;
-}
+const columns: Array<DataTableColumn<Transfer>> = [
+  {
+    id: 'transferDate',
+    header: 'Data',
+    cell: (row) => (
+      <div className="text-sm text-slate-600">
+        {formatNullableDatePtBR(row.transferDate ?? row.createdAt)}
+      </div>
+    ),
+  },
+  {
+    id: 'batchName',
+    header: 'Lote',
+    cell: (row) => (
+      <div className="text-sm font-medium text-[#0F172A]">{getBatchLabel(row)}</div>
+    ),
+  },
+  {
+    id: 'movement',
+    header: 'Movimentação',
+    cell: (row) => (
+      <div className="flex items-center gap-2 text-sm">
+        <span className="rounded bg-muted px-2 py-0.5">
+          {getTankLabel(row.originTankId, row.originTankName)}
+        </span>
+        <ArrowRight className="h-3 w-3 text-muted-foreground" />
+        <span className="rounded bg-primary/10 px-2 py-0.5 text-primary">
+          {getTankLabel(row.destinationTankId, row.destinationTankName)}
+        </span>
+      </div>
+    ),
+  },
+  {
+    id: 'quantity',
+    header: 'Quantidade',
+    headerClassName: 'text-right',
+    cellClassName: 'text-right',
+    cell: (row) => <div className="text-sm text-slate-600">{String(row.quantity)}</div>,
+  },
+  {
+    id: 'biomass',
+    header: 'Biomassa (kg)',
+    headerClassName: 'text-right',
+    cellClassName: 'text-right',
+    cell: (row) => (
+      <div className="text-sm text-slate-600">
+        {formatNumber((row.quantity * (row.averageWeight ?? 0)) / 1000, { maximumFractionDigits: 2 })}
+      </div>
+    ),
+  },
+  {
+    id: 'status',
+    header: 'Status',
+    cell: (row) =>
+      row.status ? (
+        <Badge variant="outline" className={STATUS_STYLES[row.status]}>
+          {STATUS_LABELS[row.status]}
+        </Badge>
+      ) : (
+        <span className="text-sm text-slate-400">—</span>
+      ),
+  },
+  {
+    id: 'description',
+    header: 'Descrição',
+    cell: (row) => <div className="text-sm text-slate-600">{row.description || '—'}</div>,
+  },
+];
 
-function renderDestinationTankCell(row: Transfer) {
-  return <TextCell text={getTankLabel(row.destinationTankId, row.destinationTankName)} />;
-}
-
-function renderQuantityCell(row: Transfer) {
-  return <TextCell text={String(row.quantity)} />;
-}
-
-function renderDescriptionCell(row: Transfer) {
-  return <TextCell text={row.description || '—'} />;
-}
-
-function renderCreatedAtCell(row: Transfer) {
-  return <TextCell text={row.createdAt ? formatDatePtBR(row.createdAt) : '—'} />;
-}
-
-export function TransferTable({
-  transfers,
-  onDelete,
-  isDeleting = false,
-}: Readonly<TransferTableProps>) {
-  const columns: Array<DataTableColumn<Transfer>> = [
-    {
-      id: 'batchId',
-      header: 'Lote',
-      cell: renderBatchCell,
-    },
-    {
-      id: 'originTankId',
-      header: 'Origem',
-      cell: renderOriginTankCell,
-    },
-    {
-      id: 'destinationTankId',
-      header: 'Destino',
-      cell: renderDestinationTankCell,
-    },
-    {
-      id: 'quantity',
-      header: 'Quantidade',
-      cell: renderQuantityCell,
-    },
-    {
-      id: 'description',
-      header: 'Descrição',
-      cell: renderDescriptionCell,
-    },
-    {
-      id: 'createdAt',
-      header: 'Criado em',
-      cell: renderCreatedAtCell,
-    },
-  ];
-
+export function TransferTable({ transfers, getRowActions }: Readonly<TransferTableProps>) {
   if (transfers.length === 0) {
     return <div className="p-8 text-center text-slate-500">Nenhuma transferência encontrada.</div>;
   }
@@ -112,29 +109,7 @@ export function TransferTable({
       data={transfers}
       columns={columns}
       getRowId={(row) => row.id}
-      rowActions={(row) => [
-        {
-          label: 'Ver detalhes',
-          href: `/company/transfers/${row.id}`,
-          icon: <EyeIcon className="h-4 w-4" />,
-        },
-        {
-          label: 'Editar',
-          href: `/company/transfers/${row.id}/edit`,
-          icon: <EditIcon className="h-4 w-4" />,
-        },
-        {
-          label: 'Excluir',
-          onClick: () => onDelete(row.id),
-          variant: 'danger',
-          disabled: isDeleting,
-          icon: isDeleting ? (
-            <SpinnerIcon className="h-4 w-4 animate-spin" />
-          ) : (
-            <TrashIcon className="h-4 w-4" />
-          ),
-        },
-      ]}
+      rowActions={getRowActions}
     />
   );
 }

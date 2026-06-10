@@ -1,6 +1,10 @@
 import type { Feeding, UpdateFeedingData } from '@/features/feeding/types';
 import { mapApiFeedingDetail, type ApiFeedingDetail } from '@/features/feeding/utils/apiMapper';
-import { createDetailGetHandler, createPutHandler } from '@/shared/lib/api/routeFactories';
+import {
+  createDeleteHandler,
+  createDetailGetHandler,
+  createPutHandler,
+} from '@/shared/lib/api/routeFactories';
 
 const CONTEXT = 'Feedings API Proxy';
 
@@ -25,4 +29,9 @@ export const PUT = createPutHandler<ApiFeedingDetailEnvelope, UpdateFeedingData,
     return rest;
   },
   mapResponse: mapDetailResponse,
+});
+
+export const DELETE = createDeleteHandler<{ id: string }>({
+  backendPathBuilder: (params) => `/api/company/feeding/${params.id}`,
+  context: CONTEXT,
 });

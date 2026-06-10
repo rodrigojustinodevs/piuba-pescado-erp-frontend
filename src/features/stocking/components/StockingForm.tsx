@@ -17,6 +17,7 @@ import { Input } from '@/shared/components/ui';
 type StockingFormCommonProps = {
   isLoading?: boolean;
   submitLabel?: string;
+  onCancel?: () => void;
 };
 
 export type StockingFormProps =
@@ -37,6 +38,7 @@ export function StockingForm({
   onSubmit,
   isLoading = false,
   submitLabel = 'Criar Povoamento',
+  onCancel,
 }: StockingFormProps) {
   const { data: batchesData, isLoading: isLoadingBatches } = useBatches({
     page: 1,
@@ -136,6 +138,7 @@ export function StockingForm({
         submitLabel={submitLabel}
         loadingLabel={isEditMode ? 'Atualizando...' : 'Criando...'}
         isLoading={isLoading}
+        onCancel={onCancel}
       />
     </form>
   );

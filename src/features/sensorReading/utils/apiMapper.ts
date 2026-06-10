@@ -10,9 +10,11 @@ import {
 } from '@/shared/utils/apiListResponse';
 
 export function mapApiSensorReading(api: ApiSensorReading): SensorReading {
+  const sensorType = api.sensor?.sensorType;
+
   return {
     id: api.id,
-    sensorId: api.sensorId,
+    type: api.type ?? 'automatic',
     companyId: api.companyId,
     value: api.value,
     unit: api.unit,
@@ -20,19 +22,20 @@ export function mapApiSensorReading(api: ApiSensorReading): SensorReading {
     notes: api.notes ?? null,
     createdAt: api.createdAt ?? null,
     updatedAt: api.updatedAt,
-    sensorType: api.sensor?.sensorType ?? '',
-    sensorStatus: api.sensor?.status ?? '',
-    tankId: api.sensor?.tank?.id ?? '',
-    tankName: api.sensor?.tank?.name ?? '',
+    sensor: api.sensor
+      ? {
+          ...api.sensor,
+          name: api.sensor.name ?? (sensorType ? `Sensor ${sensorType}` : 'Sensor'),
+        }
+      : undefined,
   };
 }
 
 export function mapApiSensorReadingList(
   apiData: ApiSensorReadingListResponse,
 ): SensorReadingListResponse {
-  const sensorReadings: SensorReading[] = extractListFromPagedApiResponse(apiData).map(
-    mapApiSensorReading,
-  );
+  const sensorReadings: SensorReading[] =
+    extractListFromPagedApiResponse(apiData).map(mapApiSensorReading);
   return {
     sensorReadings,
     ...getApiPagedListMeta(apiData),

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-export type StatusFilter = 'all' | 'active' | 'inactive';
+export type StatusFilter = 'all' | 'active' | 'inactive' | 'maintenance';
 
 type UseListPageStateArgs<TFilter extends string> = {
   initialPage?: number;

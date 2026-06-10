@@ -5,6 +5,11 @@ import type {
   BiometryListResponse,
 } from '../types';
 
+function coerceNumber(value: unknown, fallback = 0): number {
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 /**
  * Formato plano retornado pela API no GET por id (sem objeto batch).
  */
@@ -13,6 +18,8 @@ export type ApiBiometryDetail = {
   batchId: string;
   biometryDate: string;
   averageWeight: number;
+  sampleWeight?: number;
+  sampleQuantity?: number;
   fcr: number;
   createdAt: string;
   updatedAt: string;
@@ -28,8 +35,10 @@ export function mapApiBiometry(api: ApiBiometry): Biometry {
     batchId: batch?.id ?? '',
     batchName: batch?.name ?? '',
     biometryDate: api.biometryDate,
-    averageWeight: api.averageWeight,
-    fcr: api.fcr,
+    averageWeight: coerceNumber(api.averageWeight),
+    sampleWeight: coerceNumber(api.sampleWeight),
+    sampleQuantity: coerceNumber(api.sampleQuantity),
+    fcr: coerceNumber(api.fcr),
     createdAt: api.createdAt,
     updatedAt: api.updatedAt,
   };
@@ -45,8 +54,10 @@ export function mapApiBiometryDetail(api: ApiBiometryDetail): Biometry {
     batchId: api.batchId ?? raw.batcheId ?? '',
     batchName: api.batchName ?? raw.batcheName ?? '',
     biometryDate: api.biometryDate,
-    averageWeight: api.averageWeight,
-    fcr: api.fcr,
+    averageWeight: coerceNumber(api.averageWeight),
+    sampleWeight: coerceNumber(api.sampleWeight),
+    sampleQuantity: coerceNumber(api.sampleQuantity),
+    fcr: coerceNumber(api.fcr),
     createdAt: api.createdAt,
     updatedAt: api.updatedAt,
   };

@@ -10,8 +10,8 @@ export const purchaseLookupService = {
     const qs = buildQueryString(
       {
         page: 1,
-        per_page: LOOKUP_LIMIT,
-        ...(companyId?.trim() ? { company_id: companyId.trim() } : {}),
+        perPage: LOOKUP_LIMIT,
+        ...(companyId?.trim() ? { companyId: companyId.trim() } : {}),
       },
       { skipEmptyString: true },
     );
@@ -22,12 +22,14 @@ export const purchaseLookupService = {
     const qs = buildQueryString(
       {
         page: 1,
-        per_page: LOOKUP_LIMIT,
-        ...(companyId?.trim() ? { company_id: companyId.trim() } : {}),
+        perPage: LOOKUP_LIMIT,
+        ...(companyId?.trim() ? { companyId: companyId.trim() } : {}),
       },
       { skipEmptyString: true },
     );
-    const full = await browserHttpClient.get<SupplyFeatureListResponse>(`/api/company/supplies?${qs}`);
+    const full = await browserHttpClient.get<SupplyFeatureListResponse>(
+      `/api/company/supplies?${qs}`,
+    );
     return {
       supplies: (full.supplies ?? []).map((s) => ({
         id: s.id,

@@ -11,6 +11,7 @@ export const stockingService = {
     page?: number;
     perPage?: number;
     batchId?: string;
+    search?: string;
   }): Promise<StockingListResponse> {
     const searchParams = new URLSearchParams();
 
@@ -23,6 +24,10 @@ export const stockingService = {
     const batchId = params?.batchId?.trim();
     if (batchId) {
       searchParams.set('batchId', batchId);
+    }
+    const search = params?.search?.trim();
+    if (search) {
+      searchParams.set('search', search);
     }
 
     const queryString = searchParams.toString();

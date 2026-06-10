@@ -5,16 +5,17 @@ import { withAuthGuard } from '@/features/auth/guards/withAuthGuard';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { HttpError } from '@/shared/lib/http/httpError';
 import { serverHttpClient } from '@/shared/lib/http';
-import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
+import { buildPaginationQueryStringWithPassthrough } from '@/shared/lib/pagination/paginationQuery';
 
 /**
  * GET /api/company/tanks/without-batches - Lista tanques sem lotes (proxy para backend)
  */
 export const GET = withAuthGuard(async (_auth, req: NextRequest) => {
   try {
-    const queryString = buildPaginationQueryString(req.nextUrl.searchParams, {
+    const queryString = buildPaginationQueryStringWithPassthrough(req.nextUrl.searchParams, {
       limitParam: 'per_page',
       defaultLimit: 15,
+      passthrough: ['companyId'],
     });
 
     const data = await serverHttpClient.request<ApiTankListResponse>(

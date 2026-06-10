@@ -32,4 +32,8 @@ export const feedingService = {
     const { id, ...body } = data;
     return browserHttpClient.put<Feeding>(`/api/company/feedings/${id}`, body);
   },
+
+  async delete(id: string): Promise<void> {
+    await browserHttpClient.delete(`/api/company/feedings/${id}`);
+  },
 };

@@ -20,11 +20,12 @@ export function mapApiWaterQuality(api: ApiWaterQuality): WaterQuality {
     ammonia: api.ammonia,
     salinity: api.salinity ?? '',
     turbidity: api.turbidity ?? '',
+    quality: api.quality,
     notes: api.notes ?? null,
-    tankId: api.tank?.id ?? '',
-    tankName: api.tank?.name ?? '',
-    createdAt: api.createdAt,
-    updatedAt: api.updatedAt,
+    company: api.company ?? { name: null },
+    createdAt: api.createdAt ?? null,
+    updatedAt: api.updatedAt ?? null,
+    tank: api.tank ?? { id: '', name: '', sensor: null },
   };
 }
 
@@ -46,9 +47,8 @@ export function mapCreateWaterQualityToApiPayload(data: CreateWaterQualityData) 
 export function mapApiWaterQualityList(
   apiData: ApiWaterQualityListResponse,
 ): WaterQualityListResponse {
-  const waterQualities: WaterQuality[] = extractListFromPagedApiResponse(apiData).map(
-    mapApiWaterQuality,
-  );
+  const waterQualities: WaterQuality[] =
+    extractListFromPagedApiResponse(apiData).map(mapApiWaterQuality);
   return {
     waterQualities,
     ...getApiPagedListMeta(apiData),

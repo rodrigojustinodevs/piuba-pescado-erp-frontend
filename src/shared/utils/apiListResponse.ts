@@ -8,6 +8,12 @@ export type ApiPagedListEnvelope<T> = {
   response?: ApiListPayload<T>;
   pagination?: {
     total?: number;
+    score?: number;
+    excellent?: number;
+    good?: number;
+    warning?: number;
+    critical?: number;
+    unknown?: number;
     current_page?: number;
     per_page?: number;
   };
@@ -32,11 +38,23 @@ export function normalizeApiListLimit(value: number | undefined): number {
 
 export function getApiPagedListMeta(apiData: ApiPagedListEnvelope<unknown>): {
   total: number;
+  score: number;
+  excellent: number;
+  good: number;
+  warning: number;
+  critical: number;
+  unknown: number;
   page: number;
   limit: number;
 } {
   return {
     total: apiData.pagination?.total ?? 0,
+    score: apiData.pagination?.score ?? 0,
+    excellent: apiData.pagination?.excellent ?? 0,
+    good: apiData.pagination?.good ?? 0,
+    warning: apiData.pagination?.warning ?? 0,
+    critical: apiData.pagination?.critical ?? 0,
+    unknown: apiData.pagination?.unknown ?? 0,
     page: normalizeApiListPage(apiData.pagination?.current_page),
     limit: normalizeApiListLimit(apiData.pagination?.per_page),
   };

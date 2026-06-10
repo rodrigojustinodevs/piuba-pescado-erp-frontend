@@ -17,7 +17,7 @@ export function useUpdateWaterQuality() {
       queryClient.invalidateQueries({ queryKey: ['waterQualities', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['waterQualities', 'detail', data.id] });
       showSuccess('Medição atualizada com sucesso!');
-      router.push('/company/water-qualities');
+      router.refresh();
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar medição. Tente novamente.');

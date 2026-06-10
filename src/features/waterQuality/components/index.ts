@@ -1,5 +1,5 @@
-export { WaterQualityTable } from './WaterQualityTable';
+export { WaterQualityCards } from './WaterQualityCards';
 export { WaterQualitiesListView } from './WaterQualitiesListView';
-export { WaterQualityForm, toDateTimeLocalValue } from './WaterQualityForm';
-export { WaterQualityDetailView } from './WaterQualityDetailView';
+export { WaterQualityDialog } from './WaterQualityDialog';
+export { WaterQualityForm } from './WaterQualityForm';
 export { WaterQualityPageShell } from './WaterQualityPageShell';

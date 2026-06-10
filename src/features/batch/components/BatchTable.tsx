@@ -1,74 +1,59 @@
 'use client';
 
-import type { Batch } from '../types';
-import {
-  DataTable,
-  EditIcon,
-  EyeIcon,
-  SpinnerIcon,
-  TrashIcon,
-  type DataTableColumn,
-} from '@/shared/components/Table';
+import type { Batch, BatchCultivation } from '../types';
+import { DataTable, DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { BatchStatusBadge } from './BatchStatusBadge';
-import { formatDate, formatQuantity, getCultivationLabel } from '../utils/format';
-
-const CELL_TEXT_CLASS = 'text-sm text-slate-600';
-
-type BatchDescriptionCellProps = {
-  description: Batch['description'];
-};
-
-function BatchDescriptionCell({ description }: Readonly<BatchDescriptionCellProps>) {
-  return <div className={CELL_TEXT_CLASS}>{description ?? '—'}</div>;
-}
-
-function renderBatchDescriptionCell(batch: Batch) {
-  return <BatchDescriptionCell description={batch.description} />;
-}
-
+import { formatDate } from '../utils/format';
+import { Badge } from '@/src/shared/components/ui/Badge';
+import { formatNumber } from '@/shared/utils/numberFormat';
 export interface BatchTableProps {
   batches: Batch[];
-  onDelete: (id: string, species: string) => void;
-  isDeleting?: boolean;
+  cultivationLabels: Record<BatchCultivation, string>;
+  getRowActions: (batch: Batch) => DataTableAction[];
 }
 
-export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTableProps) {
+export function BatchTable({
+  batches,
+  cultivationLabels,
+  getRowActions,
+}: Readonly<BatchTableProps>) {
   const columns: Array<DataTableColumn<Batch>> = [
     {
       id: 'name',
       header: 'Nome',
       cell: (batch) => (
-        <div className="text-sm font-medium text-[#0F172A]">{batch.name ?? '—'}</div>
+        <div className="flex flex-col gap-1">
+          <div className="font-medium">{batch.name}</div>
+          <div className="text-xs text-muted-foreground line-clamp-1">{batch.description}</div>
+        </div>
       ),
-    },
-    {
-      id: 'description',
-      header: 'Descrição',
-      cell: renderBatchDescriptionCell,
     },
     {
       id: 'species',
       header: 'Espécie',
-      cell: (batch) => <div className={CELL_TEXT_CLASS}>{batch.species}</div>,
-    },
-    {
-      id: 'tank',
-      header: 'Tanque',
-      cell: (batch) => <div className={CELL_TEXT_CLASS}>{batch.tank?.name ?? '—'}</div>,
-    },
-    {
-      id: 'initialQuantity',
-      header: 'Quantidade Inicial',
-      cell: (batch) => (
-        <div className={CELL_TEXT_CLASS}>{formatQuantity(batch.initialQuantity)}</div>
-      ),
+      cellClassName: 'text-sm',
+      cell: (batch) => {
+        return batch.species;
+      },
     },
     {
       id: 'cultivation',
       header: 'Cultivo',
-      cell: (batch) => (
-        <div className={CELL_TEXT_CLASS}>{getCultivationLabel(batch.cultivation)}</div>
-      ),
+      cell: (batch) => <Badge variant="outline">{cultivationLabels[batch.cultivation]}</Badge>,
+    },
+    {
+      id: 'initialQuantity',
+      header: 'Qtd. Inicial',
+      cell: (batch) => {
+        return formatNumber(batch.initialQuantity);
+      },
+    },
+    {
+      id: 'entryDate',
+      header: 'Data de Entrada',
+      cell: (batch) => {
+        return formatDate(batch.entryDate);
+      },
     },
     {
       id: 'status',
@@ -76,9 +61,12 @@ export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTable
       cell: (batch) => <BatchStatusBadge status={batch.status} />,
     },
     {
-      id: 'entryDate',
-      header: 'Entrada',
-      cell: (batch) => <div className={CELL_TEXT_CLASS}>{formatDate(batch.entryDate)}</div>,
+      id: 'createdAt',
+      header: 'Criado em',
+      cellClassName: 'text-sm text-muted-foreground',
+      cell: (batch) => {
+        return formatDate(batch.createdAt);
+      },
     },
   ];
 
@@ -91,29 +79,7 @@ export function BatchTable({ batches, onDelete, isDeleting = false }: BatchTable
       data={batches}
       columns={columns}
       getRowId={(batch) => batch.id}
-      rowActions={(batch) => [
-        {
-          label: 'Ver detalhes',
-          href: `/company/batches/${batch.id}`,
-          icon: <EyeIcon className="h-4 w-4" />,
-        },
-        {
-          label: 'Editar',
-          href: `/company/batches/${batch.id}/edit`,
-          icon: <EditIcon className="h-4 w-4" />,
-        },
-        {
-          label: 'Excluir',
-          onClick: () => onDelete(batch.id, batch.species),
-          variant: 'danger',
-          disabled: isDeleting,
-          icon: isDeleting ? (
-            <SpinnerIcon className="h-4 w-4 animate-spin" />
-          ) : (
-            <TrashIcon className="h-4 w-4" />
-          ),
-        },
-      ]}
+      rowActions={getRowActions}
     />
   );
 }

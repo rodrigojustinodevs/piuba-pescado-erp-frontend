@@ -4,16 +4,20 @@
 
 import type { ApiListResponse, ApiResponse } from '@/shared/types/api';
 
+export interface TankCompany {
+  id?: string;
+  name: string;
+}
 export interface Tank {
   id: string;
-  companyId: string;
-  tankTypeId: string;
   name: string;
   capacityLiters: number;
   location?: string;
-  status: 'active' | 'inactive';
-  created_at: string;
-  updated_at: string;
+  status: 'active' | 'inactive' | 'maintenance';
+  tankType: TankType;
+  company: TankCompany;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateTankData {
@@ -22,7 +26,7 @@ export interface CreateTankData {
   name: string;
   capacityLiters: number;
   location?: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'maintenance';
 }
 
 export interface UpdateTankData extends Partial<CreateTankData> {
@@ -41,8 +45,11 @@ export interface TankType {
 /**
  * Formato de resposta da API para listagem de tipos
  */
-export type ApiTankTypeListResponse = ApiResponse<TankType[]>;
+export type ApiTankTypeListResponse = ApiResponse<{ tankTypes: TankType[] }>;
 
+export interface TankTypeListResponse {
+  tankTypes: TankType[];
+}
 /**
  * Formato de tanque retornado pela API (camelCase com objetos aninhados)
  */
@@ -51,7 +58,7 @@ export interface ApiTank {
   name: string;
   capacityLiters: number;
   location?: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'maintenance';
   tankType: {
     id: string;
     name: string;
@@ -60,8 +67,8 @@ export interface ApiTank {
     name: string;
     id?: string;
   };
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
@@ -77,4 +84,14 @@ export interface TankListResponse {
   total: number;
   page: number;
   limit: number;
+}
+
+export type TankDialogMode = 'create' | 'edit' | 'view';
+
+export interface TankTableProps {
+  tanks: Tank[];
+  openTankDialog: (mode: TankDialogMode, tank: Tank | null) => void;
+  handleTankDelete: (id: string, name: string) => void;
+  rowActions: (tank: Tank) => DataTableAction[];
+  isDeleting?: boolean;
 }

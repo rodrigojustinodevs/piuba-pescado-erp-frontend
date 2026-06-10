@@ -3,30 +3,64 @@
  */
 
 import type { ApiListResponse } from '@/shared/types/api';
+import type { StatusFilter } from '@/shared/hooks/useListPageState';
+
+export type SensorType = 'ph' | 'temperature' | 'oxygen' | 'ammonia' | 'etc';
+export type SensorStatus = 'online' | 'offline' | 'maintenance';
+export type SensorTypeFilter = 'all' | SensorType;
+
+export const sensorTypeLabels: Record<SensorType, string> = {
+  temperature: 'Temperatura',
+  ph: 'pH',
+  oxygen: 'Oxigênio Dissolvido',
+  ammonia: 'Amônia',
+  etc: 'Outros',
+};
 
 export interface Sensor {
   id: string;
-  sensorType: string;
+  name: string;
+  serialNumber: string;
+  company: {
+    name: string;
+  };
+  sensorType: SensorType;
   installationDate: string;
   status: string;
+  battery: number | null;
   tankId: string;
-  tankName: string;
-  createdAt: string | null;
-  updatedAt: string;
-}
-
-export interface ApiSensor {
-  id: string;
-  sensorType: string;
-  installationDate: string;
-  status: string;
-  tankId?: string;
-  tank?: {
+  lastReading: number | null;
+  unit: string;
+  notes?: string | null;
+  tank: {
     id: string;
     name: string;
   };
   createdAt: string | null;
-  updatedAt: string;
+  updatedAt: string | null;
+}
+
+export interface ApiSensor {
+  id: string;
+  name: string;
+  serialNumber: string;
+  company: {
+    name: string;
+  };
+  sensorType: SensorType;
+  installationDate: string;
+  status: 'online' | 'offline' | 'maintenance';
+  battery: number | null;
+  tankId: string;
+  tank: {
+    id: string;
+    name: string;
+  };
+  lastReading: number | null;
+  unit: string;
+  notes?: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
 
 export type ApiSensorListResponse = ApiListResponse<ApiSensor>;
@@ -39,12 +73,45 @@ export interface SensorListResponse {
 }
 
 export interface CreateSensorData {
-  sensorType: string;
-  installationDate: string;
-  status: string;
+  companyId?: string;
   tankId: string;
+  sensorType: SensorType;
+  name?: string;
+  serialNumber?: string;
+  battery?: number | null;
+  unit?: string;
+  lastReading?: number | null;
+  installationDate: string;
+  status: SensorStatus;
+  notes?: string | null;
 }
 
-export interface UpdateSensorData extends CreateSensorData {
+export interface UpdateSensorData extends Partial<CreateSensorData> {
   id: string;
 }
+
+export type SensorDialogMode = 'create' | 'edit' | 'view';
+
+export type SensorsListViewProps = {
+  page: number;
+  setPage: (next: number) => void;
+  search: string;
+  setSearch: (next: string) => void;
+  filter: StatusFilter;
+  setFilter: (next: StatusFilter) => void;
+  sensorTypeFilter: SensorTypeFilter;
+  setSensorTypeFilter: (next: SensorTypeFilter) => void;
+  sortBy: string;
+  setSortBy: (next: string) => void;
+  data: SensorListResponse | undefined;
+  isLoading: boolean;
+  error: unknown;
+  filteredSensors: Sensor[];
+  stats: {
+    total: number;
+    inactive: number;
+    maintenance: number;
+  };
+  handleDelete: (id: string, label: string) => void;
+  isDeleting: boolean;
+};

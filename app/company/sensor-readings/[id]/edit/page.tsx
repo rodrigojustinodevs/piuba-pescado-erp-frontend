@@ -37,7 +37,7 @@ export default function EditSensorReadingPage() {
   const initialValues = useMemo<CreateSensorReadingFormData | undefined>(() => {
     if (!reading) return undefined;
     return {
-      sensorId: reading.sensorId,
+      sensorId: reading.sensor?.id ?? '',
       value: reading.value,
       unit: reading.unit,
       measuredAt: toDateTimeLocalValue(reading.measuredAt),
@@ -67,7 +67,11 @@ export default function EditSensorReadingPage() {
         breadcrumb="Dashboard / Leituras / Editar"
         title="Leitura"
         subtitle="Atualize os dados da medição"
-        icon={<span className="inline-block text-[#0EA5A4]"><ChartIcon /></span>}
+        icon={
+          <span className="inline-block text-[#0EA5A4]">
+            <ChartIcon />
+          </span>
+        }
       >
         <SensorReadingForm
           initialValues={initialValues}

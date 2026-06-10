@@ -17,10 +17,9 @@ export {
   useDeleteSensor,
 } from './hooks';
 export {
-  SensorTable,
+  SensorCards,
   SensorsListView,
   SensorForm,
-  SensorDetailView,
   SensorPageShell,
 } from './components';
 export { sensorService } from './services/sensorService';
