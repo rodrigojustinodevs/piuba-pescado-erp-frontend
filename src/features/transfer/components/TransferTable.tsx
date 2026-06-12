@@ -43,9 +43,7 @@ const columns: Array<DataTableColumn<Transfer>> = [
   {
     id: 'batchName',
     header: 'Lote',
-    cell: (row) => (
-      <div className="text-sm font-medium text-[#0F172A]">{getBatchLabel(row)}</div>
-    ),
+    cell: (row) => <div className="text-sm font-medium text-[#0F172A]">{getBatchLabel(row)}</div>,
   },
   {
     id: 'movement',
@@ -76,7 +74,9 @@ const columns: Array<DataTableColumn<Transfer>> = [
     cellClassName: 'text-right',
     cell: (row) => (
       <div className="text-sm text-slate-600">
-        {formatNumber((row.quantity * (row.averageWeight ?? 0)) / 1000, { maximumFractionDigits: 2 })}
+        {formatNumber((row.quantity * (row.averageWeight ?? 0)) / 1000, {
+          maximumFractionDigits: 2,
+        })}
       </div>
     ),
   },
@@ -110,6 +110,8 @@ export function TransferTable({ transfers, getRowActions }: Readonly<TransferTab
       columns={columns}
       getRowId={(row) => row.id}
       rowActions={getRowActions}
+      emptyState={<div className="p-8 text-center text-slate-500">Nenhum produto encontrado.</div>}
+      showPagination={false}
     />
   );
 }

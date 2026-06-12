@@ -12,16 +12,24 @@ export const POST = createUpsertHandler<ApiSupplyCreateResponse, CreateSupplyDat
   context: CONTEXT,
   mapBody: (payload) => {
     const category = payload.category?.trim() ? payload.category.trim() : null;
+    const sku = payload.sku?.trim() ? payload.sku.trim() : null;
+    const description = payload.description?.trim() ? payload.description.trim() : null;
     const body = {
-      ...payload,
-      category,
       name: payload.name.trim(),
-      defaultUnit: payload.defaultUnit.trim(),
+      sku,
+      category,
+      unit: payload.defaultUnit.trim(),
+      unit_cost: payload.unitCost,
+      sale_price: payload.salePrice,
+      current_stock: payload.currentStock,
+      min_stock: payload.minStock,
+      supplier_id: payload.supplierId?.trim() || undefined,
+      is_product: payload.isProduct,
+      description,
+      status: 'active',
+      ...(payload.companyId?.trim() ? { companyId: payload.companyId.trim() } : {}),
     };
-    if (body.companyId?.trim()) return body;
-    const { companyId, ...rest } = body;
-    void companyId;
-    return rest;
+    return body;
   },
   mapResponse: (data) => {
     const api = 'response' in data && data.response != null ? data.response : data;

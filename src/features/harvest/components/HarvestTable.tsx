@@ -20,21 +20,6 @@ const TYPE_STYLES: Record<HarvestType, string> = {
   emergency: 'bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30',
 };
 
-function calcRevenue(d: Harvest): number {
-  return d.sizeClassifications.reduce(
-    (acc, c) => acc + (c.quantity * c.averageWeight * c.pricePerKg) / 1000,
-    0,
-  );
-}
-
-function calcBiomass(d: Harvest): number {
-  // kg
-  if (d.sizeClassifications.length > 0) {
-    return d.sizeClassifications.reduce((acc, c) => acc + (c.quantity * c.averageWeight) / 1000, 0);
-  }
-  return (d.harvestedQuantity * d.averageWeight) / 1000;
-}
-
 function calcSurvivalRate(d: Harvest): number {
   if (!d.initialPopulation) return 0;
   return Math.min(100, (d.harvestedQuantity / d.initialPopulation) * 100);
@@ -45,11 +30,6 @@ const fmt = (n: number, opts?: Intl.NumberFormatOptions) =>
 
 const fmtCurrency = (n: number) => fmt(n, { style: 'currency', currency: 'BRL' });
 
-function getBatchLabel(row: Harvest): string {
-  if (row.batchName) return row.batchName;
-  if (row.batchId) return `${row.batchId.slice(0, 8)}…`;
-  return '—';
-}
 function survivalBadge(row: Harvest) {
   const survival = calcSurvivalRate(row);
   return (
@@ -180,6 +160,8 @@ export function HarvestTable({ harvests, getRowActions }: Readonly<HarvestTableP
       columns={columns}
       getRowId={(row) => row.id}
       rowActions={getRowActions}
+      emptyState={<div className="p-8 text-center text-slate-500">Nenhum produto encontrado.</div>}
+      showPagination={false}
     />
   );
 }

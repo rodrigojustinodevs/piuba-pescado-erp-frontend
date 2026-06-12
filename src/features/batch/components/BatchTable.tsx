@@ -80,6 +80,8 @@ export function BatchTable({
       columns={columns}
       getRowId={(batch) => batch.id}
       rowActions={getRowActions}
+      emptyState={<div className="p-8 text-center text-slate-500">Nenhum produto encontrado.</div>}
+      showPagination={false}
     />
   );
 }
