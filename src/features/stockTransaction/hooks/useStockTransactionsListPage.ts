@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { StockTransactionReferenceType } from '../types';
+import type { StockTransactionCatalogStats, StockTransactionReferenceType } from '../types';
 import { useStockTransactions } from './useStockTransactions';
 import { useListPageState } from '@/shared/hooks/useListPageState';
 
@@ -22,6 +22,16 @@ export function useStockTransactionsListPage() {
 
   const transactions = useMemo(() => data?.transactions ?? [], [data?.transactions]);
 
+  const stats = useMemo<StockTransactionCatalogStats>(
+    () => ({
+      total: data?.total ?? 0,
+      entriesCount: transactions.filter((t) => t.direction === 'in').length,
+      exitsCount: transactions.filter((t) => t.direction === 'out').length,
+      totalValue: transactions.reduce((acc, t) => acc + t.totalCost, 0),
+    }),
+    [data?.total, transactions],
+  );
+
   return {
     page,
     setPage,
@@ -33,6 +43,7 @@ export function useStockTransactionsListPage() {
     isLoading,
     error,
     transactions,
+    stats,
     limit: data?.limit ?? PER_PAGE,
     total: data?.total ?? 0,
   };

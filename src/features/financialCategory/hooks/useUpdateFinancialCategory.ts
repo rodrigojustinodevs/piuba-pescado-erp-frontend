@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { UpdateFinancialCategoryData } from '../types';
 import { financialCategoryService } from '../services/financialCategoryService';
 
-export function useUpdateFinancialCategory() {
+type Options = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateFinancialCategory({ skipNavigateToList = false }: Options = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,7 @@ export function useUpdateFinancialCategory() {
       queryClient.invalidateQueries({ queryKey: ['financial-categories', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['financial-categories', 'detail', data.id] });
       showSuccess('Categoria financeira atualizada com sucesso!');
-      router.push('/company/financial-categories');
+      if (!skipNavigateToList) router.push('/company/financial-categories');
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar categoria financeira. Tente novamente.');

@@ -13,6 +13,7 @@ export const financialCategoryStatusSchema = z.enum(financialCategoryStatusValue
 export const createFinancialCategoryFormSchema = z.object({
   companyId: z.string().optional(),
   name: z.string().min(1, 'Nome é obrigatório'),
+  notes: z.string().optional(),
   type: financialCategoryTypeSchema,
   status: financialCategoryStatusSchema,
 });

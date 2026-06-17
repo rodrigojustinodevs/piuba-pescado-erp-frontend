@@ -53,9 +53,9 @@ export function FeedingForm({
     limit: 1000,
   });
   const { data: stocksData, isLoading: isLoadingStocks } = useFeedingStocks(true);
-  const stockOptions = (stocksData?.stocks ?? []).map((stock) => ({
-    value: stock.id,
-    label: stock.unit?.trim() ? `${stock.supplyName} (${stock.unit})` : stock.supplyName,
+  const stockOptions = (stocksData?.supplies ?? []).map((supply) => ({
+    value: supply.id,
+    label: supply.defaultUnit?.trim() ? `${supply.name} (${supply.defaultUnit})` : supply.name,
   }));
 
   const feedTypeOptions = useMemo(() => {

@@ -18,12 +18,14 @@ function mapDetailResponse(data: ApiPurchaseReceiveEnvelope): Purchase {
   return mapApiPurchase(api as ApiPurchase);
 }
 
-const handler = withErrorHandling(async function PATCH(_req: Request, routeContext: ParamsContext) {
+const handler = withErrorHandling(async function PATCH(req: Request, routeContext: ParamsContext) {
   const params = await routeContext.params;
+  const body = await req.json().catch(() => undefined);
   const data = await serverHttpClient.request<ApiPurchaseReceiveEnvelope>(
     `/api/company/purchase/${params.id}/receive`,
     {
       method: 'PATCH',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     },
   );
 

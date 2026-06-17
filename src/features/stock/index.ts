@@ -1,19 +1,34 @@
 export type {
-  Stock,
-  ApiStock,
+  StockLocation,
+  ApiStockLocation,
   ApiStockListResponse,
   StockListResponse,
-  CreateStockData,
-  UpdateStockData,
-  UpdateStockPayload,
-  AdjustStockPayload,
+  CreateStockLocationData,
+  UpdateStockLocationData,
+  CreateMovementData,
+  StockLocationStatus,
+  StockLocationType,
+  StockCatalogStats,
+  StockDialogMode,
+  StockMovementType,
 } from './types';
-export { mapApiStockList, mapApiStock } from './utils/apiMapper';
-export { adjustStockFormSchema, createStockFormSchema, updateStockFormSchema } from './schemas';
+export {
+  STOCK_LOCATION_TYPE_LABELS,
+  STOCK_LOCATION_STATUS_LABELS,
+} from './types';
+export { mapApiStockList, mapApiStockLocation } from './utils/apiMapper';
+export {
+  createStockFormSchema,
+  updateStockFormSchema,
+  movementFormSchema,
+  movementTypeOptions,
+  stockLocationTypeOptions,
+  stockLocationStatusOptions,
+} from './schemas';
 export type {
-  AdjustStockFormData,
   CreateStockFormData,
   UpdateStockFormData,
+  MovementFormData,
 } from './schemas';
 export { stockService } from './services/stockService';
 export {
@@ -23,13 +38,13 @@ export {
   useStock,
   useUpdateStock,
   useDeleteStock,
-  useAdjustStock,
+  useRegisterStockMovement,
 } from './hooks';
 export {
   StockTable,
   StocksListView,
   StockForm,
-  StockEditForm,
-  StockAdjustModal,
-  StockDetailView,
+  StockDialog,
+  StockViewDialogContent,
+  StockCatalogStatsCards,
 } from './components';

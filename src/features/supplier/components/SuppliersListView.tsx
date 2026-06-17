@@ -1,10 +1,32 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { Supplier, SupplierListResponse } from '../types';
+import { useCallback, useState } from 'react';
+import type { Supplier, SupplierListResponse, SupplierDialogMode } from '../types';
+import { CATEGORY_LABELS } from '../types';
+import type { SupplierStatusFilter } from '../hooks/useSuppliersListPage';
 import { SupplierTable } from './SupplierTable';
-import { ListHeader, ListPageShell, SearchField, SortButton } from '@/shared/components/list';
-import { BuildingIcon } from '@/shared/components/Sidebar/menuIcons';
+import { SupplierDialog } from './SupplierDialog';
+import { Button } from '@/shared/components/ui/Button';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
+import { Eye, Pencil, Plus, Trash } from 'lucide-react';
+import { SearchField } from '@/shared/components/list';
+import { Pagination } from '@/shared/components/list/Pagination';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+
+const STATUS_TAB_LABELS: Record<SupplierStatusFilter, string> = {
+  all: 'Todos',
+  active: 'Ativos',
+  inactive: 'Inativos',
+  suspended: 'Suspensos',
+};
+
+const SORT_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: 'name', label: 'Nome' },
+  { value: 'category', label: 'Categoria' },
+  { value: 'city', label: 'Cidade' },
+  { value: 'rating', label: 'Avaliação' },
+  { value: 'totalPurchases', label: 'Total comprado' },
+];
 
 export type SuppliersListViewProps = {
   page: number;
@@ -13,10 +35,15 @@ export type SuppliersListViewProps = {
   setSearch: (next: string) => void;
   sortBy: string;
   setSortBy: (next: string) => void;
+  statusFilter: SupplierStatusFilter;
+  setStatusFilter: (next: SupplierStatusFilter) => void;
+  categoryFilter: string;
+  setCategoryFilter: (next: string) => void;
   data: SupplierListResponse | undefined;
   isLoading: boolean;
   error: unknown;
   suppliers: Supplier[];
+  statusCounts: Record<SupplierStatusFilter, number>;
   handleDelete: (id: string, label: string) => void;
   isDeleting: boolean;
 };
@@ -28,57 +55,167 @@ export function SuppliersListView({
   setSearch,
   sortBy,
   setSortBy,
-  data,
+  statusFilter,
+  setStatusFilter,
+  categoryFilter,
+  setCategoryFilter,
   isLoading,
   error,
   suppliers,
+  statusCounts,
   handleDelete,
-  isDeleting,
 }: Readonly<SuppliersListViewProps>) {
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<SupplierDialogMode>('create');
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+  const [perPage] = useState(10);
+
+  const openDialog = useCallback((mode: SupplierDialogMode, supplier: Supplier | null = null) => {
+    setDialogMode(mode);
+    setSelectedSupplier(supplier);
+    setDialogOpen(true);
+  }, []);
+
+  const getRowActions = useCallback(
+    (row: Supplier) => [
+      {
+        label: 'Ver detalhes',
+        onClick: () => openDialog('view', row),
+        icon: <Eye className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        onClick: () => openDialog('edit', row),
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: 'Excluir',
+        onClick: () => handleDelete(row.id, row.name),
+        icon: <Trash className="h-4 w-4" />,
+      },
+    ],
+    [handleDelete, openDialog],
+  );
+
+  const total = suppliers.length;
+  const pagedSuppliers = suppliers.slice((page - 1) * perPage, page * perPage);
+
+  const renderContent = () => {
+    return (
+      <>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-16 text-red-500 text-sm">
+            Erro ao carregar fornecedores.
+          </div>
+        ) : suppliers.length === 0 ? (
+          <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
+            Nenhum fornecedor encontrado.
+          </div>
+        ) : (
+          <SupplierTable suppliers={pagedSuppliers} getRowActions={getRowActions} />
+        )}
+
+        {!isLoading && !error && suppliers.length > 0 && (
+          <Pagination
+            page={page}
+            limit={perPage}
+            total={total}
+            itemLabelPlural="fornecedores"
+            onPageChange={setPage}
+          />
+        )}
+      </>
+    );
+  };
 
   return (
-    <ListPageShell
-      listHeader={
-        <ListHeader
-          icon={<BuildingIcon />}
-          title="Fornecedores"
-          subtitle="Relação de fornecedores da empresa"
-          ctaHref="/company/suppliers/create"
-          ctaLabel="Novo fornecedor"
-        />
-      }
-      toolbar={
-        <section className="flex flex-wrap items-center gap-3">
-          <SearchField
-            value={search}
-            placeholder="Buscar por nome, contato ou e-mail..."
-            onChange={setSearch}
-          />
-          <SortButton current={sortBy} onSort={handleSort} value="name" label="Nome" />
-        </section>
-      }
-      total={data?.total ?? 0}
-      totalLabelSingular="fornecedor encontrado"
-      totalLabelPlural="fornecedores encontrados"
-      isLoading={isLoading}
-      error={error}
-      errorMessage="Erro ao carregar fornecedores."
-      isEmpty={!isLoading && !error && suppliers.length === 0}
-      emptyMessage="Nenhum fornecedor encontrado."
-      pagination={
-        data
-          ? {
-              page,
-              limit: data.limit,
-              total: data.total,
-              itemLabelPlural: 'fornecedores',
-              onPageChange: setPage,
-            }
-          : null
-      }
-    >
-      <SupplierTable suppliers={suppliers} onDelete={handleDelete} isDeleting={isDeleting} />
-    </ListPageShell>
+    <div className="space-y-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Fornecedores</h1>
+          <p className="mt-1 text-sm text-slate-500">Relação de fornecedores da empresa.</p>
+        </div>
+        <Button className="gap-2 shrink-0" onClick={() => openDialog('create')}>
+          <Plus className="h-4 w-4" />
+          Novo Fornecedor
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader className="flex-row justify-between px-5 py-4">
+          <CardTitle className="text-base">Lista de Fornecedores</CardTitle>
+          <Tabs
+            value={statusFilter}
+            onValueChange={(v) => {
+              setStatusFilter(v as SupplierStatusFilter);
+              setPage(1);
+            }}
+          >
+            <TabsList>
+              {(Object.keys(STATUS_TAB_LABELS) as SupplierStatusFilter[]).map((key) => (
+                <TabsTrigger key={key} value={key}>
+                  {STATUS_TAB_LABELS[key]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="relative flex-1">
+              <SearchField
+                search={search}
+                setSearch={setSearch}
+                setCurrentPage={setPage}
+                placeholder="Buscar por nome, documento ou e-mail..."
+              />
+            </div>
+            <select
+              value={categoryFilter}
+              onChange={(e) => {
+                setCategoryFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
+            >
+              <option value="">Todas as categorias</option>
+              {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  Ordenar por: {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            {renderContent()}
+          </main>
+        </CardContent>
+      </Card>
+
+      <SupplierDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedSupplier(null);
+          setDialogOpen(open);
+        }}
+        mode={dialogMode}
+        supplier={selectedSupplier}
+        onSuccess={() => setDialogOpen(false)}
+      />
+    </div>
   );
 }

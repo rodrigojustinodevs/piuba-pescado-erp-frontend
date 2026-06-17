@@ -85,7 +85,7 @@ export function PurchaseDetailView({
   ];
   const metricCards = [
     { label: 'Fornecedor', value: purchase.supplierName || '—' },
-    { label: 'Data da compra', value: formatPurchaseDate(purchase.purchaseDate) },
+    { label: 'Data da compra', value: formatPurchaseDate(purchase.orderDate) },
     { label: 'Status', value: getPurchaseStatusLabel(purchase.status) },
     { label: 'Total', value: formatPurchaseMoney(purchase.totalPrice) },
   ];
@@ -107,7 +107,7 @@ export function PurchaseDetailView({
         title={titleLabel}
         subtitle={
           <>
-            Fornecedor: {purchase.supplierName || '—'} · Data: {formatPurchaseDate(purchase.purchaseDate)}
+            Fornecedor: {purchase.supplierName || '—'} · Data: {formatPurchaseDate(purchase.orderDate)}
           </>
         }
         editHref={`/company/purchases/${purchase.id}/edit`}

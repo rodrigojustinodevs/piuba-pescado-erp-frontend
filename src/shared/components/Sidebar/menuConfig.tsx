@@ -130,7 +130,6 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Financeiro',
     icon: CircleDollarSign,
     allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
     children: childrenAllCompanyAdminManager(financeiroSubmenuItems),
   },
   {

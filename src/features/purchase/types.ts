@@ -4,6 +4,92 @@
 
 import type { ApiPagination } from '@/shared/types/api';
 
+export type PurchaseStatus =
+  | 'draft'
+  | 'submitted'
+  | 'approved'
+  | 'partially_received'
+  | 'received'
+  | 'cancelled';
+
+export type PurchasePaymentStatus = 'pending' | 'partial' | 'paid';
+
+export type PurchasePaymentMethod =
+  | 'bank_slip'
+  | 'pix'
+  | 'bank_transfer'
+  | 'credit_card'
+  | 'cash'
+  | 'net_terms';
+
+export const STATUS_LABELS: Record<PurchaseStatus, string> = {
+  draft: 'Rascunho',
+  submitted: 'Enviada',
+  approved: 'Aprovada',
+  partially_received: 'Recebimento Parcial',
+  received: 'Recebida',
+  cancelled: 'Cancelada',
+};
+
+export const PAYMENT_STATUS_LABELS: Record<PurchasePaymentStatus, string> = {
+  pending: 'Pendente',
+  partial: 'Parcial',
+  paid: 'Pago',
+};
+
+export const PAYMENT_METHOD_LABELS: Record<PurchasePaymentMethod, string> = {
+  bank_slip: 'Boleto',
+  pix: 'PIX',
+  bank_transfer: 'Transferência',
+  credit_card: 'Cartão',
+  cash: 'Dinheiro',
+  net_terms: 'A Prazo',
+};
+export interface ApiPurchasePayment {
+  id: string;
+  purchaseId: string;
+  amount: number;
+  paymentDate: string;
+  paymentMethod: string;
+  reference: string | null;
+  notes: string | null;
+  createdAt: string;
+}
+
+export interface PurchasePayment {
+  id: string;
+  purchaseId: string;
+  amount: number;
+  paymentDate: string;
+  paymentMethod: string;
+  reference: string | null;
+  notes: string | null;
+  createdAt: string;
+}
+
+export interface PurchasePaymentSummary {
+  id: string;
+  code: string;
+  totalAmount: number;
+  totalPaid: number;
+  balance: number;
+  progress: number;
+  paymentStatus: string;
+}
+
+export interface PurchasePaymentsResponse {
+  summary: PurchasePaymentSummary;
+  payments: PurchasePayment[];
+}
+
+export interface CreatePaymentData {
+  payment_date: string;
+  amount: number;
+  payment_method: string;
+  reference?: string;
+  notes?: string;
+}
+
 export interface ApiPurchaseItem {
   id: string;
   supplyId: string;
@@ -12,17 +98,30 @@ export interface ApiPurchaseItem {
   unit: string;
   unitPrice: number;
   totalPrice: number;
+  receivedQuantity?: number;
 }
 
 export interface ApiPurchase {
   id: string;
+  code: string;
   companyId: string;
   supplierId: string;
   invoiceNumber: string | null;
   totalPrice: number;
+  freight: number;
+  otherCosts: number;
   status: string;
-  purchaseDate: string;
-  receivedAt: string | null;
+  statusLabel: string;
+  paymentStatus: string;
+  paymentStatusLabel: string;
+  paymentMethod: string | null;
+  paymentMethodLabel: string | null;
+  orderDate: string;
+  expectedDate: string | null;
+  receivedDate: string | null;
+  notes: string | null;
+  responsible: string | null;
+  paidAmount?: number;
   createdAt: string;
   updatedAt: string;
   company?: { id: string; name: string };
@@ -45,17 +144,27 @@ export interface PurchaseItem {
   unit: string;
   unitPrice: number;
   totalPrice: number;
+  receivedQuantity: number;
 }
 
 export interface Purchase {
   id: string;
+  referenceCode: string;
   companyId: string;
   supplierId: string;
   invoiceNumber: string | null;
   totalPrice: number;
+  freightCost: number;
+  otherCosts: number;
   status: string;
-  purchaseDate: string;
+  paymentStatus: string;
+  paymentMethod: string | null;
+  orderDate: string;
+  expectedDeliveryDate: string | null;
   receivedAt: string | null;
+  notes: string | null;
+  responsibleName: string | null;
+  paidAmount: number;
   createdAt: string;
   updatedAt: string;
   companyName: string;
@@ -77,6 +186,7 @@ export interface CreatePurchaseItemData {
   unit: string;
   unitPrice: number;
   totalPrice: number;
+  discount?: number;
 }
 
 /** Corpo de criação (sem total geral — calculado no backend) */
@@ -84,9 +194,17 @@ export interface CreatePurchaseData {
   companyId: string;
   supplierId: string;
   invoiceNumber: string | null;
-  purchaseDate: string;
+  orderDate: string;
   status: string;
+  paymentStatus?: string;
   items: CreatePurchaseItemData[];
+  referenceCode?: string;
+  responsibleName?: string;
+  paymentMethod?: string;
+  expectedDeliveryDate?: string | null;
+  freightCost?: number;
+  otherCosts?: number;
+  notes?: string;
 }
 
 export interface UpdatePurchaseData extends CreatePurchaseData {
@@ -110,12 +228,16 @@ export type ApiNamedListResponse = {
 export interface SupplierOption {
   id: string;
   name: string;
+  document?: string;
 }
 
 export interface SupplyOption {
   id: string;
   name: string;
   unit: string;
+  unitCost?: number;
+  sku?: string;
+  category?: string | null;
 }
 
 export interface SupplierListResponse {
@@ -131,4 +253,12 @@ export interface SupplyListResponse {
   page: number;
   limit: number;
 }
- 
+
+export type PurchaseDialogMode = 'create' | 'edit' | 'view';
+
+export interface PurchaseCatalogStats {
+  totalPurchases: number;
+  pendingCount: number;
+  totalValue: number;
+  receivedCount: number;
+}

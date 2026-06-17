@@ -4,13 +4,27 @@ export type {
   ApiPurchase,
   ApiPurchaseItem,
   ApiPurchaseListResponse,
+  ApiPurchasePayment,
   PurchaseListResponse,
+  PurchasePayment,
   CreatePurchaseData,
   CreatePurchaseItemData,
+  CreatePaymentData,
   UpdatePurchaseData,
+  PurchaseDialogMode,
+  PurchaseCatalogStats,
 } from './types';
-export { createPurchaseFormSchema, createPurchaseSchema } from './schemas';
-export type { CreatePurchaseFormData } from './schemas';
+export {
+  createPurchaseFormSchema,
+  createPurchaseSchema,
+  receivePurchaseSchema,
+  registerPaymentSchema,
+} from './schemas';
+export type {
+  CreatePurchaseFormData,
+  ReceivePurchaseFormData,
+  RegisterPaymentFormData,
+} from './schemas';
 export {
   usePurchases,
   usePurchasesListPage,
@@ -23,8 +37,21 @@ export {
   useDeletePurchase,
   useReceivePurchase,
   useCancelPurchase,
+  useReceivePurchaseItems,
+  useRegisterPurchasePayment,
+  usePurchasePayments,
 } from './hooks';
-export { PurchaseTable, PurchasesListView, PurchaseForm, PurchaseDetailView } from './components';
+export {
+  PurchaseTable,
+  PurchasesListView,
+  PurchaseForm,
+  PurchaseDetailView,
+  PurchaseDialog,
+  PurchaseViewDialogContent,
+  PurchaseCatalogStatsCards,
+  PurchaseReceiveDialog,
+  PurchasePaymentDialog,
+} from './components';
 export { purchaseService } from './services/purchaseService';
 export { purchaseLookupService } from './services/purchaseLookupService';
 export { getPurchaseStatusLabel } from './utils/purchaseStatusLabels';

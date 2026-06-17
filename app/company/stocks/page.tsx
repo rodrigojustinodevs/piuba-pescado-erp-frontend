@@ -8,18 +8,7 @@ export default function StocksPage() {
 
   return (
     <DashboardLayout>
-      <StocksListView
-        {...state}
-        isAdjusting={state.adjustStock.isPending}
-        onConfirmAdjust={(id, payload) => {
-          state.adjustStock.mutate(
-            { id, payload },
-            {
-              onSuccess: () => state.closeAdjust(),
-            },
-          );
-        }}
-      />
+      <StocksListView {...state} />
     </DashboardLayout>
   );
 }

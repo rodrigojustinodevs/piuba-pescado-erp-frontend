@@ -1,10 +1,12 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import type { FinancialCategoryStatusStrict, FinancialCategoryTypeStrict } from '../types';
+import type {
+  FinancialCategoryCatalogStats,
+  FinancialCategoryStatusStrict,
+  FinancialCategoryTypeStrict,
+} from '../types';
 import { useFinancialCategories } from './useFinancialCategories';
-import { useActivateFinancialCategory } from './useActivateFinancialCategory';
-import { useDeactivateFinancialCategory } from './useDeactivateFinancialCategory';
 import { useDeleteFinancialCategory } from './useDeleteFinancialCategory';
 import { useAlertModal } from '@/shared/components/AlertModal';
 import { useListPageState } from '@/shared/hooks/useListPageState';
@@ -15,14 +17,12 @@ type StatusFilter = FinancialCategoryStatusStrict | 'all';
 
 export function useFinancialCategoriesListPage() {
   const listState = useListPageState({ initialSortBy: 'name' });
-  const { page, setPage, sortBy, setSortBy } = listState;
+  const { page, setPage, search, setSearch, sortBy, setSortBy } = listState;
 
   const [type, setType] = useState<TypeFilter>('all');
   const [status, setStatus] = useState<StatusFilter>('all');
 
   const deleteCategory = useDeleteFinancialCategory();
-  const activateCategory = useActivateFinancialCategory();
-  const deactivateCategory = useDeactivateFinancialCategory();
   const { showError } = useAlertModal();
 
   const { data, isLoading, error } = useFinancialCategories({
@@ -33,7 +33,17 @@ export function useFinancialCategoriesListPage() {
   });
 
   const financialCategories = useMemo(() => {
-    const rows = [...(data?.financialCategories ?? [])];
+    let rows = [...(data?.financialCategories ?? [])];
+
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      rows = rows.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          (c.notes ?? '').toLowerCase().includes(q),
+      );
+    }
+
     if (sortBy === 'type') {
       return rows.sort((a, b) => (a.typeLabel || '').localeCompare(b.typeLabel || '', 'pt-BR'));
     }
@@ -41,7 +51,16 @@ export function useFinancialCategoriesListPage() {
       return rows.sort((a, b) => (a.statusLabel || '').localeCompare(b.statusLabel || '', 'pt-BR'));
     }
     return rows.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'pt-BR'));
-  }, [data?.financialCategories, sortBy]);
+  }, [data?.financialCategories, search, sortBy]);
+
+  const stats = useMemo<FinancialCategoryCatalogStats>(() => {
+    const all = data?.financialCategories ?? [];
+    return {
+      total: data?.total ?? 0,
+      revenueCount: all.filter((c) => c.type === 'revenue' || c.type === 'income').length,
+      expenseCount: all.filter((c) => c.type === 'expense').length,
+    };
+  }, [data]);
 
   const handleDeleteCategory = useCallback(
     (targetId: string, label: string) => {
@@ -55,33 +74,11 @@ export function useFinancialCategoriesListPage() {
     [showError, deleteCategory],
   );
 
-  const handleActivateCategory = useCallback(
-    (targetId: string, label: string) => {
-      showError(
-        'Confirmar ativação',
-        `Deseja ativar a categoria "${label}"?`,
-        'Sim, ativar',
-        () => activateCategory.mutate(targetId),
-      );
-    },
-    [showError, activateCategory],
-  );
-
-  const handleDeactivateCategory = useCallback(
-    (targetId: string, label: string) => {
-      showError(
-        'Confirmar inativação',
-        `Deseja inativar a categoria "${label}"?`,
-        'Sim, inativar',
-        () => deactivateCategory.mutate(targetId),
-      );
-    },
-    [showError, deactivateCategory],
-  );
-
   return {
     page,
     setPage,
+    search,
+    setSearch,
     sortBy,
     setSortBy,
     type,
@@ -92,13 +89,10 @@ export function useFinancialCategoriesListPage() {
     isLoading,
     error,
     financialCategories,
+    stats,
     limit: data?.limit ?? PER_PAGE,
     total: data?.total ?? 0,
     onDeleteCategory: handleDeleteCategory,
     isDeletingCategory: deleteCategory.isPending,
-    onActivateCategory: handleActivateCategory,
-    isActivatingCategory: activateCategory.isPending,
-    onDeactivateCategory: handleDeactivateCategory,
-    isDeactivatingCategory: deactivateCategory.isPending,
   };
 }

@@ -1,109 +1,109 @@
 'use client';
 
-import type { Stock } from '../types';
-import {
-  AdjustIcon,
-  DataTable,
-  EyeIcon,
-  EditIcon,
-  SpinnerIcon,
-  TrashIcon,
-  type DataTableAction,
-  type DataTableColumn,
-} from '@/shared/components/Table';
+import type { StockLocation } from '../types';
+import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
+import { Progress } from '@/src/shared/components/ui/Progress';
+import { Warehouse, MapPin } from 'lucide-react';
 
-function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value.replace(' ', 'T'));
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
-  }
+type StockTableProps = {
+  stocks: StockLocation[];
+  getRowActions?: (row: StockLocation) => DataTableAction[];
+};
+
+function OccupancyCell({
+  currentQuantity,
+  capacity,
+}: {
+  currentQuantity: number;
+  capacity: number | null;
+}) {
+  const hasCapacity = capacity != null && capacity > 0;
+  const pct = hasCapacity ? Math.min(100, (currentQuantity / capacity) * 100) : 0;
+
+  return (
+    <div className="space-y-1 min-w-[140px]">
+      <div className="text-xs text-muted-foreground">
+        {currentQuantity} / {capacity}
+      </div>
+      <Progress value={pct} className="h-1.5" />
+    </div>
+  );
 }
 
-function formatMoney(value: number): string {
-  if (!Number.isFinite(value)) return '—';
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
-
-interface StockTableProps {
-  stocks: Stock[];
-  onDelete?: (id: string, label: string) => void;
-  isDeleting?: boolean;
-  onAdjust?: (id: string, label: string) => void;
-  isAdjusting?: boolean;
-}
-
-function getRowLabel(row: Stock): string {
-  return row.supplyName || 'Estoque';
-}
-
-export function StockTable({
-  stocks,
-  onDelete,
-  isDeleting = false,
-  onAdjust,
-  isAdjusting = false,
-}: Readonly<StockTableProps>) {
-  const columns: Array<DataTableColumn<Stock>> = [
+export function StockTable({ stocks, getRowActions }: Readonly<StockTableProps>) {
+  const columns: Array<DataTableColumn<StockLocation>> = [
     {
-      id: 'supplyName',
-      header: 'Insumo',
-      cell: (row) => <div className="text-sm font-medium text-[#0F172A]">{row.supplyName || '—'}</div>,
-    },
-    {
-      id: 'supplierName',
-      header: 'Fornecedor',
-      cell: (row) => <div className="text-sm text-slate-600">{row.supplierName || '—'}</div>,
-    },
-    {
-      id: 'currentQuantity',
-      header: 'Qtd. atual',
+      id: 'code',
+      header: 'Código',
       cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">
-          {row.currentQuantity} {row.unit}
+        <span className="font-mono text-sm text-slate-600 whitespace-nowrap">{row.code}</span>
+      ),
+    },
+    {
+      id: 'name',
+      header: 'Nome',
+      cell: (row) => (
+        <div className="flex items-center gap-2.5 min-w-40">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-teal-50">
+            <Warehouse className="h-4 w-4 text-teal-600" />
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-slate-900">{row.name}</div>
+            <div className="flex items-center gap-1 mt-0.5">
+              <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+              <span className="text-xs text-slate-400 truncate max-w-45">{row.location}</span>
+            </div>
+          </div>
         </div>
       ),
     },
     {
-      id: 'minimumStock',
-      header: 'Estoque mínimo',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">
-          {row.minimumStock} {row.unit}
-        </div>
-      ),
+      id: 'type',
+      header: 'Tipo',
+      cell: (row) => <span className="text-sm text-slate-600">{row.typeLabel}</span>,
     },
     {
-      id: 'unitPrice',
-      header: 'Preço unitário',
-      cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.unitPrice)}</div>,
-    },
-    {
-      id: 'status',
-      header: 'Status',
+      id: 'responsible',
+      header: 'Responsável',
       cell: (row) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-            row.isBelowMinimum ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'
-          }`}
-        >
-          {row.isBelowMinimum ? 'Abaixo do mínimo' : 'Adequado'}
+        <span className="text-sm text-slate-600">
+          {row.responsible ?? <span className="text-slate-400">—</span>}
         </span>
       ),
     },
     {
-      id: 'updatedAt',
-      header: 'Atualizado em',
-      cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+      id: 'occupancy',
+      header: 'Ocupação',
+      cell: (row) => (
+        <OccupancyCell currentQuantity={row.currentQuantity} capacity={row.capacity} />
+      ),
+    },
+    {
+      id: 'totalValue',
+      header: 'Valor',
+      cell: (row) => (
+        <span className="text-sm text-slate-700 tabular-nums whitespace-nowrap">
+          {row.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </span>
+      ),
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      cell: (row) => {
+        const isActive = row.status === 'active';
+        return (
+          <span
+            className={
+              isActive
+                ? 'inline-flex items-center rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-medium text-white'
+                : 'inline-flex items-center rounded-full border border-slate-300 bg-white px-2.5 py-0.5 text-xs font-medium text-slate-500'
+            }
+          >
+            {isActive ? 'Ativo' : 'Inativo'}
+          </span>
+        );
+      },
     },
   ];
 
@@ -112,50 +112,13 @@ export function StockTable({
       data={stocks}
       columns={columns}
       getRowId={(row) => row.id}
-      rowActions={(row): DataTableAction[] => {
-        const actions: DataTableAction[] = [
-          {
-            label: 'Ver detalhes',
-            href: `/company/stocks/${row.id}`,
-            icon: <EyeIcon className="h-4 w-4" />,
-          },
-          {
-            label: 'Editar',
-            href: `/company/stocks/${row.id}/edit`,
-            icon: <EditIcon className="h-4 w-4" />,
-          },
-        ];
-
-        if (onAdjust) {
-          actions.push({
-            label: 'Ajustar',
-            onClick: () => onAdjust(row.id, getRowLabel(row)),
-            disabled: isAdjusting,
-            icon: isAdjusting ? (
-              <SpinnerIcon className="h-4 w-4 animate-spin" />
-            ) : (
-              <AdjustIcon className="h-4 w-4" />
-            ),
-          });
-        }
-
-        if (!onDelete) return actions;
-
-        actions.push({
-          label: 'Excluir',
-          onClick: () => onDelete(row.id, getRowLabel(row)),
-          variant: 'danger',
-          disabled: isDeleting,
-          icon: isDeleting ? (
-            <SpinnerIcon className="h-4 w-4 animate-spin" />
-          ) : (
-            <TrashIcon className="h-4 w-4" />
-          ),
-        });
-
-        return actions;
-      }}
-      emptyState={<div className="p-8 text-center text-slate-500">Nenhum estoque encontrado.</div>}
+      rowActions={getRowActions}
+      emptyState={
+        <div className="p-8 text-center text-slate-500">
+          Nenhum local de armazenamento encontrado.
+        </div>
+      }
+      showPagination={false}
     />
   );
 }

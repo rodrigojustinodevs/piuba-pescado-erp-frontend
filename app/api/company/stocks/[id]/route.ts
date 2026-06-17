@@ -1,5 +1,5 @@
-import type { ApiStock, Stock, UpdateStockData } from '@/features/stock/types';
-import { mapApiStock } from '@/features/stock/utils/apiMapper';
+import type { ApiStockLocation, StockLocation, UpdateStockLocationData } from '@/features/stock/types';
+import { mapApiStockLocation } from '@/features/stock/utils/apiMapper';
 import {
   createDeleteHandler,
   createDetailGetHandler,
@@ -8,32 +8,31 @@ import {
 
 const CONTEXT = 'Stocks API Proxy';
 
-type ApiStockDetailEnvelope = { response?: ApiStock } | ApiStock;
+type ApiStockDetailEnvelope = { response?: ApiStockLocation } | ApiStockLocation;
 
-function mapDetailResponse(data: ApiStockDetailEnvelope): Stock {
+function mapDetailResponse(data: ApiStockDetailEnvelope): StockLocation {
   const api = 'response' in data && data.response != null ? data.response : data;
-  return mapApiStock(api as ApiStock);
+  return mapApiStockLocation(api as ApiStockLocation);
 }
 
-function mapUpdateBody(payload: UpdateStockData) {
-  const { id, unit, supplierId, unitPrice, minimumStock, withdrawalQuantity } = payload;
+function mapUpdateBody(payload: UpdateStockLocationData) {
+  const { id, companyId, ...rest } = payload;
   void id;
+  void companyId;
   return {
-    unit,
-    unitPrice,
-    minimumStock,
-    withdrawalQuantity,
-    supplierId: supplierId === '' || supplierId == null ? null : supplierId,
+    ...rest,
+    responsible: rest.responsible || null,
+    notes: rest.notes || null,
   };
 }
 
-export const GET = createDetailGetHandler<ApiStockDetailEnvelope, Stock, { id: string }>({
+export const GET = createDetailGetHandler<ApiStockDetailEnvelope, StockLocation, { id: string }>({
   backendPathBuilder: (params) => `/api/company/stock/${params.id}`,
   context: CONTEXT,
   mapResponse: mapDetailResponse,
 });
 
-export const PUT = createPutHandler<ApiStockDetailEnvelope, UpdateStockData, { id: string }>({
+export const PUT = createPutHandler<ApiStockDetailEnvelope, UpdateStockLocationData, { id: string }>({
   backendPathBuilder: (params) => `/api/company/stock/${params.id}`,
   context: CONTEXT,
   mapBody: mapUpdateBody,

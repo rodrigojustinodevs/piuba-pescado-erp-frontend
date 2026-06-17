@@ -1,12 +1,22 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { Stock, StockListResponse } from '../types';
+import { useState, useCallback } from 'react';
+import type {
+  StockLocation,
+  StockListResponse,
+  StockDialogMode,
+  StockCatalogStats,
+} from '../types';
 import { StockTable } from './StockTable';
-import { StockAdjustModal } from './StockAdjustModal';
-import { ListHeader, ListPageShell, SearchField, SortButton } from '@/shared/components/list';
-import { ProductsIcon } from '@/shared/components/Sidebar/menuIcons';
-import type { AdjustStockPayload } from '../types';
+import { StockDialog } from './StockDialog';
+import { StockCatalogStatsCards } from './StockCatalogStats';
+import { Button } from '@/shared/components/ui/Button';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
+import { Eye, Pencil, Plus, Trash } from 'lucide-react';
+import { SearchField } from '@/shared/components/list';
+import { Pagination } from '@/shared/components/list/Pagination';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { stockLocationTypeOptions } from '../schemas';
 
 export type StocksListViewProps = {
   page: number;
@@ -15,17 +25,17 @@ export type StocksListViewProps = {
   setSearch: (next: string) => void;
   sortBy: string;
   setSortBy: (next: string) => void;
+  typeFilter: string;
+  setTypeFilter: (next: string) => void;
+  statusFilter: string;
+  setStatusFilter: (next: string) => void;
   data: StockListResponse | undefined;
   isLoading: boolean;
   error: unknown;
-  stocks: Stock[];
+  stocks: StockLocation[];
+  stats: StockCatalogStats;
   handleDelete: (id: string, label: string) => void;
   isDeleting: boolean;
-  openAdjust: (id: string, label: string) => void;
-  closeAdjust: () => void;
-  adjustTarget: { id: string; label: string } | null;
-  onConfirmAdjust: (id: string, payload: AdjustStockPayload) => void;
-  isAdjusting: boolean;
 };
 
 export function StocksListView({
@@ -33,78 +43,166 @@ export function StocksListView({
   setPage,
   search,
   setSearch,
-  sortBy,
-  setSortBy,
+  typeFilter,
+  setTypeFilter,
+  statusFilter,
+  setStatusFilter,
   data,
   isLoading,
   error,
   stocks,
+  stats,
   handleDelete,
-  isDeleting,
-  openAdjust,
-  closeAdjust,
-  adjustTarget,
-  onConfirmAdjust,
-  isAdjusting,
 }: Readonly<StocksListViewProps>) {
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<StockDialogMode>('create');
+  const [selectedStock, setSelectedStock] = useState<StockLocation | null>(null);
+  const [perPage] = useState(10);
+
+  const openDialog = useCallback((mode: StockDialogMode, stock: StockLocation | null = null) => {
+    setDialogMode(mode);
+    setSelectedStock(stock);
+    setDialogOpen(true);
+  }, []);
+
+  const getRowActions = useCallback(
+    (row: StockLocation) => [
+      {
+        label: 'Ver detalhes',
+        onClick: () => openDialog('view', row),
+        icon: <Eye className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        onClick: () => openDialog('edit', row),
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: 'Excluir',
+        onClick: () => handleDelete(row.id, row.name),
+        icon: <Trash className="h-4 w-4" />,
+      },
+    ],
+    [handleDelete, openDialog],
+  );
+
+  const total = data?.total ?? 0;
+  const pagedStocks = stocks.slice((page - 1) * perPage, page * perPage);
+
+  const statusTabs: Array<{ value: string; label: string; count: number }> = [
+    { value: '', label: 'Todos', count: stats.totalStocks },
+    { value: 'active', label: 'Ativos', count: stats.activeCount },
+    { value: 'inactive', label: 'Inativos', count: stats.inactiveCount },
+  ];
+
+  const renderContent = () => (
+    <>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
+      ) : error ? (
+        <div className="flex items-center justify-center py-16 text-red-500 text-sm">
+          Erro ao carregar locais de armazenamento.
+        </div>
+      ) : stocks.length === 0 ? (
+        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
+          Nenhum local de armazenamento encontrado.
+        </div>
+      ) : (
+        <StockTable stocks={pagedStocks} getRowActions={getRowActions} />
+      )}
+
+      {!isLoading && !error && stocks.length > 0 && (
+        <Pagination
+          page={page}
+          limit={perPage}
+          total={total}
+          itemLabelPlural="locais"
+          onPageChange={setPage}
+        />
+      )}
+    </>
+  );
 
   return (
-    <ListPageShell
-      listHeader={
-        <ListHeader
-          icon={<ProductsIcon />}
-          title="Estoques"
-          subtitle="Visão geral dos níveis de estoque de insumos"
-          ctaHref="/company/stocks/create"
-          ctaLabel="Novo estoque"
-        />
-      }
-      toolbar={
-        <section className="flex flex-wrap items-center gap-3">
-          <SearchField value={search} placeholder="Buscar por insumo..." onChange={setSearch} />
-          <SortButton current={sortBy} onSort={handleSort} value="updatedAt" label="Atualização" />
-        </section>
-      }
-      total={data?.total ?? 0}
-      totalLabelSingular="estoque encontrado"
-      totalLabelPlural="estoques encontrados"
-      isLoading={isLoading}
-      error={error}
-      errorMessage="Erro ao carregar estoques."
-      isEmpty={!isLoading && !error && stocks.length === 0}
-      emptyMessage="Nenhum estoque encontrado."
-      pagination={
-        data
-          ? {
-              page,
-              limit: data.limit,
-              total: data.total,
-              itemLabelPlural: 'estoques',
-              onPageChange: setPage,
-            }
-          : null
-      }
-    >
-      <StockTable
-        stocks={stocks}
-        onDelete={handleDelete}
-        isDeleting={isDeleting}
-        onAdjust={openAdjust}
-        isAdjusting={isAdjusting}
+    <div className="space-y-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Locais de Armazenamento</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Gerencie armazéns, câmaras frias, silos e demais locais de estoque.
+          </p>
+        </div>
+        <Button className="gap-2 shrink-0" onClick={() => openDialog('create')}>
+          <Plus className="h-4 w-4" />
+          Novo Local
+        </Button>
+      </div>
+
+      <StockCatalogStatsCards stats={stats} />
+
+      <Card>
+        <CardHeader className="flex-row justify-between px-5 py-4">
+          <CardTitle className="text-base">Lista de Locais</CardTitle>
+          <Tabs
+            value={statusFilter}
+            onValueChange={(v) => {
+              setStatusFilter(v);
+              setPage(1);
+            }}
+          >
+            <TabsList>
+              {statusTabs.map((tab) => (
+                <TabsTrigger key={tab.value} value={tab.value}>
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="relative flex-1">
+              <SearchField
+                search={search}
+                setSearch={setSearch}
+                setCurrentPage={setPage}
+                placeholder="Buscar por código, nome, localização..."
+              />
+            </div>
+            <select
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
+            >
+              <option value="">Todos os tipos</option>
+              {stockLocationTypeOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            {renderContent()}
+          </main>
+        </CardContent>
+      </Card>
+
+      <StockDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedStock(null);
+          setDialogOpen(open);
+        }}
+        mode={dialogMode}
+        stock={selectedStock}
+        onSuccess={() => setDialogOpen(false)}
       />
 
-      <StockAdjustModal
-        isOpen={!!adjustTarget}
-        title={adjustTarget ? `Ajustar estoque — ${adjustTarget.label}` : 'Ajustar estoque'}
-        subtitle="Informe a quantidade física e o motivo do ajuste."
-        isSubmitting={isAdjusting}
-        onClose={closeAdjust}
-        onSubmit={(payload) => {
-          if (!adjustTarget) return;
-          onConfirmAdjust(adjustTarget.id, payload);
-        }}
-      />
-    </ListPageShell>
+    </div>
   );
 }

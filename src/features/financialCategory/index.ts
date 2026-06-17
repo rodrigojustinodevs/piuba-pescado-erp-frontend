@@ -7,6 +7,8 @@ export type {
   UpdateFinancialCategoryData,
   FinancialCategoryTypeStrict,
   FinancialCategoryStatusStrict,
+  FinancialCategoryDialogMode,
+  FinancialCategoryCatalogStats,
 } from './types';
 export {
   createFinancialCategoryFormSchema,
@@ -31,5 +33,8 @@ export {
   FinancialCategoryTable,
   FinancialCategoryForm,
   FinancialCategoryDetailView,
+  FinancialCategoryDialog,
+  FinancialCategoryViewDialogContent,
+  FinancialCategoryCatalogStatsCards,
 } from './components';
 export { financialCategoryService } from './services/financialCategoryService';

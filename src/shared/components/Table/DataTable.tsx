@@ -74,7 +74,7 @@ export function DataTable<T>({
   getRowId,
   rowActions,
   emptyState,
-  showPagination = true,
+  showPagination = false,
   initialPerPage = 25,
   perPageOptions = PER_PAGE_OPTIONS,
 }: DataTableProps<T>) {

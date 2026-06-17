@@ -3,24 +3,30 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
-import type { UpdateStockData } from '../types';
+import type { UpdateStockLocationData } from '../types';
 import { stockService } from '../services/stockService';
 
-export function useUpdateStock() {
+type UseUpdateStockOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateStock({ skipNavigateToList }: UseUpdateStockOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
 
   return useMutation({
-    mutationFn: (data: UpdateStockData) => stockService.update(data),
+    mutationFn: (data: UpdateStockLocationData) => stockService.update(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['stocks', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['stocks', 'detail', data.id] });
-      showSuccess('Estoque atualizado com sucesso!');
-      router.push('/company/stocks');
+      showSuccess('Local de armazenamento atualizado com sucesso!');
+      if (!skipNavigateToList) {
+        router.push('/company/stocks');
+      }
     },
     onError: (error: Error) => {
-      showError(error.message || 'Erro ao atualizar estoque. Tente novamente.');
+      showError(error.message || 'Erro ao atualizar local de armazenamento. Tente novamente.');
     },
   });
 }
