@@ -5,119 +5,133 @@ import type {
   FinancialTransactionStatus,
   FinancialTransactionType,
 } from '../types';
-import { DataTable, type DataTableColumn } from '@/shared/components/Table';
-import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
-import { formatCalendarDatePtBR, formatNullableDatePtBR } from '@/shared/utils/dateFormat';
+import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
+import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
+import { TrendingUp, TrendingDown, ArrowLeftRight, Landmark } from 'lucide-react';
 
 function formatMoney(value: number): string {
   if (!Number.isFinite(value)) return '—';
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
-function getTypeBadgeClassName(type: string): string {
-  const key = type?.toLowerCase?.() ?? '';
-  if (key === 'revenue') return 'bg-emerald-100 text-emerald-700';
-  if (key === 'expense') return 'bg-rose-100 text-rose-700';
-  if (key === 'investment') return 'bg-violet-100 text-violet-700';
-  return 'bg-slate-100 text-slate-700';
-}
-
-function getStatusClassName(status: string): string {
-  const key = status?.toLowerCase?.() ?? '';
-  if (key === 'paid') return 'bg-emerald-100 text-emerald-700';
-  return getStatusBadgeClassNames(status);
-}
-
-function DueDateCell({ dueDate }: Readonly<{ dueDate: string | null }>) {
-  return <div className="text-sm font-medium text-[#0F172A]">{formatCalendarDatePtBR(dueDate)}</div>;
-}
-
-function TypeCell({ type, typeLabel }: Readonly<{ type: FinancialTransactionType; typeLabel: string }>) {
+function TypeBadge({ type, typeLabel }: { type: FinancialTransactionType; typeLabel: string }) {
+  const styles: Record<FinancialTransactionType, { cls: string; icon: React.ReactNode }> = {
+    income: { cls: 'bg-emerald-100 text-emerald-700', icon: <TrendingUp className="h-3 w-3" /> },
+    expense: { cls: 'bg-rose-100 text-rose-700', icon: <TrendingDown className="h-3 w-3" /> },
+    transfer: {
+      cls: 'bg-violet-100 text-violet-700',
+      icon: <ArrowLeftRight className="h-3 w-3" />,
+    },
+    investment: { cls: 'bg-blue-100 text-blue-700', icon: <Landmark className="h-3 w-3" /> },
+    other: { cls: 'bg-slate-100 text-slate-600', icon: null },
+  };
+  const { cls, icon } = styles[type] ?? styles.other;
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getTypeBadgeClassName(type)}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}
     >
+      {icon}
       {typeLabel}
     </span>
   );
 }
 
-function StatusCell({
+function StatusBadge({
   status,
   statusLabel,
-}: Readonly<{ status: FinancialTransactionStatus; statusLabel: string }>) {
+}: {
+  status: FinancialTransactionStatus;
+  statusLabel: string;
+}) {
+  const styles: Record<FinancialTransactionStatus, string> = {
+    paid: 'bg-emerald-100 text-emerald-700',
+    pending: 'bg-amber-100 text-amber-700',
+    overdue: 'bg-red-100 text-red-700',
+    cancelled: 'bg-slate-100 text-slate-500',
+    other: 'bg-slate-100 text-slate-600',
+  };
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusClassName(status)}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status] ?? styles.other}`}
     >
       {statusLabel}
     </span>
   );
 }
 
-function AmountCell({ amount }: Readonly<{ amount: number }>) {
-  return <div className="text-sm text-slate-600 tabular-nums">{formatMoney(amount)}</div>;
+function AmountCell({ amount, type }: { amount: number; type: FinancialTransactionType }) {
+  const color =
+    type === 'income'
+      ? 'text-emerald-600'
+      : type === 'expense'
+        ? 'text-rose-600'
+        : 'text-slate-700';
+  return <div className={`text-sm font-semibold tabular-nums ${color}`}>{formatMoney(amount)}</div>;
 }
-
-function TextCell({ value }: Readonly<{ value: string | null | undefined }>) {
-  return <div className="text-sm text-slate-600">{value || '—'}</div>;
-}
-
-function UpdatedAtCell({ updatedAt }: Readonly<{ updatedAt: string | null }>) {
-  return <div className="text-sm text-slate-500">{formatNullableDatePtBR(updatedAt, true)}</div>;
-}
-
-const FINANCIAL_TRANSACTION_COLUMNS: Array<DataTableColumn<FinancialTransaction>> = [
-  {
-    id: 'dueDate',
-    header: 'Vencimento',
-    cell: (row) => <DueDateCell dueDate={row.dueDate} />,
-  },
-  {
-    id: 'type',
-    header: 'Tipo',
-    cell: (row) => <TypeCell type={row.type} typeLabel={row.typeLabel} />,
-  },
-  {
-    id: 'status',
-    header: 'Status',
-    cell: (row) => <StatusCell status={row.status} statusLabel={row.statusLabel} />,
-  },
-  {
-    id: 'amount',
-    header: 'Valor',
-    cell: (row) => <AmountCell amount={row.amount} />,
-  },
-  {
-    id: 'description',
-    header: 'Descrição',
-    cell: (row) => <TextCell value={row.description} />,
-  },
-  {
-    id: 'categoryName',
-    header: 'Categoria',
-    cell: (row) => <TextCell value={row.categoryName} />,
-  },
-  {
-    id: 'updatedAt',
-    header: 'Atualizado em',
-    cell: (row) => <UpdatedAtCell updatedAt={row.updatedAt} />,
-  },
-];
 
 export type FinancialTransactionTableProps = {
   financialTransactions: FinancialTransaction[];
+  getRowActions?: (row: FinancialTransaction) => DataTableAction[];
 };
 
 export function FinancialTransactionTable({
   financialTransactions,
+  getRowActions,
 }: Readonly<FinancialTransactionTableProps>) {
+  const columns: Array<DataTableColumn<FinancialTransaction>> = [
+    {
+      id: 'description',
+      header: 'Descrição',
+      cell: (row) => (
+        <div>
+          <div className="text-sm font-medium text-slate-900">{row.description || '—'}</div>
+          {row.categoryName && <div className="text-xs text-slate-400">{row.categoryName}</div>}
+        </div>
+      ),
+    },
+    {
+      id: 'type',
+      header: 'Tipo',
+      cell: (row) => <TypeBadge type={row.type} typeLabel={row.typeLabel} />,
+    },
+    {
+      id: 'dueDate',
+      header: 'Vencimento',
+      cell: (row) => (
+        <div className="text-sm font-medium text-slate-800">
+          {formatCalendarDatePtBR(row.dueDate)}
+        </div>
+      ),
+    },
+    {
+      id: 'status',
+      header: 'Status',
+      cell: (row) => <StatusBadge status={row.status} statusLabel={row.statusLabel} />,
+    },
+    {
+      id: 'amount',
+      header: 'Valor',
+      cell: (row) => <AmountCell amount={row.amount} type={row.type} />,
+    },
+    {
+      id: 'methodLabel',
+      header: 'Pagamento',
+      cell: (row) => <div className="text-sm text-slate-500">{row.methodLabel || '—'}</div>,
+    },
+  ];
+
   return (
     <DataTable
       data={financialTransactions}
-      columns={FINANCIAL_TRANSACTION_COLUMNS}
+      columns={columns}
       getRowId={(row) => row.id}
-      emptyState={<div className="p-8 text-center text-slate-500">Nenhuma transação financeira encontrada.</div>}
+      rowActions={getRowActions}
+      emptyState={
+        <div className="p-8 text-center text-slate-500">
+          Nenhuma transação financeira encontrada.
+        </div>
+      }
+      showPagination={false}
     />
   );
 }

@@ -7,7 +7,11 @@ import type { UpdateClientData } from '../types';
 import { clientService } from '../services/clientService';
 import { translateClientApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
 
-export function useUpdateClient() {
+type UseUpdateClientOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateClient({ skipNavigateToList }: UseUpdateClientOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -18,7 +22,9 @@ export function useUpdateClient() {
       queryClient.invalidateQueries({ queryKey: ['clients', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['clients', 'detail', data.id] });
       showSuccess('Cliente atualizado com sucesso!');
-      router.push('/company/clients');
+      if (!skipNavigateToList) {
+        router.push('/company/clients');
+      }
     },
     onError: (error: Error) => {
       const message = error.message ? translateClientApiErrorMessagePtBR(error.message) : '';
@@ -26,4 +32,3 @@ export function useUpdateClient() {
     },
   });
 }
-

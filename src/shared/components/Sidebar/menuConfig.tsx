@@ -137,7 +137,6 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Comercial',
     icon: ShoppingCart,
     allowedRoles: ROLES_COMPANY_ALL,
-    requiresCompany: REQUIRES_COMPANY,
     children: comercialChildrenWithAuth(comercialSubmenuItems),
   },
   {

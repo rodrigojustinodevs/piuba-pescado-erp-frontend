@@ -18,7 +18,6 @@ export const GET = createListGetHandler<
   buildQueryString: (searchParams) =>
     buildPaginationQueryStringWithPassthrough(searchParams, {
       limitParam: 'per_page',
-      passthrough: ['search'],
+      passthrough: ['search', 'type', 'status'],
     }),
 });
-

@@ -7,7 +7,11 @@ import type { CreateClientData } from '../types';
 import { clientService } from '../services/clientService';
 import { translateClientApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
 
-export function useCreateClient() {
+type UseCreateClientOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useCreateClient({ skipNavigateToList }: UseCreateClientOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,9 @@ export function useCreateClient() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients', 'list'] });
       showSuccess('Cliente cadastrado com sucesso!');
-      router.push('/company/clients');
+      if (!skipNavigateToList) {
+        router.push('/company/clients');
+      }
     },
     onError: (error: Error) => {
       const message = error.message ? translateClientApiErrorMessagePtBR(error.message) : '';
@@ -25,4 +31,3 @@ export function useCreateClient() {
     },
   });
 }
-
