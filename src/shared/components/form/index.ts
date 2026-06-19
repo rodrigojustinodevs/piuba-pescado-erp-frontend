@@ -6,6 +6,7 @@ export { EmailInput } from './EmailInput';
 export { NumberInput } from './NumberInput';
 
 export { Select } from './Select';
+export { ControlledSelect } from './ControlledSelect';
 export { TextArea } from './TextArea';
 
 export { Checkbox } from './Checkbox';

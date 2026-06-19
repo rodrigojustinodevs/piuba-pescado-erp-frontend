@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
 import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
-import { FormActions, FormCardSection, Select, TextArea } from '@/shared/components/form';
+import { ControlledSelect, FormActions, FormCardSection, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateFinancialCategoryData } from '../types';
 import {
@@ -91,63 +91,39 @@ export function FinancialCategoryForm({
   });
 
   const companyField = showCompanySelect ? (
-    <Controller
+    <ControlledSelect
       control={control}
       name="companyId"
-      render={({ field }) => (
-        <Select
-          label="Empresa"
-          required
-          disabled={isSubmitting || loadingCompanies || isEdit}
-          options={companyOptions}
-          placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-          value={field.value ?? ''}
-          onChange={field.onChange}
-          onBlur={field.onBlur}
-          name={field.name}
-          error={errors.companyId?.message}
-        />
-      )}
+      label="Empresa"
+      required
+      disabled={isSubmitting || loadingCompanies || isEdit}
+      options={companyOptions}
+      placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+      error={errors.companyId?.message}
     />
   ) : null;
 
   const typeField = (
-    <Controller
+    <ControlledSelect
       control={control}
       name="type"
-      render={({ field }) => (
-        <Select
-          label="Tipo"
-          required
-          disabled={isSubmitting}
-          options={typeOptions}
-          value={field.value ?? ''}
-          onChange={field.onChange}
-          onBlur={field.onBlur}
-          name={field.name}
-          error={errors.type?.message}
-        />
-      )}
+      label="Tipo"
+      required
+      disabled={isSubmitting}
+      options={typeOptions}
+      error={errors.type?.message}
     />
   );
 
   const statusField = (
-    <Controller
+    <ControlledSelect
       control={control}
       name="status"
-      render={({ field }) => (
-        <Select
-          label="Status"
-          required
-          disabled={isSubmitting || isEdit}
-          options={statusOptions}
-          value={field.value ?? ''}
-          onChange={field.onChange}
-          onBlur={field.onBlur}
-          name={field.name}
-          error={errors.status?.message}
-        />
-      )}
+      label="Status"
+      required
+      disabled={isSubmitting || isEdit}
+      options={statusOptions}
+      error={errors.status?.message}
     />
   );
 
