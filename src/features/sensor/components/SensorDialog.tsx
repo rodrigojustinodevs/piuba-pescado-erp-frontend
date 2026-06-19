@@ -275,93 +275,7 @@ export function SensorDialog({
     description = 'Atualize os dados operacionais do sensor.';
   }
 
-  if (isView && sensor) {
-    const sensorStatus = (sensor.status as SensorStatus) || 'active';
-
-    return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <RadioTower className="h-7 w-7" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-lg font-semibold">{sensor.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {getSensorTypeLabel(sensor.sensorType)}
-                </p>
-                <Badge variant={statusBadgeVariant[sensorStatus]} className="mt-2">
-                  {getSensorStatusLabel(sensor.status)}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <InfoRow
-                icon={<Droplets className="h-4 w-4" />}
-                label="Viveiro"
-                value={sensor.tank?.name || '—'}
-              />
-              {isMaster() && (
-                <InfoRow
-                  icon={<Building2 className="h-4 w-4" />}
-                  label="Empresa"
-                  value={sensor.company?.name || '—'}
-                />
-              )}
-              <InfoRow
-                icon={<Wrench className="h-4 w-4" />}
-                label="Serial"
-                value={sensor.serialNumber || '—'}
-              />
-              <InfoRow
-                icon={<Gauge className="h-4 w-4" />}
-                label="Última leitura"
-                value={
-                  sensor.lastReading === null
-                    ? '—'
-                    : formatSensorReadingValue(sensor.lastReading, sensor.unit)
-                }
-              />
-              <InfoRow
-                icon={<Gauge className="h-4 w-4" />}
-                label="Bateria"
-                value={`${sensor.battery ?? 0}%`}
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Instalação"
-                value={formatNullableDatePtBR(sensor.installationDate, true)}
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Atualizado em"
-                value={formatNullableDatePtBR(sensor.updatedAt, true)}
-              />
-              <InfoRow
-                icon={<Wrench className="h-4 w-4" />}
-                label="Observações"
-                value={sensor.notes || '—'}
-                className="sm:col-span-2"
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleClose(false)}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const sensorStatus = (sensor?.status as SensorStatus) || 'active';
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -371,6 +285,49 @@ export function SensorDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
+        {isView && sensor ? (
+          <>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <RadioTower className="h-7 w-7" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-lg font-semibold">{sensor.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {getSensorTypeLabel(sensor.sensorType)}
+                  </p>
+                  <Badge variant={statusBadgeVariant[sensorStatus]} className="mt-2">
+                    {getSensorStatusLabel(sensor.status)}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <InfoRow icon={<Droplets className="h-4 w-4" />} label="Viveiro" value={sensor.tank?.name || '—'} />
+                {isMaster() && (
+                  <InfoRow icon={<Building2 className="h-4 w-4" />} label="Empresa" value={sensor.company?.name || '—'} />
+                )}
+                <InfoRow icon={<Wrench className="h-4 w-4" />} label="Serial" value={sensor.serialNumber || '—'} />
+                <InfoRow
+                  icon={<Gauge className="h-4 w-4" />}
+                  label="Última leitura"
+                  value={sensor.lastReading === null ? '—' : formatSensorReadingValue(sensor.lastReading, sensor.unit)}
+                />
+                <InfoRow icon={<Gauge className="h-4 w-4" />} label="Bateria" value={`${sensor.battery ?? 0}%`} />
+                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Instalação" value={formatNullableDatePtBR(sensor.installationDate, true)} />
+                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Atualizado em" value={formatNullableDatePtBR(sensor.updatedAt, true)} />
+                <InfoRow icon={<Wrench className="h-4 w-4" />} label="Observações" value={sensor.notes || '—'} className="sm:col-span-2" />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => handleClose(false)}>
+                Fechar
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
         <form
           onSubmit={handleSubmit(onSubmit, onInvalid)}
           className="space-y-4"
@@ -593,6 +550,7 @@ export function SensorDialog({
             </Button>
           </DialogFooter>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );

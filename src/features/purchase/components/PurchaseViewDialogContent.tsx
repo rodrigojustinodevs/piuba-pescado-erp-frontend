@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
   ShoppingCart,
   DollarSign,
@@ -34,6 +35,26 @@ const STATUS_STYLES: Record<string, string> = {
   received: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30',
   cancelled: 'bg-red-500/15 text-red-700 border-red-500/30',
 };
+
+function DetailCard({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+      {icon}
+      <div>
+        <p className="text-xs text-slate-500">{label}</p>
+        <p className="text-sm font-medium text-slate-800">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 function formatDate(value: string | null): string {
   const text = formatNullableDatePtBR(value ?? '');
@@ -210,22 +231,16 @@ export function PurchaseViewDialogContent({
       <div className="space-y-2">
         <p className="text-sm font-semibold text-slate-700">Detalhes</p>
         <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-            <FileText className="h-4 w-4 text-slate-400 shrink-0" />
-            <div>
-              <p className="text-xs text-slate-500">NF / Documento</p>
-              <p className="text-sm font-medium text-slate-800">{purchase.invoiceNumber || '—'}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-            <Calendar className="h-4 w-4 text-slate-400 shrink-0" />
-            <div>
-              <p className="text-xs text-slate-500">Recebido em</p>
-              <p className="text-sm font-medium text-slate-800">
-                {formatNullableDatePtBR(purchase.receivedAt ?? '', true)}
-              </p>
-            </div>
-          </div>
+          <DetailCard
+            icon={<FileText className="h-4 w-4 text-slate-400 shrink-0" />}
+            label="NF / Documento"
+            value={purchase.invoiceNumber || '—'}
+          />
+          <DetailCard
+            icon={<Calendar className="h-4 w-4 text-slate-400 shrink-0" />}
+            label="Recebido em"
+            value={formatNullableDatePtBR(purchase.receivedAt ?? '', true)}
+          />
         </div>
       </div>
 

@@ -280,72 +280,54 @@ export function FinancialTransactionForm({
     />
   );
 
-  const formContent = inDialog ? (
-    <form onSubmit={handleFormSubmit}>
-      <div className="space-y-4 py-2">
-        {companyField}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {typeField}
-          {statusField}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {amountField}
-          {methodField}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {dueDateField}
-          {paymentDateField}
-        </div>
-        {categoryField}
-        {descriptionField}
-        {notesField}
-        <FormActions
-          submitLabel={submitLabel}
-          loadingLabel={submittingLabel}
-          isLoading={isSubmitting}
-          onCancel={onCancel}
-        />
+  const sharedFields = (
+    <div className="space-y-4">
+      {companyField}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {typeField}
+        {statusField}
       </div>
-    </form>
-  ) : (
-    <form onSubmit={handleFormSubmit}>
-      <FormCardSection
-        title="Dados da transação"
-        description="Informe tipo, valor, datas e método de pagamento."
-        footer={
-          <FormActions
-            submitLabel={submitLabel}
-            loadingLabel={submittingLabel}
-            isLoading={isSubmitting}
-            onCancel={onCancel}
-          />
-        }
-      >
-        <div className="space-y-4">
-          {companyField}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {typeField}
-            {statusField}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {amountField}
-            {methodField}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {dueDateField}
-            {paymentDateField}
-          </div>
-          {categoryField}
-          {descriptionField}
-          {notesField}
-        </div>
-      </FormCardSection>
-    </form>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {amountField}
+        {methodField}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {dueDateField}
+        {paymentDateField}
+      </div>
+      {categoryField}
+      {descriptionField}
+      {notesField}
+    </div>
+  );
+
+  const actions = (
+    <FormActions
+      submitLabel={submitLabel}
+      loadingLabel={submittingLabel}
+      isLoading={isSubmitting}
+      onCancel={onCancel}
+    />
   );
 
   return (
     <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
-      {formContent}
+      <form onSubmit={handleFormSubmit}>
+        {inDialog ? (
+          <div className="space-y-4 py-2">
+            {sharedFields}
+            {actions}
+          </div>
+        ) : (
+          <FormCardSection
+            title="Dados da transação"
+            description="Informe tipo, valor, datas e método de pagamento."
+            footer={actions}
+          >
+            {sharedFields}
+          </FormCardSection>
+        )}
+      </form>
     </AuthCompanyGate>
   );
 }

@@ -169,72 +169,7 @@ export function TankDialog({
     description = 'Atualize os dados do tanque abaixo.';
   }
 
-  if (isView && tank) {
-    const status = statusLabel[tank.status];
-
-    return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Droplets className="h-7 w-7" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-lg font-semibold">{tank.name}</h3>
-                <p className="text-sm text-muted-foreground">{tank.tankType.name}</p>
-                <Badge variant={status.variant} className="mt-2">
-                  {status.label}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <InfoRow
-                icon={<Droplets className="h-4 w-4" />}
-                label="Capacidade"
-                value={`${formatCapacity(tank.capacityLiters)} L`}
-              />
-              {isMaster() && (
-                <InfoRow
-                  icon={<Building2 className="h-4 w-4" />}
-                  label="Empresa"
-                  value={tank.company.name || '—'}
-                />
-              )}
-              <InfoRow
-                icon={<MapPin className="h-4 w-4" />}
-                label="Localização"
-                value={tank.location || '—'}
-                className="sm:col-span-2"
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Criado em"
-                value={formatDate(tank.createdAt)}
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Atualizado em"
-                value={formatDate(tank.updatedAt)}
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleClose(false)}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const tankStatus = tank ? statusLabel[tank.status] : null;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -244,6 +179,40 @@ export function TankDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
+        {isView && tank && tankStatus ? (
+          <>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Droplets className="h-7 w-7" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-lg font-semibold">{tank.name}</h3>
+                  <p className="text-sm text-muted-foreground">{tank.tankType.name}</p>
+                  <Badge variant={tankStatus.variant} className="mt-2">
+                    {tankStatus.label}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <InfoRow icon={<Droplets className="h-4 w-4" />} label="Capacidade" value={`${formatCapacity(tank.capacityLiters)} L`} />
+                {isMaster() && (
+                  <InfoRow icon={<Building2 className="h-4 w-4" />} label="Empresa" value={tank.company.name || '—'} />
+                )}
+                <InfoRow icon={<MapPin className="h-4 w-4" />} label="Localização" value={tank.location || '—'} className="sm:col-span-2" />
+                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Criado em" value={formatDate(tank.createdAt)} />
+                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Atualizado em" value={formatDate(tank.updatedAt)} />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => handleClose(false)}>
+                Fechar
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground">Dados do tanque</h3>
@@ -385,6 +354,7 @@ export function TankDialog({
             </Button>
           </DialogFooter>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );

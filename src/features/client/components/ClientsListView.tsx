@@ -9,6 +9,11 @@ import { Button } from '@/shared/components/ui/Button';
 import { SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import {
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
 import { Eye, Pencil, Plus, Trash } from 'lucide-react';
 
 export type ClientsListViewProps = {
@@ -83,25 +88,9 @@ export function ClientsListView({
   const pagedClients = clients.slice((page - 1) * perPage, page * perPage);
 
   const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
-      );
-    }
-    if (error) {
-      return (
-        <div className="flex items-center justify-center py-16 text-red-500 text-sm">
-          Erro ao carregar clientes.
-        </div>
-      );
-    }
-    if (clients.length === 0) {
-      return (
-        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
-          Nenhum cliente encontrado.
-        </div>
-      );
-    }
+    if (isLoading) return <ListLoadingState />;
+    if (error) return <ListErrorState title="Erro ao carregar clientes" message="Não foi possível carregar os clientes. Tente novamente." />;
+    if (clients.length === 0) return <ListEmptyState title="Nenhum cliente encontrado." />;
     return <ClientTable clients={pagedClients} getRowActions={getRowActions} />;
   };
 

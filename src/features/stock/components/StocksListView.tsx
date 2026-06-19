@@ -16,6 +16,11 @@ import { Eye, Pencil, Plus, Trash } from 'lucide-react';
 import { SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import {
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
 import { stockLocationTypeOptions } from '../schemas';
 
 export type StocksListViewProps = {
@@ -95,33 +100,19 @@ export function StocksListView({
     { value: 'inactive', label: 'Inativos', count: stats.inactiveCount },
   ];
 
-  const renderContent = () => (
-    <>
-      {isLoading ? (
-        <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
-      ) : error ? (
-        <div className="flex items-center justify-center py-16 text-red-500 text-sm">
-          Erro ao carregar locais de armazenamento.
-        </div>
-      ) : stocks.length === 0 ? (
-        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
-          Nenhum local de armazenamento encontrado.
-        </div>
-      ) : (
+  const renderContent = () => {
+    if (isLoading) return <ListLoadingState />;
+    if (error) return <ListErrorState title="Erro ao carregar locais" message="Não foi possível carregar os locais de armazenamento. Tente novamente." />;
+    if (stocks.length === 0) return <ListEmptyState title="Nenhum local de armazenamento encontrado." />;
+    return (
+      <>
         <StockTable stocks={pagedStocks} getRowActions={getRowActions} />
-      )}
-
-      {!isLoading && !error && stocks.length > 0 && (
-        <Pagination
-          page={page}
-          limit={perPage}
-          total={total}
-          itemLabelPlural="locais"
-          onPageChange={setPage}
-        />
-      )}
-    </>
-  );
+        {!isLoading && !error && stocks.length > 0 && (
+          <Pagination page={page} limit={perPage} total={total} itemLabelPlural="locais" onPageChange={setPage} />
+        )}
+      </>
+    );
+  };
 
   return (
     <div className="space-y-6">

@@ -12,6 +12,11 @@ import { Eye, Pencil, Plus, Trash } from 'lucide-react';
 import { SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import {
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
 
 const STATUS_TAB_LABELS: Record<SupplierStatusFilter, string> = {
   all: 'Todos',
@@ -62,7 +67,6 @@ export function SuppliersListView({
   isLoading,
   error,
   suppliers,
-  statusCounts,
   handleDelete,
 }: Readonly<SuppliersListViewProps>) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -101,31 +105,13 @@ export function SuppliersListView({
   const pagedSuppliers = suppliers.slice((page - 1) * perPage, page * perPage);
 
   const renderContent = () => {
+    if (isLoading) return <ListLoadingState />;
+    if (error) return <ListErrorState title="Erro ao carregar fornecedores" message="Não foi possível carregar os fornecedores. Tente novamente." />;
+    if (suppliers.length === 0) return <ListEmptyState title="Nenhum fornecedor encontrado." />;
     return (
       <>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
-        ) : error ? (
-          <div className="flex items-center justify-center py-16 text-red-500 text-sm">
-            Erro ao carregar fornecedores.
-          </div>
-        ) : suppliers.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
-            Nenhum fornecedor encontrado.
-          </div>
-        ) : (
-          <SupplierTable suppliers={pagedSuppliers} getRowActions={getRowActions} />
-        )}
-
-        {!isLoading && !error && suppliers.length > 0 && (
-          <Pagination
-            page={page}
-            limit={perPage}
-            total={total}
-            itemLabelPlural="fornecedores"
-            onPageChange={setPage}
-          />
-        )}
+        <SupplierTable suppliers={pagedSuppliers} getRowActions={getRowActions} />
+        <Pagination page={page} limit={perPage} total={total} itemLabelPlural="fornecedores" onPageChange={setPage} />
       </>
     );
   };

@@ -5,8 +5,13 @@ import type { Tank, TankListResponse, TankDialogMode } from '../types';
 import { TankTable } from './TankTable';
 import { TankDialog } from './TankDialog';
 import { ListHeader, Pagination, SearchField, StatusFilterTabs } from '@/shared/components/list';
+import {
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
-import { Building, Droplets, Eye, Pencil, Trash, Loader2 } from 'lucide-react';
+import { Building, Droplets, Eye, Pencil, Trash } from 'lucide-react';
 type TankFilter = 'all' | 'active' | 'inactive';
 
 export type TanksListViewProps = {
@@ -55,13 +60,6 @@ export function TanksListView({
     setDialogOpen(true);
   }, []);
 
-  const handleTankDelete = useCallback(
-    (id: string, name: string) => {
-      handleDelete(id, name);
-    },
-    [handleDelete],
-  );
-
   const getRowActions = useCallback(
     (tank: Tank) => [
       {
@@ -76,44 +74,35 @@ export function TanksListView({
       },
       {
         label: 'Excluir',
-        onClick: () => handleTankDelete(tank.id, tank.name),
+        onClick: () => handleDelete(tank.id, tank.name),
         variant: 'danger' as const,
         icon: <Trash className="h-4 w-4" />,
       },
     ],
-    [handleTankDelete, openTankDialog],
+    [handleDelete, openTankDialog],
   );
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading) return <ListLoadingState />;
+    if (error)
       return (
-        <div className="p-8 text-center">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Carregando...</span>
-          </div>
-        </div>
+        <ListErrorState
+          title="Erro ao carregar tanques"
+          message="Não foi possível carregar os tanques. Tente novamente."
+        />
       );
-    }
-
-    if (error) {
-      return <div className="p-8 text-center text-red-600">Erro ao carregar tanques.</div>;
-    }
-
-    if (!filteredTanks.length) {
-      return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
-    }
+    if (!filteredTanks.length)
+      return <ListEmptyState title="Nenhum tanque encontrado." />;
 
     return (
       <>
         <TankTable
           tanks={filteredTanks}
           openTankDialog={openTankDialog}
-          handleTankDelete={handleTankDelete}
+          handleTankDelete={handleDelete}
           isDeleting={isDeleting}
           rowActions={getRowActions}
         />
-
         {data && data.total > data.limit && (
           <Pagination
             page={page}

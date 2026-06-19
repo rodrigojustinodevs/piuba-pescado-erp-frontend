@@ -174,52 +174,45 @@ export function FinancialCategoryForm({
     />
   );
 
+  const actions = (
+    <FormActions
+      submitLabel={submitLabel}
+      loadingLabel={submittingLabel}
+      isLoading={isSubmitting}
+      onCancel={onCancel}
+    />
+  );
+
   const formContent = inDialog ? (
-    <form onSubmit={handleFormSubmit}>
-      <div className="space-y-4 py-2">
-        {companyField}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {nameField}
-          {typeField}
-        </div>
-        {notesField}
-        {statusField}
-        <FormActions
-          submitLabel={submitLabel}
-          loadingLabel={submittingLabel}
-          isLoading={isSubmitting}
-          onCancel={onCancel}
-        />
+    <div className="space-y-4 py-2">
+      {companyField}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {nameField}
+        {typeField}
       </div>
-    </form>
+      {notesField}
+      {statusField}
+      {actions}
+    </div>
   ) : (
-    <form onSubmit={handleFormSubmit}>
-      <FormCardSection
-        title="Dados da categoria"
-        description="Informe nome, tipo e status da categoria financeira."
-        footer={
-          <FormActions
-            submitLabel={submitLabel}
-            loadingLabel={submittingLabel}
-            isLoading={isSubmitting}
-            onCancel={onCancel}
-          />
-        }
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {companyField}
-          {nameField}
-          {typeField}
-          {statusField}
-        </div>
-        <div className="mt-4">{notesField}</div>
-      </FormCardSection>
-    </form>
+    <FormCardSection
+      title="Dados da categoria"
+      description="Informe nome, tipo e status da categoria financeira."
+      footer={actions}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {companyField}
+        {nameField}
+        {typeField}
+        {statusField}
+      </div>
+      <div className="mt-4">{notesField}</div>
+    </FormCardSection>
   );
 
   return (
     <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
-      {formContent}
+      <form onSubmit={handleFormSubmit}>{formContent}</form>
     </AuthCompanyGate>
   );
 }

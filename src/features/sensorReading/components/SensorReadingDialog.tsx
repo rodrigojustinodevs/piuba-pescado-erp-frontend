@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Controller, useForm, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSensors } from '@/features/sensor/hooks/useSensors';
@@ -60,6 +60,32 @@ function toUpdateDefaults(reading: SensorReading): CreateSensorReadingFormData {
     measuredAt: toDateTimeLocalInputValue(reading.measuredAt),
     notes: reading.notes ?? '',
   };
+}
+
+function FormField({
+  id,
+  label,
+  required,
+  error,
+  className,
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  error?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`space-y-2 ${className ?? ''}`}>
+      <Label htmlFor={id}>
+        {label} {required && '*'}
+      </Label>
+      {children}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
 }
 
 export function SensorReadingDialog({
@@ -147,10 +173,7 @@ export function SensorReadingDialog({
         showError('Não foi possível salvar: leitura sem identificador.');
         return;
       }
-      const updatePayload: UpdateSensorReadingData = {
-        id: sensorReading.id,
-        ...payloadBase,
-      };
+      const updatePayload: UpdateSensorReadingData = { id: sensorReading.id, ...payloadBase };
       updateReading.mutate(updatePayload, {
         onSuccess: () => {
           onOpenChange(false);
@@ -170,77 +193,12 @@ export function SensorReadingDialog({
 
   let title = 'Nova Leitura';
   let description = 'Preencha os dados para registrar uma nova leitura de sensor.';
-
   if (isView) {
     title = 'Detalhes da Leitura';
     description = 'Visualização das informações da leitura.';
   } else if (isEdit) {
     title = 'Editar Leitura';
     description = 'Atualize os dados da medição.';
-  }
-
-  if (isView && sensorReading) {
-    return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Activity className="h-7 w-7" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-lg font-semibold">
-                  {formatSensorReadingValue(sensorReading.value, sensorReading.unit)}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {getSensorTypeLabel(sensorReading.sensor?.sensorType ?? '')}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <InfoRow
-                icon={<Waves className="h-4 w-4" />}
-                label="Viveiro"
-                value={sensorReading.sensor?.tank?.name || '—'}
-              />
-              <InfoRow
-                icon={<Gauge className="h-4 w-4" />}
-                label="Valor"
-                value={formatSensorReadingValue(sensorReading.value, sensorReading.unit)}
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Data da medição"
-                value={formatNullableDatePtBR(sensorReading.measuredAt, true)}
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Atualizado em"
-                value={formatNullableDatePtBR(sensorReading.updatedAt, true)}
-              />
-              <InfoRow
-                icon={<MessageSquare className="h-4 w-4" />}
-                label="Observações"
-                value={sensorReading.notes || '—'}
-                className="sm:col-span-2"
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleClose(false)}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
   }
 
   return (
@@ -251,109 +209,166 @@ export function SensorReadingDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="sensorId">Sensor *</Label>
-              <Controller
-                name="sensorId"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={isSubmitting || isLoadingSensors}
-                  >
-                    <SelectTrigger id="sensorId">
-                      <SelectValue
-                        placeholder={
-                          isLoadingSensors ? 'Carregando sensores...' : 'Selecione o sensor'
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sensors.map((sensor) => (
-                        <SelectItem key={sensor.id} value={sensor.id}>
-                          {getSensorTypeLabel(sensor.sensorType)} -{' '}
-                          {sensor.tank?.name || 'Sem tanque'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.sensorId && (
-                <p className="text-xs text-destructive">{errors.sensorId.message}</p>
-              )}
+        {isView && sensorReading ? (
+          <>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Activity className="h-7 w-7" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-lg font-semibold">
+                    {formatSensorReadingValue(sensorReading.value, sensorReading.unit)}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {getSensorTypeLabel(sensorReading.sensor?.sensorType ?? '')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <InfoRow
+                  icon={<Waves className="h-4 w-4" />}
+                  label="Viveiro"
+                  value={sensorReading.sensor?.tank?.name || '—'}
+                />
+                <InfoRow
+                  icon={<Gauge className="h-4 w-4" />}
+                  label="Valor"
+                  value={formatSensorReadingValue(sensorReading.value, sensorReading.unit)}
+                />
+                <InfoRow
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Data da medição"
+                  value={formatNullableDatePtBR(sensorReading.measuredAt, true)}
+                />
+                <InfoRow
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Atualizado em"
+                  value={formatNullableDatePtBR(sensorReading.updatedAt, true)}
+                />
+                <InfoRow
+                  icon={<MessageSquare className="h-4 w-4" />}
+                  label="Observações"
+                  value={sensorReading.notes || '—'}
+                  className="sm:col-span-2"
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="value">Valor medido *</Label>
-              <Input
-                id="value"
-                type="number"
-                step="any"
-                disabled={isSubmitting}
-                {...register('value', { valueAsNumber: true })}
-              />
-              {errors.value && <p className="text-xs text-destructive">{errors.value.message}</p>}
-            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => handleClose(false)}>
+                Fechar
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                id="sensorId"
+                label="Sensor"
+                required
+                error={errors.sensorId?.message}
+                className="sm:col-span-2"
+              >
+                <Controller
+                  name="sensorId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={isSubmitting || isLoadingSensors}
+                    >
+                      <SelectTrigger id="sensorId">
+                        <SelectValue
+                          placeholder={
+                            isLoadingSensors ? 'Carregando sensores...' : 'Selecione o sensor'
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sensors.map((sensor) => (
+                          <SelectItem key={sensor.id} value={sensor.id}>
+                            {getSensorTypeLabel(sensor.sensorType)} -{' '}
+                            {sensor.tank?.name || 'Sem tanque'}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </FormField>
 
-            <div className="space-y-2">
-              <Label htmlFor="unit">Unidade *</Label>
-              <Input
-                id="unit"
-                placeholder="Ex.: pH, C, mg/L"
-                disabled={isSubmitting}
-                {...register('unit')}
-              />
-              {errors.unit && <p className="text-xs text-destructive">{errors.unit.message}</p>}
-            </div>
+              <FormField id="value" label="Valor medido" required error={errors.value?.message}>
+                <Input
+                  id="value"
+                  type="number"
+                  step="any"
+                  disabled={isSubmitting}
+                  {...register('value', { valueAsNumber: true })}
+                />
+              </FormField>
 
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="measuredAt">Data e hora da medição *</Label>
-              <Input
+              <FormField id="unit" label="Unidade" required error={errors.unit?.message}>
+                <Input
+                  id="unit"
+                  placeholder="Ex.: pH, C, mg/L"
+                  disabled={isSubmitting}
+                  {...register('unit')}
+                />
+              </FormField>
+
+              <FormField
                 id="measuredAt"
-                type="datetime-local"
-                disabled={isSubmitting}
-                {...register('measuredAt')}
-              />
-              {errors.measuredAt && (
-                <p className="text-xs text-destructive">{errors.measuredAt.message}</p>
-              )}
-            </div>
+                label="Data e hora da medição"
+                required
+                error={errors.measuredAt?.message}
+                className="sm:col-span-2"
+              >
+                <Input
+                  id="measuredAt"
+                  type="datetime-local"
+                  disabled={isSubmitting}
+                  {...register('measuredAt')}
+                />
+              </FormField>
 
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="notes">Observações</Label>
-              <textarea
+              <FormField
                 id="notes"
-                rows={3}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                placeholder="Observações opcionais"
-                disabled={isSubmitting}
-                {...register('notes')}
-              />
-              {errors.notes && <p className="text-xs text-destructive">{errors.notes.message}</p>}
+                label="Observações"
+                error={errors.notes?.message}
+                className="sm:col-span-2"
+              >
+                <textarea
+                  id="notes"
+                  rows={3}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  placeholder="Observações opcionais"
+                  disabled={isSubmitting}
+                  {...register('notes')}
+                />
+              </FormField>
             </div>
-          </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleClose(false)}
-              disabled={isSubmitting}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? 'Salvar alterações' : 'Cadastrar'}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleClose(false)}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isEdit ? 'Salvar alterações' : 'Cadastrar'}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );
 }
-
