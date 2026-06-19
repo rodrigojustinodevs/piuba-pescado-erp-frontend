@@ -23,7 +23,7 @@ import {
   CircleDollarSign,
   ShoppingCart,
   Droplets,
-} from 'lucide-react';
+} from 'lucide-react';ain
 
 export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   allowedRoles?: UserRoleType[];
