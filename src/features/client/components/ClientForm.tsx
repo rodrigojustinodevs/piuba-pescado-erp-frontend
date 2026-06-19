@@ -98,7 +98,6 @@ export function ClientForm({
       status: clientStatusFormValues[0],
       creditLimit: 0,
       notes: '',
-      address: '',
     },
   });
 
@@ -128,7 +127,6 @@ export function ClientForm({
             priceGroup: data.priceGroup,
             city: data.city?.trim() || null,
             state: data.state?.trim().toUpperCase() || null,
-            address: data.address?.trim() || null,
             status: data.status,
             creditLimit: credit,
             notes: data.notes?.trim() || null,

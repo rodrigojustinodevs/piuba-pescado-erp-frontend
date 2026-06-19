@@ -91,7 +91,6 @@ export interface CreateClientData {
   contact: string | null;
   city?: string | null;
   state?: string | null;
-  address: string | null;
   creditLimit: number | null;
   priceGroup: ClientPriceGroup;
   status?: ClientStatus;

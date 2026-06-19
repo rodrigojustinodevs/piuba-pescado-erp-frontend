@@ -30,7 +30,6 @@ export const createClientFormSchema = z.object({
   status: clientStatusFormSchema.optional(),
   creditLimit: z.number().optional(),
   notes: z.string().optional(),
-  address: z.string().optional(),
 });
 
 export type CreateClientFormData = z.infer<typeof createClientFormSchema>;

@@ -100,7 +100,6 @@ export function ClientDialog({
             : clientStatusFormValues[0]) as typeof clientStatusFormValues[number],
           creditLimit: client.creditLimit ? parseFloat(client.creditLimit) : 0,
           notes: client.notes ?? '',
-          address: client.address ?? '',
         }
       : undefined;
 
