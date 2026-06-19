@@ -3,11 +3,9 @@
 import { useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import { FormActions, Select, TextArea } from '@/shared/components/form';
+import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
+import { FormActions, FormCardSection, Select, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateFinancialCategoryData } from '../types';
 import {
@@ -38,20 +36,8 @@ export function FinancialCategoryForm({
   submittingLabel,
   inDialog = false,
 }: Readonly<FinancialCategoryFormProps>) {
-  const { user, isMaster } = useAuthContext();
-  const showCompanySelect = isMaster();
-
-  const resolverSchema = useMemo(
-    () =>
-      createFinancialCategoryFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
-    [showCompanySelect],
-  );
-
-  const { loadingCompanies, companyOptions } = useCompanyOptions(showCompanySelect);
+  const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
+    useFormWithCompany(createFinancialCategoryFormSchema);
 
   const typeOptions = useMemo(
     () => [
@@ -208,32 +194,26 @@ export function FinancialCategoryForm({
     </form>
   ) : (
     <form onSubmit={handleFormSubmit}>
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-[#0F172A]">Dados da categoria</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Informe nome, tipo e status da categoria financeira.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {companyField}
-          {nameField}
-          {typeField}
-          {statusField}
-        </div>
-
-        <div className="mt-4">{notesField}</div>
-
-        <div className="mt-8">
+      <FormCardSection
+        title="Dados da categoria"
+        description="Informe nome, tipo e status da categoria financeira."
+        footer={
           <FormActions
             submitLabel={submitLabel}
             loadingLabel={submittingLabel}
             isLoading={isSubmitting}
             onCancel={onCancel}
           />
+        }
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {companyField}
+          {nameField}
+          {typeField}
+          {statusField}
         </div>
-      </div>
+        <div className="mt-4">{notesField}</div>
+      </FormCardSection>
     </form>
   );
 

@@ -3,12 +3,10 @@
 import { useEffect, useMemo } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
+import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
 import { useSuppliers } from '@/features/supplier/hooks/useSuppliers';
-import { FormActions, Switch, Select, TextArea } from '@/shared/components/form';
+import { FormActions, FormCardSection, Switch, Select, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateSupplyData } from '../types';
 import {
@@ -37,20 +35,8 @@ export function SupplyForm({
   submittingLabel,
   inDialog = false,
 }: Readonly<SupplyFormProps>) {
-  const { user, isMaster } = useAuthContext();
-  const showCompanySelect = isMaster();
-
-  const resolverSchema = useMemo(
-    () =>
-      createSupplyFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
-    [showCompanySelect],
-  );
-
-  const { loadingCompanies, companyOptions } = useCompanyOptions(showCompanySelect);
+  const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
+    useFormWithCompany(createSupplyFormSchema);
 
   const unitOptions = useMemo(
     () => [
@@ -319,13 +305,12 @@ export function SupplyForm({
         {inDialog ? (
           fields
         ) : (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            <div className="mb-6">
-              <h2 className="text-base font-semibold text-[#0F172A]">Dados do produto</h2>
-              <p className="mt-1 text-sm text-slate-600">Informe os dados do insumo ou produto.</p>
-            </div>
+          <FormCardSection
+            title="Dados do produto"
+            description="Informe os dados do insumo ou produto."
+          >
             {fields}
-          </div>
+          </FormCardSection>
         )}
       </form>
     </AuthCompanyGate>

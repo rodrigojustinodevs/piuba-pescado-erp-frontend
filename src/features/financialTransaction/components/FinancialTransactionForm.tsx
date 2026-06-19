@@ -3,11 +3,9 @@
 import { useEffect, useMemo } from 'react';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import { FormActions, Select, TextArea } from '@/shared/components/form';
+import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
+import { FormActions, FormCardSection, Select, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateFinancialTransactionData } from '../types';
 import {
@@ -65,20 +63,8 @@ export function FinancialTransactionForm({
   submittingLabel,
   inDialog = false,
 }: Readonly<Props>) {
-  const { user, isMaster } = useAuthContext();
-  const showCompanySelect = isMaster();
-
-  const resolverSchema = useMemo(
-    () =>
-      createFinancialTransactionFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
-    [showCompanySelect],
-  );
-
-  const { loadingCompanies, companyOptions } = useCompanyOptions(showCompanySelect);
+  const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
+    useFormWithCompany(createFinancialTransactionFormSchema);
 
   const {
     register,
@@ -323,13 +309,18 @@ export function FinancialTransactionForm({
     </form>
   ) : (
     <form onSubmit={handleFormSubmit}>
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-[#0F172A]">Dados da transação</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Informe tipo, valor, datas e método de pagamento.
-          </p>
-        </div>
+      <FormCardSection
+        title="Dados da transação"
+        description="Informe tipo, valor, datas e método de pagamento."
+        footer={
+          <FormActions
+            submitLabel={submitLabel}
+            loadingLabel={submittingLabel}
+            isLoading={isSubmitting}
+            onCancel={onCancel}
+          />
+        }
+      >
         <div className="space-y-4">
           {companyField}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -348,15 +339,7 @@ export function FinancialTransactionForm({
           {descriptionField}
           {notesField}
         </div>
-        <div className="mt-8">
-          <FormActions
-            submitLabel={submitLabel}
-            loadingLabel={submittingLabel}
-            isLoading={isSubmitting}
-            onCancel={onCancel}
-          />
-        </div>
-      </div>
+      </FormCardSection>
     </form>
   );
 

@@ -2,24 +2,11 @@
 
 import type { Biometry } from '../types';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
+import { formatNumber, formatSampleWeight, formatSampleQuantity } from '../utils/formatters';
 
 export type BiometryDetailViewProps = {
   biometry: Biometry;
 };
-
-function formatNumber(value: number): string {
-  return Number.isFinite(value) ? String(value) : '—';
-}
-
-function formatSampleWeight(value: number): string {
-  if (!Number.isFinite(value) || value <= 0) return '—';
-  return formatNumber(value);
-}
-
-function formatSampleQuantity(value: number): string {
-  if (!Number.isFinite(value) || value <= 0) return '—';
-  return String(Math.trunc(value));
-}
 
 export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProps>) {
   const titleLabel = biometry.batchName || `Biometria ${biometry.biometryDate}`;

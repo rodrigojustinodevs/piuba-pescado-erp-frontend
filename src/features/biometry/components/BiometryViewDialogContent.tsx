@@ -4,24 +4,11 @@ import type { Biometry } from '../types';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 import { BarChart3, Calendar, Scale } from 'lucide-react';
 import { InfoRow } from '@/shared/components/entityDetail';
+import { formatNumber, formatSampleWeight, formatSampleQuantity } from '../utils/formatters';
 
 type BiometryViewDialogContentProps = {
   biometry: Biometry | null;
 };
-
-function formatNumber(value: number): string {
-  return Number.isFinite(value) ? String(value) : '—';
-}
-
-function formatSampleWeight(value: number): string {
-  if (!Number.isFinite(value) || value <= 0) return '—';
-  return formatNumber(value);
-}
-
-function formatSampleQuantity(value: number): string {
-  if (!Number.isFinite(value) || value <= 0) return '—';
-  return String(Math.trunc(value));
-}
 
 export function BiometryViewDialogContent({ biometry }: Readonly<BiometryViewDialogContentProps>) {
   if (!biometry) {

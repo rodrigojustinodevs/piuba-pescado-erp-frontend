@@ -3,11 +3,9 @@
 import { useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import { FormActions, Select, TextArea } from '@/shared/components/form';
+import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
+import { FormActions, FormCardSection, Select, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateStockLocationData, UpdateStockLocationData } from '../types';
 import {
@@ -56,20 +54,8 @@ function StockCreateForm({
   submittingLabel: string;
   inDialog?: boolean;
 }>) {
-  const { user, isMaster } = useAuthContext();
-  const showCompanySelect = isMaster();
-
-  const resolverSchema = useMemo(
-    () =>
-      createStockFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
-    [showCompanySelect],
-  );
-
-  const { loadingCompanies, companyOptions } = useCompanyOptions(showCompanySelect);
+  const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
+    useFormWithCompany(createStockFormSchema);
 
   const {
     register,
@@ -252,15 +238,12 @@ function StockCreateForm({
         {inDialog ? (
           fields
         ) : (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-            <div className="mb-6">
-              <h2 className="text-base font-semibold text-[#0F172A]">Novo local de armazenamento</h2>
-              <p className="mt-1 text-sm text-slate-600">
-                Preencha os dados para cadastrar um novo local de armazenamento.
-              </p>
-            </div>
+          <FormCardSection
+            title="Novo local de armazenamento"
+            description="Preencha os dados para cadastrar um novo local de armazenamento."
+          >
             {fields}
-          </div>
+          </FormCardSection>
         )}
       </form>
     </AuthCompanyGate>
@@ -431,13 +414,12 @@ function StockEditForm({
       {inDialog ? (
         fields
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-          <div className="mb-6">
-            <h2 className="text-base font-semibold text-[#0F172A]">Editar local de armazenamento</h2>
-            <p className="mt-1 text-sm text-slate-600">Atualize os dados deste local de armazenamento.</p>
-          </div>
+        <FormCardSection
+          title="Editar local de armazenamento"
+          description="Atualize os dados deste local de armazenamento."
+        >
           {fields}
-        </div>
+        </FormCardSection>
       )}
     </form>
   );
