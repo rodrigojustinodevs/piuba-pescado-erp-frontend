@@ -161,6 +161,7 @@ export function DataTable<T>({
                                 key={key}
                                 className={className}
                                 onClick={() => action.onClick?.()}
+
                               >
                                 {action.icon}
                                 {action.label}

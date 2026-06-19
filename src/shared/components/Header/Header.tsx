@@ -21,6 +21,7 @@ export interface HeaderProps {
 export function AppHeader({ onMenuClick }: HeaderProps = {}) {
   const { user, logout } = useAuthContext();
   const name = user?.name || 'Usuário';
+
   return (
     <header className="flex h-14 items-center gap-4 border-b border-border bg-card px-4">
       <SidebarTrigger className="-ml-1" onClick={onMenuClick} />
