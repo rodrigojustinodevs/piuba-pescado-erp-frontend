@@ -1,12 +1,12 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import { SEVERITY_LABELS, type Mortality } from '../types';
 import {
   formatNullableDatePtBR,
   formatRelativeDateTimePtBR,
 } from '@/shared/utils/dateFormat';
 import { Calendar, Hash, Skull } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 
 type MortalityViewDialogContentProps = {
   mortality: Mortality | null;
@@ -89,20 +89,3 @@ export function MortalityViewDialogContent({
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-}
-
-function InfoRow({ icon, label, value }: Readonly<InfoRowProps>) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="break-words text-sm">{value}</p>
-    </div>
-  );
-}

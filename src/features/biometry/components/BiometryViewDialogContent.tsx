@@ -1,9 +1,9 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import type { Biometry } from '../types';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 import { BarChart3, Calendar, Scale } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 
 type BiometryViewDialogContentProps = {
   biometry: Biometry | null;
@@ -89,20 +89,3 @@ export function BiometryViewDialogContent({ biometry }: Readonly<BiometryViewDia
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-}
-
-function InfoRow({ icon, label, value }: Readonly<InfoRowProps>) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="break-words text-sm">{value}</p>
-    </div>
-  );
-}

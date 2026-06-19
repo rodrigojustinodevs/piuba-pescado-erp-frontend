@@ -1,9 +1,9 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import type { Feeding } from '../types';
 import { formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 import { Calendar, Fish, Package, Scale, Sprout, Warehouse } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 
 type FeedingViewDialogContentProps = {
   feeding: Feeding | null;
@@ -86,21 +86,3 @@ export function FeedingViewDialogContent({ feeding }: Readonly<FeedingViewDialog
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-  readonly className?: string;
-}
-
-function InfoRow({ icon, label, value, className }: Readonly<InfoRowProps>) {
-  return (
-    <div className={`space-y-1 ${className ?? ''}`}>
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="break-words text-sm">{value}</p>
-    </div>
-  );
-}

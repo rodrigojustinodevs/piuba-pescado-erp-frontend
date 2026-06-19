@@ -1,10 +1,10 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import type { Transfer, TransferStatus } from '../types';
 import { REASON_LABELS, STATUS_LABELS } from '../types';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { ArrowRight, Calendar, Clock, FileText, Fish, Scale, Tag, User, Users } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 
 type TransferViewDialogContentProps = {
   transfer: Transfer | null;
@@ -174,20 +174,3 @@ function MetricCard({ icon, label, value, unit, highlight }: MetricCardProps) {
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-}
-
-function InfoRow({ icon, label, value }: InfoRowProps) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="wrap-break-word text-sm font-medium">{value}</p>
-    </div>
-  );
-}

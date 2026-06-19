@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCompanies } from '@/features/company';
@@ -33,6 +33,7 @@ import {
 } from '@/shared/components/ui/Select';
 import { Badge } from '@/shared/components/ui/Badge';
 import { Building2, Calendar, Droplets, Loader2, MapPin } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 
 interface TankDialogProps {
   readonly open: boolean;
@@ -389,21 +390,3 @@ export function TankDialog({
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-  readonly className?: string;
-}
-
-function InfoRow({ icon, label, value, className }: Readonly<InfoRowProps>) {
-  return (
-    <div className={`space-y-1 ${className ?? ''}`}>
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="break-words text-sm">{value}</p>
-    </div>
-  );
-}

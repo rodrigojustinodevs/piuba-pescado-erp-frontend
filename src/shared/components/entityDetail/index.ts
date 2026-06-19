@@ -1,5 +1,5 @@
-export { DetailInfoField, DetailSummaryCard } from './detailBlocks';
-export type { DetailInfoFieldProps, DetailSummaryCardProps } from './detailBlocks';
+export { DetailInfoField, DetailSummaryCard, InfoRow } from './detailBlocks';
+export type { DetailInfoFieldProps, DetailSummaryCardProps, InfoRowProps } from './detailBlocks';
 export { DetailInfoSection } from './DetailInfoSection';
 export type { DetailInfoSectionProps } from './DetailInfoSection';
 export { DetailPageHero } from './DetailPageHero';

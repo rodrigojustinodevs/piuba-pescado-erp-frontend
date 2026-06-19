@@ -1,6 +1,7 @@
 import type {
   ApiFinancialTransaction,
   ApiFinancialTransactionListResponse,
+  CreateFinancialTransactionData,
   FinancialTransaction,
   FinancialTransactionListResponse,
   FinancialTransactionMethod,
@@ -12,6 +13,24 @@ import {
   extractListFromPagedApiResponse,
   getApiPagedListMeta,
 } from '@/shared/utils/apiListResponse';
+
+export function buildFinancialTransactionBody(
+  payload: CreateFinancialTransactionData,
+): Record<string, unknown> {
+  const body: Record<string, unknown> = {
+    type: payload.type,
+    status: payload.status,
+    amount: payload.amount,
+  };
+  if (payload.companyId?.trim()) body.companyId = payload.companyId.trim();
+  if (payload.method) body.method = payload.method;
+  if (payload.dueDate) body.dueDate = payload.dueDate;
+  if (payload.paymentDate) body.paymentDate = payload.paymentDate;
+  if (payload.description?.trim()) body.description = payload.description.trim();
+  if (payload.notes?.trim()) body.notes = payload.notes.trim();
+  if (payload.categoryId?.trim()) body.categoryId = payload.categoryId.trim();
+  return body;
+}
 
 function mapType(raw: string | undefined | null): FinancialTransactionType {
   const k = (raw ?? '').toLowerCase();

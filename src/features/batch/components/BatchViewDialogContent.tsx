@@ -1,10 +1,10 @@
 'use client';
 
-import type { ReactNode } from 'react';
 import type { Batch } from '../types';
 import { BatchStatusBadge } from './BatchStatusBadge';
 import { formatDate, formatDateTime, formatQuantity, getCultivationLabel } from '../utils/format';
 import { Calendar, Fish, Leaf, Package, Sprout } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 
 type BatchViewDialogContentProps = {
   batch: Batch | null;
@@ -75,21 +75,3 @@ export function BatchViewDialogContent({ batch }: Readonly<BatchViewDialogConten
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-  readonly className?: string;
-}
-
-function InfoRow({ icon, label, value, className }: Readonly<InfoRowProps>) {
-  return (
-    <div className={`space-y-1 ${className ?? ''}`}>
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="break-words text-sm">{value}</p>
-    </div>
-  );
-}
