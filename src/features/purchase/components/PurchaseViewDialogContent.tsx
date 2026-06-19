@@ -88,6 +88,10 @@ function formatDate(value: string | null): string {
   return text === '—' ? (value ?? '—') : text;
 }
 
+function itemCell(value: ReactNode, className = 'text-sm text-slate-700') {
+  return <div className={className}>{value}</div>;
+}
+
 export function PurchaseViewDialogContent({
   purchase,
   onReceive,
@@ -106,39 +110,31 @@ export function PurchaseViewDialogContent({
     {
       id: 'supplyName',
       header: 'Insumo',
-      cell: (item) => <div className="text-sm text-slate-700">{item.supplyName || '—'}</div>,
+      cell: (item) => itemCell(item.supplyName || '—'),
     },
     {
       id: 'quantity',
       header: 'Qtd',
       align: 'right',
-      cell: (item) => <div className="text-sm text-slate-700 tabular-nums">{item.quantity}</div>,
+      cell: (item) => itemCell(item.quantity, 'text-sm text-slate-700 tabular-nums'),
     },
     {
       id: 'unit',
       header: 'Un',
       align: 'center',
-      cell: (item) => <div className="text-sm text-slate-700">{item.unit || '—'}</div>,
+      cell: (item) => itemCell(item.unit || '—'),
     },
     {
       id: 'unitPrice',
       header: 'Preço unit.',
       align: 'right',
-      cell: (item) => (
-        <div className="text-sm text-slate-700 tabular-nums">
-          {formatPurchaseMoney(item.unitPrice)}
-        </div>
-      ),
+      cell: (item) => itemCell(formatPurchaseMoney(item.unitPrice), 'text-sm text-slate-700 tabular-nums'),
     },
     {
       id: 'totalPrice',
       header: 'Subtotal',
       align: 'right',
-      cell: (item) => (
-        <div className="text-sm font-medium text-[#0F172A] tabular-nums">
-          {formatPurchaseMoney(item.totalPrice)}
-        </div>
-      ),
+      cell: (item) => itemCell(formatPurchaseMoney(item.totalPrice), 'text-sm font-medium text-[#0F172A] tabular-nums'),
     },
   ];
 

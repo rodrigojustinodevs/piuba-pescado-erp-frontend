@@ -24,6 +24,7 @@ import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { useAlertModal } from '@/shared/components/AlertModal/AlertModalContext';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
+import { labelsToOptions } from '@/shared/utils/labelOptions';
 import { FormActions, TextArea, Select, ControlledSelect } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
@@ -51,6 +52,9 @@ export type TransferFormProps =
       initialData: Transfer;
       onSubmit: (data: PatchTransferPayload) => void;
     });
+
+const SET_DIRTY_VALIDATE = { shouldDirty: true, shouldValidate: true } as const;
+const SET_DIRTY_NO_VALIDATE = { shouldDirty: true, shouldValidate: false } as const;
 
 function todayIso() {
   return new Date().toISOString().split('T')[0];
@@ -239,9 +243,9 @@ export function TransferForm({
       return;
     }
 
-    setValue('batchId', '', { shouldDirty: true, shouldValidate: false });
-    setValue('originTankId', '', { shouldDirty: true, shouldValidate: false });
-    setValue('destinationTankId', '', { shouldDirty: true, shouldValidate: false });
+    setValue('batchId', '', SET_DIRTY_NO_VALIDATE);
+    setValue('originTankId', '', SET_DIRTY_NO_VALIDATE);
+    setValue('destinationTankId', '', SET_DIRTY_NO_VALIDATE);
 
     loadCompanyData(companyId);
   }, [companyId, showCompanyField, loadCompanyData, setValue]);
@@ -276,16 +280,18 @@ export function TransferForm({
     isCompleted || isLoading || isLoadingTanksEffective || (showCompanyField && !companyDataLoaded);
   const quantityDisabled = isCompleted || isLoading;
 
-  const reasonOptions = useMemo(
-    () => Object.entries(REASON_LABELS).map(([value, label]) => ({ value, label })),
-    [],
-  );
-  const statusOptions = useMemo(
-    () => Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label })),
-    [],
-  );
+  const reasonOptions = useMemo(() => labelsToOptions(REASON_LABELS), []);
+  const statusOptions = useMemo(() => labelsToOptions(STATUS_LABELS), []);
 
   function buildAndSubmit(data: CreateTransferFormData | UpdateTransferFormData) {
+    const exceedsStock = (qty: number) => {
+      if (!selectedBatch || qty <= selectedBatch.initialQuantity) return false;
+      setError('quantity', {
+        message: `Quantidade informada excede o estoque disponível (${selectedBatch.initialQuantity.toLocaleString('pt-BR')} disponíveis).`,
+      });
+      return true;
+    };
+
     if (mode === 'update') {
       const patch: PatchTransferPayload = {
         id: (data as UpdateTransferFormData).id,
@@ -294,16 +300,7 @@ export function TransferForm({
       for (const key of Object.keys(dirtyFields) as Array<keyof typeof dirtyFields>) {
         (patch as unknown as Record<string, unknown>)[key] = (data as Record<string, unknown>)[key];
       }
-      if (
-        patch.quantity !== undefined &&
-        selectedBatch &&
-        patch.quantity > selectedBatch.initialQuantity
-      ) {
-        setError('quantity', {
-          message: `Quantidade informada excede o estoque disponível (${selectedBatch.initialQuantity.toLocaleString('pt-BR')} disponíveis).`,
-        });
-        return;
-      }
+      if (patch.quantity !== undefined && exceedsStock(patch.quantity)) return;
 
       if (patch.status) {
         const msg = getStatusTransitionMessage(
@@ -321,13 +318,7 @@ export function TransferForm({
 
       (onSubmit as (data: PatchTransferPayload) => void)(patch);
     } else {
-      const qty = (data as CreateTransferFormData).quantity;
-      if (selectedBatch && qty > selectedBatch.initialQuantity) {
-        setError('quantity', {
-          message: `Quantidade informada excede o estoque disponível (${selectedBatch.initialQuantity.toLocaleString('pt-BR')} disponíveis).`,
-        });
-        return;
-      }
+      if (exceedsStock((data as CreateTransferFormData).quantity)) return;
       (onSubmit as (data: CreateTransferFormData) => void)(data as CreateTransferFormData);
     }
   }
@@ -378,23 +369,14 @@ export function TransferForm({
               const batch = batches.find((b) => b.id === nextId);
               const nextOriginTankId = batch?.tank?.id;
 
-              setValue('originTankId', nextOriginTankId ?? '', {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
+              setValue('originTankId', nextOriginTankId ?? '', SET_DIRTY_VALIDATE);
 
               if (!isEditMode) {
-                setValue('quantity', batch?.initialQuantity ?? 0, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                setValue('quantity', batch?.initialQuantity ?? 0, SET_DIRTY_VALIDATE);
               }
 
               if (!nextOriginTankId || destinationTankId === nextOriginTankId) {
-                setValue('destinationTankId', '', {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                });
+                setValue('destinationTankId', '', SET_DIRTY_VALIDATE);
               }
             }}
             error={errors.batchId?.message}
@@ -418,24 +400,15 @@ export function TransferForm({
           <ArrowRight className="h-5 w-5" />
         </div>
 
-        <Controller
-          name="destinationTankId"
+        <ControlledSelect
           control={control}
-          render={({ field }) => (
-            <Select
-              label="Tanque de Destino"
-              required
-              disabled={tankDisabled}
-              placeholder={isLoadingTanksEffective ? 'Carregando tanques...' : 'Destino'}
-              options={destinationTankOptions.map((tank) => ({
-                value: tank.id,
-                label: tank.name,
-              }))}
-              value={field.value || ''}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={errors.destinationTankId?.message}
-            />
-          )}
+          name="destinationTankId"
+          label="Tanque de Destino"
+          required
+          disabled={tankDisabled}
+          placeholder={isLoadingTanksEffective ? 'Carregando tanques...' : 'Destino'}
+          options={destinationTankOptions.map((tank) => ({ value: tank.id, label: tank.name }))}
+          error={errors.destinationTankId?.message}
         />
       </div>
 

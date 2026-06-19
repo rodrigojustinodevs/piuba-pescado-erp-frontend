@@ -26,6 +26,7 @@ import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
+import { labelsToOptions } from '@/shared/utils/labelOptions';
 import { FormActions, Select, TextArea, ControlledSelect } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
@@ -50,6 +51,17 @@ export type HarvestFormProps =
       initialData: Harvest;
       onSubmit: (data: PatchHarvestPayload) => void;
     });
+
+const TABLE_INPUT_CLS = 'w-full rounded border-0 bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5';
+
+function SummaryItem({ label, value, className }: { label: string; value: string; className?: string }) {
+  return (
+    <div>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className={`font-semibold ${className ?? ''}`}>{value}</p>
+    </div>
+  );
+}
 
 function todayIso() {
   return new Date().toISOString().split('T')[0];
@@ -182,15 +194,16 @@ export function HarvestForm({
   // Watched values for live summary
   const companyId = (watch('companyId' as never) ?? '') as unknown as string;
   const batchId = (watch('batchId' as never) ?? '') as unknown as string;
-  const harvestedQuantity = (useWatch({ control, name: 'harvestedQuantity' as never }) as number) ?? 0;
-  const averageWeight = (useWatch({ control, name: 'averageWeight' as never }) as number) ?? 0;
-  const initialPopulation = (useWatch({ control, name: 'initialPopulation' as never }) as number) ?? 0;
-  const operationalCost = (useWatch({ control, name: 'operationalCost' as never }) as number) ?? 0;
-  const sizeClassifications = useWatch({ control, name: 'sizeClassifications' as never }) as Array<{
+  const watchNum = (name: string) => (watch(name as never) as unknown as number) ?? 0;
+  const harvestedQuantity = watchNum('harvestedQuantity');
+  const averageWeight = watchNum('averageWeight');
+  const initialPopulation = watchNum('initialPopulation');
+  const operationalCost = watchNum('operationalCost');
+  const sizeClassifications = (watch('sizeClassifications' as never) as unknown as Array<{
     quantity: number;
     averageWeight: number;
     pricePerKg: number;
-  }> ?? [];
+  }>) ?? [];
 
   // Summary calculations
   const biomassKg = (Number(harvestedQuantity) * Number(averageWeight)) / 1000;
@@ -241,18 +254,9 @@ export function HarvestForm({
 
   const selectedBatch = useMemo(() => batches.find((b) => b.id === batchId), [batches, batchId]);
 
-  const typeOptions = useMemo(
-    () => Object.entries(HARVEST_TYPE_LABELS).map(([value, label]) => ({ value, label })),
-    [],
-  );
-  const statusOptions = useMemo(
-    () => Object.entries(HARVEST_STATUS_LABELS).map(([value, label]) => ({ value, label })),
-    [],
-  );
-  const destinationOptions = useMemo(
-    () => Object.entries(HARVEST_DESTINATION_LABELS).map(([value, label]) => ({ value, label })),
-    [],
-  );
+  const typeOptions = useMemo(() => labelsToOptions(HARVEST_TYPE_LABELS), []);
+  const statusOptions = useMemo(() => labelsToOptions(HARVEST_STATUS_LABELS), []);
+  const destinationOptions = useMemo(() => labelsToOptions(HARVEST_DESTINATION_LABELS), []);
 
   const errs = errors as Record<string, { message?: string }>;
   const classErrs = (
@@ -462,7 +466,7 @@ export function HarvestForm({
                 <input
                   type="text"
                   placeholder="G, M, P..."
-                  className="w-full rounded border-0 bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5"
+                  className={TABLE_INPUT_CLS}
                   disabled={isLoading}
                   {...register(`sizeClassifications.${index}.class` as never)}
                 />
@@ -475,7 +479,7 @@ export function HarvestForm({
                   type="number"
                   min={0}
                   step={1}
-                  className="w-full rounded border-0 bg-transparent text-sm text-right focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5"
+                  className={`${TABLE_INPUT_CLS} text-right`}
                   disabled={isLoading}
                   {...register(`sizeClassifications.${index}.quantity` as never, { valueAsNumber: true })}
                 />
@@ -485,7 +489,7 @@ export function HarvestForm({
                   type="number"
                   min={0}
                   step={0.1}
-                  className="w-full rounded border-0 bg-transparent text-sm text-right focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5"
+                  className={`${TABLE_INPUT_CLS} text-right`}
                   disabled={isLoading}
                   {...register(`sizeClassifications.${index}.averageWeight` as never, { valueAsNumber: true })}
                 />
@@ -495,7 +499,7 @@ export function HarvestForm({
                   type="number"
                   min={0}
                   step={0.01}
-                  className="w-full rounded border-0 bg-transparent text-sm text-right focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5"
+                  className={`${TABLE_INPUT_CLS} text-right`}
                   disabled={isLoading}
                   {...register(`sizeClassifications.${index}.pricePerKg` as never, { valueAsNumber: true })}
                 />
@@ -548,26 +552,17 @@ export function HarvestForm({
 
       {/* Summary bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
-        <div>
-          <p className="text-xs text-slate-500">Biomassa</p>
-          <p className="font-semibold">
-            {fmt(biomassKg, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-slate-500">Receita bruta</p>
-          <p className="font-semibold">{fmtCurrency(grossRevenue)}</p>
-        </div>
-        <div>
-          <p className="text-xs text-slate-500">Lucro líquido</p>
-          <p className={`font-semibold ${netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-            {fmtCurrency(netProfit)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-slate-500">Sobrevivência</p>
-          <p className="font-semibold">{fmtPct(survivalRate)}</p>
-        </div>
+        <SummaryItem
+          label="Biomassa"
+          value={`${fmt(biomassKg, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kg`}
+        />
+        <SummaryItem label="Receita bruta" value={fmtCurrency(grossRevenue)} />
+        <SummaryItem
+          label="Lucro líquido"
+          value={fmtCurrency(netProfit)}
+          className={netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}
+        />
+        <SummaryItem label="Sobrevivência" value={fmtPct(survivalRate)} />
       </div>
 
       {/* Observações */}
