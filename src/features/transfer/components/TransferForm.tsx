@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight } from 'lucide-react';
@@ -12,17 +12,12 @@ import {
 } from '../schemas';
 import type { PatchTransferPayload, Transfer, TransferStatus } from '../types';
 import { REASON_LABELS, STATUS_LABELS } from '../types';
-import type { Batch } from '@/features/batch/types';
 import type { Tank } from '@/features/tank/types';
-import { batchService } from '@/features/batch/services/batchService';
 import { tankService } from '@/features/tank/services/tankService';
-import { useBatches } from '@/features/batch';
 import { formatBatchOptionLabel } from '@/features/batch/utils/format';
 import { useTanksWithoutBatches } from '@/features/tank';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { useToast } from '@/shared/contexts/ToastContext';
 import { useAlertModal } from '@/shared/components/AlertModal/AlertModalContext';
+import { useCompanyBatchData } from '@/shared/hooks/useCompanyBatchData';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
 import { labelsToOptions } from '@/shared/utils/labelOptions';
 import { FormActions, TextArea, Select, ControlledSelect } from '@/shared/components/form';
@@ -60,6 +55,9 @@ function todayIso() {
   return new Date().toISOString().split('T')[0];
 }
 
+const loadTransferTanks = (companyId: string) =>
+  tankService.listWithoutBatches({ page: 1, perPage: 1000, companyId });
+
 function getStatusTransitionMessage(
   from: TransferStatus | undefined,
   to: TransferStatus,
@@ -93,33 +91,31 @@ export function TransferForm({
   onCancel,
   apiError,
 }: TransferFormProps) {
-  const { isMaster } = useAuthContext();
-  const { showError } = useToast();
   const { showWarning } = useAlertModal();
   const isEditMode = mode === 'update';
-  const showCompanyField = isMaster() && !isEditMode;
 
-  const { companyOptions, loadingCompanies } = useCompanyOptions(showCompanyField);
-
-  const [companyBatches, setCompanyBatches] = useState<Batch[]>([]);
-  const [companyTanks, setCompanyTanks] = useState<Tank[]>([]);
-  const [isLoadingCompanyData, setIsLoadingCompanyData] = useState(false);
-  const [companyDataLoaded, setCompanyDataLoaded] = useState(false);
-
-  const { data: batchesData, isLoading: isLoadingBatches } = useBatches({
-    page: 1,
-    limit: 1000,
-    enabled: !showCompanyField,
+  const {
+    showCompanyField,
+    companyOptions,
+    loadingCompanies,
+    companyTanks,
+    isLoadingCompanyData,
+    companyDataLoaded,
+    batches,
+    isLoadingBatchesEffective,
+    loadCompanyData,
+    resetCompanyData,
+  } = useCompanyBatchData({
+    isEditMode,
+    loadTanks: loadTransferTanks,
+    errorMessage: 'Erro ao carregar dados da empresa. Verifique sua conexão e tente novamente.',
   });
-  const defaultBatches = useMemo(() => batchesData?.batches ?? [], [batchesData]);
 
   const { data: destinationTanksData, isLoading: isLoadingDestinationTanks } =
     useTanksWithoutBatches({ page: 1, perPage: 1000, enabled: !showCompanyField });
   const defaultTanks = useMemo(() => destinationTanksData?.tanks ?? [], [destinationTanksData]);
 
-  const batches = showCompanyField ? companyBatches : defaultBatches;
   const destinationTankList = showCompanyField ? companyTanks : defaultTanks;
-  const isLoadingBatchesEffective = showCompanyField ? isLoadingCompanyData : isLoadingBatches;
   const isLoadingTanksEffective = showCompanyField
     ? isLoadingCompanyData
     : isLoadingDestinationTanks;
@@ -210,36 +206,9 @@ export function TransferForm({
   const isCompleted = isEditMode && currentStatus === 'completed';
 
 
-  const loadCompanyData = useCallback(
-    async (selectedCompanyId: string) => {
-      setIsLoadingCompanyData(true);
-      setCompanyDataLoaded(false);
-      setCompanyBatches([]);
-      setCompanyTanks([]);
-
-      try {
-        const [batchesResult, tanksResult] = await Promise.all([
-          batchService.getBatches({ page: 1, limit: 1000, companyId: selectedCompanyId }),
-          tankService.listWithoutBatches({ page: 1, perPage: 1000, companyId: selectedCompanyId }),
-        ]);
-
-        setCompanyBatches(batchesResult.batches);
-        setCompanyTanks(tanksResult.tanks);
-        setCompanyDataLoaded(true);
-      } catch {
-        showError('Erro ao carregar dados da empresa. Verifique sua conexão e tente novamente.');
-      } finally {
-        setIsLoadingCompanyData(false);
-      }
-    },
-    [showError],
-  );
-
   useEffect(() => {
     if (!showCompanyField || !companyId) {
-      setCompanyBatches([]);
-      setCompanyTanks([]);
-      setCompanyDataLoaded(false);
+      resetCompanyData();
       return;
     }
 
@@ -248,7 +217,7 @@ export function TransferForm({
     setValue('destinationTankId', '', SET_DIRTY_NO_VALIDATE);
 
     loadCompanyData(companyId);
-  }, [companyId, showCompanyField, loadCompanyData, setValue]);
+  }, [companyId, showCompanyField, loadCompanyData, resetCompanyData, setValue]);
 
   const selectedBatch = useMemo(() => batches.find((b) => b.id === batchId), [batches, batchId]);
   const originTankLabel = selectedBatch?.tank?.name ?? '—';

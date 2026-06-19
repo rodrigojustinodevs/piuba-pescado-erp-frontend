@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useEffect, useMemo } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2 } from 'lucide-react';
 import {
@@ -16,15 +16,10 @@ import {
   HARVEST_STATUS_LABELS,
   HARVEST_TYPE_LABELS,
 } from '../types';
-import type { Batch } from '@/features/batch/types';
 import type { Tank } from '@/features/tank/types';
-import { batchService } from '@/features/batch/services/batchService';
 import { tankService } from '@/features/tank/services/tankService';
-import { useBatches } from '@/features/batch';
 import { formatBatchOptionLabel } from '@/features/batch/utils/format';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { useToast } from '@/shared/contexts/ToastContext';
+import { useCompanyBatchData } from '@/shared/hooks/useCompanyBatchData';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
 import { labelsToOptions } from '@/shared/utils/labelOptions';
 import { FormActions, Select, TextArea, ControlledSelect } from '@/shared/components/form';
@@ -63,6 +58,8 @@ function SummaryItem({ label, value, className }: { label: string; value: string
   );
 }
 
+const loadHarvestTanks = (_companyId: string) => tankService.list({ page: 1, limit: 1000 });
+
 function todayIso() {
   return new Date().toISOString().split('T')[0];
 }
@@ -83,26 +80,20 @@ export function HarvestForm({
   onCancel,
   apiError,
 }: HarvestFormProps) {
-  const { isMaster } = useAuthContext();
-  const { showError } = useToast();
   const isEditMode = mode === 'update';
-  const showCompanyField = isMaster() && !isEditMode;
 
-  const { companyOptions, loadingCompanies } = useCompanyOptions(showCompanyField);
-
-  const [companyBatches, setCompanyBatches] = useState<Batch[]>([]);
-  const [companyTanks, setCompanyTanks] = useState<Tank[]>([]);
-  const [isLoadingCompanyData, setIsLoadingCompanyData] = useState(false);
-  const [companyDataLoaded, setCompanyDataLoaded] = useState(false);
-
-  const { data: batchesData, isLoading: isLoadingBatches } = useBatches({
-    page: 1,
-    limit: 1000,
-    enabled: !showCompanyField,
-  });
-  const defaultBatches = useMemo(() => batchesData?.batches ?? [], [batchesData]);
-  const batches = showCompanyField ? companyBatches : defaultBatches;
-  const isLoadingBatchesEffective = showCompanyField ? isLoadingCompanyData : isLoadingBatches;
+  const {
+    showCompanyField,
+    companyOptions,
+    loadingCompanies,
+    companyTanks,
+    isLoadingCompanyData,
+    companyDataLoaded,
+    batches,
+    isLoadingBatchesEffective,
+    loadCompanyData,
+    resetCompanyData,
+  } = useCompanyBatchData({ isEditMode, loadTanks: loadHarvestTanks });
 
   const baseSchema = isEditMode ? updateHarvestSchema : createHarvestSchema;
   const resolverSchema = useMemo(
@@ -217,40 +208,15 @@ export function HarvestForm({
       ? (Number(harvestedQuantity) / Number(initialPopulation)) * 100
       : 0;
 
-  const loadCompanyData = useCallback(
-    async (cId: string) => {
-      setIsLoadingCompanyData(true);
-      setCompanyDataLoaded(false);
-      setCompanyBatches([]);
-      setCompanyTanks([]);
-      try {
-        const [batchRes, tankRes] = await Promise.all([
-          batchService.getBatches({ page: 1, limit: 1000, companyId: cId }),
-          tankService.list({ page: 1, limit: 1000 }),
-        ]);
-        setCompanyBatches(batchRes.batches);
-        setCompanyTanks(tankRes.tanks);
-        setCompanyDataLoaded(true);
-      } catch {
-        showError('Erro ao carregar dados da empresa.');
-      } finally {
-        setIsLoadingCompanyData(false);
-      }
-    },
-    [showError],
-  );
-
   useEffect(() => {
     if (!showCompanyField || !companyId) {
-      setCompanyBatches([]);
-      setCompanyTanks([]);
-      setCompanyDataLoaded(false);
+      resetCompanyData();
       return;
     }
     setValue('batchId' as never, '' as never, { shouldDirty: true });
     setValue('tankId' as never, '' as never, { shouldDirty: true });
     loadCompanyData(companyId);
-  }, [companyId, showCompanyField, loadCompanyData, setValue]);
+  }, [companyId, showCompanyField, loadCompanyData, resetCompanyData, setValue]);
 
   const selectedBatch = useMemo(() => batches.find((b) => b.id === batchId), [batches, batchId]);
 
