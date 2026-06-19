@@ -26,7 +26,7 @@ import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import { FormActions, Select, TextArea } from '@/shared/components/form';
+import { FormActions, Select, TextArea, ControlledSelect } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 
@@ -372,46 +372,26 @@ export function HarvestForm({
           error={errs['harvestDate']?.message}
         />
 
-        <Controller
+        <ControlledSelect
+          control={control as never}
           name={'type' as never}
-          control={control}
-          render={({ field }) => (
-            <Select
-              label="Tipo"
-              options={typeOptions}
-              value={(field.value as string) || ''}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={errs['type']?.message}
-            />
-          )}
+          label="Tipo"
+          options={typeOptions}
+          error={errs['type']?.message}
         />
-
-        <Controller
+        <ControlledSelect
+          control={control as never}
           name={'status' as never}
-          control={control}
-          render={({ field }) => (
-            <Select
-              label="Status"
-              options={statusOptions}
-              value={(field.value as string) || ''}
-              onChange={(e) => field.onChange(e.target.value as HarvestStatus)}
-              error={errs['status']?.message}
-            />
-          )}
+          label="Status"
+          options={statusOptions}
+          error={errs['status']?.message}
         />
-
-        <Controller
+        <ControlledSelect
+          control={control as never}
           name={'destination' as never}
-          control={control}
-          render={({ field }) => (
-            <Select
-              label="Destino"
-              options={destinationOptions}
-              value={(field.value as string) || ''}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={errs['destination']?.message}
-            />
-          )}
+          label="Destino"
+          options={destinationOptions}
+          error={errs['destination']?.message}
         />
       </div>
 

@@ -56,6 +56,33 @@ function DetailCard({
   );
 }
 
+function PurchaseMetricCard({
+  icon,
+  title,
+  value,
+  subtitle,
+  valueClassName = 'text-xl font-bold',
+}: {
+  icon: ReactNode;
+  title: string;
+  value: ReactNode;
+  subtitle: string;
+  valueClassName?: string;
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-xs font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className={valueClassName}>{value}</div>
+        <p className="text-xs text-muted-foreground">{subtitle}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
 function formatDate(value: string | null): string {
   const text = formatNullableDatePtBR(value ?? '');
   return text === '—' ? (value ?? '—') : text;
@@ -140,51 +167,32 @@ export function PurchaseViewDialogContent({
 
       {/* Metric cards */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium">Total da Compra</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-bold">{formatPurchaseMoney(purchase.totalPrice)}</div>
-            <p className="text-xs text-muted-foreground">valor total</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium">Itens</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl font-bold">{purchase.items.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {purchase.items.length === 1 ? 'insumo' : 'insumos'}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium">Data da Compra</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-lg font-bold">{formatDate(purchase.orderDate)}</div>
-            <p className="text-xs text-muted-foreground">data do pedido</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium">Fornecedor</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm font-bold leading-tight">{purchase.supplierName || '—'}</div>
-            <p className="text-xs text-muted-foreground">fornecedor</p>
-          </CardContent>
-        </Card>
+        <PurchaseMetricCard
+          icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+          title="Total da Compra"
+          value={formatPurchaseMoney(purchase.totalPrice)}
+          subtitle="valor total"
+        />
+        <PurchaseMetricCard
+          icon={<Package className="h-4 w-4 text-muted-foreground" />}
+          title="Itens"
+          value={purchase.items.length}
+          subtitle={purchase.items.length === 1 ? 'insumo' : 'insumos'}
+        />
+        <PurchaseMetricCard
+          icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+          title="Data da Compra"
+          value={formatDate(purchase.orderDate)}
+          subtitle="data do pedido"
+          valueClassName="text-lg font-bold"
+        />
+        <PurchaseMetricCard
+          icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
+          title="Fornecedor"
+          value={purchase.supplierName || '—'}
+          subtitle="fornecedor"
+          valueClassName="text-sm font-bold leading-tight"
+        />
       </div>
 
       {/* Ações de status */}

@@ -24,7 +24,7 @@ import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { useAlertModal } from '@/shared/components/AlertModal/AlertModalContext';
 import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import { FormActions, TextArea, Select } from '@/shared/components/form';
+import { FormActions, TextArea, Select, ControlledSelect } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 
@@ -520,34 +520,21 @@ export function TransferForm({
 
       {/* Motivo | Status */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Controller
+        <ControlledSelect
+          control={control}
           name="reason"
-          control={control}
-          render={({ field }) => (
-            <Select
-              label="Motivo"
-              placeholder="Selecione o motivo"
-              options={reasonOptions}
-              value={field.value || ''}
-              onChange={(e) => field.onChange(e.target.value)}
-              error={errors.reason?.message}
-            />
-          )}
+          label="Motivo"
+          placeholder="Selecione o motivo"
+          options={reasonOptions}
+          error={errors.reason?.message}
         />
-
-        <Controller
-          name="status"
+        <ControlledSelect
           control={control}
-          render={({ field }) => (
-            <Select
-              label="Status"
-              placeholder="Selecione o status"
-              options={statusOptions}
-              value={field.value || ''}
-              onChange={(e) => field.onChange(e.target.value as TransferStatus)}
-              error={errors.status?.message}
-            />
-          )}
+          name="status"
+          label="Status"
+          placeholder="Selecione o status"
+          options={statusOptions}
+          error={errors.status?.message}
         />
       </div>
 

@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
 import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
-import { FormActions, FormCardSection, Select, TextArea } from '@/shared/components/form';
+import { FormActions, FormCardSection, ControlledSelect, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateStockLocationData, UpdateStockLocationData } from '../types';
 import {
@@ -75,40 +75,24 @@ export function StockForm(props: Readonly<StockFormProps>) {
   const sharedFields = (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Controller
+        <ControlledSelect
           control={control}
           name="type"
-          render={({ field }) => (
-            <Select
-              label="Tipo"
-              required
-              disabled={isSubmitting}
-              options={stockLocationTypeOptions}
-              placeholder="Selecione o tipo"
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.type?.message}
-            />
-          )}
+          label="Tipo"
+          required
+          disabled={isSubmitting}
+          options={stockLocationTypeOptions}
+          placeholder="Selecione o tipo"
+          error={errors.type?.message}
         />
-        <Controller
+        <ControlledSelect
           control={control}
           name="status"
-          render={({ field }) => (
-            <Select
-              label="Status"
-              required
-              disabled={isSubmitting}
-              options={stockLocationStatusOptions}
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.status?.message}
-            />
-          )}
+          label="Status"
+          required
+          disabled={isSubmitting}
+          options={stockLocationStatusOptions}
+          error={errors.status?.message}
         />
       </div>
 
@@ -179,23 +163,15 @@ export function StockForm(props: Readonly<StockFormProps>) {
       ) : (
         <>
           {showCompanySelect ? (
-            <Controller
+            <ControlledSelect
               control={control}
               name="companyId"
-              render={({ field }) => (
-                <Select
-                  label="Empresa"
-                  required
-                  disabled={isSubmitting || loadingCompanies}
-                  options={companyOptions}
-                  placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-                  value={field.value ?? ''}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  error={errors.companyId?.message}
-                />
-              )}
+              label="Empresa"
+              required
+              disabled={isSubmitting || loadingCompanies}
+              options={companyOptions}
+              placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+              error={errors.companyId?.message}
             />
           ) : null}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

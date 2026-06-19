@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
 import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
 import { useSuppliers } from '@/features/supplier/hooks/useSuppliers';
-import { FormActions, FormCardSection, Switch, Select, TextArea } from '@/shared/components/form';
+import { FormActions, FormCardSection, Switch, ControlledSelect, TextArea } from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateSupplyData } from '../types';
 import {
@@ -91,23 +91,15 @@ export function SupplyForm({
   const fields = (
     <div className="space-y-5">
       {showCompanySelect ? (
-        <Controller
+        <ControlledSelect
           control={control}
           name="companyId"
-          render={({ field }) => (
-            <Select
-              label="Empresa"
-              required
-              disabled={isSubmitting || loadingCompanies}
-              options={companyOptions}
-              placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.companyId?.message}
-            />
-          )}
+          label="Empresa"
+          required
+          disabled={isSubmitting || loadingCompanies}
+          options={companyOptions}
+          placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+          error={errors.companyId?.message}
         />
       ) : null}
 
@@ -156,56 +148,32 @@ export function SupplyForm({
 
       {/* Categoria + Unidade + Fornecedor */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Controller
+        <ControlledSelect
           control={control}
           name="category"
-          render={({ field }) => (
-            <Select
-              label="Categoria"
-              disabled={isSubmitting}
-              options={supplyCategoryOptions}
-              placeholder="Selecione"
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.category?.message}
-            />
-          )}
+          label="Categoria"
+          disabled={isSubmitting}
+          options={supplyCategoryOptions}
+          placeholder="Selecione"
+          error={errors.category?.message}
         />
-        <Controller
+        <ControlledSelect
           control={control}
           name="defaultUnit"
-          render={({ field }) => (
-            <Select
-              label="Unidade"
-              required
-              disabled={isSubmitting}
-              options={unitOptions}
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.defaultUnit?.message}
-            />
-          )}
+          label="Unidade"
+          required
+          disabled={isSubmitting}
+          options={unitOptions}
+          error={errors.defaultUnit?.message}
         />
-        <Controller
+        <ControlledSelect
           control={control}
           name="supplierId"
-          render={({ field }) => (
-            <Select
-              label="Fornecedor"
-              disabled={isSubmitting || loadingSuppliers}
-              options={supplierOptions}
-              placeholder={loadingSuppliers ? 'Carregando...' : 'Selecione'}
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.supplierId?.message}
-            />
-          )}
+          label="Fornecedor"
+          disabled={isSubmitting || loadingSuppliers}
+          options={supplierOptions}
+          placeholder={loadingSuppliers ? 'Carregando...' : 'Selecione'}
+          error={errors.supplierId?.message}
         />
       </div>
 

@@ -11,20 +11,12 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
-import {
-  DollarSign,
-  Eye,
-  Fish,
-  Pencil,
-  Percent,
-  Scale,
-  Trash,
-  TrendingUp,
-  Waves,
-} from 'lucide-react';
+import { DollarSign, Fish, Percent, Scale, TrendingUp, Waves } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { StatCard } from '@/shared/components/Cards';
 import { formatNumber } from '@/shared/utils/numberFormat';
 import type { DataTableAction } from '@/shared/components/Table';
+import { createStandardRowActions } from '@/shared/utils/rowActions';
 import {
   Select,
   SelectContent,
@@ -133,25 +125,13 @@ export function HarvestsListView({
   }, []);
 
   const getRowActions = useCallback(
-    (row: Harvest): DataTableAction[] => [
-      {
-        label: 'Ver detalhes',
-        onClick: () => openDialog('view', row),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: 'Editar',
-        onClick: () => openDialog('edit', row),
-        icon: <Pencil className="h-4 w-4" />,
-      },
-      {
-        label: 'Excluir',
-        onClick: () => handleDelete(row.id),
-        variant: 'danger' as const,
-        disabled: isDeleting,
-        icon: <Trash className="h-4 w-4" />,
-      },
-    ],
+    (row: Harvest): DataTableAction[] =>
+      createStandardRowActions(
+        () => openDialog('view', row),
+        () => openDialog('edit', row),
+        () => handleDelete(row.id),
+        isDeleting,
+      ),
     [handleDelete, isDeleting, openDialog],
   );
 
@@ -209,62 +189,37 @@ export function HarvestsListView({
       />
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Despescas</CardTitle>
-            <Waves className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground"> {stats.countScheduled} agendadas</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Biomassa Total</CardTitle>
-            <Scale className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(stats.totalBiomass, { maximumFractionDigits: 2 })}
-            </div>
-            <p className="text-xs text-muted-foreground">kg despescados</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Receita</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{fmtCurrency(stats.totalRevenue)}</div>
-            <p className="text-xs text-muted-foreground">bruta concluídas</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Lucro Líquido</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div
-              className={`text-2xl font-bold ${stats.totalNetProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}`}
-            >
-              {fmtCurrency(stats.totalNetProfit)}
-            </div>
-            <p className="text-xs text-muted-foreground">após custos operacionais</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Sobrevivência</CardTitle>
-            <Percent className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{fmtCurrency(stats.averageSurvivalRate)} %</div>
-            <p className="text-xs text-muted-foreground">taxa de sobrevivência média</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          label="Despescas"
+          icon={<Waves className="h-4 w-4 text-muted-foreground" />}
+          value={stats.total}
+          subtitle={`${stats.countScheduled} agendadas`}
+        />
+        <StatCard
+          label="Biomassa Total"
+          icon={<Scale className="h-4 w-4 text-muted-foreground" />}
+          value={formatNumber(stats.totalBiomass, { maximumFractionDigits: 2 })}
+          subtitle="kg despescados"
+        />
+        <StatCard
+          label="Receita"
+          icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+          value={fmtCurrency(stats.totalRevenue)}
+          subtitle="bruta concluídas"
+        />
+        <StatCard
+          label="Lucro Líquido"
+          icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+          value={fmtCurrency(stats.totalNetProfit)}
+          subtitle="após custos operacionais"
+          valueClassName={stats.totalNetProfit >= 0 ? 'text-emerald-700' : 'text-red-600'}
+        />
+        <StatCard
+          label="Sobrevivência"
+          icon={<Percent className="h-4 w-4 text-muted-foreground" />}
+          value={`${fmtCurrency(stats.averageSurvivalRate)} %`}
+          subtitle="taxa de sobrevivência média"
+        />
       </div>
 
       <Card>
