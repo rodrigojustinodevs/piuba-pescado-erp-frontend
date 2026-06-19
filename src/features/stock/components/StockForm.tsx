@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
@@ -10,11 +10,9 @@ import { Input } from '@/shared/components/ui';
 import type { CreateStockLocationData, UpdateStockLocationData } from '../types';
 import {
   createStockFormSchema,
-  updateStockFormSchema,
   stockLocationTypeOptions,
   stockLocationStatusOptions,
   type CreateStockFormData,
-  type UpdateStockFormData,
 } from '../schemas';
 
 type StockFormProps =
@@ -29,7 +27,7 @@ type StockFormProps =
     }
   | {
       mode: 'edit';
-      initialValues: UpdateStockFormData;
+      initialValues: CreateStockFormData;
       stockCode: string;
       onSubmit: (data: Omit<UpdateStockLocationData, 'id'>) => void;
       onCancel?: () => void;
@@ -39,270 +37,43 @@ type StockFormProps =
       inDialog?: boolean;
     };
 
-function StockCreateForm({
-  onSubmit,
-  onCancel,
-  isSubmitting = false,
-  submitLabel,
-  submittingLabel,
-  inDialog,
-}: Readonly<{
-  onSubmit: (data: CreateStockLocationData) => void;
-  onCancel?: () => void;
-  isSubmitting?: boolean;
-  submitLabel: string;
-  submittingLabel: string;
-  inDialog?: boolean;
-}>) {
+export function StockForm(props: Readonly<StockFormProps>) {
+  const isEdit = props.mode === 'edit';
+  const isSubmitting = props.isSubmitting ?? false;
+
   const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
     useFormWithCompany(createStockFormSchema);
 
   const {
     register,
     handleSubmit,
+    reset,
     control,
     formState: { errors },
   } = useForm<CreateStockFormData>({
     resolver: zodResolver(resolverSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: {
-      companyId: '',
-      code: '',
-      name: '',
-      type: 'deposito',
-      location: '',
-      responsible: '',
-      notes: '',
-      status: 'active',
-    },
-  });
-
-  const fields = (
-    <div className="space-y-5">
-      {showCompanySelect ? (
-        <Controller
-          control={control}
-          name="companyId"
-          render={({ field }) => (
-            <Select
-              label="Empresa"
-              required
-              disabled={isSubmitting || loadingCompanies}
-              options={companyOptions}
-              placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.companyId?.message}
-            />
-          )}
-        />
-      ) : null}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label="Código"
-          requiredIndicator
-          type="text"
-          disabled={isSubmitting}
-          placeholder="Ex.: ARM-001"
-          {...register('code')}
-          error={errors.code?.message}
-        />
-        <Input
-          label="Nome"
-          requiredIndicator
-          type="text"
-          disabled={isSubmitting}
-          placeholder="Ex.: Armazém Principal"
-          {...register('name')}
-          error={errors.name?.message}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Controller
-          control={control}
-          name="type"
-          render={({ field }) => (
-            <Select
-              label="Tipo"
-              required
-              disabled={isSubmitting}
-              options={stockLocationTypeOptions}
-              placeholder="Selecione o tipo"
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.type?.message}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="status"
-          render={({ field }) => (
-            <Select
-              label="Status"
-              required
-              disabled={isSubmitting}
-              options={stockLocationStatusOptions}
-              value={field.value ?? ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              name={field.name}
-              error={errors.status?.message}
-            />
-          )}
-        />
-      </div>
-
-      <Input
-        label="Localização"
-        requiredIndicator
-        type="text"
-        disabled={isSubmitting}
-        placeholder="Ex.: Galpão Norte, Setor B"
-        {...register('location')}
-        error={errors.location?.message}
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label="Responsável"
-          type="text"
-          disabled={isSubmitting}
-          placeholder="Nome do responsável"
-          {...register('responsible')}
-          error={errors.responsible?.message}
-        />
-        <Input
-          label="Capacidade"
-          type="number"
-          step={0.01}
-          min={0.01}
-          disabled={isSubmitting}
-          placeholder="Ex.: 5000"
-          {...register('capacity', {
-            valueAsNumber: true,
-            setValueAs: (v: string) => (v === '' ? undefined : Number(v)),
-          })}
-          error={errors.capacity?.message}
-        />
-      </div>
-
-      <TextArea
-        label="Observações"
-        disabled={isSubmitting}
-        placeholder="Informações adicionais sobre este local (opcional)"
-        rows={3}
-        {...register('notes')}
-        error={errors.notes?.message}
-        inputClassName="resize-none"
-      />
-
-      <div className="mt-2">
-        <FormActions
-          submitLabel={submitLabel}
-          loadingLabel={submittingLabel}
-          isLoading={isSubmitting}
-          onCancel={onCancel}
-        />
-      </div>
-    </div>
-  );
-
-  return (
-    <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
-      <form
-        onSubmit={handleSubmit((data) => {
-          const payload: CreateStockLocationData = {
-            code: data.code.trim(),
-            name: data.name.trim(),
-            type: data.type,
-            location: data.location.trim(),
-            responsible: data.responsible?.trim() || null,
-            capacity: data.capacity ?? null,
-            status: data.status,
-            notes: data.notes?.trim() || null,
-          };
-          if (showCompanySelect && data.companyId?.trim()) {
-            payload.companyId = data.companyId.trim();
-          }
-          onSubmit(payload);
-        })}
-      >
-        {inDialog ? (
-          fields
-        ) : (
-          <FormCardSection
-            title="Novo local de armazenamento"
-            description="Preencha os dados para cadastrar um novo local de armazenamento."
-          >
-            {fields}
-          </FormCardSection>
-        )}
-      </form>
-    </AuthCompanyGate>
-  );
-}
-
-function StockEditForm({
-  initialValues,
-  stockCode,
-  onSubmit,
-  onCancel,
-  isSubmitting = false,
-  submitLabel,
-  submittingLabel,
-  inDialog,
-}: Readonly<{
-  initialValues: UpdateStockFormData;
-  stockCode: string;
-  onSubmit: (data: Omit<UpdateStockLocationData, 'id'>) => void;
-  onCancel?: () => void;
-  isSubmitting?: boolean;
-  submitLabel: string;
-  submittingLabel: string;
-  inDialog?: boolean;
-}>) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors },
-  } = useForm<UpdateStockFormData>({
-    resolver: zodResolver(updateStockFormSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: initialValues,
+    defaultValues: isEdit
+      ? props.initialValues
+      : {
+          companyId: '',
+          code: '',
+          name: '',
+          type: undefined,
+          location: '',
+          responsible: '',
+          notes: '',
+          status: 'active',
+        },
   });
 
   useEffect(() => {
-    reset(initialValues);
-  }, [initialValues, reset]);
+    if (isEdit) reset(props.initialValues);
+  }, [isEdit, props, reset]);
 
-  const fields = (
-    <div className="space-y-5">
-      <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-        <p className="text-xs text-slate-500">Código</p>
-        <p className="text-sm font-medium text-slate-800">{stockCode}</p>
-      </div>
-
-      <Input
-        label="Nome"
-        requiredIndicator
-        type="text"
-        disabled={isSubmitting}
-        placeholder="Ex.: Armazém Principal"
-        {...register('name')}
-        error={errors.name?.message}
-      />
-
+  const sharedFields = (
+    <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Controller
           control={control}
@@ -384,23 +155,94 @@ function StockEditForm({
         error={errors.notes?.message}
         inputClassName="resize-none"
       />
+    </>
+  );
+
+  const fields = (
+    <div className="space-y-5">
+      {isEdit ? (
+        <>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-xs text-slate-500">Código</p>
+            <p className="text-sm font-medium text-slate-800">{props.stockCode}</p>
+          </div>
+          <Input
+            label="Nome"
+            requiredIndicator
+            type="text"
+            disabled={isSubmitting}
+            placeholder="Ex.: Armazém Principal"
+            {...register('name')}
+            error={errors.name?.message}
+          />
+        </>
+      ) : (
+        <>
+          {showCompanySelect ? (
+            <Controller
+              control={control}
+              name="companyId"
+              render={({ field }) => (
+                <Select
+                  label="Empresa"
+                  required
+                  disabled={isSubmitting || loadingCompanies}
+                  options={companyOptions}
+                  placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  error={errors.companyId?.message}
+                />
+              )}
+            />
+          ) : null}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Código"
+              requiredIndicator
+              type="text"
+              disabled={isSubmitting}
+              placeholder="Ex.: ARM-001"
+              {...register('code')}
+              error={errors.code?.message}
+            />
+            <Input
+              label="Nome"
+              requiredIndicator
+              type="text"
+              disabled={isSubmitting}
+              placeholder="Ex.: Armazém Principal"
+              {...register('name')}
+              error={errors.name?.message}
+            />
+          </div>
+        </>
+      )}
+
+      {sharedFields}
 
       <div className="mt-2">
         <FormActions
-          submitLabel={submitLabel}
-          loadingLabel={submittingLabel}
+          submitLabel={props.submitLabel}
+          loadingLabel={props.submittingLabel}
           isLoading={isSubmitting}
-          onCancel={onCancel}
+          onCancel={props.onCancel}
         />
       </div>
     </div>
   );
 
-  return (
+  const cardTitle = isEdit ? 'Editar local de armazenamento' : 'Novo local de armazenamento';
+  const cardDescription = isEdit
+    ? 'Atualize os dados deste local de armazenamento.'
+    : 'Preencha os dados para cadastrar um novo local de armazenamento.';
+
+  const form = (
     <form
       onSubmit={handleSubmit((data) => {
-        onSubmit({
-          code: stockCode,
+        const base = {
           name: data.name.trim(),
           type: data.type,
           location: data.location.trim(),
@@ -408,47 +250,33 @@ function StockEditForm({
           capacity: data.capacity ?? null,
           status: data.status,
           notes: data.notes?.trim() || null,
-        });
+        };
+        if (isEdit) {
+          props.onSubmit({ ...base, code: props.stockCode } as Omit<UpdateStockLocationData, 'id'>);
+        } else {
+          const payload: CreateStockLocationData = { ...base, code: data.code.trim() };
+          if (showCompanySelect && data.companyId?.trim()) {
+            payload.companyId = data.companyId.trim();
+          }
+          props.onSubmit(payload);
+        }
       })}
     >
-      {inDialog ? (
+      {props.inDialog ? (
         fields
       ) : (
-        <FormCardSection
-          title="Editar local de armazenamento"
-          description="Atualize os dados deste local de armazenamento."
-        >
+        <FormCardSection title={cardTitle} description={cardDescription}>
           {fields}
         </FormCardSection>
       )}
     </form>
   );
-}
 
-export function StockForm(props: Readonly<StockFormProps>) {
-  if (props.mode === 'edit') {
-    return (
-      <StockEditForm
-        initialValues={props.initialValues}
-        stockCode={props.stockCode}
-        onSubmit={props.onSubmit}
-        onCancel={props.onCancel}
-        isSubmitting={props.isSubmitting}
-        submitLabel={props.submitLabel}
-        submittingLabel={props.submittingLabel}
-        inDialog={props.inDialog}
-      />
-    );
-  }
+  if (isEdit) return form;
 
   return (
-    <StockCreateForm
-      onSubmit={props.onSubmit}
-      onCancel={props.onCancel}
-      isSubmitting={props.isSubmitting}
-      submitLabel={props.submitLabel}
-      submittingLabel={props.submittingLabel}
-      inDialog={props.inDialog}
-    />
+    <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
+      {form}
+    </AuthCompanyGate>
   );
 }
