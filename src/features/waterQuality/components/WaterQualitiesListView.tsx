@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from '@/shared/components/ui/Select';
 import {
-  Droplets,
   Eye,
   FlaskConical,
   Gauge,

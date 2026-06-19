@@ -17,7 +17,6 @@ import { getPurchaseStatusLabel } from '../utils/purchaseStatusLabels';
 import { formatPurchaseMoney } from '../utils/formatPurchaseMoney';
 import { Separator } from '@/src/shared/components/ui/Separator';
 import { Button } from '@/src/shared/components/ui/Button';
-import { de } from 'zod/v4/locales';
 
 const STATUS_OPTIONS = [
   { value: 'draft', label: getPurchaseStatusLabel('draft') },
@@ -55,7 +54,7 @@ type PurchaseFormProps = {
 
 // ─── Subcomponentes de cálculo ──────────────────────────────────────────────
 
-function ItemTotal({ control, index }: { control: Control<any>; index: number }) {
+function ItemTotal({ control, index }: { control: Control<CreatePurchaseFormData>; index: number }) {
   const qty = useWatch({ control, name: `items.${index}.quantity` });
   const price = useWatch({ control, name: `items.${index}.unitPrice` });
   const discount = useWatch({ control, name: `items.${index}.discount` });
@@ -70,12 +69,12 @@ function ItemTotal({ control, index }: { control: Control<any>; index: number })
   );
 }
 
-function FinancialSummary({ control }: { control: Control<any> }) {
+function FinancialSummary({ control }: { control: Control<CreatePurchaseFormData> }) {
   const items = useWatch({ control, name: 'items' });
   const freightCost = useWatch({ control, name: 'freightCost' });
   const otherCosts = useWatch({ control, name: 'otherCosts' });
 
-  const subtotal = (items ?? []).reduce((sum: number, item: Record<string, unknown>) => {
+  const subtotal = (items ?? []).reduce((sum: number, item: CreatePurchaseFormData['items'][number]) => {
     const t = roundMoney(
       (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0) - (Number(item.discount) || 0),
     );
@@ -105,8 +104,6 @@ function FinancialSummary({ control }: { control: Control<any> }) {
     </div>
   );
 }
-
-// ─── Formulário principal ────────────────────────────────────────────────────
 
 export function PurchaseForm({
   initialValues,
@@ -177,7 +174,7 @@ export function PurchaseForm({
 
   const { effectiveCompanyId, suppliersData, suppliesData, loadingSuppliers, loadingSupplies } =
     usePurchaseLookupOptions({
-      control: control as any,
+      control,
       showCompanySelect,
       companyIdFieldName: 'companyId',
     });
