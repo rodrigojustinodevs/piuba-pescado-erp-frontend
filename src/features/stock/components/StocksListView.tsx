@@ -12,8 +12,8 @@ import { StockDialog } from './StockDialog';
 import { StockCatalogStatsCards } from './StockCatalogStats';
 import { Button } from '@/shared/components/ui/Button';
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
-import { Eye, Pencil, Plus, Trash } from 'lucide-react';
-import { SearchField } from '@/shared/components/list';
+import { Plus } from 'lucide-react';
+import { FilterSelect, SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import {
@@ -21,6 +21,7 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
+import { createStandardRowActions } from '@/shared/utils/rowActions';
 import { stockLocationTypeOptions } from '../schemas';
 
 export type StocksListViewProps = {
@@ -71,23 +72,12 @@ export function StocksListView({
   }, []);
 
   const getRowActions = useCallback(
-    (row: StockLocation) => [
-      {
-        label: 'Ver detalhes',
-        onClick: () => openDialog('view', row),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: 'Editar',
-        onClick: () => openDialog('edit', row),
-        icon: <Pencil className="h-4 w-4" />,
-      },
-      {
-        label: 'Excluir',
-        onClick: () => handleDelete(row.id, row.name),
-        icon: <Trash className="h-4 w-4" />,
-      },
-    ],
+    (row: StockLocation) =>
+      createStandardRowActions(
+        () => openDialog('view', row),
+        () => openDialog('edit', row),
+        () => handleDelete(row.id, row.name),
+      ),
     [handleDelete, openDialog],
   );
 
@@ -160,21 +150,12 @@ export function StocksListView({
                 placeholder="Buscar por código, nome, localização..."
               />
             </div>
-            <select
-              value={typeFilter}
-              onChange={(e) => {
-                setTypeFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
-            >
+            <FilterSelect value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}>
               <option value="">Todos os tipos</option>
               {stockLocationTypeOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">

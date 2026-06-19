@@ -10,7 +10,8 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { StatCard } from '@/shared/components/Cards/StatCard';
+import { Card, CardContent } from '@/shared/components/ui/Card';
 import { Building, Droplets, Eye, Pencil, Trash } from 'lucide-react';
 type TankFilter = 'all' | 'active' | 'inactive';
 
@@ -137,39 +138,21 @@ export function TanksListView({
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data?.total}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Ativas</CardTitle>
-            <div className="h-2 w-2 rounded-full bg-emerald-500" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {data?.tanks.filter((t) => t.status === 'active').length}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Inativas / Suspensas
-            </CardTitle>
-            <div className="h-2 w-2 rounded-full bg-destructive" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              {data?.tanks.filter((t) => t.status !== 'active').length}
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          label="Total"
+          value={data?.total ?? 0}
+          icon={<Building className="h-4 w-4 text-muted-foreground" />}
+        />
+        <StatCard
+          label="Ativas"
+          value={data?.tanks.filter((t) => t.status === 'active').length ?? 0}
+          icon={<div className="h-2 w-2 rounded-full bg-emerald-500" />}
+        />
+        <StatCard
+          label="Inativas / Suspensas"
+          value={data?.tanks.filter((t) => t.status !== 'active').length ?? 0}
+          icon={<div className="h-2 w-2 rounded-full bg-destructive" />}
+        />
       </div>
       <Card>
         <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">

@@ -6,7 +6,7 @@ import { ClientTable } from './ClientTable';
 import { ClientDialog } from './ClientDialog';
 import { ClientCatalogStatsCards } from './ClientCatalogStats';
 import { Button } from '@/shared/components/ui/Button';
-import { SearchField } from '@/shared/components/list';
+import { FilterSelect, SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
 import {
@@ -14,7 +14,8 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
-import { Eye, Pencil, Plus, Trash } from 'lucide-react';
+import { createStandardRowActions } from '@/shared/utils/rowActions';
+import { Plus } from 'lucide-react';
 
 export type ClientsListViewProps = {
   page: number;
@@ -64,23 +65,12 @@ export function ClientsListView({
   }, []);
 
   const getRowActions = useCallback(
-    (row: Client) => [
-      {
-        label: 'Ver detalhes',
-        onClick: () => openDialog('view', row),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: 'Editar',
-        onClick: () => openDialog('edit', row),
-        icon: <Pencil className="h-4 w-4" />,
-      },
-      {
-        label: 'Excluir',
-        onClick: () => handleDelete(row.id, row.name),
-        icon: <Trash className="h-4 w-4" />,
-      },
-    ],
+    (row: Client) =>
+      createStandardRowActions(
+        () => openDialog('view', row),
+        () => openDialog('edit', row),
+        () => handleDelete(row.id, row.name),
+      ),
     [handleDelete, openDialog],
   );
 
@@ -129,32 +119,18 @@ export function ClientsListView({
               />
             </div>
 
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
-            >
+            <FilterSelect value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}>
               <option value="">Todos os status</option>
               <option value="active">Ativo</option>
               <option value="prospect">Prospect</option>
               <option value="inactive">Inativo</option>
-            </select>
+            </FilterSelect>
 
-            <select
-              value={segmentFilter}
-              onChange={(e) => {
-                setSegmentFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
-            >
+            <FilterSelect value={segmentFilter} onChange={(e) => { setSegmentFilter(e.target.value); setPage(1); }}>
               <option value="">Todos os segmentos</option>
               <option value="retail">Varejo</option>
               <option value="wholesale">Atacado</option>
-            </select>
+            </FilterSelect>
           </div>
 
           <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">

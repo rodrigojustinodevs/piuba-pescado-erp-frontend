@@ -8,8 +8,8 @@ import { SupplierTable } from './SupplierTable';
 import { SupplierDialog } from './SupplierDialog';
 import { Button } from '@/shared/components/ui/Button';
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
-import { Eye, Pencil, Plus, Trash } from 'lucide-react';
-import { SearchField } from '@/shared/components/list';
+import { Plus } from 'lucide-react';
+import { FilterSelect, SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
 import {
@@ -17,6 +17,7 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
+import { createStandardRowActions } from '@/shared/utils/rowActions';
 
 const STATUS_TAB_LABELS: Record<SupplierStatusFilter, string> = {
   all: 'Todos',
@@ -81,23 +82,12 @@ export function SuppliersListView({
   }, []);
 
   const getRowActions = useCallback(
-    (row: Supplier) => [
-      {
-        label: 'Ver detalhes',
-        onClick: () => openDialog('view', row),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: 'Editar',
-        onClick: () => openDialog('edit', row),
-        icon: <Pencil className="h-4 w-4" />,
-      },
-      {
-        label: 'Excluir',
-        onClick: () => handleDelete(row.id, row.name),
-        icon: <Trash className="h-4 w-4" />,
-      },
-    ],
+    (row: Supplier) =>
+      createStandardRowActions(
+        () => openDialog('view', row),
+        () => openDialog('edit', row),
+        () => handleDelete(row.id, row.name),
+      ),
     [handleDelete, openDialog],
   );
 
@@ -158,32 +148,17 @@ export function SuppliersListView({
                 placeholder="Buscar por nome, documento ou e-mail..."
               />
             </div>
-            <select
-              value={categoryFilter}
-              onChange={(e) => {
-                setCategoryFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
-            >
+            <FilterSelect value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}>
               <option value="">Todas as categorias</option>
               {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
+                <option key={value} value={value}>{label}</option>
               ))}
-            </select>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0EA5A4]"
-            >
+            </FilterSelect>
+            <FilterSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  Ordenar por: {option.label}
-                </option>
+                <option key={option.value} value={option.value}>Ordenar por: {option.label}</option>
               ))}
-            </select>
+            </FilterSelect>
           </div>
 
           <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">

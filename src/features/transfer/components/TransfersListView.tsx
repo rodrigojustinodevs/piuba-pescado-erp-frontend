@@ -11,6 +11,7 @@ import {
 import { TransferTable } from './TransferTable';
 import { TransferDialog } from './TransferDialog';
 import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
+import { createStandardRowActions } from '@/shared/utils/rowActions';
 import {
   ListEmptyState,
   ListErrorState,
@@ -21,10 +22,7 @@ import {
   ArrowRightLeft,
   Boxes,
   CalendarClock,
-  Eye,
-  Pencil,
   Scale,
-  Trash,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
 import { formatNumber } from '@/shared/utils/numberFormat';
@@ -117,25 +115,13 @@ export function TransfersListView({
   }, []);
 
   const getRowActions = useCallback(
-    (row: Transfer): DataTableAction[] => [
-      {
-        label: 'Ver detalhes',
-        onClick: () => openDialog('view', row),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: 'Editar',
-        onClick: () => openDialog('edit', row),
-        icon: <Pencil className="h-4 w-4" />,
-      },
-      {
-        label: 'Excluir',
-        onClick: () => handleDelete(row.id),
-        variant: 'danger' as const,
-        disabled: isDeleting,
-        icon: <Trash className="h-4 w-4" />,
-      },
-    ],
+    (row: Transfer): DataTableAction[] =>
+      createStandardRowActions(
+        () => openDialog('view', row),
+        () => openDialog('edit', row),
+        () => handleDelete(row.id),
+        isDeleting,
+      ),
     [handleDelete, isDeleting, openDialog],
   );
 
