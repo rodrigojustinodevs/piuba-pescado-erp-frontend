@@ -117,10 +117,11 @@ export function TransferDialog({
         </>
       );
     }
+    const openState = open ? 'open' : 'closed';
     if (mode === 'edit' && transfer) {
       return (
         <TransferForm
-          key={`edit-${transfer.id}-${open ? 'open' : 'closed'}`}
+          key={`edit-${transfer.id}-${openState}`}
           mode="update"
           initialData={transfer}
           onSubmit={handleUpdate}
@@ -133,7 +134,7 @@ export function TransferDialog({
     }
     return (
       <TransferForm
-        key={`create-${open ? 'open' : 'closed'}`}
+        key={`create-${openState}`}
         mode="create"
         onSubmit={handleCreate}
         isLoading={isLoading}

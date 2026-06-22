@@ -64,16 +64,13 @@ interface SensorReadingTableProps {
   isOutOfRange: (type: SensorReadingType, value: number) => boolean;
 }
 
-export function SensorReadingTable({
-  sensorReadings,
-  rowActions,
-  typeIcon,
-  sourceConfig,
-  isOutOfRange,
-}: Readonly<SensorReadingTableProps>) {
+function buildColumns(
+  typeIcon: Record<SensorType, LucideIcon>,
+  sourceConfig: SourceConfig,
+  isOutOfRange: (type: SensorReadingType, value: number) => boolean,
+): Array<DataTableColumn<SensorReading>> {
   const fallbackSource = sourceConfig.automatic;
-
-  const columns: Array<DataTableColumn<SensorReading>> = [
+  return [
     {
       id: 'sensor',
       header: 'Sensor',
@@ -95,9 +92,7 @@ export function SensorReadingTable({
       id: 'tankName',
       header: 'Tanque',
       cellClassName: 'text-sm',
-      cell: (row) => {
-        return row.sensor?.tank?.name || '—';
-      },
+      cell: (row) => row.sensor?.tank?.name || '—',
     },
     {
       id: 'value',
@@ -130,7 +125,16 @@ export function SensorReadingTable({
       ),
     },
   ];
+}
 
+export function SensorReadingTable({
+  sensorReadings,
+  rowActions,
+  typeIcon,
+  sourceConfig,
+  isOutOfRange,
+}: Readonly<SensorReadingTableProps>) {
+  const columns = buildColumns(typeIcon, sourceConfig, isOutOfRange);
   return (
     <DataTable
       data={sensorReadings}

@@ -6,6 +6,7 @@ import { SensorType, sensorTypeLabels } from '../../sensor/types';
 import { Minus, Radio, TrendingDown, TrendingUp, type LucideIcon } from 'lucide-react';
 import { Badge } from '@/shared/components/ui/Badge';
 
+type Trend = 'up' | 'down' | 'stable';
 type IdealRanges = Record<SensorType, { min: number; max: number; critical: { min: number; max: number } }>;
 type QualityConfig = Record<Quality, { label: string; variant: 'default' | 'secondary' | 'destructive'; className: string; icon: LucideIcon }>;
 
@@ -55,19 +56,19 @@ function WaterQualityRangeCell({ row, idealRanges }: Readonly<{ row: WaterQualit
   );
 }
 
-function getTrendIcon(trend: 'up' | 'down' | 'stable'): LucideIcon {
+function getTrendIcon(trend: Trend): LucideIcon {
   if (trend === 'up') return TrendingUp;
   if (trend === 'down') return TrendingDown;
   return Minus;
 }
 
-function getTrendClass(trend: 'up' | 'down' | 'stable'): string {
+function getTrendClass(trend: Trend): string {
   if (trend === 'up') return 'text-emerald-500';
   if (trend === 'down') return 'text-red-500';
   return 'text-muted-foreground';
 }
 
-function WaterQualityTrendCell({ getTrend }: Readonly<{ getTrend: () => 'up' | 'down' | 'stable' }>) {
+function WaterQualityTrendCell({ getTrend }: Readonly<{ getTrend: () => Trend }>) {
   const trend = getTrend();
   const TrendIcon = getTrendIcon(trend);
   return <TrendIcon className={`h-4 w-4 ${getTrendClass(trend)}`} />;
@@ -88,7 +89,7 @@ function buildColumns(
   typeIcon: Record<SensorType, LucideIcon>,
   idealRanges: IdealRanges,
   qualityConfig: QualityConfig,
-  getTrend: () => 'up' | 'down' | 'stable',
+  getTrend: () => Trend,
 ): Array<DataTableColumn<WaterQuality>> {
   return [
     {
@@ -135,7 +136,7 @@ interface WaterQualityTableProps {
   typeIcon: Record<SensorType, LucideIcon>;
   idealRanges: IdealRanges;
   qualityConfig: QualityConfig;
-  getTrend: () => 'up' | 'down' | 'stable';
+  getTrend: () => Trend;
 }
 
 export function WaterQualityTable({

@@ -265,7 +265,12 @@ export function HarvestForm({
 
       {/* Lote + Tanque */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {!isEditMode ? (
+        {isEditMode ? (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 flex flex-col justify-center">
+            <span className="text-xs text-slate-500 mb-0.5">Lote</span>
+            <span className="font-semibold">{initialData?.batchName ?? initialData?.batchId}</span>
+          </div>
+        ) : (
           <Controller
             name={'batchId' as never}
             control={control}
@@ -293,11 +298,6 @@ export function HarvestForm({
               />
             )}
           />
-        ) : (
-          <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 flex flex-col justify-center">
-            <span className="text-xs text-slate-500 mb-0.5">Lote</span>
-            <span className="font-semibold">{initialData?.batchName ?? initialData?.batchId}</span>
-          </div>
         )}
 
         <Controller

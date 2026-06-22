@@ -127,10 +127,11 @@ export function HarvestDialog({
         </>
       );
     }
+    const openState = open ? 'open' : 'closed';
     if (currentMode === 'edit' && harvest) {
       return (
         <HarvestForm
-          key={`edit-${harvest.id}-${open ? 'open' : 'closed'}`}
+          key={`edit-${harvest.id}-${openState}`}
           mode="update"
           initialData={harvest}
           onSubmit={handleUpdate}
@@ -143,7 +144,7 @@ export function HarvestDialog({
     }
     return (
       <HarvestForm
-        key={`create-${open ? 'open' : 'closed'}`}
+        key={`create-${openState}`}
         mode="create"
         onSubmit={handleCreate}
         isLoading={isLoading}
