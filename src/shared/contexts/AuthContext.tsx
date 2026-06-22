@@ -73,7 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const isMaster = useMemo(
-    () => (): boolean => authState?.user?.role === UserRole.MASTER,
+    () => (): boolean =>
+      authState?.user?.role === UserRole.MASTER || authState?.user?.role === UserRole.MASTER_ADMIN,
     [authState?.user],
   );
 

@@ -19,9 +19,13 @@ export const POST = createUpsertHandler<ApiClientCreateResponse, CreateClientDat
       email: payload.email?.trim() ? payload.email.trim() : null,
       phone: payload.phone?.trim() ? payload.phone.trim() : null,
       contact: payload.contact?.trim() ? payload.contact.trim() : null,
-      address: payload.address?.trim() ? payload.address.trim() : null,
+      trade_name: payload.tradeName?.trim() ? payload.tradeName.trim() : null,
+      city: payload.city?.trim() ? payload.city.trim() : null,
+      state: payload.state?.trim() ? payload.state.trim().toUpperCase() : null,
+      notes: payload.notes?.trim() ? payload.notes.trim() : null,
       credit_limit: payload.creditLimit ?? null,
       price_group: payload.priceGroup,
+      status: payload.status ?? 'active',
     };
     if (body.company_id) return body;
     const { company_id, ...rest } = body;

@@ -1,11 +1,11 @@
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { buildQueryString } from '@/shared/utils/queryString';
-import { StockListResponse } from '../../stock/types';
+import type { SupplyListResponse } from '../../supply/types';
 
 const LOOKUP_LIMIT = 500;
 
 export const feedingLookupService = {
-  async listStocks(companyId?: string | null): Promise<StockListResponse> {
+  async listStocks(companyId?: string | null): Promise<SupplyListResponse> {
     const qs = buildQueryString(
       {
         page: 1,
@@ -14,6 +14,6 @@ export const feedingLookupService = {
       },
       { skipEmptyString: true },
     );
-    return browserHttpClient.get<StockListResponse>(`/api/company/stocks?${qs}`);
+    return browserHttpClient.get<SupplyListResponse>(`/api/company/supplies?${qs}`);
   },
 };

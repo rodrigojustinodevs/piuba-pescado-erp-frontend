@@ -34,9 +34,13 @@ export const PUT = createPutHandler<ApiClientDetailEnvelope, UpdateClientData, {
       email: rest.email?.trim() ? rest.email.trim() : null,
       phone: rest.phone?.trim() ? rest.phone.trim() : null,
       contact: rest.contact?.trim() ? rest.contact.trim() : null,
-      address: rest.address?.trim() ? rest.address.trim() : null,
+      trade_name: rest.tradeName?.trim() ? rest.tradeName.trim() : null,
+      city: rest.city?.trim() ? rest.city.trim() : null,
+      state: rest.state?.trim() ? rest.state.trim().toUpperCase() : null,
+      notes: rest.notes?.trim() ? rest.notes.trim() : null,
       credit_limit: rest.creditLimit ?? null,
       price_group: rest.priceGroup,
+      status: rest.status ?? 'active',
     };
     if (body.company_id) return body;
     const { company_id, ...withoutCompanyId } = body;

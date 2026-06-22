@@ -5,6 +5,7 @@ export type {
   ApiBiometryListResponse,
   CreateBiometryData,
   UpdateBiometryData,
+  BiometryDialogMode,
 } from './types';
 export { createBiometrySchema, updateBiometrySchema } from './schemas';
 export type { CreateBiometryFormData, UpdateBiometryFormData } from './schemas';
@@ -21,5 +22,7 @@ export {
   BiometryDetailView,
   BiometryForm,
   BiometryPageShell,
+  BiometryDialog,
+  BiometryViewDialogContent,
 } from './components';
 export { biometryService } from './services/biometryService';

@@ -10,29 +10,45 @@ export const purchaseLookupService = {
     const qs = buildQueryString(
       {
         page: 1,
-        per_page: LOOKUP_LIMIT,
-        ...(companyId?.trim() ? { company_id: companyId.trim() } : {}),
+        perPage: LOOKUP_LIMIT,
+        ...(companyId?.trim() ? { companyId: companyId.trim() } : {}),
       },
       { skipEmptyString: true },
     );
-    return browserHttpClient.get<SupplierListResponse>(`/api/company/suppliers?${qs}`);
+    const raw = await browserHttpClient.get<any>(`/api/company/suppliers?${qs}`);
+    const suppliers = (raw?.suppliers ?? []).map((s: any) => ({
+      id: s.id,
+      name: s.name,
+      document: s.cnpj ?? s.document ?? undefined,
+    }));
+    return {
+      suppliers,
+      total: raw?.total ?? suppliers.length,
+      page: raw?.page ?? 1,
+      limit: raw?.limit ?? LOOKUP_LIMIT,
+    };
   },
 
   async listSupplies(companyId?: string | null): Promise<SupplyListResponse> {
     const qs = buildQueryString(
       {
         page: 1,
-        per_page: LOOKUP_LIMIT,
-        ...(companyId?.trim() ? { company_id: companyId.trim() } : {}),
+        perPage: LOOKUP_LIMIT,
+        ...(companyId?.trim() ? { companyId: companyId.trim() } : {}),
       },
       { skipEmptyString: true },
     );
-    const full = await browserHttpClient.get<SupplyFeatureListResponse>(`/api/company/supplies?${qs}`);
+    const full = await browserHttpClient.get<SupplyFeatureListResponse>(
+      `/api/company/supplies?${qs}`,
+    );
     return {
       supplies: (full.supplies ?? []).map((s) => ({
         id: s.id,
         name: s.name,
         unit: s.defaultUnit?.trim() ? s.defaultUnit : 'unit',
+        unitCost: s.unitCost ?? undefined,
+        sku: s.sku ?? undefined,
+        category: s.categoryLabel ?? s.category ?? null,
       })),
       total: full.total,
       page: full.page,

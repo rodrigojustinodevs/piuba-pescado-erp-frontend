@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useCallback, ReactNode } from 'react';
+import { ReactNode } from 'react';
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 
 export type AlertModalType = 'success' | 'warning' | 'error' | 'info';
 export interface AlertModalProps {
@@ -99,89 +100,62 @@ export function AlertModal({
 }: AlertModalProps) {
   const config = TYPE_CONFIG[type];
 
-  const handleClose = useCallback(() => onClose(), [onClose]);
-
-  const handleConfirm = useCallback(() => {
+  function handleConfirm() {
     if (onConfirm) onConfirm();
     onClose();
-  }, [onConfirm, onClose]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, handleClose]);
-
-  useEffect(() => {
-    if (isOpen) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalStyle;
-      };
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+  }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-    >
-      <button
-        className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm cursor-default"
-        onClick={handleClose}
-        aria-hidden="true"
-        tabIndex={-1}
-      />
-
-      <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 transition-all animate-in fade-in zoom-in duration-200">
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors focus:ring-2 focus:ring-gray-300 outline-none"
-          aria-label="Fechar modal"
+    <AlertDialogPrimitive.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <AlertDialogPrimitive.Portal>
+        <AlertDialogPrimitive.Overlay className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-200" />
+        <AlertDialogPrimitive.Content
+          className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-201 bg-white rounded-2xl shadow-xl max-w-md w-full p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+          aria-describedby="alert-modal-message"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
-        <div className="flex flex-col items-center text-center">
-          <div
-            className={`w-20 h-20 ${config.iconBg} rounded-full flex items-center justify-center mb-4 shadow-inner`}
-            aria-hidden="true"
-          >
-            {config.icon}
-          </div>
-
-          <h2 id="modal-title" className="text-2xl font-bold text-gray-900 mb-2">
-            {title}
-          </h2>
-
-          <p className="text-gray-600 text-sm leading-relaxed mb-8">{message}</p>
-
           <button
-            onClick={handleConfirm}
-            autoFocus
-            className={`w-full ${config.buttonBg} text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95 focus:outline-none focus:ring-4 focus:ring-offset-2`}
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors focus:ring-2 focus:ring-gray-300 outline-none"
+            aria-label="Fechar modal"
           >
-            {buttonText}
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
-        </div>
-      </div>
-    </div>
+
+          <div className="flex flex-col items-center text-center">
+            <div
+              className={`w-20 h-20 ${config.iconBg} rounded-full flex items-center justify-center mb-4 shadow-inner`}
+              aria-hidden="true"
+            >
+              {config.icon}
+            </div>
+
+            <AlertDialogPrimitive.Title className="text-2xl font-bold text-gray-900 mb-2">
+              {title}
+            </AlertDialogPrimitive.Title>
+
+            <AlertDialogPrimitive.Description
+              id="alert-modal-message"
+              className="text-gray-600 text-sm leading-relaxed mb-8"
+            >
+              {message}
+            </AlertDialogPrimitive.Description>
+
+            <AlertDialogPrimitive.Action
+              onClick={handleConfirm}
+              className={`w-full ${config.buttonBg} text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95 focus:outline-none focus:ring-4 focus:ring-offset-2`}
+            >
+              {buttonText}
+            </AlertDialogPrimitive.Action>
+          </div>
+        </AlertDialogPrimitive.Content>
+      </AlertDialogPrimitive.Portal>
+    </AlertDialogPrimitive.Root>
   );
 }

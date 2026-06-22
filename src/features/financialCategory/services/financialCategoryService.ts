@@ -18,8 +18,8 @@ export const financialCategoryService = {
     const queryString = buildQueryString(
       {
         page: params?.page,
-        per_page: params?.limit,
-        company_id: params?.companyId,
+        perPage: params?.limit,
+        companyId: params?.companyId,
         type: params?.type,
         status: params?.status,
       },
@@ -43,7 +43,10 @@ export const financialCategoryService = {
 
   async update(data: UpdateFinancialCategoryData): Promise<FinancialCategory> {
     const { id, ...body } = data;
-    return browserHttpClient.put<FinancialCategory>(`/api/company/financial-categories/${id}`, body);
+    return browserHttpClient.put<FinancialCategory>(
+      `/api/company/financial-categories/${id}`,
+      body,
+    );
   },
 
   async delete(id: string): Promise<void> {
@@ -51,10 +54,14 @@ export const financialCategoryService = {
   },
 
   async activate(id: string): Promise<FinancialCategory> {
-    return browserHttpClient.patch<FinancialCategory>(`/api/company/financial-categories/${id}/active`);
+    return browserHttpClient.patch<FinancialCategory>(
+      `/api/company/financial-categories/${id}/active`,
+    );
   },
 
   async deactivate(id: string): Promise<FinancialCategory> {
-    return browserHttpClient.patch<FinancialCategory>(`/api/company/financial-categories/${id}/inactive`);
+    return browserHttpClient.patch<FinancialCategory>(
+      `/api/company/financial-categories/${id}/inactive`,
+    );
   },
 };

@@ -5,6 +5,7 @@ export type {
   ApiMortalityListResponse,
   CreateMortalityData,
   UpdateMortalityData,
+  MortalityDialogMode,
 } from './types';
 export { createMortalitySchema } from './schemas';
 export type { CreateMortalityFormData } from './schemas';
@@ -22,5 +23,7 @@ export {
   MortalityPageShell,
   MortalityForm,
   MortalityDetailView,
+  MortalityDialog,
+  MortalityViewDialogContent,
 } from './components';
 export { mortalityService } from './services/mortalityService';

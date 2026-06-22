@@ -5,7 +5,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { mortalityService } from '../services/mortalityService';
 import type { CreateMortalityData } from '../types';
 
-export function useCreateMortality() {
+type UseCreateMortalityOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useCreateMortality(_options: UseCreateMortalityOptions = {}) {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
 

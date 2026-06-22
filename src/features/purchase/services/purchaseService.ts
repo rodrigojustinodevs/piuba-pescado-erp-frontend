@@ -1,7 +1,9 @@
 import type {
+  CreatePaymentData,
   CreatePurchaseData,
   Purchase,
   PurchaseListResponse,
+  PurchasePaymentsResponse,
   UpdatePurchaseData,
 } from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
@@ -50,5 +52,20 @@ export const purchaseService = {
 
   async cancel(id: string): Promise<Purchase> {
     return browserHttpClient.patch<Purchase>(`/api/company/purchases/${id}/cancel`);
+  },
+
+  async receiveItems(
+    id: string,
+    items: { purchase_item_id: string; received_quantity: number }[],
+  ): Promise<Purchase> {
+    return browserHttpClient.patch<Purchase>(`/api/company/purchases/${id}/receive`, { items });
+  },
+
+  async getPayments(id: string): Promise<PurchasePaymentsResponse> {
+    return browserHttpClient.get<PurchasePaymentsResponse>(`/api/company/purchases/${id}/payments`);
+  },
+
+  async registerPayment(id: string, data: CreatePaymentData): Promise<Purchase> {
+    return browserHttpClient.post<Purchase>(`/api/company/purchases/${id}/payments`, data);
   },
 };

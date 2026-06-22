@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { supplierService } from '../services/supplierService';
 import type { UpdateSupplierData } from '../types';
 
-export function useUpdateSupplier() {
+type UseUpdateSupplierOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateSupplier({ skipNavigateToList }: UseUpdateSupplierOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,9 @@ export function useUpdateSupplier() {
       queryClient.invalidateQueries({ queryKey: ['suppliers', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['suppliers', 'detail', data.id] });
       showSuccess('Fornecedor atualizado com sucesso!');
-      router.push('/company/suppliers');
+      if (!skipNavigateToList) {
+        router.push('/company/suppliers');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar fornecedor. Tente novamente.');

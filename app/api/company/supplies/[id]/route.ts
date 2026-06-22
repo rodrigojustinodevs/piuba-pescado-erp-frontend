@@ -1,6 +1,7 @@
 import type { ApiSupply, Supply, UpdateSupplyData } from '@/features/supply/types';
-import { mapApiSupply } from '@/features/supply/utils/apiMapper';
+import { buildSupplyBody, mapApiSupply } from '@/features/supply/utils/apiMapper';
 import {
+  createDeleteHandler,
   createDetailGetHandler,
   createPutHandler,
 } from '@/shared/lib/api/routeFactories';
@@ -20,23 +21,15 @@ export const GET = createDetailGetHandler<ApiSupplyDetailEnvelope, Supply, { id:
   mapResponse: mapDetailResponse,
 });
 
+export const DELETE = createDeleteHandler<{ id: string }>({
+  backendPathBuilder: (params) => `/api/company/supply/${params.id}`,
+  context: CONTEXT,
+});
+
 export const PUT = createPutHandler<ApiSupplyDetailEnvelope, UpdateSupplyData, { id: string }>({
   backendPathBuilder: (params) => `/api/company/supply/${params.id}`,
   context: CONTEXT,
-  mapBody: (payload) => {
-    const { ...rest } = payload;
-    const category = rest.category?.trim() ? rest.category.trim() : null;
-    const body = {
-      ...rest,
-      name: rest.name.trim(),
-      category,
-      defaultUnit: rest.defaultUnit.trim(),
-    };
-    if (body.companyId?.trim()) return body;
-    const { companyId, ...withoutCompanyId } = body;
-    void companyId;
-    return withoutCompanyId;
-  },
+  mapBody: buildSupplyBody,
   mapResponse: mapDetailResponse,
 });
 

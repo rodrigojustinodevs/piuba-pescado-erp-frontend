@@ -108,15 +108,12 @@ export function TankUpsertForm({
                 control={control}
                 render={({ field }) => (
                   <Select
-                    label="Empresa"
-                    requiredIndicator
-                    placeholder="Selecione uma empresa"
                     options={companies.map((company) => ({
                       value: String(company.id),
                       label: company.name,
                     }))}
-                    value={field.value || ''}
-                    onChange={(e) => field.onChange(e.target.value)}
+                    value={field.value}
+                    onValueChange={(value) => field.onChange(value)}
                     disabled={isSubmitting}
                     error={errors.companyId?.message}
                   />

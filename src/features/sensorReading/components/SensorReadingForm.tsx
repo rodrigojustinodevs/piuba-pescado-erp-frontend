@@ -79,12 +79,12 @@ export function SensorReadingForm({
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Select
-            label="Sensor"
+            label="Sensor *"
             requiredIndicator
             disabled={isSubmitting || isLoadingSensors}
             options={sensors.map((s) => ({
               value: s.id,
-              label: `${getSensorTypeLabel(s.sensorType)} — ${s.tankName || '—'}`,
+              label: `${getSensorTypeLabel(s.sensorType)} — ${s.tank?.name || '—'}`,
             }))}
             placeholder={isLoadingSensors ? 'Carregando sensores...' : 'Selecione o sensor'}
             {...register('sensorId')}

@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { feedingService } from '../services/feedingService';
 import type { UpdateFeedingData } from '../types';
 
-export function useUpdateFeeding() {
+export type UseUpdateFeedingOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateFeeding(options: UseUpdateFeedingOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,9 @@ export function useUpdateFeeding() {
       queryClient.invalidateQueries({ queryKey: ['feedings', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['feedings', 'detail', data.id] });
       showSuccess('Alimentação atualizada com sucesso!');
-      router.push('/company/feedings');
+      if (!options.skipNavigateToList) {
+        router.push('/company/feedings');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar alimentação. Tente novamente.');

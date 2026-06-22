@@ -1,24 +1,39 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { Controller, useForm, type SubmitHandler } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight } from 'lucide-react';
 import {
   createTransferSchema,
   updateTransferSchema,
   type CreateTransferFormData,
   type UpdateTransferFormData,
 } from '../schemas';
-import type { Transfer } from '../types';
-import { useBatches } from '@/features/batch';
+import type { PatchTransferPayload, Transfer, TransferStatus } from '../types';
+import { REASON_LABELS, STATUS_LABELS } from '../types';
+import type { Tank } from '@/features/tank/types';
+import { tankService } from '@/features/tank/services/tankService';
 import { formatBatchOptionLabel } from '@/features/batch/utils/format';
 import { useTanksWithoutBatches } from '@/features/tank';
-import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { useAlertModal } from '@/shared/components/AlertModal/AlertModalContext';
+import { useCompanyBatchData } from '@/shared/hooks/useCompanyBatchData';
+import { addRequiredCompanyIssue } from '@/shared/utils/zod';
+import { labelsToOptions } from '@/shared/utils/labelOptions';
+import { FormActions, TextArea, Select, ControlledSelect } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+
+export type ApiFieldError = {
+  field: string;
+  message: string;
+} | null;
 
 type TransferFormCommonProps = {
   isLoading?: boolean;
   submitLabel?: string;
+  onCancel?: () => void;
+  apiError?: ApiFieldError;
 };
 
 export type TransferFormProps =
@@ -30,210 +45,467 @@ export type TransferFormProps =
   | (TransferFormCommonProps & {
       mode: 'update';
       initialData: Transfer;
-      onSubmit: (data: UpdateTransferFormData) => void;
+      onSubmit: (data: PatchTransferPayload) => void;
     });
+
+const SET_DIRTY_VALIDATE = { shouldDirty: true, shouldValidate: true } as const;
+const SET_DIRTY_NO_VALIDATE = { shouldDirty: true, shouldValidate: false } as const;
+
+function todayIso() {
+  return new Date().toISOString().split('T')[0];
+}
+
+const loadTransferTanks = (companyId: string) =>
+  tankService.listWithoutBatches({ page: 1, perPage: 1000, companyId });
+
+function getStatusTransitionMessage(
+  from: TransferStatus | undefined,
+  to: TransferStatus,
+  transfer: Transfer | undefined,
+): string | null {
+  const qty = transfer?.quantity?.toLocaleString('pt-BR') ?? '?';
+  const origin = transfer?.originTankName ?? 'Tanque de origem';
+  const dest = transfer?.destinationTankName ?? 'Tanque de destino';
+
+  if (from === 'scheduled' && to === 'completed') {
+    return `Confirmar execução? ${qty} organismos serão movidos de ${origin} para ${dest} agora.`;
+  }
+  if (from === 'completed' && to === 'cancelled') {
+    return `⚠ Cancelar uma transferência concluída reverterá a movimentação. ${qty} organismos voltarão ao ${origin}.`;
+  }
+  if (from === 'completed' && to === 'scheduled') {
+    return '⚠ Reabrir esta transferência reverterá a movimentação realizada.';
+  }
+  if (from === 'cancelled' && to === 'completed') {
+    return `Confirmar execução? ${qty} organismos serão movidos agora.`;
+  }
+  return null;
+}
 
 export function TransferForm({
   mode,
   initialData,
   onSubmit,
   isLoading = false,
-  submitLabel = 'Criar Transferência',
+  submitLabel = 'Registrar',
+  onCancel,
+  apiError,
 }: TransferFormProps) {
-  const { data: batchesData, isLoading: isLoadingBatches } = useBatches({ page: 1, limit: 1000 });
-  const batches = batchesData?.batches ?? [];
+  const { showWarning } = useAlertModal();
+  const isEditMode = mode === 'update';
+
+  const {
+    showCompanyField,
+    companyOptions,
+    loadingCompanies,
+    companyTanks,
+    isLoadingCompanyData,
+    companyDataLoaded,
+    batches,
+    isLoadingBatchesEffective,
+    loadCompanyData,
+    resetCompanyData,
+  } = useCompanyBatchData({
+    isEditMode,
+    loadTanks: loadTransferTanks,
+    errorMessage: 'Erro ao carregar dados da empresa. Verifique sua conexão e tente novamente.',
+  });
 
   const { data: destinationTanksData, isLoading: isLoadingDestinationTanks } =
-    useTanksWithoutBatches({
-      page: 1,
-      per_page: 1000,
-    });
-  const destinationTanks = destinationTanksData?.tanks ?? [];
+    useTanksWithoutBatches({ page: 1, perPage: 1000, enabled: !showCompanyField });
+  const defaultTanks = useMemo(() => destinationTanksData?.tanks ?? [], [destinationTanksData]);
 
-  const isEditMode = mode === 'update';
-  const schema = isEditMode ? updateTransferSchema : createTransferSchema;
+  const destinationTankList = showCompanyField ? companyTanks : defaultTanks;
+  const isLoadingTanksEffective = showCompanyField
+    ? isLoadingCompanyData
+    : isLoadingDestinationTanks;
+
+  const baseSchema = isEditMode ? updateTransferSchema : createTransferSchema;
+  const resolverSchema = useMemo(
+    () =>
+      baseSchema.superRefine((data, ctx) => {
+        if (showCompanyField && !data.companyId?.trim()) {
+          addRequiredCompanyIssue(ctx);
+        }
+      }),
+    [baseSchema, showCompanyField],
+  );
+
   const emptyValues: CreateTransferFormData = {
+    companyId: '',
     batchId: '',
     originTankId: '',
     destinationTankId: '',
     quantity: 0,
     description: '',
+    transferDate: todayIso(),
+    averageWeight: undefined,
+    reason: 'growth',
+    status: 'completed',
+    responsible: '',
   };
 
   const buildValuesFromInitial = (data: Transfer): UpdateTransferFormData => ({
     id: data.id,
+    companyId: '',
     batchId: data.batchId,
     originTankId: data.originTankId,
     destinationTankId: data.destinationTankId,
     quantity: data.quantity,
     description: data.description,
+    transferDate: data.transferDate ?? todayIso(),
+    averageWeight: data.averageWeight,
+    reason: (data.reason ?? 'growth') as CreateTransferFormData['reason'],
+    status: data.status as CreateTransferFormData['status'],
+    responsible: data.responsible ?? '',
   });
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
     control,
     reset,
     setValue,
+    setError,
     watch,
   } = useForm<CreateTransferFormData | UpdateTransferFormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(resolverSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: initialData ? buildValuesFromInitial(initialData) : emptyValues,
   });
 
   useEffect(() => {
-    if (initialData) {
-      reset(buildValuesFromInitial(initialData));
-    }
+    if (initialData) reset(buildValuesFromInitial(initialData));
   }, [initialData, reset]);
 
+  // Apply API errors to form fields
+  useEffect(() => {
+    if (!apiError) return;
+    const field = apiError.field as keyof (CreateTransferFormData | UpdateTransferFormData);
+    if (field === ('root' as unknown)) {
+      setError('root' as keyof (CreateTransferFormData | UpdateTransferFormData), {
+        message: apiError.message,
+      });
+    } else {
+      setError(field, { message: apiError.message });
+    }
+  }, [apiError, setError]);
+
+  const companyId = watch('companyId');
   const originTankId = watch('originTankId');
   const destinationTankId = watch('destinationTankId');
   const batchId = watch('batchId');
+  const currentStatus = watch('status') as TransferStatus | undefined;
+
+  const quantity = useWatch({ control, name: 'quantity' }) ?? 0;
+  const averageWeight = useWatch({ control, name: 'averageWeight' }) ?? 0;
+  const biomass = (Number(quantity) * Number(averageWeight)) / 1000;
+
+  const isCompleted = isEditMode && currentStatus === 'completed';
+
+
+  useEffect(() => {
+    if (!showCompanyField || !companyId) {
+      resetCompanyData();
+      return;
+    }
+
+    setValue('batchId', '', SET_DIRTY_NO_VALIDATE);
+    setValue('originTankId', '', SET_DIRTY_NO_VALIDATE);
+    setValue('destinationTankId', '', SET_DIRTY_NO_VALIDATE);
+
+    loadCompanyData(companyId);
+  }, [companyId, showCompanyField, loadCompanyData, resetCompanyData, setValue]);
 
   const selectedBatch = useMemo(() => batches.find((b) => b.id === batchId), [batches, batchId]);
   const originTankLabel = selectedBatch?.tank?.name ?? '—';
 
   const destinationTanksWithCurrent = useMemo(() => {
-    // Se estiver editando e o destino atual não vier da rota without-batches,
-    // mantemos o item na lista para não "sumir" do Select.
-    if (!isEditMode || !destinationTankId) return destinationTanks;
-    const exists = destinationTanks.some((t) => t.id === destinationTankId);
-    if (exists) return destinationTanks;
+    if (!isEditMode || !destinationTankId) return destinationTankList;
+    const exists = destinationTankList.some((t) => t.id === destinationTankId);
+    if (exists) return destinationTankList;
     return [
-      ...destinationTanks,
+      ...destinationTankList,
       {
         id: destinationTankId,
         name: `Tanque ${destinationTankId.slice(0, 8)}…`,
-      } as unknown as (typeof destinationTanks)[number],
+      } as unknown as Tank,
     ];
-  }, [destinationTanks, destinationTankId, isEditMode]);
+  }, [destinationTankList, destinationTankId, isEditMode]);
 
   const destinationTankOptions = useMemo(() => {
     if (!originTankId) return destinationTanksWithCurrent;
     return destinationTanksWithCurrent.filter((t) => t.id !== originTankId);
   }, [destinationTanksWithCurrent, originTankId]);
 
+  const batchDisabled =
+    isCompleted ||
+    isLoading ||
+    isLoadingBatchesEffective ||
+    (showCompanyField && !companyDataLoaded);
+  const tankDisabled =
+    isCompleted || isLoading || isLoadingTanksEffective || (showCompanyField && !companyDataLoaded);
+  const quantityDisabled = isCompleted || isLoading;
+
+  const reasonOptions = useMemo(() => labelsToOptions(REASON_LABELS), []);
+  const statusOptions = useMemo(() => labelsToOptions(STATUS_LABELS), []);
+
+  function buildAndSubmit(data: CreateTransferFormData | UpdateTransferFormData) {
+    const exceedsStock = (qty: number) => {
+      if (!selectedBatch || qty <= selectedBatch.initialQuantity) return false;
+      setError('quantity', {
+        message: `Quantidade informada excede o estoque disponível (${selectedBatch.initialQuantity.toLocaleString('pt-BR')} disponíveis).`,
+      });
+      return true;
+    };
+
+    if (mode === 'update') {
+      const patch: PatchTransferPayload = {
+        id: (data as UpdateTransferFormData).id,
+        reason: (data as UpdateTransferFormData).reason,
+      };
+      for (const key of Object.keys(dirtyFields) as Array<keyof typeof dirtyFields>) {
+        (patch as unknown as Record<string, unknown>)[key] = (data as Record<string, unknown>)[key];
+      }
+      if (patch.quantity !== undefined && exceedsStock(patch.quantity)) return;
+
+      if (patch.status) {
+        const msg = getStatusTransitionMessage(
+          initialData?.status as TransferStatus | undefined,
+          patch.status as TransferStatus,
+          initialData,
+        );
+        if (msg) {
+          showWarning('Confirmar ação', msg, 'Confirmar', () =>
+            (onSubmit as (data: PatchTransferPayload) => void)(patch),
+          );
+          return;
+        }
+      }
+
+      (onSubmit as (data: PatchTransferPayload) => void)(patch);
+    } else {
+      if (exceedsStock((data as CreateTransferFormData).quantity)) return;
+      (onSubmit as (data: CreateTransferFormData) => void)(data as CreateTransferFormData);
+    }
+  }
+
+  // Root-level API error banner
+  const rootError = (errors as Record<string, { message?: string }>)['root']?.message;
+
   return (
-    <form
-      onSubmit={handleSubmit(
-        onSubmit as unknown as SubmitHandler<CreateTransferFormData | UpdateTransferFormData>,
+    <form onSubmit={handleSubmit(buildAndSubmit)} className="space-y-5">
+      {rootError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {rootError}
+        </div>
       )}
-      className="space-y-6"
-    >
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Informações da Transferência</h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Controller
-            name="batchId"
-            control={control}
-            render={({ field }) => (
-              <Select
-                label="Lote"
-                requiredIndicator
-                disabled={isLoadingBatches}
-                placeholder={isLoadingBatches ? 'Carregando lotes...' : 'Selecione um lote'}
-                options={batches.map((b) => ({
-                  value: b.id,
-                  label: formatBatchOptionLabel(b),
-                }))}
-                value={field.value || ''}
-                onChange={(e) => {
-                  const nextId = e.target.value;
-                  field.onChange(nextId);
+      {/* Empresa — apenas admin, apenas no create */}
+      {showCompanyField && (
+        <Select
+          label="Empresa"
+          required
+          disabled={isLoading || loadingCompanies}
+          options={companyOptions}
+          placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+          {...register('companyId')}
+          error={errors.companyId?.message}
+        />
+      )}
 
-                  const selectedBatch = batches.find((b) => b.id === nextId);
-                  const nextOriginTankId = selectedBatch?.tank?.id;
+      {/* Lote */}
+      <Controller
+        name="batchId"
+        control={control}
+        render={({ field }) => (
+          <Select
+            label="Lote"
+            required
+            disabled={batchDisabled}
+            placeholder={isLoadingBatchesEffective ? 'Carregando lotes...' : 'Selecione o lote'}
+            options={batches.map((b) => ({
+              value: b.id,
+              label: formatBatchOptionLabel(b),
+            }))}
+            value={field.value || ''}
+            onChange={(e) => {
+              const nextId = e.target.value;
+              field.onChange(nextId);
 
-                  setValue('originTankId', nextOriginTankId ?? '', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
+              const batch = batches.find((b) => b.id === nextId);
+              const nextOriginTankId = batch?.tank?.id;
 
-                  if (!isEditMode) {
-                    setValue('quantity', selectedBatch?.initialQuantity ?? 0, {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
-                  }
+              setValue('originTankId', nextOriginTankId ?? '', SET_DIRTY_VALIDATE);
 
-                  // Se o lote for limpo ou o tanque mudar, limpa destino caso conflite.
-                  if (!nextOriginTankId || destinationTankId === nextOriginTankId) {
-                    setValue('destinationTankId', '', {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
-                  }
-                }}
-                error={errors.batchId?.message}
-              />
-            )}
+              if (!isEditMode) {
+                setValue('quantity', batch?.initialQuantity ?? 0, SET_DIRTY_VALIDATE);
+              }
+
+              if (!nextOriginTankId || destinationTankId === nextOriginTankId) {
+                setValue('destinationTankId', '', SET_DIRTY_VALIDATE);
+              }
+            }}
+            error={errors.batchId?.message}
           />
+        )}
+      />
 
-          <Input
-            label="Tanque de origem"
-            requiredIndicator
-            type="text"
-            value={originTankLabel}
-            disabled
-            readOnly
-            error={errors.originTankId?.message}
-          />
+      {/* Tanque Origem → Tanque Destino */}
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-end gap-3">
+        <Input
+          label="Tanque de Origem"
+          requiredIndicator
+          type="text"
+          value={originTankLabel}
+          disabled
+          readOnly
+          error={errors.originTankId?.message}
+        />
 
-          <Controller
-            name="destinationTankId"
-            control={control}
-            render={({ field }) => (
-              <Select
-                label="Tanque de destino"
-                requiredIndicator
-                disabled={isLoadingDestinationTanks}
-                placeholder={
-                  isLoadingDestinationTanks
-                    ? 'Carregando tanques...'
-                    : 'Selecione o tanque de destino'
-                }
-                options={destinationTankOptions.map((tank) => ({
-                  value: tank.id,
-                  label: tank.name,
-                }))}
-                value={field.value || ''}
-                onChange={(e) => field.onChange(e.target.value)}
-                error={errors.destinationTankId?.message}
-              />
-            )}
-          />
+        <div className="flex items-center justify-center pb-2 text-slate-400">
+          <ArrowRight className="h-5 w-5" />
+        </div>
 
+        <ControlledSelect
+          control={control}
+          name="destinationTankId"
+          label="Tanque de Destino"
+          required
+          disabled={tankDisabled}
+          placeholder={isLoadingTanksEffective ? 'Carregando tanques...' : 'Destino'}
+          options={destinationTankOptions.map((tank) => ({ value: tank.id, label: tank.name }))}
+          error={errors.destinationTankId?.message}
+        />
+      </div>
+
+      {/* Reabrir quando completed */}
+      {isCompleted && (
+        <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <span className="flex-1">
+            Campos de origem, destino, lote e quantidade estão bloqueados porque esta transferência
+            foi concluída.
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              showWarning(
+                'Reabrir transferência',
+                '⚠ Reabrir esta transferência reverterá a movimentação realizada. Deseja continuar?',
+                'Reabrir',
+                () => setValue('status', 'scheduled', { shouldDirty: true }),
+              )
+            }
+          >
+            Reabrir
+          </Button>
+        </div>
+      )}
+
+      {/* Data | Quantidade | Peso médio */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Input
+          label="Data"
+          type="date"
+          disabled={isLoading}
+          {...register('transferDate')}
+          error={errors.transferDate?.message}
+        />
+
+        <div className="flex flex-col gap-1">
           <Input
             label="Quantidade"
             requiredIndicator
             type="number"
             step={1}
             min={1}
-            disabled={isLoading}
+            disabled={quantityDisabled}
             {...register('quantity', { valueAsNumber: true })}
             error={errors.quantity?.message}
           />
-
-          <Input
-            label="Descrição"
-            requiredIndicator
-            type="text"
-            disabled={isLoading}
-            {...register('description')}
-            error={errors.description?.message}
-          />
+          {selectedBatch && (
+            <p className="text-xs text-slate-500">
+              Estoque disponível:{' '}
+              <span className="font-medium">
+                {selectedBatch.initialQuantity.toLocaleString('pt-BR')}
+              </span>
+            </p>
+          )}
         </div>
+
+        <Input
+          label="Peso médio (g)"
+          type="number"
+          step={0.01}
+          min={0}
+          disabled={isLoading}
+          {...register('averageWeight', { valueAsNumber: true })}
+          error={errors.averageWeight?.message}
+        />
       </div>
+
+      {/* Biomassa calculada */}
+      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+        Biomassa transferida:{' '}
+        <span className="font-semibold">
+          {biomass.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}{' '}
+          kg
+        </span>
+      </div>
+
+      {/* Motivo | Status */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <ControlledSelect
+          control={control}
+          name="reason"
+          label="Motivo"
+          placeholder="Selecione o motivo"
+          options={reasonOptions}
+          error={errors.reason?.message}
+        />
+        <ControlledSelect
+          control={control}
+          name="status"
+          label="Status"
+          placeholder="Selecione o status"
+          options={statusOptions}
+          error={errors.status?.message}
+        />
+      </div>
+
+      {/* Responsável */}
+      <Input
+        label="Responsável"
+        type="text"
+        placeholder="Nome do responsável pela operação"
+        disabled={isLoading}
+        {...register('responsible')}
+        error={errors.responsible?.message}
+      />
+
+      {/* Observações */}
+      <TextArea
+        label="Observações"
+        required
+        placeholder="Detalhes da transferência..."
+        rows={3}
+        disabled={isLoading}
+        {...register('description')}
+        error={errors.description?.message}
+      />
 
       <FormActions
         submitLabel={submitLabel}
-        loadingLabel={isEditMode ? 'Atualizando...' : 'Criando...'}
+        loadingLabel={isEditMode ? 'Atualizando...' : 'Registrando...'}
         isLoading={isLoading}
+        onCancel={onCancel}
       />
     </form>
   );

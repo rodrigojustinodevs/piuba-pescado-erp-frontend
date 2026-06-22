@@ -28,5 +28,9 @@ export const supplyService = {
     const { id, ...body } = data;
     return browserHttpClient.put<Supply>(`/api/company/supplies/${id}`, body);
   },
+
+  async delete(id: string): Promise<void> {
+    await browserHttpClient.delete<null>(`/api/company/supplies/${id}`);
+  },
 };
 

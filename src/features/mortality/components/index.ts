@@ -3,3 +3,5 @@ export { MortalitiesListView } from './MortalitiesListView';
 export { MortalityPageShell } from './MortalityPageShell';
 export { MortalityForm } from './MortalityForm';
 export { MortalityDetailView } from './MortalityDetailView';
+export { MortalityDialog } from './MortalityDialog';
+export { MortalityViewDialogContent } from './MortalityViewDialogContent';

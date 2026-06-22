@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateFinancialCategoryData } from '../types';
 import { financialCategoryService } from '../services/financialCategoryService';
 
-export function useCreateFinancialCategory() {
+type Options = {
+  skipNavigateToList?: boolean;
+};
+
+export function useCreateFinancialCategory({ skipNavigateToList = false }: Options = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -16,7 +20,7 @@ export function useCreateFinancialCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financial-categories', 'list'] });
       showSuccess('Categoria financeira cadastrada com sucesso!');
-      router.push('/company/financial-categories');
+      if (!skipNavigateToList) router.push('/company/financial-categories');
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao cadastrar categoria financeira. Tente novamente.');

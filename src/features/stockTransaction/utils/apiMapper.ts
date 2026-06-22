@@ -17,6 +17,10 @@ export function mapApiStockTransaction(api: ApiStockTransaction): StockTransacti
     referenceType: api.referenceType,
     referenceId: api.referenceId,
     createdAt: api.createdAt,
+    location: api.location ?? api.location,
+    supplyName: api.supply?.name ?? api.supply?.name,
+    responsible: api.responsible,
+    notes: api.notes,
   };
 }
 

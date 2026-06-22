@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { purchaseService } from '../services/purchaseService';
 import type { UpdatePurchaseData } from '../types';
 
-export function useUpdatePurchase() {
+type UseUpdatePurchaseOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdatePurchase({ skipNavigateToList = false }: UseUpdatePurchaseOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -17,7 +21,9 @@ export function useUpdatePurchase() {
       queryClient.invalidateQueries({ queryKey: ['purchases', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['purchases', 'detail', data.id] });
       showSuccess('Compra atualizada com sucesso!');
-      router.push('/company/purchases');
+      if (!skipNavigateToList) {
+        router.push('/company/purchases');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar compra. Tente novamente.');

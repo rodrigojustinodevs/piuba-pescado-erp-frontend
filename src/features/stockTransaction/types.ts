@@ -10,6 +10,11 @@ export type StockTransactionReferenceType =
   | 'stocking'
   | 'sale';
 
+export type Supply = {
+  id: string;
+  name: string;
+};
+
 export interface StockTransaction {
   id: string;
   direction: StockTransactionDirection;
@@ -20,6 +25,10 @@ export interface StockTransaction {
   referenceType: StockTransactionReferenceType;
   referenceId: string;
   createdAt: string;
+  location?: string;
+  supplyName?: string;
+  responsible?: string;
+  notes?: string;
 }
 
 export interface ApiStockTransaction {
@@ -32,6 +41,17 @@ export interface ApiStockTransaction {
   referenceType: StockTransactionReferenceType;
   referenceId: string;
   createdAt: string;
+  location?: string;
+  supply?: Supply;
+  responsible?: string;
+  notes?: string;
+}
+
+export interface StockTransactionCatalogStats {
+  total: number;
+  entriesCount: number;
+  exitsCount: number;
+  totalValue: number;
 }
 
 export type ApiStockTransactionListResponse = {

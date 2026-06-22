@@ -24,7 +24,11 @@ function toPayload(data: BatchDistributionFormData): BatchDistributionPayload {
   };
 }
 
-export function useDistributeBatch() {
+type UseDistributeBatchOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useDistributeBatch(options: UseDistributeBatchOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -34,7 +38,9 @@ export function useDistributeBatch() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['batches', 'list'] });
       showSuccess('Entrada de lote com distribuição registrada com sucesso!');
-      router.push('/company/batches');
+      if (!options.skipNavigateToList) {
+        router.push('/company/batches');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao registrar entrada de lote. Tente novamente.');

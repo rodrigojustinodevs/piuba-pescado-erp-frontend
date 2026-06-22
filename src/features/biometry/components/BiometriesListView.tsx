@@ -1,9 +1,25 @@
 'use client';
 
-import type { Biometry, BiometryListResponse } from '../types';
+import { useCallback, useMemo, useState } from 'react';
+import type { Biometry, BiometryDialogMode, BiometryListResponse } from '../types';
 import { BiometryTable } from './BiometryTable';
+import { BiometryDialog } from './BiometryDialog';
 import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
 import { SpinnerIcon } from '@/shared/components/icons/AppIcons';
+import { Activity, Eye, FingerprintPattern, Pencil, Ruler, Scale, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { formatNumber } from '@/src/shared/utils/numberFormat';
+
+function toFiniteNumber(value: unknown): number {
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function arithmeticMean(values: number[]): number {
+  if (!values.length) return 0;
+  const sum = values.reduce((acc, v) => acc + v, 0);
+  return sum / values.length;
+}
 
 export type BiometriesListViewProps = {
   page: number;
@@ -26,6 +42,46 @@ export function BiometriesListView({
   error,
   biometries,
 }: Readonly<BiometriesListViewProps>) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<BiometryDialogMode>('create');
+  const [selectedBiometry, setSelectedBiometry] = useState<Biometry | null>(null);
+
+  const openBiometryDialog = useCallback(
+    (mode: BiometryDialogMode, biometry: Biometry | null = null) => {
+      setDialogMode(mode);
+      setSelectedBiometry(biometry);
+      setDialogOpen(true);
+    },
+    [],
+  );
+
+  const stats = useMemo(() => {
+    const weights = biometries.map((b) => toFiniteNumber(b.averageWeight));
+    const fcrs = biometries.map((b) => toFiniteNumber(b.fcr));
+    const batchIds = biometries.map((b) => b.batchId).filter(Boolean);
+    return {
+      total: biometries.length,
+      lotesMonitorados: new Set(batchIds).size,
+      avgWeight: arithmeticMean(weights),
+      avgFcr: arithmeticMean(fcrs),
+    };
+  }, [biometries]);
+  const getRowActions = useCallback(
+    (row: Biometry) => [
+      {
+        label: 'Ver detalhes',
+        onClick: () => openBiometryDialog('view', row),
+        icon: <Eye className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        onClick: () => openBiometryDialog('edit', row),
+        icon: <Pencil className="h-4 w-4" />,
+      },
+    ],
+    [openBiometryDialog],
+  );
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -48,7 +104,7 @@ export function BiometriesListView({
 
     return (
       <>
-        <BiometryTable biometries={biometries} />
+        <BiometryTable biometries={biometries} getRowActions={getRowActions} />
         {data && data.total > data.limit && (
           <Pagination
             page={page}
@@ -65,41 +121,89 @@ export function BiometriesListView({
   return (
     <div className="space-y-6">
       <ListHeader
-        icon={
-          <svg
-            className="h-8 w-8 text-[#0EA5A4]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
-        }
+        icon={<FingerprintPattern className="h-8 w-8 text-[#0EA5A4]" />}
         title="Biometrias"
-        subtitle="Acompanhe as biometrias por lote"
-        ctaHref="/company/biometries/create"
-        ctaLabel="Nova Biometria"
+        subtitle="Acompanhe o crescimento dos lotes através de amostragens periódicas."
+        dialogOpen
+        dialogLabel="Nova Biometria"
+        setDialogOpen={() => openBiometryDialog('create')}
       />
 
-      <section className="flex flex-wrap items-center gap-3">
-        <SearchField value={search} placeholder="Buscar por lote..." onChange={setSearch} />
-      </section>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Total Registros</CardTitle>
+            <Ruler className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+            <p className="text-xs text-muted-foreground">biometrias realizadas</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Lotes Monitorados</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.lotesMonitorados}</div>
+            <p className="text-xs text-muted-foreground">com biometrias</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Peso Médio</CardTitle>
+            <Scale className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.avgWeight, { maximumFractionDigits: 3 })} g
+            </div>
+            <p className="text-xs text-muted-foreground">média geral</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">FCR Médio</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.avgFcr, { maximumFractionDigits: 2 })}
+            </div>
+            <p className="text-xs text-muted-foreground">conversão alimentar</p>
+          </CardContent>
+        </Card>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Histórico de Biometrias</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <SearchField
+              search={search}
+              setSearch={setSearch}
+              setCurrentPage={setPage}
+              placeholder="Buscar por lote..."
+            />
+          </div>
+          {renderContent()}
+        </CardContent>
+      </Card>
 
-      <section className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">
-          {data?.total ?? 0} {data?.total === 1 ? 'biometria encontrada' : 'biometrias encontradas'}
-        </p>
-      </section>
-
-      <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {renderContent()}
-      </main>
+      <BiometryDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedBiometry(null);
+          setDialogOpen(open);
+        }}
+        mode={dialogMode}
+        biometry={selectedBiometry}
+        onSuccess={() => {
+          setDialogOpen(false);
+        }}
+      />
     </div>
   );
 }

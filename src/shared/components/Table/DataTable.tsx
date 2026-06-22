@@ -4,7 +4,6 @@ import { useMemo, useState, ReactNode } from 'react';
 
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-import { Card, CardContent } from '@/shared/components/ui/Card';
 import {
   Table,
   TableBody,
@@ -74,7 +73,7 @@ export function DataTable<T>({
   getRowId,
   rowActions,
   emptyState,
-  showPagination = true,
+  showPagination = false,
   initialPerPage = 25,
   perPageOptions = PER_PAGE_OPTIONS,
 }: DataTableProps<T>) {
@@ -103,97 +102,92 @@ export function DataTable<T>({
   }
 
   return (
-    <Card>
-      <CardContent className="p-0">
-        <Table>
-          <TableHeader>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {columns.map((col) => (
+              <TableHead
+                key={col.id}
+                className={`${ALIGN_CLASS[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
+              >
+                {col.header}
+              </TableHead>
+            ))}
+            {hasActionsColumn && <TableHead className="w-[50px]"></TableHead>}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {paginated.length === 0 ? (
             <TableRow>
-              {columns.map((col) => (
-                <TableHead
-                  key={col.id}
-                  className={`${ALIGN_CLASS[col.align ?? 'left']} ${col.headerClassName ?? ''}`}
-                >
-                  {col.header}
-                </TableHead>
-              ))}
-              {hasActionsColumn && <TableHead className="w-[50px]"></TableHead>}
+              <TableCell colSpan={totalColumns} className="h-24 text-center text-muted-foreground">
+                Nenhum registro encontrado.
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginated.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={totalColumns}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  Nenhum registro encontrado.
-                </TableCell>
-              </TableRow>
-            ) : (
-              paginated.map((row) => (
-                <TableRow key={getRowId(row)} className="group">
-                  {columns.map((col) => (
-                    <TableCell
-                      key={`${getRowId(row)}-${col.id}`}
-                      className={`${ALIGN_CLASS[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
-                    >
-                      {col.cell(row)}
-                    </TableCell>
-                  ))}
-                  {hasActionsColumn && (
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {rowActions?.(row).map((action, index) => {
-                            const key = action.id ?? `${action.label}-${index}`;
-                            const className = `gap-2 ${
-                              action.variant === 'danger' ? 'text-destructive' : ''
-                            }`;
+          ) : (
+            paginated.map((row) => (
+              <TableRow key={getRowId(row)} className="group">
+                {columns.map((col) => (
+                  <TableCell
+                    key={`${getRowId(row)}-${col.id}`}
+                    className={`${ALIGN_CLASS[col.align ?? 'left']} ${col.cellClassName ?? ''}`}
+                  >
+                    {col.cell(row)}
+                  </TableCell>
+                ))}
+                {hasActionsColumn && (
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {rowActions?.(row).map((action, index) => {
+                          const key = action.id ?? `${action.label}-${index}`;
+                          const className = `gap-2 ${
+                            action.variant === 'danger' ? 'text-destructive' : ''
+                          }`;
 
-                            if (action.href) {
-                              return (
-                                <DropdownMenuItem
-                                  key={key}
-                                  className={className}
-                                  onClick={() => action.onClick?.()}
-                                >
-                                  {action.icon}
-                                  {action.label}
-                                </DropdownMenuItem>
-                              );
-                            }
-
+                          if (action.href) {
                             return (
                               <DropdownMenuItem
                                 key={key}
                                 className={className}
-                                disabled={action.disabled}
-                                onClick={action.onClick}
+                                onClick={() => action.onClick?.()}
                               >
                                 {action.icon}
                                 {action.label}
                               </DropdownMenuItem>
                             );
-                          })}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
+                          }
+
+                          return (
+                            <DropdownMenuItem
+                              key={key}
+                              className={className}
+                              disabled={action.disabled}
+                              onClick={action.onClick}
+                            >
+                              {action.icon}
+                              {action.label}
+                            </DropdownMenuItem>
+                          );
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {showPagination && (
         <div className="flex flex-col items-center justify-between gap-4 border-t px-4 py-3 sm:flex-row">
@@ -247,6 +241,6 @@ export function DataTable<T>({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

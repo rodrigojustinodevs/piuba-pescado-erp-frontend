@@ -1,12 +1,10 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { mortalityService } from '../services/mortalityService';
 
 export function useDeleteMortality() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
 
@@ -15,7 +13,6 @@ export function useDeleteMortality() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mortalities', 'list'] });
       showSuccess('Mortalidade excluida com sucesso!');
-      router.push('/company/mortalities');
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao excluir mortalidade. Tente novamente.');

@@ -12,12 +12,16 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/DropdownMenu/dropdown-menu';
 import { Badge } from '@/shared/components/ui/Badge';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
 
 export interface HeaderProps {
   onMenuClick?: () => void;
 }
 
 export function AppHeader({ onMenuClick }: HeaderProps = {}) {
+  const { user, logout } = useAuthContext();
+  const name = user?.name || 'Usuário';
+
   return (
     <header className="flex h-14 items-center gap-4 border-b border-border bg-card px-4">
       <SidebarTrigger className="-ml-1" onClick={onMenuClick} />
@@ -40,10 +44,10 @@ export function AppHeader({ onMenuClick }: HeaderProps = {}) {
             <Button variant="ghost" className="flex items-center gap-2 px-2">
               <Avatar className="h-7 w-7">
                 <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                  JP
+                  {name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm font-medium sm:inline-block">João Pedro</span>
+              <span className="hidden text-sm font-medium sm:inline-block">{name}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
@@ -52,7 +56,7 @@ export function AppHeader({ onMenuClick }: HeaderProps = {}) {
             <DropdownMenuItem>Perfil</DropdownMenuItem>
             <DropdownMenuItem>Configurações</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Sair</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => void logout()}>Sair</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

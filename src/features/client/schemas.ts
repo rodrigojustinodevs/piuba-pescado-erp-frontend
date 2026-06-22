@@ -10,18 +10,26 @@ export const clientPriceGroupSchema = z.enum(clientPriceGroupValues, {
   message: 'Grupo de preço inválido',
 });
 
+export const clientStatusFormValues = ['active', 'prospect', 'inactive'] as const;
+export const clientStatusFormSchema = z.enum(clientStatusFormValues, {
+  message: 'Status inválido',
+});
+
 export const createClientFormSchema = z.object({
   companyId: z.string().optional(),
-  name: z.string().min(1, 'Nome é obrigatório'),
   personType: clientPersonTypeSchema,
+  name: z.string().min(1, 'Razão Social é obrigatória'),
+  tradeName: z.string().optional(),
   documentNumber: z.string().optional(),
+  contact: z.string().optional(),
   email: z.string().optional(),
   phone: z.string().optional(),
-  contact: z.string().optional(),
-  address: z.string().optional(),
-  creditLimit: z.number().optional(),
   priceGroup: clientPriceGroupSchema,
+  city: z.string().optional(),
+  state: z.string().max(2, 'UF deve ter 2 letras').optional(),
+  status: clientStatusFormSchema.optional(),
+  creditLimit: z.number().optional(),
+  notes: z.string().optional(),
 });
 
 export type CreateClientFormData = z.infer<typeof createClientFormSchema>;
-

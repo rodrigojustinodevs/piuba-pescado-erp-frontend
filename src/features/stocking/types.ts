@@ -46,3 +46,5 @@ export interface CreateStockingData {
 export interface UpdateStockingData extends CreateStockingData {
   id: string;
 }
+
+export type StockingDialogMode = 'create' | 'edit' | 'view';

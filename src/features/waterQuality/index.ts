@@ -16,11 +16,5 @@ export {
   useUpdateWaterQuality,
   useDeleteWaterQuality,
 } from './hooks';
-export {
-  WaterQualityTable,
-  WaterQualitiesListView,
-  WaterQualityForm,
-  WaterQualityDetailView,
-  WaterQualityPageShell,
-} from './components';
+export { WaterQualitiesListView, WaterQualityForm, WaterQualityPageShell } from './components';
 export { waterQualityService } from './services/waterQualityService';

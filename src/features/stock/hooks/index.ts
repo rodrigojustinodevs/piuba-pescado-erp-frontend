@@ -4,4 +4,4 @@ export { useCreateStock } from './useCreateStock';
 export { useStock } from './useStock';
 export { useUpdateStock } from './useUpdateStock';
 export { useDeleteStock } from './useDeleteStock';
-export { useAdjustStock } from './useAdjustStock';
+export { useRegisterStockMovement } from './useRegisterStockMovement';

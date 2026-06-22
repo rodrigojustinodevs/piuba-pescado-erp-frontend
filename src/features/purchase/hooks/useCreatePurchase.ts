@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreatePurchaseData } from '../types';
 import { purchaseService } from '../services/purchaseService';
 
-export function useCreatePurchase() {
+type UseCreatePurchaseOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useCreatePurchase({ skipNavigateToList = false }: UseCreatePurchaseOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -16,7 +20,9 @@ export function useCreatePurchase() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchases', 'list'] });
       showSuccess('Compra registrada com sucesso!');
-      router.push('/company/purchases');
+      if (!skipNavigateToList) {
+        router.push('/company/purchases');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao registrar compra. Tente novamente.');

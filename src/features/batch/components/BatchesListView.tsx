@@ -1,43 +1,21 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { Batch, BatchListResponse } from '../types';
+import { useCallback, useMemo, useState } from 'react';
+import type { Batch, BatchCultivation, BatchDialogMode, BatchesListViewProps } from '../types';
 import { BatchTable } from './BatchTable';
+import { BatchCreateDialog } from './BatchCreateDialog';
+import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
+import { SpinnerIcon } from '@/shared/components/icons/AppIcons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { CheckCircle2, Eye, Fish, Package, Pencil, Sprout, Trash } from 'lucide-react';
 import {
-  ListHeader,
-  Pagination,
-  SearchField,
-  SortButton,
-  StatusFilterTabs,
-} from '@/shared/components/list';
-import {
-  ChevronRightIcon,
-  CircleIcon,
-  FilterIcon,
-  SpinnerIcon,
-} from '@/shared/components/icons/AppIcons';
-import type { BatchStatusFilter } from '../hooks/useBatchesListPage';
-
-export type BatchesListViewProps = {
-  page: number;
-  setPage: (next: number) => void;
-  search: string;
-  setSearch: (next: string) => void;
-  filter: BatchStatusFilter;
-  setFilter: (next: BatchStatusFilter) => void;
-  sortBy: string;
-  setSortBy: (next: string) => void;
-  data: BatchListResponse | undefined;
-  isLoading: boolean;
-  error: unknown;
-  filteredBatches: Batch[];
-  stats: {
-    total: number;
-    finishedCount: number;
-  };
-  handleDelete: (id: string, species: string) => void;
-  isDeleting: boolean;
-};
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/src/shared/components/ui/Select';
+import { formatNumber } from '@/shared/utils/numberFormat';
 
 export function BatchesListView({
   page,
@@ -45,9 +23,6 @@ export function BatchesListView({
   search,
   setSearch,
   filter,
-  setFilter,
-  sortBy,
-  setSortBy,
   data,
   isLoading,
   error,
@@ -56,6 +31,67 @@ export function BatchesListView({
   handleDelete,
   isDeleting,
 }: Readonly<BatchesListViewProps>) {
+  const cultivationLabels: Record<BatchCultivation, string> = {
+    growout: 'Engorda',
+    daycare: 'Berçário',
+    nursery: 'Berçário',
+    broodstock: 'Reprodução',
+    larviculture: 'Larvicultura',
+  };
+
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [cultivationFilter, setCultivationFilter] = useState<string>('all');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<BatchDialogMode>('create');
+  const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
+  const openBatchDialog = useCallback((mode: BatchDialogMode, batch: Batch | null = null) => {
+    setDialogMode(mode);
+    setSelectedBatch(batch);
+    setDialogOpen(true);
+  }, []);
+
+  const speciesList = useMemo(() => {
+    return Array.from(new Set(data?.batches.map((b) => b.species) ?? []));
+  }, [data?.batches]);
+
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return data?.batches.filter((b) => {
+      const matchSearch =
+        !term ||
+        b.name?.toLowerCase().includes(term) ||
+        b.species.toLowerCase().includes(term) ||
+        b.description?.toLowerCase().includes(term);
+      const matchStatus = statusFilter === 'all' || b.status === statusFilter;
+      const matchCultivation = cultivationFilter === 'all' || b.cultivation === cultivationFilter;
+      return matchSearch && matchStatus && matchCultivation;
+    });
+  }, [search, statusFilter, cultivationFilter, data?.batches]);
+  const visibleBatches = filtered ?? filteredBatches;
+
+  const getRowActions = useCallback(
+    (batch: Batch) => [
+      {
+        label: 'Ver detalhes',
+        onClick: () => openBatchDialog('view', batch),
+        icon: <Eye className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        onClick: () => openBatchDialog('edit', batch),
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: 'Excluir',
+        onClick: () => handleDelete(batch.id, batch.species),
+        disabled: isDeleting,
+        variant: 'danger' as const,
+        icon: <Trash className="h-4 w-4" />,
+      },
+    ],
+    [handleDelete, isDeleting, openBatchDialog],
+  );
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -76,7 +112,7 @@ export function BatchesListView({
       );
     }
 
-    if (!filteredBatches.length) {
+    if (!visibleBatches.length) {
       return (
         <div className="p-8 text-center text-slate-500">
           <p className="text-base">
@@ -95,7 +131,11 @@ export function BatchesListView({
 
     return (
       <>
-        <BatchTable batches={filteredBatches} onDelete={handleDelete} isDeleting={isDeleting} />
+        <BatchTable
+          batches={visibleBatches}
+          cultivationLabels={cultivationLabels}
+          getRowActions={getRowActions}
+        />
 
         {data && data.total > data.limit && (
           <Pagination
@@ -110,57 +150,137 @@ export function BatchesListView({
     );
   };
 
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
-
   return (
     <div className="space-y-6">
       <ListHeader
-        icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
+        icon={<Fish className="h-8 w-8 text-[#0EA5A4]" />}
         title="Lotes"
-        subtitle="Gerencie e acompanhe os lotes de cultivo"
-        ctaHref="/company/batches/create"
-        ctaLabel="Novo Lote"
-        secondaryCtaHref="/company/batches/distribution"
-        secondaryCtaLabel="Entrada com distribuição"
+        subtitle="Gerencie os lotes de cultivo da sua produção."
+        dialogOpen
+        dialogLabel="Novo Lote"
+        setDialogOpen={() => openBatchDialog('create')}
       />
 
-      <section className="flex flex-wrap items-center gap-3">
-        <SearchField
-          value={search}
-          placeholder="Buscar por nome, espécie, tanque..."
-          onChange={setSearch}
-        />
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total de Lotes
+            </CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Ativos</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {data?.batches.filter((b) => b.status === 'active').length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Animais Ativos
+            </CardTitle>
+            <Fish className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatNumber(
+                data?.batches
+                  .filter((b) => b.status === 'active')
+                  .reduce((s, b) => s + b.initialQuantity, 0) ?? 0,
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Espécies</CardTitle>
+            <Sprout className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{speciesList.length}</div>
+          </CardContent>
+        </Card>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Lista de Lotes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="relative flex-1">
+              <SearchField
+                search={search}
+                setSearch={setSearch}
+                setCurrentPage={setPage}
+                placeholder="Buscar por nome, espécie, tanque..."
+              />
+            </div>
+            <Select
+              value={cultivationFilter}
+              onValueChange={(v) => {
+                setCultivationFilter(v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="md:w-56">
+                <SelectValue placeholder="Tipo de cultivo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os cultivos</SelectItem>
+                {Object.entries(cultivationLabels).map(([k, label]) => (
+                  <SelectItem key={k} value={k}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={statusFilter}
+              onValueChange={(v) => {
+                setStatusFilter(v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="md:w-44">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os status</SelectItem>
+                <SelectItem value="active">Ativo</SelectItem>
+                <SelectItem value="inactive">Inativo</SelectItem>
+                <SelectItem value="harvested">Despescado</SelectItem>
+                <SelectItem value="lost">Perdido</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <StatusFilterTabs<BatchStatusFilter>
-          filter={filter}
-          onChange={setFilter}
-          options={[
-            { value: 'all', label: 'Todos' },
-            { value: 'active', label: 'Ativos' },
-            { value: 'finished', label: 'Finalizados', badgeCount: stats.finishedCount },
-          ]}
-        />
-
-        <SortButton current={sortBy} onSort={handleSort} />
-      </section>
-
-      <section className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">
-          {stats.total} {stats.total === 1 ? 'lote encontrado' : 'lotes encontrados'}
-        </p>
-        <button
-          type="button"
-          className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-        >
-          <FilterIcon className="h-4 w-4" />
-          Filtros avançados
-          <ChevronRightIcon className="h-4 w-4" />
-        </button>
-      </section>
-
-      <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {renderContent()}
-      </main>
+          <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            {renderContent()}
+          </main>
+        </CardContent>
+      </Card>
+      <BatchCreateDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedBatch(null);
+          setDialogOpen(open);
+        }}
+        mode={dialogMode}
+        batch={selectedBatch}
+        onSuccess={() => {
+          setDialogOpen(false);
+        }}
+      />
     </div>
   );
 }

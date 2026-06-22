@@ -67,6 +67,31 @@ export interface BatchListResponse {
   limit: number;
 }
 
+export type BatchDialogMode = 'create' | 'edit' | 'view';
+
+export type BatchStatusFilter = 'all' | BatchStatus;
+
+export type BatchesListViewProps = {
+  page: number;
+  setPage: (next: number) => void;
+  search: string;
+  setSearch: (next: string) => void;
+  filter: BatchStatusFilter;
+  setFilter: (next: BatchStatusFilter) => void;
+  sortBy: string;
+  setSortBy: (next: string) => void;
+  data: BatchListResponse | undefined;
+  isLoading: boolean;
+  error: unknown;
+  filteredBatches: Batch[];
+  stats: {
+    total: number;
+    finishedCount: number;
+  };
+  handleDelete: (id: string, species: string) => void;
+  isDeleting: boolean;
+};
+
 /** Item de distribuição do lote entre tanques (POST batches/distribution) */
 export interface BatchDistributionItem {
   tankId: string;

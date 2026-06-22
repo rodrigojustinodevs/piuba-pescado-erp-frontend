@@ -9,3 +9,6 @@ export { useUpdatePurchase } from './useUpdatePurchase';
 export { useDeletePurchase } from './useDeletePurchase';
 export { useReceivePurchase } from './useReceivePurchase';
 export { useCancelPurchase } from './useCancelPurchase';
+export { useReceivePurchaseItems } from './useReceivePurchaseItems';
+export { useRegisterPurchasePayment } from './useRegisterPurchasePayment';
+export { usePurchasePayments } from './usePurchasePayments';

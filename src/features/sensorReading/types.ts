@@ -4,9 +4,21 @@
 
 import type { ApiPagination } from '@/shared/types/api';
 
+export type SensorReadingType = 'manual' | 'automatic';
+export interface SensorReadingSensor {
+  id: string;
+  name?: string | null;
+  sensorType?: string;
+  status?: string;
+  tank?: {
+    id: string;
+    name: string;
+  } | null;
+}
+
 export interface SensorReading {
   id: string;
-  sensorId: string;
+  type: SensorReadingType;
   companyId: string;
   value: number;
   unit: string;
@@ -14,15 +26,12 @@ export interface SensorReading {
   notes: string | null;
   createdAt: string | null;
   updatedAt: string;
-  sensorType: string;
-  sensorStatus: string;
-  tankId: string;
-  tankName: string;
+  sensor?: SensorReadingSensor;
 }
 
 export interface ApiSensorReading {
   id: string;
-  sensorId: string;
+  type: SensorReadingType;
   companyId: string;
   value: number;
   unit: string;
@@ -30,15 +39,7 @@ export interface ApiSensorReading {
   notes: string | null;
   createdAt: string | null;
   updatedAt: string;
-  sensor?: {
-    id: string;
-    sensorType: string;
-    status: string;
-    tank?: {
-      id: string;
-      name: string;
-    };
-  };
+  sensor?: SensorReadingSensor;
 }
 
 export type ApiSensorReadingListResponse = {

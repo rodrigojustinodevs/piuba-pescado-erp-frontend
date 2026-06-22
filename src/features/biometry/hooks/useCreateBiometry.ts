@@ -5,10 +5,14 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { biometryService } from '../services/biometryService';
 import type { CreateBiometryData } from '../types';
 
+type UseCreateBiometryOptions = {
+  skipNavigateToList?: boolean;
+};
+
 /**
  * Hook para criar uma nova biometria
  */
-export function useCreateBiometry() {
+export function useCreateBiometry(_options: UseCreateBiometryOptions = {}) {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
 

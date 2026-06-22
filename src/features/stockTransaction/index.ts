@@ -2,6 +2,7 @@ export type {
   StockTransaction,
   StockTransactionDirection,
   StockTransactionReferenceType,
+  StockTransactionCatalogStats,
   ApiStockTransaction,
   ApiStockTransactionListResponse,
   StockTransactionListResponse,
@@ -9,5 +10,9 @@ export type {
 export { mapApiStockTransactionList } from './utils/apiMapper';
 export { stockTransactionService } from './services/stockTransactionService';
 export { useStockTransactions, useStockTransactionsListPage } from './hooks';
-export { StockTransactionTable, StockTransactionsListView } from './components';
+export {
+  StockTransactionTable,
+  StockTransactionsListView,
+  StockTransactionCatalogStatsCards,
+} from './components';
 

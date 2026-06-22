@@ -15,7 +15,7 @@ export const GET = createListGetHandler<ApiFeedingListResponse, FeedingListRespo
   mapResponse: mapApiFeedingList,
   context: CONTEXT,
   buildQueryString: (searchParams) =>
-    buildPaginationQueryString(searchParams, { limitParam: 'per_page' }),
+    buildPaginationQueryString(searchParams, { limitParam: 'perPage' }),
 });
 
 type ApiFeedingCreateResponse = { response?: ApiFeeding } | ApiFeeding;

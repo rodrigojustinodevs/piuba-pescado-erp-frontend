@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useDeleteSupplier, useSupplier } from '@/features/supplier';
 import { SupplierDetailView } from '@/features/supplier/components';
 import { useAlertModal } from '@/shared/components/AlertModal';
@@ -9,6 +9,7 @@ import { LoadingState, NotFoundState } from '@/shared/components/states/PageStat
 
 export default function SupplierDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const { data: supplier, isLoading, error } = useSupplier(id);
   const deleteSupplier = useDeleteSupplier();
@@ -19,7 +20,10 @@ export default function SupplierDetailPage() {
       'Confirmar Exclusão',
       `Tem certeza que deseja excluir o fornecedor "${label}"? Esta ação não pode ser desfeita.`,
       'Sim, Excluir',
-      () => deleteSupplier.mutate(targetId),
+      () =>
+        deleteSupplier.mutate(targetId, {
+          onSuccess: () => router.push('/company/suppliers'),
+        }),
     );
   };
 

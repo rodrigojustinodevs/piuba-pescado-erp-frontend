@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { UpdateSupplyData } from '../types';
 import { supplyService } from '../services/supplyService';
 
-export function useUpdateSupply() {
+type UseUpdateSupplyOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useUpdateSupply({ skipNavigateToList }: UseUpdateSupplyOptions = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -18,7 +22,9 @@ export function useUpdateSupply() {
       queryClient.invalidateQueries({ queryKey: ['supplies', 'detail', data.id] });
       queryClient.invalidateQueries({ queryKey: ['purchaseLookups', 'supplies'] });
       showSuccess('Produto atualizado com sucesso!');
-      router.push('/company/supplies');
+      if (!skipNavigateToList) {
+        router.push('/company/supplies');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar produto. Tente novamente.');

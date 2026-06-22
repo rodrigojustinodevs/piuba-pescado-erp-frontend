@@ -15,7 +15,9 @@ function sortSensorReadings(readings: SensorReading[], sortBy: string): SensorRe
         (a, b) => new Date(b.measuredAt).getTime() - new Date(a.measuredAt).getTime(),
       );
     case 'tankName':
-      return list.sort((a, b) => (a.tankName || '').localeCompare(b.tankName || '', 'pt-BR'));
+      return list.sort((a, b) =>
+        (a.sensor?.tank?.name || '').localeCompare(b.sensor?.tank?.name || '', 'pt-BR'),
+      );
     case 'value':
       return list.sort((a, b) => b.value - a.value);
     default:
@@ -25,7 +27,7 @@ function sortSensorReadings(readings: SensorReading[], sortBy: string): SensorRe
 
 export function useSensorReadingsListPage() {
   const listState = useListPageState({ initialSortBy: 'measuredAt' });
-  const { page, setPage, search, setSearch, sortBy, setSortBy } = listState;
+  const { page, setPage, search, setSearch, sortBy } = listState;
 
   const { data, isLoading, error } = useSensorReadings({ page, limit: 25, search });
   const deleteReading = useDeleteSensorReading();
@@ -54,8 +56,6 @@ export function useSensorReadingsListPage() {
     setPage,
     search,
     setSearch,
-    sortBy,
-    setSortBy,
     data,
     isLoading,
     error,

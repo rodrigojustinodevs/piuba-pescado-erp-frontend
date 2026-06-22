@@ -3,12 +3,10 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
+import { ControlledSelect, FormActions, FormCardSection, TextArea } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
 import type { CreateFinancialCategoryData } from '../types';
 import {
   createFinancialCategoryFormSchema,
@@ -20,34 +18,26 @@ import {
 type FinancialCategoryFormProps = {
   initialValues?: CreateFinancialCategoryFormData;
   onSubmit: (data: CreateFinancialCategoryData) => void;
+  onCancel?: () => void;
   isSubmitting?: boolean;
   isEdit?: boolean;
   submitLabel: string;
   submittingLabel: string;
+  inDialog?: boolean;
 };
 
 export function FinancialCategoryForm({
   initialValues,
   onSubmit,
+  onCancel,
   isSubmitting = false,
   isEdit = false,
   submitLabel,
   submittingLabel,
+  inDialog = false,
 }: Readonly<FinancialCategoryFormProps>) {
-  const { user, isMaster } = useAuthContext();
-  const showCompanySelect = isMaster();
-
-  const resolverSchema = useMemo(
-    () =>
-      createFinancialCategoryFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
-    [showCompanySelect],
-  );
-
-  const { loadingCompanies, companyOptions } = useCompanyOptions(showCompanySelect);
+  const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
+    useFormWithCompany(createFinancialCategoryFormSchema);
 
   const typeOptions = useMemo(
     () => [
@@ -70,6 +60,7 @@ export function FinancialCategoryForm({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<CreateFinancialCategoryFormData>({
     resolver: zodResolver(resolverSchema),
@@ -78,6 +69,7 @@ export function FinancialCategoryForm({
     defaultValues: initialValues ?? {
       companyId: '',
       name: '',
+      notes: '',
       type: financialCategoryTypeValues[0],
       status: financialCategoryStatusValues[0],
     },
@@ -87,78 +79,116 @@ export function FinancialCategoryForm({
     if (initialValues) reset(initialValues);
   }, [initialValues, reset]);
 
+  const handleFormSubmit = handleSubmit((data) => {
+    const companyId = showCompanySelect ? data.companyId?.trim() : undefined;
+    onSubmit({
+      ...(companyId ? { companyId } : {}),
+      name: data.name.trim(),
+      notes: data.notes?.trim() || undefined,
+      type: data.type,
+      status: data.status,
+    });
+  });
+
+  const companyField = showCompanySelect ? (
+    <ControlledSelect
+      control={control}
+      name="companyId"
+      label="Empresa"
+      required
+      disabled={isSubmitting || loadingCompanies || isEdit}
+      options={companyOptions}
+      placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+      error={errors.companyId?.message}
+    />
+  ) : null;
+
+  const typeField = (
+    <ControlledSelect
+      control={control}
+      name="type"
+      label="Tipo"
+      required
+      disabled={isSubmitting}
+      options={typeOptions}
+      error={errors.type?.message}
+    />
+  );
+
+  const statusField = (
+    <ControlledSelect
+      control={control}
+      name="status"
+      label="Status"
+      required
+      disabled={isSubmitting || isEdit}
+      options={statusOptions}
+      error={errors.status?.message}
+    />
+  );
+
+  const nameField = (
+    <Input
+      label="Nome"
+      requiredIndicator
+      type="text"
+      disabled={isSubmitting}
+      placeholder="Ex.: Venda de Tilápia"
+      {...register('name')}
+      error={errors.name?.message}
+    />
+  );
+
+  const notesField = (
+    <TextArea
+      label="Descrição"
+      disabled={isSubmitting}
+      placeholder="Descrição opcional da categoria..."
+      rows={inDialog ? 2 : 3}
+      {...register('notes')}
+      error={errors.notes?.message}
+    />
+  );
+
+  const actions = (
+    <FormActions
+      submitLabel={submitLabel}
+      loadingLabel={submittingLabel}
+      isLoading={isSubmitting}
+      onCancel={onCancel}
+    />
+  );
+
+  const formContent = inDialog ? (
+    <div className="space-y-4 py-2">
+      {companyField}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {nameField}
+        {typeField}
+      </div>
+      {notesField}
+      {statusField}
+      {actions}
+    </div>
+  ) : (
+    <FormCardSection
+      title="Dados da categoria"
+      description="Informe nome, tipo e status da categoria financeira."
+      footer={actions}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {companyField}
+        {nameField}
+        {typeField}
+        {statusField}
+      </div>
+      <div className="mt-4">{notesField}</div>
+    </FormCardSection>
+  );
+
   return (
     <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
-      <form
-        onSubmit={handleSubmit((data) => {
-          const companyId = showCompanySelect ? data.companyId?.trim() : undefined;
-          onSubmit({
-            ...(companyId ? { companyId } : {}),
-            name: data.name.trim(),
-            type: data.type,
-            status: data.status,
-          });
-        })}
-      >
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-          <div className="mb-6">
-            <h2 className="text-base font-semibold text-[#0F172A]">Dados da categoria</h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Informe nome, tipo e status da categoria financeira.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {showCompanySelect ? (
-              <Select
-                label="Empresa"
-                requiredIndicator
-                disabled={isSubmitting || loadingCompanies || isEdit}
-                options={companyOptions}
-                placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-                {...register('companyId')}
-                error={errors.companyId?.message}
-              />
-            ) : null}
-
-            <Input
-              label="Nome"
-              requiredIndicator
-              type="text"
-              disabled={isSubmitting}
-              placeholder="Ex.: Venda de Tilápia"
-              {...register('name')}
-              error={errors.name?.message}
-            />
-
-            <Select
-              label="Tipo"
-              requiredIndicator
-              disabled={isSubmitting}
-              options={typeOptions}
-              {...register('type')}
-              error={errors.type?.message}
-            />
-
-            <Select
-              label="Status"
-              requiredIndicator
-              disabled={isSubmitting || isEdit}
-              options={statusOptions}
-              {...register('status')}
-              error={errors.status?.message}
-            />
-          </div>
-
-          <div className="mt-8">
-            <FormActions
-              submitLabel={submitLabel}
-              loadingLabel={submittingLabel}
-              isLoading={isSubmitting}
-            />
-          </div>
-        </div>
-      </form>
+      <form onSubmit={handleFormSubmit}>{formContent}</form>
     </AuthCompanyGate>
   );
 }

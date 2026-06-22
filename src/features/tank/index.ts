@@ -28,10 +28,16 @@ export {
   useUpdateTank,
   useDeleteTank,
   useTankTypes,
-  useTankLookups,
   useTanksWithoutBatches,
   useTanksListPage,
 } from './hooks';
 
 // Components
-export { TankForm, TankTable, TanksListView, TankPageShell, TankUpsertForm } from './components';
+export {
+  TankForm,
+  TankTable,
+  TanksListView,
+  TankPageShell,
+  TankUpsertForm,
+  TankDialog,
+} from './components';

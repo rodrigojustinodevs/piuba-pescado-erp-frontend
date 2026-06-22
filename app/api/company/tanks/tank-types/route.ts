@@ -17,8 +17,15 @@ export const GET = withAuthGuard(async (_auth) => {
       },
     );
 
-    const tankTypes = Array.isArray(data) ? data : (data?.response ?? []);
-    return NextResponse.json(tankTypes, { status: 200 });
+    let tankTypes: TankType[];
+    if (Array.isArray(data)) {
+      tankTypes = data;
+    } else if (Array.isArray(data?.response)) {
+      tankTypes = data.response;
+    } else {
+      tankTypes = (data?.response as { tankTypes?: TankType[] })?.tankTypes ?? [];
+    }
+    return NextResponse.json({ tankTypes }, { status: 200 });
   } catch (error) {
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

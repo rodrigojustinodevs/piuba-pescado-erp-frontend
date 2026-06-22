@@ -76,3 +76,18 @@ export function formatRelativeDateTimePtBR(dateString: string): string {
   }
   return formatDatePtBR(dateString);
 }
+
+export function formatDateTimeLocal(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export function isToday(dateStr: string): boolean {
+  return dateStr === new Date().toISOString().slice(0, 10);
+}

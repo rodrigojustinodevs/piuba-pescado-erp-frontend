@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateCompany, useUpdateCompany } from '@/features/company';
@@ -22,6 +22,7 @@ import {
 } from '@/shared/components/ui/Select';
 import { Badge } from '@/shared/components/ui/Badge';
 import { Loader2, Mail, Phone, MapPin, Building, Calendar } from 'lucide-react';
+import { InfoRow } from '@/shared/components/entityDetail';
 import { createCompanySchema, type CreateCompanyFormData } from '../schemas';
 import type { Company, CreateCompanyData, UpdateCompanyData } from '../types';
 import { STATES_LIST } from '@/shared/types';
@@ -400,21 +401,3 @@ export function CompanyCreateDialog({
   );
 }
 
-interface InfoRowProps {
-  readonly icon: ReactNode;
-  readonly label: string;
-  readonly value: string;
-  readonly className?: string;
-}
-
-function InfoRow({ icon, label, value, className }: Readonly<InfoRowProps>) {
-  return (
-    <div className={`space-y-1 ${className ?? ''}`}>
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {icon}
-        {label}
-      </div>
-      <p className="break-words text-sm">{value}</p>
-    </div>
-  );
-}

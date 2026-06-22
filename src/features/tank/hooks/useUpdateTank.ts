@@ -16,17 +16,17 @@ export function useUpdateTank() {
 
   return useMutation({
     mutationFn: (data: UpdateTankData) => tankService.update(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalida queries relacionadas
       queryClient.invalidateQueries({ queryKey: ['tanks', 'list'] });
-      queryClient.invalidateQueries({ queryKey: ['tanks', 'detail', data.id] });
 
       // Mostra mensagem de sucesso
       showSuccess('Tanque atualizado com sucesso!');
 
       // Redireciona para a página de detalhes
-      router.push(`/company/tanks/${data.id}`);
+      router.push(`/company/tanks`);
     },
+    
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar tanque. Tente novamente.');
     },

@@ -5,7 +5,12 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { feedingService } from '../services/feedingService';
 import type { CreateFeedingData } from '../types';
 
-export function useCreateFeeding() {
+export type UseCreateFeedingOptions = {
+  /** Quando true, não navega após criar (uso em modal — alinhado a stocking/batch). */
+  skipNavigateToList?: boolean;
+};
+
+export function useCreateFeeding(_options: UseCreateFeedingOptions = {}) {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
 

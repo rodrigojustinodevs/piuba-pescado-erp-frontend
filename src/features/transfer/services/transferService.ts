@@ -1,11 +1,30 @@
 import type {
   CreateTransferData,
+  PatchTransferPayload,
   Transfer,
   TransferListResponse,
   UpdateTransferData,
 } from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { HttpError } from '@/shared/lib/http/httpError';
+
+function mapTransfer422(message: string): string {
+  if (message.includes('The batch is not in the origin tank')) {
+    return 'O lote não está no tanque de origem informado.';
+  }
+  if (message.includes('Transfer quantity') && message.includes('exceeds available stock')) {
+    const match = /available stock \((\d+)\)/.exec(message);
+    const available = match?.[1] ?? '';
+    return `Quantidade informada excede o estoque disponível (${available} disponíveis).`;
+  }
+  if (message.includes('already has an active batch')) {
+    return 'O tanque de destino já possui um lote ativo.';
+  }
+  if (message.toLowerCase().includes('same tank') || message.includes('TransferSameTankException')) {
+    return 'Origem e destino não podem ser o mesmo tanque.';
+  }
+  return message;
+}
 
 export const transferService = {
   async list(params?: { page?: number; per_page?: number }): Promise<TransferListResponse> {
@@ -33,9 +52,16 @@ export const transferService = {
     return browserHttpClient.post<Transfer>('/api/company/transfers', data);
   },
 
-  async update(data: UpdateTransferData): Promise<Transfer> {
-    const { id, ...updateData } = data;
-    return browserHttpClient.put<Transfer>(`/api/company/transfers/${id}`, updateData);
+  async update(data: UpdateTransferData | PatchTransferPayload): Promise<Transfer> {
+    const { id, ...patch } = data;
+    try {
+      return await browserHttpClient.put<Transfer>(`/api/company/transfers/${id}`, patch);
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 422) {
+        throw new HttpError(mapTransfer422(error.message), 422);
+      }
+      throw error;
+    }
   },
 
   async delete(id: string): Promise<void> {

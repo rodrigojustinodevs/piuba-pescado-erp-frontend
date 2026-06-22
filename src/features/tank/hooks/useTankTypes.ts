@@ -3,13 +3,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { tankService } from '../services/tankService';
 
+interface UseTankTypesParams {
+  enabled?: boolean;
+}
+
 /**
  * Hook para listar tipos de tanque
  */
-export function useTankTypes() {
+export function useTankTypes({ enabled = true }: UseTankTypesParams = {}) {
   return useQuery({
     queryKey: ['tanks', 'types'],
     queryFn: () => tankService.getTankTypes(),
-    staleTime: 1000 * 60 * 30, // 30 minutos (tipos não mudam frequentemente)
+    staleTime: 1000 * 60 * 30,
+    enabled,
   });
 }

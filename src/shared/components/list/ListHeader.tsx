@@ -14,6 +14,7 @@ export function ListHeader({
   secondaryCtaHref,
   secondaryCtaLabel,
   dialogOpen,
+  dialogLabel = 'Nova Empresa',
   setDialogOpen,
 }: {
   icon: ReactNode;
@@ -24,6 +25,7 @@ export function ListHeader({
   secondaryCtaHref?: string;
   secondaryCtaLabel?: string;
   dialogOpen?: boolean;
+  dialogLabel?: string;
   setDialogOpen: (open: boolean) => void;
 }) {
   return (
@@ -59,7 +61,7 @@ export function ListHeader({
       {dialogOpen && (
         <Button className="gap-2" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4" />
-          Nova Empresa
+          {dialogLabel}
         </Button>
       )}
     </div>

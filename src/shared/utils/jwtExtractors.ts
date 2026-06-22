@@ -45,7 +45,12 @@ export function extractEmailFromJWT(payload: JWTPayload | null): string | null {
 
 export function extractNameFromJWT(payload: JWTPayload | null): string | null {
   if (!payload) return null;
-  return (payload.name as string) || (payload.user_name as string) || null;
+  return (
+    (payload.name as string) ||
+    (payload.user_name as string) ||
+    (payload.unm as string) ||
+    null
+  );
 }
 
 export function extractCompanyIdFromJWT(payload: JWTPayload | null): string | null {
@@ -53,6 +58,7 @@ export function extractCompanyIdFromJWT(payload: JWTPayload | null): string | nu
   return (
     (payload.companyId as string) ||
     (payload.company_id as string) ||
+    (payload.cid as string) ||
     (payload.company as string) ||
     null
   );

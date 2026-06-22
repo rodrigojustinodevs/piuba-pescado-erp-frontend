@@ -6,7 +6,7 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { sensorService } from '../services/sensorService';
 import type { UpdateSensorData } from '../types';
 
-export function useUpdateSensor() {
+export function   useUpdateSensor() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -17,8 +17,8 @@ export function useUpdateSensor() {
       queryClient.invalidateQueries({ queryKey: ['sensors', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['sensors', 'detail', data.id] });
       showSuccess('Sensor atualizado com sucesso!');
-      router.push('/company/sensors');
-    },
+      router.refresh();
+    },  
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar sensor. Tente novamente.');
     },

@@ -6,7 +6,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateSupplierData } from '../types';
 import { supplierService } from '../services/supplierService';
 
-export function useCreateSupplier() {
+type UseCreateSupplierOptions = {
+  skipNavigateToList?: boolean;
+};
+
+export function useCreateSupplier({ skipNavigateToList }: UseCreateSupplierOptions = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -16,7 +20,9 @@ export function useCreateSupplier() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['suppliers', 'list'] });
       showSuccess('Fornecedor cadastrado com sucesso!');
-      router.push('/company/suppliers');
+      if (!skipNavigateToList) {
+        router.push('/company/suppliers');
+      }
     },
     onError: (error: Error) => {
       showError(error.message || 'Erro ao cadastrar fornecedor. Tente novamente.');

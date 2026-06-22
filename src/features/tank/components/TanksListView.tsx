@@ -1,22 +1,18 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { Tank, TankListResponse } from '../types';
+import { useCallback, useState } from 'react';
+import type { Tank, TankListResponse, TankDialogMode } from '../types';
 import { TankTable } from './TankTable';
+import { TankDialog } from './TankDialog';
+import { ListHeader, Pagination, SearchField, StatusFilterTabs } from '@/shared/components/list';
 import {
-  ListHeader,
-  Pagination,
-  SearchField,
-  SortButton,
-  StatusFilterTabs,
-} from '@/shared/components/list';
-import {
-  ChevronRightIcon,
-  CircleIcon,
-  FilterIcon,
-  SpinnerIcon,
-} from '@/shared/components/icons/AppIcons';
-
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
+import { StatCard } from '@/shared/components/Cards/StatCard';
+import { Card, CardContent } from '@/shared/components/ui/Card';
+import { Building, Droplets, Eye, Pencil, Trash } from 'lucide-react';
 type TankFilter = 'all' | 'active' | 'inactive';
 
 export type TanksListViewProps = {
@@ -38,8 +34,6 @@ export type TanksListViewProps = {
   };
   handleDelete: (id: string, name: string) => void;
   isDeleting: boolean;
-  tankTypeMap: Record<string, string>;
-  companyMap: Record<string, string>;
 };
 
 export function TanksListView({
@@ -49,8 +43,6 @@ export function TanksListView({
   setSearch,
   filter,
   setFilter,
-  sortBy,
-  setSortBy,
   data,
   isLoading,
   error,
@@ -58,39 +50,60 @@ export function TanksListView({
   stats,
   handleDelete,
   isDeleting,
-  tankTypeMap,
-  companyMap,
 }: Readonly<TanksListViewProps>) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<TankDialogMode>('create');
+  const [selectedTank, setSelectedTank] = useState<Tank | null>(null);
+
+  const openTankDialog = useCallback((mode: TankDialogMode, tank: Tank | null = null) => {
+    setDialogMode(mode);
+    setSelectedTank(tank);
+    setDialogOpen(true);
+  }, []);
+
+  const getRowActions = useCallback(
+    (tank: Tank) => [
+      {
+        label: 'Ver detalhes',
+        onClick: () => openTankDialog('view', tank),
+        icon: <Eye className="h-4 w-4" />,
+      },
+      {
+        label: 'Editar',
+        onClick: () => openTankDialog('edit', tank),
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: 'Excluir',
+        onClick: () => handleDelete(tank.id, tank.name),
+        variant: 'danger' as const,
+        icon: <Trash className="h-4 w-4" />,
+      },
+    ],
+    [handleDelete, openTankDialog],
+  );
+
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading) return <ListLoadingState />;
+    if (error)
       return (
-        <div className="p-8 text-center">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <SpinnerIcon className="w-5 h-5 animate-spin" />
-            <span>Carregando...</span>
-          </div>
-        </div>
+        <ListErrorState
+          title="Erro ao carregar tanques"
+          message="Não foi possível carregar os tanques. Tente novamente."
+        />
       );
-    }
-
-    if (error) {
-      return <div className="p-8 text-center text-red-600">Erro ao carregar tanques.</div>;
-    }
-
-    if (!filteredTanks.length) {
-      return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
-    }
+    if (!filteredTanks.length)
+      return <ListEmptyState title="Nenhum tanque encontrado." />;
 
     return (
       <>
         <TankTable
           tanks={filteredTanks}
-          onDelete={handleDelete}
+          openTankDialog={openTankDialog}
+          handleTankDelete={handleDelete}
           isDeleting={isDeleting}
-          tankTypeMap={tankTypeMap}
-          companyMap={companyMap}
+          rowActions={getRowActions}
         />
-
         {data && data.total > data.limit && (
           <Pagination
             page={page}
@@ -104,41 +117,65 @@ export function TanksListView({
     );
   };
 
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
-
   return (
     <div className="space-y-6">
       <ListHeader
-        icon={<CircleIcon className="h-8 w-8 text-[#0EA5A4]" />}
+        icon={<Droplets className="h-8 w-8 text-[#0EA5A4]" />}
         title="Tanques"
         subtitle="Gerencie e acompanhe os tanques cadastrados"
-        ctaHref="/company/tanks/create"
-        ctaLabel="Novo Tanque"
+        dialogOpen
+        dialogLabel="Novo Tanque"
+        setDialogOpen={() => openTankDialog('create')}
+      />
+      <TankDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSuccess={() => {
+          setDialogOpen(false);
+        }}
+        mode={dialogMode}
+        tank={selectedTank}
       />
 
-      <section className="flex flex-wrap items-center gap-3">
-        <SearchField value={search} placeholder="Buscar tanque..." onChange={setSearch} />
-
-        <StatusFilterTabs
-          filter={filter}
-          onChange={setFilter}
-          inactiveCount={stats.inactive}
-          labels={{ all: 'Todas', active: 'Ativos', inactive: 'Inativos' }}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard
+          label="Total"
+          value={data?.total ?? 0}
+          icon={<Building className="h-4 w-4 text-muted-foreground" />}
         />
+        <StatCard
+          label="Ativas"
+          value={data?.tanks.filter((t) => t.status === 'active').length ?? 0}
+          icon={<div className="h-2 w-2 rounded-full bg-emerald-500" />}
+        />
+        <StatCard
+          label="Inativas / Suspensas"
+          value={data?.tanks.filter((t) => t.status !== 'active').length ?? 0}
+          icon={<div className="h-2 w-2 rounded-full bg-destructive" />}
+        />
+      </div>
+      <Card>
+        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+          <SearchField
+            search={search}
+            setSearch={setSearch}
+            setCurrentPage={setPage}
+            placeholder="Buscar por nome, CNPJ ou e-mail..."
+          />
 
-        <SortButton current={sortBy} onSort={handleSort} />
-      </section>
-
-      <section className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">
-          {stats.total} {stats.total === 1 ? 'tanque encontrado' : 'tanques encontrados'}
-        </p>
-        <button className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
-          <FilterIcon className="h-4 w-4" />
-          Filtros avançados
-          <ChevronRightIcon className="h-4 w-4" />
-        </button>
-      </section>
+          <StatusFilterTabs
+            filter={filter}
+            onChange={setFilter}
+            inactiveCount={stats.inactive}
+            labels={{
+              all: 'Todas',
+              active: 'Ativas',
+              inactive: 'Inativas',
+              maintenance: 'Manutenção',
+            }}
+          />
+        </CardContent>
+      </Card>
 
       <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {renderContent()}

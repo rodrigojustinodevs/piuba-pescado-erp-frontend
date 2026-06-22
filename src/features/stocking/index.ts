@@ -4,6 +4,9 @@ export {
   StockingDetailView,
   StockingPageShell,
   StockingForm,
+  StockingCreateDialog,
+  StockingViewDialogContent,
+  getStockingRowLabel,
 } from './components';
 export type {
   StockingsListViewProps,
@@ -18,6 +21,7 @@ export {
   useCreateStocking,
   useUpdateStocking,
 } from './hooks';
+export type { UseStockingsParams } from './hooks';
 export { mapApiStockingList, mapApiStocking } from './utils/apiMapper';
 export type {
   Stocking,
@@ -26,6 +30,7 @@ export type {
   ApiStockingResponse,
   CreateStockingData,
   UpdateStockingData,
+  StockingDialogMode,
 } from './types';
 export { createStockingSchema, updateStockingSchema } from './schemas';
 export type { CreateStockingFormData, UpdateStockingFormData } from './schemas';

@@ -1,4 +1,25 @@
 /** Blocos reutilizáveis nas telas de detalhe de entidades (ERP). */
+import type { ReactNode } from 'react';
+
+export interface InfoRowProps {
+  readonly icon: ReactNode;
+  readonly label: string;
+  readonly value: string;
+  readonly className?: string;
+}
+
+export function InfoRow({ icon, label, value, className }: InfoRowProps) {
+  return (
+    <div className={`space-y-1 ${className ?? ''}`}>
+      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+        {icon}
+        {label}
+      </div>
+      <p className="wrap-break-word text-sm">{value}</p>
+    </div>
+  );
+}
+
 
 export type DetailSummaryCardProps = {
   label: string;

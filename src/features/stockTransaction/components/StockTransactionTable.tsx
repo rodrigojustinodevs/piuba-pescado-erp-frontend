@@ -48,8 +48,7 @@ function getReferenceTypeLabel(type: StockTransaction['referenceType']): string 
   }
 }
 
-export function StockTransactionTable({ transactions }: { transactions: StockTransaction[] }) {
-  const columns: Array<DataTableColumn<StockTransaction>> = [
+const columns: Array<DataTableColumn<StockTransaction>> = [
     {
       id: 'createdAt',
       header: 'Data',
@@ -61,14 +60,22 @@ export function StockTransactionTable({ transactions }: { transactions: StockTra
       cell: (row) => (
         <span
           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-            row.direction === 'in'
-              ? 'bg-emerald-100 text-emerald-700'
-              : 'bg-red-100 text-red-700'
+            row.direction === 'in' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
           }`}
         >
           {getDirectionLabel(row.direction)}
         </span>
       ),
+    },
+    {
+      id: 'location',
+      header: 'Local',
+      cell: (row) => <div className="text-sm text-slate-600">{row.location || '—'}</div>,
+    },
+    {
+      id: 'supplyName',
+      header: 'Insumo',
+      cell: (row) => <div className="text-sm text-slate-600">{row.supplyName || '—'}</div>,
     },
     {
       id: 'quantity',
@@ -82,32 +89,45 @@ export function StockTransactionTable({ transactions }: { transactions: StockTra
     {
       id: 'unitPrice',
       header: 'Preço unit.',
-      cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.unitPrice)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.unitPrice)}</div>
+      ),
     },
     {
       id: 'totalCost',
       header: 'Custo total',
-      cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.totalCost)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.totalCost)}</div>
+      ),
     },
     {
       id: 'referenceType',
       header: 'Referência',
-      cell: (row) => <div className="text-sm text-slate-600">{getReferenceTypeLabel(row.referenceType)}</div>,
+      cell: (row) => (
+        <div className="text-sm text-slate-600">{getReferenceTypeLabel(row.referenceType)}</div>
+      ),
     },
     {
-      id: 'referenceId',
-      header: 'ID Referência',
-      cell: (row) => <div className="text-sm text-slate-500 font-mono">{row.referenceId}</div>,
+      id: 'responsible',
+      header: 'Responsável',
+      cell: (row) => <div className="text-sm text-slate-600">{row.responsible || '—'}</div>,
     },
-  ];
+    {
+      id: 'notes',
+      header: 'Observações',
+      cell: (row) => <div className="text-sm text-slate-600">{row.notes || '—'}</div>,
+    },
+];
 
+export function StockTransactionTable({ transactions }: Readonly<{ transactions: StockTransaction[] }>) {
   return (
     <DataTable
       data={transactions}
       columns={columns}
       getRowId={(row) => row.id}
-      emptyState={<div className="p-8 text-center text-slate-500">Nenhuma transação encontrada.</div>}
+      emptyState={
+        <div className="p-8 text-center text-slate-500">Nenhuma transação encontrada.</div>
+      }
     />
   );
 }
-

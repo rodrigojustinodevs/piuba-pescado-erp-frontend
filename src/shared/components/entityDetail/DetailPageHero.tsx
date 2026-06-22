@@ -9,7 +9,7 @@ export type DetailPageHeroProps = {
   icon: ReactNode;
   title: string;
   subtitle: ReactNode;
-  editHref: string;
+  editHref?: string;
   onCancelClick?: () => void;
   isCancelling?: boolean;
   onDeleteClick?: () => void;
@@ -72,13 +72,15 @@ export function DetailPageHero({
             Excluir
           </button>
         ) : null}
-        <Link
-          href={editHref}
-          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition"
-        >
-          <PencilIcon className="h-4 w-4" />
-          Editar
-        </Link>
+        {editHref ? (
+          <Link
+            href={editHref}
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#0F172A] hover:bg-slate-50 transition"
+          >
+            <PencilIcon className="h-4 w-4" />
+            Editar
+          </Link>
+        ) : null}
       </div>
     </div>
   );

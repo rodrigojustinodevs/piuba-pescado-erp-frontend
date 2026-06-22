@@ -7,6 +7,7 @@ export interface UseBatchesParams {
   page?: number;
   limit?: number;
   search?: string;
+  companyId?: string;
   enabled?: boolean;
 }
 
@@ -18,11 +19,12 @@ export function useBatches({
   page = 1,
   limit = 10,
   search,
+  companyId,
   enabled = true,
 }: UseBatchesParams = {}) {
   const query = useQuery({
-    queryKey: ['batches', 'list', page, limit, search],
-    queryFn: () => batchService.getBatches({ page, limit, search }),
+    queryKey: ['batches', 'list', page, limit, search, companyId],
+    queryFn: () => batchService.getBatches({ page, limit, search, companyId }),
     enabled,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });

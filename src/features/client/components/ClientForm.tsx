@@ -9,29 +9,35 @@ import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
 import { withRequiredCompany } from '@/shared/utils/zod';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { maskPhone } from '@/shared/utils/phoneMask';
-import { FormActions } from '@/shared/components/form';
-import { CompanyAndNameFields } from '@/shared/components/form/CompanyAndNameFields';
-import { Input, Select } from '@/shared/components/ui';
-import type { FormSubmitProps } from '@/shared/components/form/types';
+import { FormActions, Select, TextArea } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
 import type { CreateClientData } from '../types';
 import {
   clientPersonTypeValues,
   clientPriceGroupValues,
+  clientStatusFormValues,
   createClientFormSchema,
   type CreateClientFormData,
 } from '../schemas';
 
-type ClientFormProps = FormSubmitProps & {
+type ClientFormProps = {
   initialValues?: CreateClientFormData;
   onSubmit: (data: CreateClientData) => void;
+  onCancel?: () => void;
+  isSubmitting?: boolean;
+  submitLabel?: string;
+  submittingLabel?: string;
+  inDialog?: boolean;
 };
 
 export function ClientForm({
   initialValues,
   onSubmit,
+  onCancel,
   isSubmitting = false,
-  submitLabel,
-  submittingLabel,
+  submitLabel = 'Cadastrar',
+  submittingLabel = 'Cadastrando...',
+  inDialog = false,
 }: Readonly<ClientFormProps>) {
   const { user, isMaster } = useAuthContext();
   const showCompanySelect = isMaster();
@@ -45,15 +51,25 @@ export function ClientForm({
 
   const personTypeOptions = useMemo(
     () => [
-      { value: clientPersonTypeValues[0], label: 'Pessoa jurídica' },
-      { value: clientPersonTypeValues[1], label: 'Pessoa física' },
+      { value: clientPersonTypeValues[0], label: 'Pessoa Jurídica' },
+      { value: clientPersonTypeValues[1], label: 'Pessoa Física' },
     ],
     [],
   );
-  const priceGroupOptions = useMemo(
+
+  const segmentOptions = useMemo(
     () => [
       { value: clientPriceGroupValues[0], label: 'Varejo' },
       { value: clientPriceGroupValues[1], label: 'Atacado' },
+    ],
+    [],
+  );
+
+  const statusOptions = useMemo(
+    () => [
+      { value: clientStatusFormValues[0], label: 'Ativo' },
+      { value: clientStatusFormValues[1], label: 'Prospect' },
+      { value: clientStatusFormValues[2], label: 'Inativo' },
     ],
     [],
   );
@@ -69,15 +85,19 @@ export function ClientForm({
     reValidateMode: 'onChange',
     defaultValues: initialValues ?? {
       companyId: '',
-      name: '',
       personType: clientPersonTypeValues[0],
+      name: '',
+      tradeName: '',
       documentNumber: '',
+      contact: '',
       email: '',
       phone: '',
-      contact: '',
-      address: '',
-      creditLimit: 0,
       priceGroup: clientPriceGroupValues[0],
+      city: '',
+      state: '',
+      status: clientStatusFormValues[0],
+      creditLimit: 0,
+      notes: '',
     },
   });
 
@@ -97,68 +117,101 @@ export function ClientForm({
 
           onSubmit({
             ...(companyId ? { companyId } : {}),
-            name: data.name.trim(),
             personType: data.personType,
-            documentNumber: data.documentNumber?.trim() ? data.documentNumber.trim() : null,
-            email: data.email?.trim() ? data.email.trim() : null,
-            phone: data.phone?.trim() ? data.phone.trim() : null,
-            contact: data.contact?.trim() ? data.contact.trim() : null,
-            address: data.address?.trim() ? data.address.trim() : null,
-            creditLimit: credit,
+            name: data.name.trim(),
+            tradeName: data.tradeName?.trim() || null,
+            documentNumber: data.documentNumber?.trim() || null,
+            contact: data.contact?.trim() || null,
+            email: data.email?.trim() || null,
+            phone: data.phone?.trim() || null,
             priceGroup: data.priceGroup,
+            city: data.city?.trim() || null,
+            state: data.state?.trim().toUpperCase() || null,
+            status: data.status,
+            creditLimit: credit,
+            notes: data.notes?.trim() || null,
           });
         })}
       >
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-          <div className="mb-6">
-            <h2 className="text-base font-semibold text-[#0F172A]">Dados do cliente</h2>
-            <p className="mt-1 text-sm text-slate-600">Cadastro de clientes pessoa física ou jurídica.</p>
-          </div>
+        <div className={inDialog ? 'space-y-4' : 'bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-4'}>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <CompanyAndNameFields
-              showCompanySelect={showCompanySelect}
-              isSubmitting={isSubmitting}
-              loadingCompanies={loadingCompanies}
-              companyOptions={companyOptions}
-              companySelectProps={register('companyId')}
-              companyError={errors.companyId?.message}
-              nameInputProps={register('name')}
-              nameError={errors.name?.message}
-            />
+          {/* Linha 1 — company select (apenas master) */}
+          {showCompanySelect && (
+            <div>
+              <Select
+                label="Empresa"
+                disabled={isSubmitting || loadingCompanies}
+                options={companyOptions}
+                {...register('companyId')}
+                error={errors.companyId?.message}
+              />
+            </div>
+          )}
 
+          {/* Linha 2 — Tipo + Razão Social */}
+          <div className="grid grid-cols-2 gap-4">
             <Select
-              label="Tipo de pessoa"
-              requiredIndicator
+              label="Tipo"
+              required
               disabled={isSubmitting}
               options={personTypeOptions}
               {...register('personType')}
               error={errors.personType?.message}
             />
-
             <Input
-              label="Documento"
+              label="Razão Social"
+              required
               type="text"
               disabled={isSubmitting}
-              placeholder="CPF/CNPJ"
+              placeholder="Nome ou razão social"
+              {...register('name')}
+              error={errors.name?.message}
+            />
+          </div>
+
+          {/* Linha 3 — Nome Fantasia + CNPJ */}
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Nome Fantasia"
+              type="text"
+              disabled={isSubmitting}
+              placeholder="Nome fantasia"
+              {...register('tradeName')}
+              error={errors.tradeName?.message}
+            />
+            <Input
+              label="CNPJ"
+              required
+              type="text"
+              disabled={isSubmitting}
+              placeholder="00.000.000/0000-00"
               inputMode="numeric"
               maxLength={18}
               {...register('documentNumber', {
-                onChange: (event) => {
-                  event.target.value = maskCpfCnpj(event.target.value);
-                },
+                onChange: (e) => { e.target.value = maskCpfCnpj(e.target.value); },
               })}
               error={errors.documentNumber?.message}
             />
+          </div>
 
+          {/* Linha 4 — Contato + E-mail + Telefone */}
+          <div className="grid grid-cols-3 gap-4">
+            <Input
+              label="Contato"
+              type="text"
+              disabled={isSubmitting}
+              placeholder="Nome do contato"
+              {...register('contact')}
+              error={errors.contact?.message}
+            />
             <Input
               label="E-mail"
               type="email"
               disabled={isSubmitting}
+              placeholder="email@exemplo.com"
               {...register('email')}
               error={errors.email?.message}
             />
-
             <Input
               label="Telefone"
               type="text"
@@ -167,66 +220,81 @@ export function ClientForm({
               placeholder="(00) 00000-0000"
               maxLength={15}
               {...register('phone', {
-                onChange: (event) => {
-                  event.target.value = maskPhone(event.target.value);
-                },
+                onChange: (e) => { e.target.value = maskPhone(e.target.value); },
               })}
               error={errors.phone?.message}
             />
+          </div>
 
+          {/* Linha 5 — Segmento + Cidade + UF */}
+          <div className="grid grid-cols-[1fr_1fr_80px] gap-4">
+            <Select
+              label="Segmento"
+              required
+              disabled={isSubmitting}
+              options={segmentOptions}
+              {...register('priceGroup')}
+              error={errors.priceGroup?.message}
+            />
             <Input
-              label="Contato"
+              label="Cidade"
               type="text"
               disabled={isSubmitting}
-              inputMode="numeric"
-              placeholder="(00) 00000-0000"
-              maxLength={15}
-              {...register('contact', {
-                onChange: (event) => {
-                  event.target.value = maskPhone(event.target.value);
-                },
-              })}
-              error={errors.contact?.message}
+              placeholder="Fortaleza"
+              {...register('city')}
+              error={errors.city?.message}
             />
-
             <Input
-              label="Endereço"
+              label="UF"
               type="text"
               disabled={isSubmitting}
-              {...register('address')}
-              error={errors.address?.message}
+              placeholder="CE"
+              maxLength={2}
+              className="uppercase"
+              {...register('state')}
+              error={errors.state?.message}
             />
+          </div>
 
+          {/* Linha 6 — Status + Limite de Crédito */}
+          <div className="grid grid-cols-[1fr_1fr] gap-4">
+            <Select
+              label="Status"
+              disabled={isSubmitting}
+              options={statusOptions}
+              {...register('status')}
+              error={errors.status?.message}
+            />
             <Input
-              label="Limite de crédito"
+              label="Limite de Crédito (R$)"
               type="number"
               step={0.01}
               min={0}
               disabled={isSubmitting}
+              placeholder="0"
               {...register('creditLimit', { valueAsNumber: true })}
               error={errors.creditLimit?.message}
             />
-
-            <Select
-              label="Grupo de preço"
-              requiredIndicator
-              disabled={isSubmitting}
-              options={priceGroupOptions}
-              {...register('priceGroup')}
-              error={errors.priceGroup?.message}
-            />
           </div>
 
-          <div className="mt-8">
-            <FormActions
-              submitLabel={submitLabel}
-              loadingLabel={submittingLabel}
-              isLoading={isSubmitting}
-            />
-          </div>
+          {/* Linha 7 — Observações */}
+          <TextArea
+            label="Observações"
+            disabled={isSubmitting}
+            placeholder="Informações adicionais sobre o cliente..."
+            rows={3}
+            {...register('notes')}
+            error={errors.notes?.message}
+          />
+
+          <FormActions
+            submitLabel={submitLabel}
+            loadingLabel={submittingLabel}
+            isLoading={isSubmitting}
+            onCancel={onCancel}
+          />
         </div>
       </form>
     </AuthCompanyGate>
   );
 }
-

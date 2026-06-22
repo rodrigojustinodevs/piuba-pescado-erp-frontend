@@ -2,6 +2,13 @@ import type { ApiPagination } from '@/shared/types/api';
 
 export type FinancialCategoryTypeStrict = 'revenue' | 'expense' | 'investment';
 export type FinancialCategoryStatusStrict = 'active' | 'inactive';
+export type FinancialCategoryDialogMode = 'create' | 'edit' | 'view';
+
+export interface FinancialCategoryCatalogStats {
+  total: number;
+  revenueCount: number;
+  expenseCount: number;
+}
 
 export interface ApiFinancialCategory {
   id: string;
@@ -10,6 +17,8 @@ export interface ApiFinancialCategory {
   typeLabel?: string | null;
   status: string;
   statusLabel?: string | null;
+  notes?: string | null;
+  totalAmount?: number | null;
   company?: {
     id?: string;
     name?: string | null;
@@ -34,6 +43,8 @@ export interface FinancialCategory {
   statusLabel: string;
   companyId: string;
   companyName: string;
+  notes: string | null;
+  totalAmount: number;
   createdAt: string | null;
   updatedAt: string | null;
 }
@@ -49,6 +60,7 @@ export interface FinancialCategoryListResponse {
 export interface CreateFinancialCategoryData {
   companyId?: string;
   name: string;
+  notes?: string;
   type: FinancialCategoryTypeStrict;
   status: FinancialCategoryStatusStrict;
 }

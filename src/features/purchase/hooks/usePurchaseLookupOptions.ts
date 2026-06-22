@@ -1,23 +1,23 @@
 import { useMemo } from 'react';
-import type { Control } from 'react-hook-form';
+import type { Control, FieldValues, Path } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { usePurchaseSuppliers } from './usePurchaseSuppliers';
 import { usePurchaseSupplies } from './usePurchaseSupplies';
 
-type UsePurchaseLookupOptionsParams = {
-  control: Control<any>;
+type UsePurchaseLookupOptionsParams<T extends FieldValues> = {
+  control: Control<T>;
   showCompanySelect: boolean;
-  companyIdFieldName?: string;
+  companyIdFieldName?: Path<T>;
 };
 
-export function usePurchaseLookupOptions({
+export function usePurchaseLookupOptions<T extends FieldValues>({
   control,
   showCompanySelect,
-  companyIdFieldName = 'companyId',
-}: UsePurchaseLookupOptionsParams) {
+  companyIdFieldName = 'companyId' as Path<T>,
+}: UsePurchaseLookupOptionsParams<T>) {
   const { user } = useAuthContext();
-  const selectedCompanyId = useWatch({ control, name: companyIdFieldName as any });
+  const selectedCompanyId = useWatch({ control, name: companyIdFieldName });
   const effectiveCompanyId = (showCompanySelect ? selectedCompanyId : user?.companyId)?.trim() || '';
 
   const { data: suppliersData, isLoading: loadingSuppliers } = usePurchaseSuppliers(

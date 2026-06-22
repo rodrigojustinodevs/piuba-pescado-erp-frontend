@@ -28,6 +28,8 @@ export function mapApiFinancialCategory(api: ApiFinancialCategory): FinancialCat
     statusLabel: api.statusLabel ?? defaultStatusLabel(api.status),
     companyId: api.company?.id ?? '',
     companyName: api.company?.name ?? '',
+    notes: api.notes ?? null,
+    totalAmount: api.totalAmount ?? 0,
     createdAt: api.createdAt ?? null,
     updatedAt: api.updatedAt ?? null,
   };

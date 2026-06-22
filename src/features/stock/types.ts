@@ -1,89 +1,106 @@
-/**
- * Tipos relacionados à entidade Stock (Estoque)
- */
-
 import type { ApiPagination } from '@/shared/types/api';
 
-export interface Stock {
+export type StockLocationType = 'warehouse' | 'cold_room' | 'silo' | 'storage' | 'field';
+
+export const STOCK_LOCATION_TYPE_LABELS: Record<StockLocationType, string> = {
+  warehouse: 'Armazém',
+  cold_room: 'Câmara Fria',
+  silo: 'Silo',
+  storage: 'Depósito',
+  field: 'Campo',
+};
+
+export type StockLocationStatus = 'active' | 'inactive';
+
+export const STOCK_LOCATION_STATUS_LABELS: Record<StockLocationStatus, string> = {
+  active: 'Ativo',
+  inactive: 'Inativo',
+};
+
+export type StockMovementType = 'inbound' | 'outbound' | 'adjustment' | 'transfer';
+
+export type StockDialogMode = 'create' | 'edit' | 'view';
+
+export interface StockLocation {
   id: string;
   companyId: string;
-  supplyId: string;
-  supplierId: string | null;
-  supplyName: string;
-  supplierName: string | null;
+  code: string;
+  name: string;
+  type: StockLocationType;
+  typeLabel: string;
+  location: string;
+  responsible: string | null;
+  capacity: number | null;
+  status: StockLocationStatus;
+  statusLabel: string;
+  notes: string | null;
   currentQuantity: number;
-  unit: string;
-  unitPrice: number;
-  minimumStock: number;
-  withdrawalQuantity: number;
-  isBelowMinimum: boolean;
+  totalValue: number;
   createdAt: string | null;
-  updatedAt: string;
+  updatedAt: string | null;
 }
 
-export interface ApiStock {
+export interface ApiStockLocation {
   id: string;
   companyId: string;
-  supplyId: string;
-  supplierId: string | null;
-  currentQuantity: number;
-  unit: string;
-  unitPrice: number;
-  minimumStock: number;
-  withdrawalQuantity: number;
-  isBelowMinimum: boolean;
+  code: string;
+  name: string;
+  type: string;
+  location: string;
+  responsible?: string | null;
+  capacity?: number | null;
+  status?: string | null;
+  notes?: string | null;
+  currentQuantity?: number | null;
+  totalValue?: number | null;
   createdAt: string | null;
-  updatedAt: string;
-  supply?: {
-    id: string;
-    name: string;
-    defaultUnit?: string | null;
-  } | null;
-  supplier?: {
-    id: string;
-    name: string;
-  } | null;
+  updatedAt: string | null;
 }
 
 export type ApiStockListResponse = {
   status?: boolean;
   message?: string;
-  response?: ApiStock[] | { data?: ApiStock[] };
+  response?: ApiStockLocation[] | { data?: ApiStockLocation[] };
   pagination?: ApiPagination;
 };
 
 export interface StockListResponse {
-  stocks: Stock[];
+  stocks: StockLocation[];
   total: number;
   page: number;
   limit: number;
 }
 
-/** Payload de criação (POST /api/company/stock). `companyId` só para Master. */
-export interface CreateStockData {
+export interface StockCatalogStats {
+  totalStocks: number;
+  activeCount: number;
+  inactiveCount: number;
+  totalCapacity: number;
+  totalItems: number;
+}
+
+export interface CreateStockLocationData {
   companyId?: string;
-  supplierId: string;
-  supplyId: string;
-  quantity: number;
-  unit: string;
-  minimumStock: number;
-  unitPrice: number;
+  code: string;
+  name: string;
+  type: StockLocationType;
+  location: string;
+  responsible?: string | null;
+  capacity?: number | null;
+  status: StockLocationStatus;
+  notes?: string | null;
 }
 
-/** Campos permitidos no PUT /api/company/stock/:id */
-export interface UpdateStockPayload {
-  unit: string;
-  supplierId: string | null;
-  unitPrice: number;
-  minimumStock: number;
-  withdrawalQuantity: number;
-}
-
-export interface UpdateStockData extends UpdateStockPayload {
+export interface UpdateStockLocationData extends CreateStockLocationData {
   id: string;
 }
 
-export interface AdjustStockPayload {
-  physicalQuantity: number;
+export interface CreateMovementData {
+  type: StockMovementType;
+  stockId: string;
+  destStockId?: string;
+  supplyId: string;
+  quantity: number;
   reason: string;
+  notes?: string;
 }

@@ -1,114 +1,101 @@
 'use client';
 
-import type { Tank } from '../types';
+import type { Tank, TankTableProps } from '../types';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { formatCapacityLiters } from '../utils/format';
-import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
-import { getCompanyName, getTankTypeLabel } from '../utils/lookups';
-import {
-  DataTable,
-  EditIcon,
-  EyeIcon,
-  SpinnerIcon,
-  TrashIcon,
-  type DataTableColumn,
-} from '@/shared/components/Table';
+import { DataTable, type DataTableColumn } from '@/shared/components/Table';
+import { Badge } from '@/src/shared/components/ui/Badge';
+import { Building2, MapPin } from 'lucide-react';
+import { formatDate } from '../../batch/utils/format';
 
-const CELL_TEXT_CLASS = 'text-sm text-slate-600';
+const statusConfig: Record<
+  Tank['status'],
+  { label: string; variant: 'default' | 'secondary' | 'destructive' }
+> = {
+  active: { label: 'Ativo', variant: 'default' },
+  inactive: { label: 'Inativo', variant: 'secondary' },
+  maintenance: { label: 'Manutenção', variant: 'destructive' },
+};
 
-interface TankTableProps {
-  tanks: Tank[];
-  onDelete: (id: string, name: string) => void;
-  isDeleting?: boolean;
-  tankTypeMap?: Record<string, string>;
-  companyMap?: Record<string, string>;
+function TankTypeBadge({ name }: Readonly<{ name: string | undefined }>) {
+  return <Badge variant="outline">{name}</Badge>;
 }
 
-export function TankTable({
-  tanks,
-  onDelete,
-  isDeleting = false,
-  tankTypeMap = {},
-  companyMap = {},
-}: TankTableProps) {
-  const { isMaster } = useAuthContext();
-
-  if (tanks.length === 0) {
-    return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
-  }
-
-  const columns: Array<DataTableColumn<Tank>> = [
+function buildColumns(showCompanyColumn: boolean): Array<DataTableColumn<Tank>> {
+  return [
     {
       id: 'name',
       header: 'Nome',
-      cell: (tank) => <div className="text-sm font-medium text-[#0F172A]">{tank.name}</div>,
+      cellClassName: 'font-medium',
+      cell: (tank) => {
+        return tank.name;
+      },
     },
-    ...(isMaster()
+    {
+      id: 'type',
+      header: 'Tipo',
+      cell: (tank) => <Badge variant="outline">{tank.tankType?.name}</Badge>,
+    },
+    {
+      id: 'capacity',
+      header: 'Capacidade',
+      cell: (tank) => formatCapacityLiters(tank.capacityLiters),
+    },
+    {
+      id: 'location',
+      header: 'Localização',
+      cell: (tank) => (
+        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5" />
+          {tank.location}
+        </div>
+      ),
+    },
+    ...(showCompanyColumn
       ? ([
           {
             id: 'company',
             header: 'Empresa',
             cell: (tank) => (
-              <div className={CELL_TEXT_CLASS}>{getCompanyName(companyMap, tank.companyId)}</div>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Building2 className="h-3.5 w-3.5" />
+                {tank.company?.name}
+              </div>
             ),
           },
         ] as Array<DataTableColumn<Tank>>)
       : []),
     {
-      id: 'capacity',
-      header: 'Capacidade',
-      cell: (tank) => (
-        <div className={CELL_TEXT_CLASS}>{formatCapacityLiters(tank.capacityLiters)}</div>
-      ),
-    },
-    {
-      id: 'type',
-      header: 'Tipo',
-      cell: (tank) => (
-        <div className={CELL_TEXT_CLASS}>{getTankTypeLabel(tankTypeMap, tank.tankTypeId)}</div>
-      ),
-    },
-    {
       id: 'status',
       header: 'Status',
       cell: (tank) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(tank.status)}`}
-        >
-          {tank.status === 'active' ? 'Ativo' : 'Inativo'}
-        </span>
+        <Badge variant={statusConfig[tank.status].variant}>{statusConfig[tank.status].label}</Badge>
       ),
     },
+    {
+      id: 'createdAt',
+      header: 'Criado em',
+      cellClassName: 'text-sm text-muted-foreground',
+      cell: (tank) => formatDate(tank.createdAt),
+    },
   ];
+}
+
+export function TankTable({ tanks, rowActions }: Readonly<TankTableProps>) {
+  const { isMaster } = useAuthContext();
+  const columns = buildColumns(isMaster());
+
+  if (tanks.length === 0) {
+    return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
+  }
 
   return (
     <DataTable
       data={tanks}
       columns={columns}
       getRowId={(tank) => tank.id}
-      rowActions={(tank) => [
-        {
-          label: 'Ver detalhes',
-          href: `/company/tanks/${tank.id}`,
-          icon: <EyeIcon className="h-4 w-4" />,
-        },
-        {
-          label: 'Editar',
-          href: `/company/tanks/${tank.id}/edit`,
-          icon: <EditIcon className="h-4 w-4" />,
-        },
-        {
-          label: 'Excluir',
-          onClick: () => onDelete(tank.id, tank.name),
-          variant: 'danger',
-          disabled: isDeleting,
-          icon: isDeleting ? (
-            <SpinnerIcon className="h-4 w-4 animate-spin" />
-          ) : (
-            <TrashIcon className="h-4 w-4" />
-          ),
-        },
-      ]}
+      rowActions={rowActions}
+      showPagination={false}
     />
   );
 }

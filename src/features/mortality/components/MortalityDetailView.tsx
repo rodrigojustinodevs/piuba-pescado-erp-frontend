@@ -43,15 +43,15 @@ export function MortalityDetailView({
   isDeleting = false,
 }: Readonly<MortalityDetailViewProps>) {
   const mortalityDateLabel = formatNullableDatePtBR(mortality.mortalityDate);
-  const titleLabel = mortality.batchName || `Mortalidade ${mortalityDateLabel}`;
+  const titleLabel = mortality.batch?.name || `Mortalidade ${mortalityDateLabel}`;
   const metricCards = [
-    { label: 'Lote', value: mortality.batchName || '—' },
+    { label: 'Lote', value: mortality.batch?.name || '—' },
     { label: 'Data da mortalidade', value: mortalityDateLabel },
     { label: 'Quantidade', value: formatNumber(mortality.quantity) },
     { label: 'Atualizado em', value: formatNullableDatePtBR(mortality.updatedAt, true) },
   ];
   const infoItems = [
-    { label: 'LOTE', value: mortality.batchName || '—' },
+    { label: 'LOTE', value: mortality.batch?.name || '—' },
     { label: 'CAUSA', value: mortality.cause || '—' },
     { label: 'CRIADO EM', value: formatNullableDatePtBR(mortality.createdAt, true) },
     { label: 'ÚLTIMA ATUALIZAÇÃO', value: formatRelativeDateTimePtBR(mortality.updatedAt) },
@@ -63,7 +63,6 @@ export function MortalityDetailView({
         icon={trendIcon}
         title={titleLabel}
         subtitle={<>Data: {mortalityDateLabel}</>}
-        editHref={`/company/mortalities/${mortality.id}/edit`}
         onDeleteClick={onDelete ? () => onDelete(mortality.id, titleLabel) : undefined}
         isDeleting={isDeleting}
       />

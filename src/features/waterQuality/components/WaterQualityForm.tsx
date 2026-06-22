@@ -1,11 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTanks } from '@/features/tank';
 import { FormActions, FormCardSection } from '@/shared/components/form';
 import { Input, Select } from '@/shared/components/ui';
+import { Label } from '@/shared/components/ui/Label';
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/Select';
 import { toMeasuredAtBackendString } from '@/shared/utils/datetimeForm';
 import type { CreateWaterQualityData } from '../types';
 import { createWaterQualitySchema, type CreateWaterQualityFormData } from '../schemas';
@@ -16,6 +23,8 @@ type WaterQualityFormProps = {
   isSubmitting?: boolean;
   submitLabel: string;
   submittingLabel: string;
+  /** Quando definido, o botão Cancelar chama esta função em vez de `history.back()`. */
+  onCancel?: () => void;
 };
 
 export { toDateTimeLocalInputValue as toDateTimeLocalValue } from '@/shared/utils/datetimeForm';
@@ -26,12 +35,14 @@ export function WaterQualityForm({
   isSubmitting = false,
   submitLabel,
   submittingLabel,
+  onCancel,
 }: Readonly<WaterQualityFormProps>) {
   const { data: tanksData, isLoading: isLoadingTanks } = useTanks({ page: 1, limit: 1000 });
   const tanks = tanksData?.tanks ?? [];
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -81,19 +92,41 @@ export function WaterQualityForm({
             submitLabel={submitLabel}
             loadingLabel={submittingLabel}
             isLoading={isSubmitting}
+            {...(onCancel ? { onCancel } : {})}
           />
         }
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Select
-            label="Tanque"
-            requiredIndicator
-            disabled={isSubmitting || isLoadingTanks}
-            options={tanks.map((t) => ({ value: t.id, label: t.name }))}
-            placeholder={isLoadingTanks ? 'Carregando tanques...' : 'Selecione o tanque'}
-            {...register('tankId')}
-            error={errors.tankId?.message}
-          />
+          <div className="space-y-2">
+            <Label htmlFor="tankId">Viveiro *</Label>
+            <Controller
+              name="tankId"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={isSubmitting || isLoadingTanks}
+                >
+                  <SelectTrigger id="tankId">
+                    <SelectValue
+                      placeholder={isLoadingTanks ? 'Carregando tanques...' : 'Selecione o tanque'}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tanks.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.tankId?.message ? (
+              <p className="text-xs text-destructive">{errors.tankId.message}</p>
+            ) : null}
+          </div>
 
           <Input
             label="Data e hora da medição"

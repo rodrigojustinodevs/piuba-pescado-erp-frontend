@@ -1,10 +1,10 @@
 const LABELS: Record<string, string> = {
   draft: 'Rascunho',
-  confirmed: 'Confirmado',
+  submitted: 'Enviado',
+  approved: 'Aprovado',
+  partially_received: 'Parcialmente Recebido',
   received: 'Recebido',
   cancelled: 'Cancelado',
-  pending: 'Pendente',
-  ordered: 'Pedido',
 };
 
 export function getPurchaseStatusLabel(status: string): string {

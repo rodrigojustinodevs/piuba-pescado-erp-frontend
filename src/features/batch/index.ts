@@ -9,11 +9,13 @@ export type {
   ApiBatchListResponse,
   ApiBatchResponse,
   BatchStatus,
+  BatchStatusFilter,
   BatchCultivation,
   CreateBatchData,
   UpdateBatchData,
   BatchDistributionItem,
   BatchDistributionPayload,
+  BatchesListViewProps,
 } from './types';
 
 export { batchService } from './services/batchService';
@@ -27,7 +29,7 @@ export {
   useDeleteBatch,
   useDistributeBatch,
 } from './hooks';
-export type { UseBatchesParams, BatchStatusFilter } from './hooks';
+export type { UseBatchesParams } from './hooks';
 
 export {
   BatchSelectField,
@@ -38,8 +40,9 @@ export {
   BatchPageShell,
   BatchForm,
   BatchDistributionForm,
+  BatchCreateDialog,
 } from './components';
-export type { BatchFormProps, BatchesListViewProps, BatchDetailViewProps } from './components';
+export type { BatchFormProps, BatchDetailViewProps } from './components';
 
 export { createBatchSchema, updateBatchSchema, batchDistributionSchema } from './schemas';
 export type {

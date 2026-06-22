@@ -1,215 +1,258 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePurchaseLookupOptions } from '@/features/purchase/hooks/usePurchaseLookupOptions';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
-import { useCompanyOptions } from '@/shared/hooks/useCompanyOptions';
-import { addRequiredCompanyIssue } from '@/shared/utils/zod';
-import type { CreateStockData } from '../types';
-import { createStockFormSchema, type CreateStockFormData } from '../schemas';
+import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
+import { FormActions, FormCardSection, ControlledSelect, TextArea } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
+import type { CreateStockLocationData, UpdateStockLocationData } from '../types';
+import {
+  createStockFormSchema,
+  stockLocationTypeOptions,
+  stockLocationStatusOptions,
+  type CreateStockFormData,
+} from '../schemas';
 
-type StockFormProps = {
-  initialValues?: CreateStockFormData;
-  onSubmit: (data: CreateStockData) => void;
-  isSubmitting?: boolean;
-  submitLabel: string;
-  submittingLabel: string;
-};
+type StockFormProps =
+  | {
+      mode: 'create';
+      onSubmit: (data: CreateStockLocationData) => void;
+      onCancel?: () => void;
+      isSubmitting?: boolean;
+      submitLabel: string;
+      submittingLabel: string;
+      inDialog?: boolean;
+    }
+  | {
+      mode: 'edit';
+      initialValues: CreateStockFormData;
+      stockCode: string;
+      onSubmit: (data: Omit<UpdateStockLocationData, 'id'>) => void;
+      onCancel?: () => void;
+      isSubmitting?: boolean;
+      submitLabel: string;
+      submittingLabel: string;
+      inDialog?: boolean;
+    };
 
-export function StockForm({
-  initialValues,
-  onSubmit,
-  isSubmitting = false,
-  submitLabel,
-  submittingLabel,
-}: Readonly<StockFormProps>) {
-  const { user, isMaster } = useAuthContext();
-  const showCompanySelect = isMaster();
+export function StockForm(props: Readonly<StockFormProps>) {
+  const isEdit = props.mode === 'edit';
+  const isSubmitting = props.isSubmitting ?? false;
 
-  const resolverSchema = useMemo(
-    () =>
-      createStockFormSchema.superRefine((data, ctx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
-    [showCompanySelect],
-  );
-
-  const { loadingCompanies, companyOptions } = useCompanyOptions(showCompanySelect);
+  const { user, showCompanySelect, resolverSchema, loadingCompanies, companyOptions } =
+    useFormWithCompany(createStockFormSchema);
 
   const {
     register,
     handleSubmit,
-    control,
-    setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm<CreateStockFormData>({
     resolver: zodResolver(resolverSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: initialValues ?? {
-      companyId: '',
-      supplierId: '',
-      supplyId: '',
-      quantity: 0,
-      unit: '',
-      minimumStock: 0,
-      unitPrice: 0,
-    },
+    defaultValues: isEdit
+      ? props.initialValues
+      : {
+          companyId: '',
+          code: '',
+          name: '',
+          type: undefined,
+          location: '',
+          responsible: '',
+          notes: '',
+          status: 'active',
+        },
   });
 
   useEffect(() => {
-    if (initialValues) reset(initialValues);
-  }, [initialValues, reset]);
+    if (isEdit) reset(props.initialValues);
+  }, [isEdit, props, reset]);
 
-  const { effectiveCompanyId, loadingSuppliers, supplierOptions, loadingSupplies, supplyOptions } =
-    usePurchaseLookupOptions({ control, showCompanySelect, companyIdFieldName: 'companyId' });
+  const sharedFields = (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <ControlledSelect
+          control={control}
+          name="type"
+          label="Tipo"
+          required
+          disabled={isSubmitting}
+          options={stockLocationTypeOptions}
+          placeholder="Selecione o tipo"
+          error={errors.type?.message}
+        />
+        <ControlledSelect
+          control={control}
+          name="status"
+          label="Status"
+          required
+          disabled={isSubmitting}
+          options={stockLocationStatusOptions}
+          error={errors.status?.message}
+        />
+      </div>
 
-  const prevCompanyForReset = useRef<string | undefined>(undefined);
-  useEffect(() => {
-    const id = effectiveCompanyId || undefined;
-    if (!id) return;
-    if (prevCompanyForReset.current !== undefined && prevCompanyForReset.current !== id) {
-      setValue('supplierId', '');
-      setValue('supplyId', '');
-    }
-    prevCompanyForReset.current = id;
-  }, [effectiveCompanyId, setValue]);
+      <Input
+        label="Localização"
+        requiredIndicator
+        type="text"
+        disabled={isSubmitting}
+        placeholder="Ex.: Galpão Norte, Setor B"
+        {...register('location')}
+        error={errors.location?.message}
+      />
 
-  return (
-    <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
-      <form
-        onSubmit={handleSubmit((data) => {
-          const companyId = showCompanySelect ? data.companyId?.trim() : undefined;
-          const payload: CreateStockData = {
-            supplierId: data.supplierId.trim(),
-            supplyId: data.supplyId,
-            quantity: data.quantity,
-            unit: data.unit.trim(),
-            minimumStock: data.minimumStock,
-            unitPrice: data.unitPrice,
-          };
-          if (companyId) {
-            payload.companyId = companyId;
-          }
-          onSubmit(payload);
-        })}
-      >
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-          <div className="mb-6">
-            <h2 className="text-base font-semibold text-[#0F172A]">Novo estoque</h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Vincule fornecedor e insumo, informe quantidade e parâmetros de controle.
-            </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Input
+          label="Responsável"
+          type="text"
+          disabled={isSubmitting}
+          placeholder="Nome do responsável"
+          {...register('responsible')}
+          error={errors.responsible?.message}
+        />
+        <Input
+          label="Capacidade"
+          type="number"
+          step={0.01}
+          min={0.01}
+          disabled={isSubmitting}
+          placeholder="Ex.: 5000"
+          {...register('capacity', {
+            valueAsNumber: true,
+            setValueAs: (v: string) => (v === '' ? undefined : Number(v)),
+          })}
+          error={errors.capacity?.message}
+        />
+      </div>
+
+      <TextArea
+        label="Observações"
+        disabled={isSubmitting}
+        placeholder="Informações adicionais sobre este local (opcional)"
+        rows={3}
+        {...register('notes')}
+        error={errors.notes?.message}
+        inputClassName="resize-none"
+      />
+    </>
+  );
+
+  const fields = (
+    <div className="space-y-5">
+      {isEdit ? (
+        <>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-xs text-slate-500">Código</p>
+            <p className="text-sm font-medium text-slate-800">{props.stockCode}</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {showCompanySelect ? (
-              <div className="md:col-span-2">
-                <Select
-                  label="Empresa"
-                  requiredIndicator
-                  disabled={isSubmitting || loadingCompanies}
-                  options={companyOptions}
-                  placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
-                  {...register('companyId')}
-                  error={errors.companyId?.message}
-                />
-              </div>
-            ) : null}
-
-            <Select
-              label="Fornecedor"
-              requiredIndicator
-              disabled={isSubmitting || loadingSuppliers || !effectiveCompanyId}
-              options={supplierOptions}
-              placeholder={
-                !effectiveCompanyId
-                  ? 'Selecione a empresa primeiro'
-                  : loadingSuppliers
-                    ? 'Carregando fornecedores...'
-                    : 'Selecione um fornecedor'
-              }
-              {...register('supplierId')}
-              error={errors.supplierId?.message}
+          <Input
+            label="Nome"
+            requiredIndicator
+            type="text"
+            disabled={isSubmitting}
+            placeholder="Ex.: Armazém Principal"
+            {...register('name')}
+            error={errors.name?.message}
+          />
+        </>
+      ) : (
+        <>
+          {showCompanySelect ? (
+            <ControlledSelect
+              control={control}
+              name="companyId"
+              label="Empresa"
+              required
+              disabled={isSubmitting || loadingCompanies}
+              options={companyOptions}
+              placeholder={loadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'}
+              error={errors.companyId?.message}
             />
-
-            <Select
-              label="Insumo"
-              requiredIndicator
-              disabled={isSubmitting || loadingSupplies || !effectiveCompanyId}
-              options={supplyOptions}
-              placeholder={
-                !effectiveCompanyId
-                  ? 'Selecione a empresa primeiro'
-                  : loadingSupplies
-                    ? 'Carregando insumos...'
-                    : 'Selecione um insumo'
-              }
-              {...register('supplyId')}
-              error={errors.supplyId?.message}
-            />
-
+          ) : null}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
-              label="Quantidade inicial"
-              requiredIndicator
-              type="number"
-              step={0.01}
-              min={0.01}
-              disabled={isSubmitting}
-              {...register('quantity', { valueAsNumber: true })}
-              error={errors.quantity?.message}
-            />
-
-            <Input
-              label="Unidade"
+              label="Código"
               requiredIndicator
               type="text"
               disabled={isSubmitting}
-              placeholder="Ex.: kg, ração"
-              {...register('unit')}
-              error={errors.unit?.message}
+              placeholder="Ex.: ARM-001"
+              {...register('code')}
+              error={errors.code?.message}
             />
-
             <Input
-              label="Estoque mínimo"
+              label="Nome"
               requiredIndicator
-              type="number"
-              step={0.01}
-              min={0}
+              type="text"
               disabled={isSubmitting}
-              {...register('minimumStock', { valueAsNumber: true })}
-              error={errors.minimumStock?.message}
-            />
-
-            <Input
-              label="Preço unitário"
-              requiredIndicator
-              type="number"
-              step={0.01}
-              min={0}
-              disabled={isSubmitting}
-              {...register('unitPrice', { valueAsNumber: true })}
-              error={errors.unitPrice?.message}
+              placeholder="Ex.: Armazém Principal"
+              {...register('name')}
+              error={errors.name?.message}
             />
           </div>
+        </>
+      )}
 
-          <div className="mt-8">
-            <FormActions
-              submitLabel={submitLabel}
-              loadingLabel={submittingLabel}
-              isLoading={isSubmitting}
-            />
-          </div>
-        </div>
-      </form>
+      {sharedFields}
+
+      <div className="mt-2">
+        <FormActions
+          submitLabel={props.submitLabel}
+          loadingLabel={props.submittingLabel}
+          isLoading={isSubmitting}
+          onCancel={props.onCancel}
+        />
+      </div>
+    </div>
+  );
+
+  const cardTitle = isEdit ? 'Editar local de armazenamento' : 'Novo local de armazenamento';
+  const cardDescription = isEdit
+    ? 'Atualize os dados deste local de armazenamento.'
+    : 'Preencha os dados para cadastrar um novo local de armazenamento.';
+
+  const form = (
+    <form
+      onSubmit={handleSubmit((data) => {
+        const base = {
+          name: data.name.trim(),
+          type: data.type,
+          location: data.location.trim(),
+          responsible: data.responsible?.trim() || null,
+          capacity: data.capacity ?? null,
+          status: data.status,
+          notes: data.notes?.trim() || null,
+        };
+        if (isEdit) {
+          props.onSubmit({ ...base, code: props.stockCode });
+        } else {
+          const payload: CreateStockLocationData = { ...base, code: data.code.trim() };
+          if (showCompanySelect && data.companyId?.trim()) {
+            payload.companyId = data.companyId.trim();
+          }
+          props.onSubmit(payload);
+        }
+      })}
+    >
+      {props.inDialog ? (
+        fields
+      ) : (
+        <FormCardSection title={cardTitle} description={cardDescription}>
+          {fields}
+        </FormCardSection>
+      )}
+    </form>
+  );
+
+  if (isEdit) return form;
+
+  return (
+    <AuthCompanyGate user={user} showCompanySelect={showCompanySelect}>
+      {form}
     </AuthCompanyGate>
   );
 }
