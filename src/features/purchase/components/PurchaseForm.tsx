@@ -37,7 +37,9 @@ function roundMoney(n: number): number {
 
 function generateReferenceCode(): string {
   const year = new Date().getFullYear();
-  const rand = String(Math.floor(Math.random() * 9000) + 1000);
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  const rand = String((array[0] % 9000) + 1000);
   return `PC-${year}-${rand}`;
 }
 

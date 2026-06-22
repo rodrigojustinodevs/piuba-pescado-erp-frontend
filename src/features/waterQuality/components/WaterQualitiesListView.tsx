@@ -108,7 +108,9 @@ const qualityConfig: Record<
 };
 
 function getTrend(): 'up' | 'down' | 'stable' {
-  const r = Math.random();
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  const r = array[0] / 0xffffffff;
   if (r < 0.33) return 'up';
   if (r < 0.66) return 'down';
   return 'stable';
