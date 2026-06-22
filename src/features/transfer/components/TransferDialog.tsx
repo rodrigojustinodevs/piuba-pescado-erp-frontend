@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import type { Transfer, TransferDialogMode, CreateTransferData, PatchTransferPayload } from '../types';
-import type { CreateTransferFormData, UpdateTransferFormData } from '../schemas';
+import type { CreateTransferFormData } from '../schemas';
 import type { ApiFieldError } from './TransferForm';
 import { TransferForm } from './TransferForm';
 import { TransferViewDialogContent } from './TransferViewDialogContent';
@@ -80,24 +80,6 @@ export function TransferDialog({
     onOpenChange(false);
   }
 
-  const initialValues = useMemo<UpdateTransferFormData | undefined>(() => {
-    if (!transfer || mode !== 'edit') return undefined;
-    return {
-      id: transfer.id,
-      batchId: transfer.batchId,
-      originTankId: transfer.originTankId,
-      destinationTankId: transfer.destinationTankId,
-      quantity: transfer.quantity,
-      description: transfer.description,
-      transferDate: transfer.transferDate ?? undefined,
-      averageWeight: transfer.averageWeight,
-      reason: transfer.reason as UpdateTransferFormData['reason'],
-      status: transfer.status as UpdateTransferFormData['status'],
-      responsible: transfer.responsible,
-    };
-  }, [transfer, mode]);
-  void initialValues;
-
   function handleCreate(data: CreateTransferFormData) {
     setApiError(null);
     createTransfer.mutate(data as CreateTransferData, {
@@ -122,6 +104,45 @@ export function TransferDialog({
     });
   }
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <TransferViewDialogContent transfer={transfer} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && transfer) {
+      return (
+        <TransferForm
+          key={`edit-${transfer.id}-${open ? 'open' : 'closed'}`}
+          mode="update"
+          initialData={transfer}
+          onSubmit={handleUpdate}
+          isLoading={isLoading}
+          submitLabel="Atualizar transferência"
+          onCancel={handleClose}
+          apiError={apiError}
+        />
+      );
+    }
+    return (
+      <TransferForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        mode="create"
+        onSubmit={handleCreate}
+        isLoading={isLoading}
+        submitLabel="Registrar"
+        onCancel={handleClose}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -129,37 +150,7 @@ export function TransferDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <TransferViewDialogContent transfer={transfer} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && transfer ? (
-          <TransferForm
-            key={`edit-${transfer.id}-${open ? 'open' : 'closed'}`}
-            mode="update"
-            initialData={transfer}
-            onSubmit={handleUpdate}
-            isLoading={isLoading}
-            submitLabel="Atualizar transferência"
-            onCancel={handleClose}
-            apiError={apiError}
-          />
-        ) : (
-          <TransferForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            mode="create"
-            onSubmit={handleCreate}
-            isLoading={isLoading}
-            submitLabel="Registrar"
-            onCancel={handleClose}
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

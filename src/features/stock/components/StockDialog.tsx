@@ -80,6 +80,56 @@ export function StockDialog({ open, onOpenChange, mode, stock, onSuccess }: Read
         }
       : undefined;
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <StockViewDialogContent stock={stock} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && stock && editInitialValues) {
+      return (
+        <StockForm
+          key={`edit-${stock.id}-${open ? 'open' : 'closed'}`}
+          mode="edit"
+          initialValues={editInitialValues}
+          stockCode={stock.code}
+          onSubmit={handleUpdate}
+          onCancel={handleClose}
+          isSubmitting={isLoading}
+          submitLabel="Atualizar local"
+          submittingLabel="Atualizando..."
+          inDialog
+        />
+      );
+    }
+    return (
+      <StockForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        mode="create"
+        onSubmit={(data) => {
+          createStock.mutate(data, {
+            onSuccess: () => {
+              onSuccess();
+              handleClose();
+            },
+          });
+        }}
+        onCancel={handleClose}
+        isSubmitting={isLoading}
+        submitLabel="Cadastrar local"
+        submittingLabel="Cadastrando..."
+        inDialog
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -87,48 +137,7 @@ export function StockDialog({ open, onOpenChange, mode, stock, onSuccess }: Read
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <StockViewDialogContent stock={stock} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && stock && editInitialValues ? (
-          <StockForm
-            key={`edit-${stock.id}-${open ? 'open' : 'closed'}`}
-            mode="edit"
-            initialValues={editInitialValues}
-            stockCode={stock.code}
-            onSubmit={handleUpdate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Atualizar local"
-            submittingLabel="Atualizando..."
-            inDialog
-          />
-        ) : (
-          <StockForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            mode="create"
-            onSubmit={(data) => {
-              createStock.mutate(data, {
-                onSuccess: () => {
-                  onSuccess();
-                  handleClose();
-                },
-              });
-            }}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Cadastrar local"
-            submittingLabel="Cadastrando..."
-            inDialog
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

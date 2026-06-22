@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { Sensor, SensorStatus, SensorTypeFilter } from '../types';
 import { useSensors } from './useSensors';
 import { useDeleteSensor } from './useDeleteSensor';
-import { useListPageState, type StatusFilter } from '@/shared/hooks/useListPageState';
+import { useListPageState } from '@/shared/hooks/useListPageState';
 import { useAlertModal } from '@/shared/components/AlertModal';
 
 function sortSensors(sensors: Sensor[], sortBy: string): Sensor[] {

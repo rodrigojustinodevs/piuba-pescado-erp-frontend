@@ -20,6 +20,6 @@ export const POST = createUpsertHandler<Envelope, CreateFinancialTransactionData
   mapBody: buildFinancialTransactionBody,
   mapResponse: (data) => {
     const api = 'response' in data && data.response != null ? data.response : data;
-    return mapApiFinancialTransaction(api as ApiFinancialTransaction) as FinancialTransaction;
+    return mapApiFinancialTransaction(api as ApiFinancialTransaction);
   },
 });

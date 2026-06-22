@@ -89,7 +89,7 @@ export function StockViewDialogContent({ stock }: Readonly<StockViewDialogConten
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stock.capacity != null ? stock.capacity.toLocaleString('pt-BR') : '—'}
+              {stock.capacity == null ? '—' : stock.capacity.toLocaleString('pt-BR')}
             </div>
             <p className="text-xs text-muted-foreground">capacidade total</p>
           </CardContent>

@@ -10,7 +10,7 @@ import {
   type CreateHarvestFormData,
   type UpdateHarvestFormData,
 } from '../schemas';
-import type { Harvest, HarvestStatus, PatchHarvestPayload } from '../types';
+import type { Harvest, PatchHarvestPayload } from '../types';
 import {
   HARVEST_DESTINATION_LABELS,
   HARVEST_STATUS_LABELS,
@@ -49,7 +49,7 @@ export type HarvestFormProps =
 
 const TABLE_INPUT_CLS = 'w-full rounded border-0 bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5';
 
-function SummaryItem({ label, value, className }: { label: string; value: string; className?: string }) {
+function SummaryItem({ label, value, className }: Readonly<{ label: string; value: string; className?: string }>) {
   return (
     <div>
       <p className="text-xs text-slate-500">{label}</p>
@@ -59,6 +59,32 @@ function SummaryItem({ label, value, className }: { label: string; value: string
 }
 
 const loadHarvestTanks = (_companyId: string) => tankService.list({ page: 1, limit: 1000 });
+
+function buildFromInitial(d: Harvest): UpdateHarvestFormData {
+  return {
+    id: d.id,
+    tankId: d.tankId,
+    harvestDate: d.harvestDate,
+    type: d.type,
+    status: d.status,
+    destination: d.destination,
+    initialPopulation: d.initialPopulation ?? 0,
+    harvestedQuantity: d.harvestedQuantity,
+    averageWeight: d.averageWeight,
+    sizeClassifications: d.sizeClassifications?.length
+      ? d.sizeClassifications.map((c) => ({
+          class: c.class,
+          quantity: c.quantity,
+          averageWeight: c.averageWeight,
+          pricePerKg: c.pricePerKg,
+        }))
+      : [{ class: '', quantity: 0, averageWeight: 0, pricePerKg: 0 }],
+    clientDestination: d.clientDestination ?? '',
+    responsible: d.responsible ?? '',
+    operationalCost: d.operationalCost ?? 0,
+    notes: d.notes ?? '',
+  };
+}
 
 function todayIso() {
   return new Date().toISOString().split('T')[0];
@@ -79,7 +105,7 @@ export function HarvestForm({
   submitLabel = 'Registrar',
   onCancel,
   apiError,
-}: HarvestFormProps) {
+}: Readonly<HarvestFormProps>) {
   const isEditMode = mode === 'update';
 
   const {
@@ -99,7 +125,7 @@ export function HarvestForm({
   const resolverSchema = useMemo(
     () =>
       baseSchema.superRefine((data, ctx) => {
-        if (showCompanyField && !('id' in data) && !(data as CreateHarvestFormData).companyId?.trim()) {
+        if (showCompanyField && !isEditMode && !(data as CreateHarvestFormData).companyId?.trim()) {
           addRequiredCompanyIssue(ctx);
         }
       }),
@@ -123,30 +149,6 @@ export function HarvestForm({
     operationalCost: 0,
     notes: '',
   };
-
-  const buildFromInitial = (d: Harvest): UpdateHarvestFormData => ({
-    id: d.id,
-    tankId: d.tankId,
-    harvestDate: d.harvestDate,
-    type: d.type,
-    status: d.status,
-    destination: d.destination,
-    initialPopulation: d.initialPopulation ?? 0,
-    harvestedQuantity: d.harvestedQuantity,
-    averageWeight: d.averageWeight,
-    sizeClassifications: d.sizeClassifications?.length
-      ? d.sizeClassifications.map((c) => ({
-          class: c.class,
-          quantity: c.quantity,
-          averageWeight: c.averageWeight,
-          pricePerKg: c.pricePerKg,
-        }))
-      : [{ class: '', quantity: 0, averageWeight: 0, pricePerKg: 0 }],
-    clientDestination: d.clientDestination ?? '',
-    responsible: d.responsible ?? '',
-    operationalCost: d.operationalCost ?? 0,
-    notes: d.notes ?? '',
-  });
 
   const {
     register,
@@ -309,19 +311,21 @@ export function HarvestForm({
               const exists = allTanks.some((t) => t.id === tankFromBatch.id);
               if (!exists) allTanks.push(tankFromBatch as Tank);
             }
+            let tankOptions: Array<{ value: string; label: string }>;
+            if (allTanks.length > 0) {
+              tankOptions = allTanks.map((t) => ({ value: t.id, label: t.name }));
+            } else if (field.value) {
+              tankOptions = [{ value: field.value as string, label: initialData?.tankName ?? (field.value as string) }];
+            } else {
+              tankOptions = [];
+            }
             return (
               <Select
                 label="Tanque"
                 required={!isEditMode}
                 disabled={isLoading || (showCompanyField && !companyDataLoaded && !isEditMode)}
                 placeholder="Selecione o tanque"
-                options={
-                  allTanks.length > 0
-                    ? allTanks.map((t) => ({ value: t.id, label: t.name }))
-                    : field.value
-                    ? [{ value: field.value as string, label: initialData?.tankName ?? (field.value as string) }]
-                    : []
-                }
+                options={tankOptions}
                 value={(field.value as string) || ''}
                 onChange={(e) => field.onChange(e.target.value)}
                 error={errs['tankId']?.message}

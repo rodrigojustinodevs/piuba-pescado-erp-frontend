@@ -4,6 +4,16 @@ import type { SensorReading, SensorReadingType } from '../types';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { SensorType, sensorTypeLabels } from '../../sensor/types';
 import { AlertTriangle, Radio, type LucideIcon } from 'lucide-react';
+
+interface SensorTypeIconProps {
+  typeIcon: Record<SensorType, LucideIcon>;
+  sensorType: string | undefined | null;
+}
+
+function SensorTypeIcon({ typeIcon, sensorType }: Readonly<SensorTypeIconProps>) {
+  const TypeIcon = typeIcon[sensorType as SensorType] ?? Radio;
+  return <TypeIcon className="h-3.5 w-3.5" />;
+}
 import { Badge } from '@/shared/components/ui/Badge';
 import { formatDateTime, formatRelative } from '../../batch/utils/format';
 
@@ -34,11 +44,7 @@ export function SensorReadingTable({
       cell: (row) => (
         <div className="flex items-center gap-2">
           <div className="rounded-md bg-primary/10 p-1.5 text-primary">
-            {/* Fallback para leituras sem sensor associado */}
-            {(() => {
-              const TypeIcon = typeIcon[row.sensor?.sensorType as SensorType] ?? Radio;
-              return <TypeIcon className="h-3.5 w-3.5" />;
-            })()}
+            <SensorTypeIcon typeIcon={typeIcon} sensorType={row.sensor?.sensorType} />
           </div>
           <div className="min-w-0">
             <div className="truncate text-sm font-medium">{row.sensor?.name}</div>

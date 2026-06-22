@@ -21,8 +21,7 @@ export interface MortalityTableProps {
   getRowActions: (row: Mortality) => DataTableAction[];
 }
 
-export function MortalityTable({ mortalities, getRowActions }: Readonly<MortalityTableProps>) {
-  const columns: Array<DataTableColumn<Mortality>> = [
+const columns: Array<DataTableColumn<Mortality>> = [
     {
       id: 'batchName',
       header: 'Lote',
@@ -67,8 +66,9 @@ export function MortalityTable({ mortalities, getRowActions }: Readonly<Mortalit
         </Badge>
       ),
     },
-  ];
+];
 
+export function MortalityTable({ mortalities, getRowActions }: Readonly<MortalityTableProps>) {
   return (
     <DataTable
       data={mortalities}

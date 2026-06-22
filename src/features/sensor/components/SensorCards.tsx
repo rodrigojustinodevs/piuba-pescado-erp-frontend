@@ -48,8 +48,7 @@ export function SensorCards({
   openSensorDialog,
 }: Readonly<SensorCardsProps>) {
   return (
-    <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {sensors.map((s) => {
           const status = statusConfig[s.status] ?? {
             label: 'Desconhecido',
@@ -145,18 +144,17 @@ export function SensorCards({
                     <Droplets className="h-3.5 w-3.5 shrink-0" />
                     <span className="truncate">{s.tank?.name}</span>
                   </div>
-                  {isMaster ? (
+                  {isMaster && (
                     <div className="flex items-center gap-1.5">
                       <Building2 className="h-3.5 w-3.5 shrink-0" />
                       <span className="truncate">{s.company?.name}</span>
                     </div>
-                  ) : null}
+                  )}
                 </div>
               </CardContent>
             </Card>
           );
         })}
-      </div>
-    </>
+    </div>
   );
 }

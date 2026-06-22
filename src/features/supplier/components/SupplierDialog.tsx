@@ -1,6 +1,6 @@
 'use client';
 
-import type { Supplier, SupplierDialogMode, CreateSupplierData, UpdateSupplierData } from '../types';
+import type { Supplier, SupplierDialogMode, CreateSupplierData } from '../types';
 import type { CreateSupplierFormData } from '../schemas';
 import { SupplierForm } from './SupplierForm';
 import { SupplierViewDialogContent } from './SupplierViewDialogContent';
@@ -71,7 +71,7 @@ export function SupplierDialog({
 
   function handleUpdate(data: CreateSupplierData) {
     if (!supplier?.id) return;
-    updateSupplier.mutate({ ...data, id: supplier.id } as UpdateSupplierData, {
+    updateSupplier.mutate({ ...data, id: supplier.id }, {
       onSuccess: () => {
         onSuccess();
         handleClose();
@@ -106,6 +106,46 @@ export function SupplierDialog({
         }
       : undefined;
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <SupplierViewDialogContent supplier={supplier} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && supplier) {
+      return (
+        <SupplierForm
+          key={`edit-${supplier.id}-${open ? 'open' : 'closed'}`}
+          initialValues={editInitialValues}
+          onSubmit={handleUpdate}
+          onCancel={handleClose}
+          isSubmitting={isLoading}
+          submitLabel="Atualizar fornecedor"
+          submittingLabel="Atualizando..."
+          inDialog
+        />
+      );
+    }
+    return (
+      <SupplierForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        onSubmit={handleCreate}
+        onCancel={handleClose}
+        isSubmitting={isLoading}
+        submitLabel="Cadastrar fornecedor"
+        submittingLabel="Cadastrando..."
+        inDialog
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -113,38 +153,7 @@ export function SupplierDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <SupplierViewDialogContent supplier={supplier} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && supplier ? (
-          <SupplierForm
-            key={`edit-${supplier.id}-${open ? 'open' : 'closed'}`}
-            initialValues={editInitialValues}
-            onSubmit={handleUpdate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Atualizar fornecedor"
-            submittingLabel="Atualizando..."
-            inDialog
-          />
-        ) : (
-          <SupplierForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            onSubmit={handleCreate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Cadastrar fornecedor"
-            submittingLabel="Cadastrando..."
-            inDialog
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

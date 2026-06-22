@@ -1,6 +1,6 @@
 'use client';
 
-import type { Supply, SupplyDialogMode, CreateSupplyData, UpdateSupplyData } from '../types';
+import type { Supply, SupplyDialogMode, CreateSupplyData } from '../types';
 import type { CreateSupplyFormData } from '../schemas';
 import { SupplyForm } from './SupplyForm';
 import { SupplyViewDialogContent } from './SupplyViewDialogContent';
@@ -71,7 +71,7 @@ export function SupplyDialog({
 
   function handleUpdate(data: CreateSupplyData) {
     if (!supply?.id) return;
-    updateSupply.mutate({ ...data, id: supply.id } as UpdateSupplyData, {
+    updateSupply.mutate({ ...data, id: supply.id }, {
       onSuccess: () => {
         onSuccess();
         handleClose();
@@ -97,6 +97,46 @@ export function SupplyDialog({
         }
       : undefined;
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <SupplyViewDialogContent supply={supply} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && supply) {
+      return (
+        <SupplyForm
+          key={`edit-${supply.id}-${open ? 'open' : 'closed'}`}
+          initialValues={editInitialValues}
+          onSubmit={handleUpdate}
+          onCancel={handleClose}
+          isSubmitting={isLoading}
+          submitLabel="Atualizar produto"
+          submittingLabel="Atualizando..."
+          inDialog
+        />
+      );
+    }
+    return (
+      <SupplyForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        onSubmit={handleCreate}
+        onCancel={handleClose}
+        isSubmitting={isLoading}
+        submitLabel="Cadastrar produto"
+        submittingLabel="Cadastrando..."
+        inDialog
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -104,38 +144,7 @@ export function SupplyDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <SupplyViewDialogContent supply={supply} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && supply ? (
-          <SupplyForm
-            key={`edit-${supply.id}-${open ? 'open' : 'closed'}`}
-            initialValues={editInitialValues}
-            onSubmit={handleUpdate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Atualizar produto"
-            submittingLabel="Atualizando..."
-            inDialog
-          />
-        ) : (
-          <SupplyForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            onSubmit={handleCreate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Cadastrar produto"
-            submittingLabel="Cadastrando..."
-            inDialog
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

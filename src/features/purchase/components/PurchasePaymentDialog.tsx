@@ -91,6 +91,54 @@ export function PurchasePaymentDialog({
   const pendingAmount = summary?.balance ?? Math.max(0, totalPrice - paidAmount);
   const progressPercent = summary ? Math.min(100, Math.round(summary.progress)) : (totalPrice > 0 ? Math.min(100, Math.round((paidAmount / totalPrice) * 100)) : 0);
 
+  function renderPaymentHistory() {
+    if (isLoadingPayments) {
+      return (
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      );
+    }
+    if (!payments || payments.length === 0) {
+      return <p className="text-sm text-slate-400 py-3 text-center">Nenhum pagamento registrado.</p>;
+    }
+    return (
+      <div className="rounded-lg border border-slate-200 overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-50 text-xs text-slate-500">
+              <th className="px-3 py-2 text-left font-medium">Data</th>
+              <th className="px-3 py-2 text-left font-medium">Método</th>
+              <th className="px-3 py-2 text-left font-medium">Referência</th>
+              <th className="px-3 py-2 text-right font-medium">Valor</th>
+              <th className="px-3 py-2 text-left font-medium">Observação</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {payments.map((payment) => (
+              <tr key={payment.id} className="hover:bg-slate-50/50">
+                <td className="px-3 py-2 text-slate-700 whitespace-nowrap">
+                  {formatPaymentDate(payment.paymentDate)}
+                </td>
+                <td className="px-3 py-2 text-slate-700">
+                  {PAYMENT_METHOD_LABELS[payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] ?? payment.paymentMethod}
+                </td>
+                <td className="px-3 py-2 text-slate-500">{payment.reference ?? '—'}</td>
+                <td className="px-3 py-2 text-right font-medium text-emerald-700 whitespace-nowrap">
+                  {formatPurchaseMoney(payment.amount)}
+                </td>
+                <td className="px-3 py-2 text-slate-500 max-w-[140px] truncate">
+                  {payment.notes ?? '—'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   function onSubmit(data: RegisterPaymentFormData) {
     if (!purchase) return;
     registerPayment.mutate(
@@ -184,10 +232,11 @@ export function PurchasePaymentDialog({
           <div className="grid grid-cols-2 gap-4">
             {/* Payment date */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">
+              <label htmlFor="payment_date" className="text-sm font-medium text-slate-700">
                 Data do pagamento <span className="text-red-500">*</span>
               </label>
               <input
+                id="payment_date"
                 type="datetime-local"
                 {...register('payment_date')}
                 className="w-full h-9 rounded-md border border-slate-300 px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -199,10 +248,11 @@ export function PurchasePaymentDialog({
 
             {/* Amount */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700">
+              <label htmlFor="amount" className="text-sm font-medium text-slate-700">
                 Valor pago <span className="text-red-500">*</span>
               </label>
               <input
+                id="amount"
                 type="number"
                 step="0.01"
                 min="0.01"
@@ -218,10 +268,11 @@ export function PurchasePaymentDialog({
 
           {/* Payment method */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700">
+            <label htmlFor="payment_method" className="text-sm font-medium text-slate-700">
               Método de pagamento <span className="text-red-500">*</span>
             </label>
             <select
+              id="payment_method"
               {...register('payment_method')}
               className="w-full h-9 rounded-md border border-slate-300 px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
@@ -239,8 +290,9 @@ export function PurchasePaymentDialog({
 
           {/* Reference */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700">Referência</label>
+            <label htmlFor="reference" className="text-sm font-medium text-slate-700">Referência</label>
             <input
+              id="reference"
               type="text"
               placeholder="Ex: PIX-845632"
               {...register('reference')}
@@ -250,8 +302,9 @@ export function PurchasePaymentDialog({
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700">Observações</label>
+            <label htmlFor="notes" className="text-sm font-medium text-slate-700">Observações</label>
             <textarea
+              id="notes"
               rows={2}
               placeholder="Observações sobre o pagamento..."
               {...register('notes')}
@@ -263,47 +316,7 @@ export function PurchasePaymentDialog({
           <Separator />
           <div className="space-y-2">
             <p className="text-sm font-semibold text-slate-700">Histórico de pagamentos</p>
-            {isLoadingPayments ? (
-              <div className="space-y-2">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-            ) : !payments || payments.length === 0 ? (
-              <p className="text-sm text-slate-400 py-3 text-center">Nenhum pagamento registrado.</p>
-            ) : (
-              <div className="rounded-lg border border-slate-200 overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-slate-50 text-xs text-slate-500">
-                      <th className="px-3 py-2 text-left font-medium">Data</th>
-                      <th className="px-3 py-2 text-left font-medium">Método</th>
-                      <th className="px-3 py-2 text-left font-medium">Referência</th>
-                      <th className="px-3 py-2 text-right font-medium">Valor</th>
-                      <th className="px-3 py-2 text-left font-medium">Observação</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {payments.map((payment) => (
-                      <tr key={payment.id} className="hover:bg-slate-50/50">
-                        <td className="px-3 py-2 text-slate-700 whitespace-nowrap">
-                          {formatPaymentDate(payment.paymentDate)}
-                        </td>
-                        <td className="px-3 py-2 text-slate-700">
-                          {PAYMENT_METHOD_LABELS[payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] ?? payment.paymentMethod}
-                        </td>
-                        <td className="px-3 py-2 text-slate-500">{payment.reference ?? '—'}</td>
-                        <td className="px-3 py-2 text-right font-medium text-emerald-700 whitespace-nowrap">
-                          {formatPurchaseMoney(payment.amount)}
-                        </td>
-                        <td className="px-3 py-2 text-slate-500 max-w-[140px] truncate">
-                          {payment.notes ?? '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            {renderPaymentHistory()}
           </div>
 
           <DialogFooter>

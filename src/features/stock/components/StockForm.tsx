@@ -228,7 +228,7 @@ export function StockForm(props: Readonly<StockFormProps>) {
           notes: data.notes?.trim() || null,
         };
         if (isEdit) {
-          props.onSubmit({ ...base, code: props.stockCode } as Omit<UpdateStockLocationData, 'id'>);
+          props.onSubmit({ ...base, code: props.stockCode });
         } else {
           const payload: CreateStockLocationData = { ...base, code: data.code.trim() };
           if (showCompanySelect && data.companyId?.trim()) {

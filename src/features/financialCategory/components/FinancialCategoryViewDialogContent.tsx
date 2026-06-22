@@ -19,11 +19,11 @@ function DetailItem({
   icon,
   label,
   value,
-}: {
+}: Readonly<{
   icon: React.ReactNode;
   label: string;
   value: string;
-}) {
+}>) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
       <span className="text-slate-400 shrink-0">{icon}</span>
@@ -43,20 +43,28 @@ export function FinancialCategoryViewDialogContent({ category }: Readonly<Props>
   const isRevenue = category.type === 'revenue' || category.type === 'income';
   const isExpense = category.type === 'expense';
 
+  let iconBgClass = 'bg-slate-100';
+  let typeIcon = <BarChart2 className="h-5 w-5 text-slate-500" />;
+  if (isRevenue) {
+    iconBgClass = 'bg-emerald-50';
+    typeIcon = <TrendingUp className="h-5 w-5 text-emerald-600" />;
+  } else if (isExpense) {
+    iconBgClass = 'bg-rose-50';
+    typeIcon = <TrendingDown className="h-5 w-5 text-rose-600" />;
+  }
+
+  const amountColorClass = isRevenue
+    ? 'text-emerald-600'
+    : isExpense
+      ? 'text-rose-600'
+      : 'text-slate-900';
+
   return (
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl ${isRevenue ? 'bg-emerald-50' : isExpense ? 'bg-rose-50' : 'bg-slate-100'}`}
-        >
-          {isRevenue ? (
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
-          ) : isExpense ? (
-            <TrendingDown className="h-5 w-5 text-rose-600" />
-          ) : (
-            <BarChart2 className="h-5 w-5 text-slate-500" />
-          )}
+        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconBgClass}`}>
+          {typeIcon}
         </div>
         <div>
           <h3 className="text-lg font-semibold text-slate-900">{category.name}</h3>
@@ -74,9 +82,7 @@ export function FinancialCategoryViewDialogContent({ category }: Readonly<Props>
       {/* Total Movimentado */}
       <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-4">
         <p className="text-xs text-slate-500 mb-1">Total Movimentado</p>
-        <p
-          className={`text-2xl font-bold ${isRevenue ? 'text-emerald-600' : isExpense ? 'text-rose-600' : 'text-slate-900'}`}
-        >
+        <p className={`text-2xl font-bold ${amountColorClass}`}>
           {formatCurrency(category.totalAmount)}
         </p>
       </div>

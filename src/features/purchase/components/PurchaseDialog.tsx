@@ -5,7 +5,6 @@ import type {
   Purchase,
   PurchaseDialogMode,
   CreatePurchaseData,
-  UpdatePurchaseData,
 } from '../types';
 import type { CreatePurchaseFormData } from '../schemas';
 import { PurchaseForm } from './PurchaseForm';
@@ -94,7 +93,7 @@ export function PurchaseDialog({
 
   function handleUpdate(data: CreatePurchaseData) {
     if (!purchase?.id) return;
-    updatePurchase.mutate({ ...data, id: purchase.id } as UpdatePurchaseData, {
+    updatePurchase.mutate({ ...data, id: purchase.id }, {
       onSuccess: () => {
         onSuccess();
         handleClose();
@@ -141,6 +140,61 @@ export function PurchaseDialog({
         }
       : undefined;
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <PurchaseViewDialogContent
+            purchase={purchase}
+            onReceive={handleReceive}
+            isReceiving={isReceiving}
+            onCancel={handleCancel}
+            isCancelling={cancelPurchase.isPending}
+            onOpenPaymentDialog={() => setPaymentDialogOpen(true)}
+          />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && purchase) {
+      return (
+        <PurchaseForm
+          key={`edit-${purchase.id}-${open ? 'open' : 'closed'}`}
+          initialValues={editInitialValues}
+          onSubmit={handleUpdate}
+          onCancel={handleClose}
+          isSubmitting={isLoading}
+          submitLabel="Atualizar compra"
+          submittingLabel="Atualizando..."
+          statusOptions={[
+            'draft',
+            'submitted',
+            'approved',
+            'partially_received',
+            'received',
+            'cancelled',
+          ]}
+          inDialog
+        />
+      );
+    }
+    return (
+      <PurchaseForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        onSubmit={handleCreate}
+        onCancel={handleClose}
+        isSubmitting={isLoading}
+        submitLabel="Registrar compra"
+        submittingLabel="Registrando..."
+        inDialog
+      />
+    );
+  }
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -149,53 +203,7 @@ export function PurchaseDialog({
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
-
-          {isViewMode ? (
-            <>
-              <PurchaseViewDialogContent
-                purchase={purchase}
-                onReceive={handleReceive}
-                isReceiving={isReceiving}
-                onCancel={handleCancel}
-                isCancelling={cancelPurchase.isPending}
-                onOpenPaymentDialog={() => setPaymentDialogOpen(true)}
-              />
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={handleClose}>
-                  Fechar
-                </Button>
-              </DialogFooter>
-            </>
-          ) : mode === 'edit' && purchase ? (
-            <PurchaseForm
-              key={`edit-${purchase.id}-${open ? 'open' : 'closed'}`}
-              initialValues={editInitialValues}
-              onSubmit={handleUpdate}
-              onCancel={handleClose}
-              isSubmitting={isLoading}
-              submitLabel="Atualizar compra"
-              submittingLabel="Atualizando..."
-              statusOptions={[
-                'draft',
-                'submitted',
-                'approved',
-                'partially_received',
-                'received',
-                'cancelled',
-              ]}
-              inDialog
-            />
-          ) : (
-            <PurchaseForm
-              key={`create-${open ? 'open' : 'closed'}`}
-              onSubmit={handleCreate}
-              onCancel={handleClose}
-              isSubmitting={isLoading}
-              submitLabel="Registrar compra"
-              submittingLabel="Registrando..."
-              inDialog
-            />
-          )}
+          {renderContent()}
         </DialogContent>
       </Dialog>
 

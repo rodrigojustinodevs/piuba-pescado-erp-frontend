@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { Harvest, HarvestDialogMode, CreateHarvestData, PatchHarvestPayload } from '../types';
-import type { CreateHarvestFormData, UpdateHarvestFormData } from '../schemas';
+import type { CreateHarvestFormData } from '../schemas';
 import type { ApiFieldError } from './HarvestForm';
 import { HarvestForm } from './HarvestForm';
 import { HarvestViewDialogContent } from './HarvestViewDialogContent';
@@ -81,27 +81,6 @@ export function HarvestDialog({
     onOpenChange(false);
   }
 
-  const initialValues = useMemo<UpdateHarvestFormData | undefined>(() => {
-    if (!harvest || currentMode !== 'edit') return undefined;
-    return {
-      id: harvest.id,
-      tankId: harvest.tankId,
-      harvestDate: harvest.harvestDate,
-      type: harvest.type,
-      status: harvest.status,
-      destination: harvest.destination,
-      initialPopulation: harvest.initialPopulation,
-      harvestedQuantity: harvest.harvestedQuantity,
-      averageWeight: harvest.averageWeight,
-      sizeClassifications: harvest.sizeClassifications,
-      clientDestination: harvest.clientDestination,
-      responsible: harvest.responsible,
-      operationalCost: harvest.operationalCost,
-      notes: harvest.notes,
-    };
-  }, [harvest, mode]);
-  void initialValues;
-
   function handleCreate(data: CreateHarvestFormData) {
     setApiError(null);
     createHarvest.mutate(data as CreateHarvestData, {
@@ -129,6 +108,51 @@ export function HarvestDialog({
     });
   }
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <HarvestViewDialogContent harvest={harvest} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+            {harvest && (
+              <Button type="button" onClick={() => setCurrentMode('edit')}>
+                <Pencil className="mr-1.5 h-4 w-4" />
+                Editar
+              </Button>
+            )}
+          </DialogFooter>
+        </>
+      );
+    }
+    if (currentMode === 'edit' && harvest) {
+      return (
+        <HarvestForm
+          key={`edit-${harvest.id}-${open ? 'open' : 'closed'}`}
+          mode="update"
+          initialData={harvest}
+          onSubmit={handleUpdate}
+          isLoading={isLoading}
+          submitLabel="Atualizar despesca"
+          onCancel={handleClose}
+          apiError={apiError}
+        />
+      );
+    }
+    return (
+      <HarvestForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        mode="create"
+        onSubmit={handleCreate}
+        isLoading={isLoading}
+        submitLabel="Registrar"
+        onCancel={handleClose}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -136,43 +160,7 @@ export function HarvestDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <HarvestViewDialogContent harvest={harvest} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-              {harvest && (
-                <Button type="button" onClick={() => setCurrentMode('edit')}>
-                  <Pencil className="mr-1.5 h-4 w-4" />
-                  Editar
-                </Button>
-              )}
-            </DialogFooter>
-          </>
-        ) : currentMode === 'edit' && harvest ? (
-          <HarvestForm
-            key={`edit-${harvest.id}-${open ? 'open' : 'closed'}`}
-            mode="update"
-            initialData={harvest}
-            onSubmit={handleUpdate}
-            isLoading={isLoading}
-            submitLabel="Atualizar despesca"
-            onCancel={handleClose}
-            apiError={apiError}
-          />
-        ) : (
-          <HarvestForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            mode="create"
-            onSubmit={handleCreate}
-            isLoading={isLoading}
-            submitLabel="Registrar"
-            onCancel={handleClose}
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

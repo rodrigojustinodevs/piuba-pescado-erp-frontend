@@ -173,7 +173,7 @@ export function HarvestDetailView({ harvest, batchLabel }: Readonly<HarvestDetai
                 <div className="text-right">R$/kg</div>
               </div>
               {harvest.sizeClassifications.map((c, i) => (
-                <div key={i} className="grid grid-cols-4 px-4 py-2.5 border-b border-slate-100 last:border-0">
+                <div key={c.class || i} className="grid grid-cols-4 px-4 py-2.5 border-b border-slate-100 last:border-0">
                   <div className="text-sm font-medium text-[#0F172A]">{c.class}</div>
                   <div className="text-sm text-right text-slate-600">{fmt(c.quantity)}</div>
                   <div className="text-sm text-right text-slate-600">

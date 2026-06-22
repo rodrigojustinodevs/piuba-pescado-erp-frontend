@@ -2,7 +2,7 @@
 
 import type { Feeding } from '../types';
 import { formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
-import { Calendar, Fish, Package, Scale, Sprout, Warehouse } from 'lucide-react';
+import { Calendar, Package, Scale, Sprout, Warehouse } from 'lucide-react';
 import { InfoRow } from '@/shared/components/entityDetail';
 
 type FeedingViewDialogContentProps = {
@@ -85,4 +85,3 @@ export function FeedingViewDialogContent({ feeding }: Readonly<FeedingViewDialog
     </div>
   );
 }
-

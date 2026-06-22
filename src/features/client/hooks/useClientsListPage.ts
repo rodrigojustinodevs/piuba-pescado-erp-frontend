@@ -71,8 +71,8 @@ export function useClientsListPage() {
       activeCount: clients.filter((c) => c.status === 'active').length,
       prospectCount: clients.filter((c) => c.status === 'prospect').length,
       totalCreditLimit: clients.reduce((acc, c) => {
-        const v = parseFloat(c.creditLimit ?? '0');
-        return acc + (isNaN(v) ? 0 : v);
+        const v = Number.parseFloat(c.creditLimit ?? '0');
+        return acc + (Number.isNaN(v) ? 0 : v);
       }, 0),
     }),
     [data?.total, clients],

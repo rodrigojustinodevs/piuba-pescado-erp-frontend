@@ -3,7 +3,6 @@ import type {
   CreateTankData,
   UpdateTankData,
   TankListResponse,
-  ApiTankTypeListResponse,
   TankTypeListResponse,
 } from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';

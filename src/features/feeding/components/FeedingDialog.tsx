@@ -93,6 +93,46 @@ export function FeedingDialog({
         }
       : undefined;
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <FeedingViewDialogContent feeding={feeding} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && feeding) {
+      return (
+        <FeedingForm
+          key={`${mode}-${feeding.id}-${open ? 'open' : 'closed'}`}
+          initialValues={editInitialValues}
+          onSubmit={handleSubmit}
+          isSubmitting={isLoading}
+          submitLabel="Atualizar alimentação"
+          submittingLabel="Atualizando..."
+          variant="dialog"
+          onCancel={handleClose}
+        />
+      );
+    }
+    return (
+      <FeedingForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        onSubmit={handleSubmit}
+        isSubmitting={isLoading}
+        submitLabel="Criar alimentação"
+        submittingLabel="Criando..."
+        variant="dialog"
+        onCancel={handleClose}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -100,38 +140,7 @@ export function FeedingDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <FeedingViewDialogContent feeding={feeding} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && feeding ? (
-          <FeedingForm
-            key={`${mode}-${feeding.id}-${open ? 'open' : 'closed'}`}
-            initialValues={editInitialValues}
-            onSubmit={handleSubmit}
-            isSubmitting={isLoading}
-            submitLabel="Atualizar alimentação"
-            submittingLabel="Atualizando..."
-            variant="dialog"
-            onCancel={handleClose}
-          />
-        ) : (
-          <FeedingForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            onSubmit={handleSubmit}
-            isSubmitting={isLoading}
-            submitLabel="Criar alimentação"
-            submittingLabel="Criando..."
-            variant="dialog"
-            onCancel={handleClose}
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

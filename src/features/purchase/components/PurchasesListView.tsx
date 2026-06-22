@@ -81,7 +81,7 @@ export function PurchasesListView({
   const [receiveDialogPurchase, setReceiveDialogPurchase] = useState<Purchase | null>(null);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [paymentDialogPurchase, setPaymentDialogPurchase] = useState<Purchase | null>(null);
-  const [perPage, setPerPage] = useState(10);
+  const perPage = 10;
 
   const openDialog = useCallback((mode: PurchaseDialogMode, purchase: Purchase | null = null) => {
     setDialogMode(mode);

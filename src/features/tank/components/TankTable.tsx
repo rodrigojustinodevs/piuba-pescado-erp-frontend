@@ -9,7 +9,7 @@ import { Building2, MapPin } from 'lucide-react';
 import { formatDate } from '../../batch/utils/format';
 
 const statusConfig: Record<
-  Tank['status'] | 'maintenance',
+  Tank['status'],
   { label: string; variant: 'default' | 'secondary' | 'destructive' }
 > = {
   active: { label: 'Ativo', variant: 'default' },

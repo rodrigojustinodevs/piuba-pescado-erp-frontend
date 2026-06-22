@@ -54,7 +54,7 @@ type PurchaseFormProps = {
 
 // ─── Subcomponentes de cálculo ──────────────────────────────────────────────
 
-function ItemTotal({ control, index }: { control: Control<CreatePurchaseFormData>; index: number }) {
+function ItemTotal({ control, index }: Readonly<{ control: Control<CreatePurchaseFormData>; index: number }>) {
   const qty = useWatch({ control, name: `items.${index}.quantity` });
   const price = useWatch({ control, name: `items.${index}.unitPrice` });
   const discount = useWatch({ control, name: `items.${index}.discount` });
@@ -69,7 +69,7 @@ function ItemTotal({ control, index }: { control: Control<CreatePurchaseFormData
   );
 }
 
-function FinancialSummary({ control }: { control: Control<CreatePurchaseFormData> }) {
+function FinancialSummary({ control }: Readonly<{ control: Control<CreatePurchaseFormData> }>) {
   const items = useWatch({ control, name: 'items' });
   const freightCost = useWatch({ control, name: 'freightCost' });
   const otherCosts = useWatch({ control, name: 'otherCosts' });

@@ -161,8 +161,6 @@ export function MortalitiesListView({
     );
   };
 
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
-
   return (
     <div className="space-y-6">
       <ListHeader

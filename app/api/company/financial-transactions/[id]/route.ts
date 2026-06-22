@@ -1,5 +1,4 @@
-import type { ApiFinancialTransaction, UpdateFinancialTransactionData } from '@/features/financialTransaction/types';
-import type { FinancialTransaction } from '@/features/financialTransaction/types';
+import type { ApiFinancialTransaction, FinancialTransaction, UpdateFinancialTransactionData } from '@/features/financialTransaction/types';
 import {
   buildFinancialTransactionBody,
   mapApiFinancialTransaction,

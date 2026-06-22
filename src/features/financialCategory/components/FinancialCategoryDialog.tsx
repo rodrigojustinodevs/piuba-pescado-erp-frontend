@@ -77,7 +77,7 @@ export function FinancialCategoryDialog({
 
   function handleUpdate(data: CreateFinancialCategoryData) {
     if (!category?.id) return;
-    updateCategory.mutate({ ...data, id: category.id } as UpdateFinancialCategoryData, {
+    updateCategory.mutate({ ...data, id: category.id }, {
       onSuccess: () => {
         onSuccess();
         handleClose();
@@ -100,6 +100,47 @@ export function FinancialCategoryDialog({
         }
       : undefined;
 
+  function renderContent() {
+    if (isViewMode) {
+      return (
+        <>
+          <FinancialCategoryViewDialogContent category={category} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && category) {
+      return (
+        <FinancialCategoryForm
+          key={`edit-${category.id}-${open ? 'open' : 'closed'}`}
+          initialValues={editInitialValues}
+          onSubmit={handleUpdate}
+          onCancel={handleClose}
+          isSubmitting={isLoading}
+          isEdit
+          submitLabel="Atualizar categoria"
+          submittingLabel="Atualizando..."
+          inDialog
+        />
+      );
+    }
+    return (
+      <FinancialCategoryForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        onSubmit={handleCreate}
+        onCancel={handleClose}
+        isSubmitting={isLoading}
+        submitLabel="Cadastrar categoria"
+        submittingLabel="Cadastrando..."
+        inDialog
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -107,39 +148,7 @@ export function FinancialCategoryDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <>
-            <FinancialCategoryViewDialogContent category={category} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && category ? (
-          <FinancialCategoryForm
-            key={`edit-${category.id}-${open ? 'open' : 'closed'}`}
-            initialValues={editInitialValues}
-            onSubmit={handleUpdate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            isEdit
-            submitLabel="Atualizar categoria"
-            submittingLabel="Atualizando..."
-            inDialog
-          />
-        ) : (
-          <FinancialCategoryForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            onSubmit={handleCreate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Cadastrar categoria"
-            submittingLabel="Cadastrando..."
-            inDialog
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

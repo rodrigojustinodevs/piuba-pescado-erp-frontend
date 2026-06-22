@@ -26,7 +26,7 @@ const STATUS_LABELS: Record<SupplierStatus, string> = {
   suspended: 'Suspenso',
 };
 
-function StatusBadge({ status }: { status: SupplierStatus }) {
+function StatusBadge({ status }: Readonly<{ status: SupplierStatus }>) {
   return (
     <Badge variant="outline" className={STATUS_STYLES[status]}>
       {STATUS_LABELS[status]}
@@ -34,7 +34,7 @@ function StatusBadge({ status }: { status: SupplierStatus }) {
   );
 }
 
-function RatingStars({ rating }: { rating: number | null }) {
+function RatingStars({ rating }: Readonly<{ rating: number | null }>) {
   if (rating == null) {
     return <span className="text-sm text-slate-400">—</span>;
   }
@@ -58,8 +58,7 @@ interface SupplierTableProps {
   getRowActions: (row: Supplier) => DataTableAction[];
 }
 
-export function SupplierTable({ suppliers, getRowActions }: Readonly<SupplierTableProps>) {
-  const columns: Array<DataTableColumn<Supplier>> = [
+const columns: Array<DataTableColumn<Supplier>> = [
     {
       id: 'name',
       header: 'Fornecedor',
@@ -132,8 +131,9 @@ export function SupplierTable({ suppliers, getRowActions }: Readonly<SupplierTab
       header: 'Status',
       cell: (row) => <StatusBadge status={row.status} />,
     },
-  ];
+];
 
+export function SupplierTable({ suppliers, getRowActions }: Readonly<SupplierTableProps>) {
   return (
     <DataTable
       data={suppliers}

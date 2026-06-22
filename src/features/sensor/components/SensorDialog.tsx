@@ -187,7 +187,7 @@ export function SensorDialog({
     }
     reset({
       ...createDefaults,
-      companyId: !showCompanyField ? (user?.companyId ?? '') : '',
+      companyId: showCompanyField ? '' : (user?.companyId ?? ''),
     });
   }, [open, isEdit, isView, sensor, reset, showCompanyField, user?.companyId]);
 
@@ -201,7 +201,7 @@ export function SensorDialog({
           ? toUpdateDefaults(sensor)
           : {
               ...createDefaults,
-              companyId: !showCompanyField ? (user?.companyId ?? '') : '',
+              companyId: showCompanyField ? '' : (user?.companyId ?? ''),
             },
       );
     }

@@ -15,10 +15,7 @@ function mapDetailResponse(data: ApiStockDetailEnvelope): StockLocation {
   return mapApiStockLocation(api as ApiStockLocation);
 }
 
-function mapUpdateBody(payload: UpdateStockLocationData) {
-  const { id, companyId, ...rest } = payload;
-  void id;
-  void companyId;
+function mapUpdateBody({ id: _id, companyId: _companyId, ...rest }: UpdateStockLocationData) {
   return {
     ...rest,
     responsible: rest.responsible || null,

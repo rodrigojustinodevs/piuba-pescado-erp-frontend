@@ -97,7 +97,7 @@ export function BatchCreateDialog({
           onSubmit: handleSubmit,
         }
       : {
-          mode: (mode === 'edit' ? 'edit' : 'update') as 'edit' | 'update',
+          mode: mode === 'edit' ? 'edit' : 'update',
           initialData: batch ?? undefined,
           onSubmit: handleSubmit as (data: CreateBatchFormData) => void,
         };

@@ -30,17 +30,17 @@ const fmt = (n: number, opts?: Intl.NumberFormatOptions) =>
 
 const fmtCurrency = (n: number) => fmt(n, { style: 'currency', currency: 'BRL' });
 
+function getSurvivalClass(survival: number): string {
+  if (survival >= 85) return 'text-emerald-600 dark:text-emerald-400';
+  if (survival >= 70) return 'text-amber-600 dark:text-amber-400';
+  return 'text-destructive';
+}
+
 function survivalBadge(row: Harvest) {
   const survival = calcSurvivalRate(row);
   return (
     <span
-      className={
-        survival >= 85
-          ? 'text-emerald-600 dark:text-emerald-400'
-          : survival >= 70
-            ? 'text-amber-600 dark:text-amber-400'
-            : 'text-destructive'
-      }
+      className={getSurvivalClass(survival)}
     >
       {fmt(survival, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
     </span>

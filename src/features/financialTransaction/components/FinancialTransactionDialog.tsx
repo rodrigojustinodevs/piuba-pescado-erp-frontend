@@ -4,7 +4,6 @@ import type {
   FinancialTransaction,
   FinancialTransactionDialogMode,
   CreateFinancialTransactionData,
-  UpdateFinancialTransactionData,
 } from '../types';
 import type { CreateFinancialTransactionFormData } from '../schemas';
 import { transactionTypeValues, transactionStatusValues, transactionMethodValues } from '../schemas';
@@ -65,7 +64,7 @@ export function FinancialTransactionDialog({ open, onOpenChange, mode, transacti
 
   function handleUpdate(data: CreateFinancialTransactionData) {
     if (!transaction?.id) return;
-    updateTransaction.mutate({ ...data, id: transaction.id } as UpdateFinancialTransactionData, {
+    updateTransaction.mutate({ ...data, id: transaction.id }, {
       onSuccess: () => { onSuccess(); handleClose(); },
     });
   }
@@ -90,6 +89,47 @@ export function FinancialTransactionDialog({ open, onOpenChange, mode, transacti
         }
       : undefined;
 
+  function renderContent() {
+    if (mode === 'view') {
+      return (
+        <>
+          <FinancialTransactionViewDialogContent transaction={transaction} />
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </>
+      );
+    }
+    if (mode === 'edit' && transaction) {
+      return (
+        <FinancialTransactionForm
+          key={`edit-${transaction.id}-${open ? 'open' : 'closed'}`}
+          initialValues={editInitialValues}
+          onSubmit={handleUpdate}
+          onCancel={handleClose}
+          isSubmitting={isLoading}
+          isEdit
+          submitLabel="Atualizar transação"
+          submittingLabel="Atualizando..."
+          inDialog
+        />
+      );
+    }
+    return (
+      <FinancialTransactionForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        onSubmit={handleCreate}
+        onCancel={handleClose}
+        isSubmitting={isLoading}
+        submitLabel="Cadastrar transação"
+        submittingLabel="Cadastrando..."
+        inDialog
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -97,39 +137,7 @@ export function FinancialTransactionDialog({ open, onOpenChange, mode, transacti
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {mode === 'view' ? (
-          <>
-            <FinancialTransactionViewDialogContent transaction={transaction} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : mode === 'edit' && transaction ? (
-          <FinancialTransactionForm
-            key={`edit-${transaction.id}-${open ? 'open' : 'closed'}`}
-            initialValues={editInitialValues}
-            onSubmit={handleUpdate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            isEdit
-            submitLabel="Atualizar transação"
-            submittingLabel="Atualizando..."
-            inDialog
-          />
-        ) : (
-          <FinancialTransactionForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            onSubmit={handleCreate}
-            onCancel={handleClose}
-            isSubmitting={isLoading}
-            submitLabel="Cadastrar transação"
-            submittingLabel="Cadastrando..."
-            inDialog
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

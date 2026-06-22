@@ -57,7 +57,7 @@ export function SuppliesListView({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<SupplyDialogMode>('create');
   const [selectedSupply, setSelectedSupply] = useState<Supply | null>(null);
-  const [perPage, setPerPage] = useState(10);
+  const perPage = 10;
 
   const openDialog = useCallback((mode: SupplyDialogMode, supply: Supply | null = null) => {
     setDialogMode(mode);
@@ -88,35 +88,38 @@ export function SuppliesListView({
 
   const total = data?.total ?? 0;
   const pagedSupplies = supplies.slice((page - 1) * perPage, page * perPage);
-  const renderContent = () => {
+
+  function renderContent() {
+    if (isLoading) {
+      return <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>;
+    }
+    if (error) {
+      return (
+        <div className="flex items-center justify-center py-16 text-red-500 text-sm">
+          Erro ao carregar produtos.
+        </div>
+      );
+    }
+    if (supplies.length === 0) {
+      return (
+        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
+          Nenhum produto encontrado.
+        </div>
+      );
+    }
     return (
       <>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
-        ) : error ? (
-          <div className="flex items-center justify-center py-16 text-red-500 text-sm">
-            Erro ao carregar produtos.
-          </div>
-        ) : supplies.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
-            Nenhum produto encontrado.
-          </div>
-        ) : (
-          <SupplyTable supplies={pagedSupplies} getRowActions={getRowActions} />
-        )}
-
-        {!isLoading && !error && supplies.length > 0 && (
-          <Pagination
-            page={page}
-            limit={perPage}
-            total={total}
-            itemLabelPlural="produtos"
-            onPageChange={setPage}
-          />
-        )}
+        <SupplyTable supplies={pagedSupplies} getRowActions={getRowActions} />
+        <Pagination
+          page={page}
+          limit={perPage}
+          total={total}
+          itemLabelPlural="produtos"
+          onPageChange={setPage}
+        />
       </>
     );
-  };
+  }
 
   return (
     <div className="space-y-6">

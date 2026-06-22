@@ -69,14 +69,14 @@ function FormField({
   error,
   className,
   children,
-}: {
+}: Readonly<{
   id: string;
   label: string;
   required?: boolean;
   error?: string;
   className?: string;
   children: ReactNode;
-}) {
+}>) {
   return (
     <div className={`space-y-2 ${className ?? ''}`}>
       <Label htmlFor={id}>

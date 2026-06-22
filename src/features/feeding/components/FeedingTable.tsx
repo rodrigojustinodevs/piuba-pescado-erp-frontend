@@ -16,13 +16,7 @@ export function getFeedingRowLabel(row: Feeding): string {
   return `${batch} - ${when}`;
 }
 
-export interface FeedingTableProps {
-  feedings: Feeding[];
-  getRowActions: (row: Feeding) => DataTableAction[];
-}
-
-export function FeedingTable({ feedings, getRowActions }: Readonly<FeedingTableProps>) {
-  const columns: Array<DataTableColumn<Feeding>> = [
+const columns: Array<DataTableColumn<Feeding>> = [
     {
       id: 'feedingDate',
       header: 'Data da alimentação',
@@ -73,8 +67,14 @@ export function FeedingTable({ feedings, getRowActions }: Readonly<FeedingTableP
           : '—';
       },
     },
-  ];
+];
 
+export interface FeedingTableProps {
+  feedings: Feeding[];
+  getRowActions: (row: Feeding) => DataTableAction[];
+}
+
+export function FeedingTable({ feedings, getRowActions }: Readonly<FeedingTableProps>) {
   return (
     <DataTable
       data={feedings}

@@ -141,7 +141,7 @@ export function HarvestViewDialogContent({ harvest }: Readonly<Props>) {
               const rowRevenue = rowBiomass * c.pricePerKg;
               return (
                 <div
-                  key={i}
+                  key={c.class || i}
                   className="grid grid-cols-6 px-3 py-2.5 border-b border-slate-100 last:border-0 hover:bg-slate-50/60"
                 >
                   <div className="font-semibold">{c.class}</div>
@@ -184,11 +184,11 @@ function SummaryMetric({
   label,
   value,
   valueClass = '',
-}: {
+}: Readonly<{
   label: string;
   value: string;
   valueClass?: string;
-}) {
+}>) {
   return (
     <div>
       <p className="text-xs text-slate-500 mb-0.5">{label}</p>
@@ -201,11 +201,11 @@ function InfoField({
   label,
   value,
   icon,
-}: {
+}: Readonly<{
   label: string;
   value: string;
   icon?: React.ReactNode;
-}) {
+}>) {
   return (
     <div className="space-y-0.5">
       <p className="text-xs text-muted-foreground">{label}</p>

@@ -39,7 +39,7 @@ const CULTIVATION_OPTIONS: { value: BatchCultivation; label: string }[] = [
   { value: 'larviculture', label: 'Larvicultura' },
 ];
 
-const VALID_CULTIVATIONS: BatchCultivation[] = ['growout', 'nursery', 'broodstock', 'larviculture'];
+const VALID_CULTIVATIONS = new Set<string>(['growout', 'nursery', 'broodstock', 'larviculture']);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -48,8 +48,8 @@ function today(): string {
 }
 
 function normalizeCultivation(value?: string | null): BatchCultivation {
-  const normalized = value?.trim().toLowerCase() as BatchCultivation | undefined;
-  return normalized && VALID_CULTIVATIONS.includes(normalized) ? normalized : 'growout';
+  const normalized = value?.trim().toLowerCase() ?? '';
+  return VALID_CULTIVATIONS.has(normalized) ? (normalized as BatchCultivation) : 'growout';
 }
 
 function emptySimple(): CreateBatchFormData {
@@ -229,18 +229,18 @@ export function BatchForm({
     }
   };
 
-  function handleFormSubmit(e: React.FormEvent) {
+  async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (isEdit || tab === 'simple') {
-      void handleSubmit(submitSimple, (errors) => {
+      await handleSubmit(submitSimple, (errors) => {
         const message = Object.values(errors)[0]?.message;
         if (message) toast.error(String(message));
       })();
       return;
     }
 
-    void handleSubmitDistributed(submitDistributed, (errors) => {
+    await handleSubmitDistributed(submitDistributed, (errors) => {
       const distributionErrors = Array.isArray(errors.distribution) ? errors.distribution : [];
       const rowError = distributionErrors.find(Boolean);
       const message =

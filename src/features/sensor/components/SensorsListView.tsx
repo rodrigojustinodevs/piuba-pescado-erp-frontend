@@ -10,7 +10,7 @@ import type {
 } from '../types';
 import { SensorCards } from './SensorCards';
 import { SensorDialog } from './SensorDialog';
-import { ListHeader, Pagination, SearchField, StatusFilterTabs } from '@/shared/components/list';
+import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import {
   Activity,

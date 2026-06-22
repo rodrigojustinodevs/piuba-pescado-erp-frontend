@@ -79,7 +79,7 @@ const postHandler = withErrorHandling(async function POST(req: Request, routeCon
     `/api/company/purchase/${params.id}/payments`,
     {
       method: 'POST',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : JSON.stringify(body),
     },
   );
   return successResponse(mapPurchaseResponse(data), 200);

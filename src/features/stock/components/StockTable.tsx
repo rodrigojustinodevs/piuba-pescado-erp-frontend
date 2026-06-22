@@ -13,10 +13,10 @@ type StockTableProps = {
 function OccupancyCell({
   currentQuantity,
   capacity,
-}: {
+}: Readonly<{
   currentQuantity: number;
   capacity: number | null;
-}) {
+}>) {
   const hasCapacity = capacity != null && capacity > 0;
   const pct = hasCapacity ? Math.min(100, (currentQuantity / capacity) * 100) : 0;
 
@@ -30,8 +30,7 @@ function OccupancyCell({
   );
 }
 
-export function StockTable({ stocks, getRowActions }: Readonly<StockTableProps>) {
-  const columns: Array<DataTableColumn<StockLocation>> = [
+const columns: Array<DataTableColumn<StockLocation>> = [
     {
       id: 'code',
       header: 'Código',
@@ -105,8 +104,9 @@ export function StockTable({ stocks, getRowActions }: Readonly<StockTableProps>)
         );
       },
     },
-  ];
+];
 
+export function StockTable({ stocks, getRowActions }: Readonly<StockTableProps>) {
   return (
     <DataTable
       data={stocks}

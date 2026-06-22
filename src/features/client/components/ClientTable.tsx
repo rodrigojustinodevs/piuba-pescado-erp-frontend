@@ -4,9 +4,9 @@ import type { Client, ClientStatus } from '../types';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { maskPhone } from '@/shared/utils/phoneMask';
-import { User, Eye, Pencil, Trash } from 'lucide-react';
+import { User } from 'lucide-react';
 
-function StatusBadge({ status }: { status: ClientStatus }) {
+function StatusBadge({ status }: Readonly<{ status: ClientStatus }>) {
   const styles: Record<ClientStatus, string> = {
     active: 'bg-emerald-100 text-emerald-700',
     inactive: 'bg-slate-100 text-slate-600',
@@ -26,7 +26,7 @@ function StatusBadge({ status }: { status: ClientStatus }) {
   );
 }
 
-function SegmentBadge({ value }: { value: string }) {
+function SegmentBadge({ value }: Readonly<{ value: string }>) {
   const label = (() => {
     switch (value?.toLowerCase()) {
       case 'wholesale':
@@ -49,18 +49,12 @@ function SegmentBadge({ value }: { value: string }) {
 
 function formatCurrency(value: string | number | null | undefined): string {
   if (value === null || value === undefined || value === '') return '—';
-  const num = typeof value === 'number' ? value : parseFloat(value);
-  if (isNaN(num)) return '—';
+  const num = typeof value === 'number' ? value : Number.parseFloat(value);
+  if (Number.isNaN(num)) return '—';
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
 }
 
-type ClientTableProps = {
-  clients: Client[];
-  getRowActions?: (row: Client) => DataTableAction[];
-};
-
-export function ClientTable({ clients, getRowActions }: Readonly<ClientTableProps>) {
-  const columns: Array<DataTableColumn<Client>> = [
+const columns: Array<DataTableColumn<Client>> = [
     {
       id: 'name',
       header: 'Cliente',
@@ -125,8 +119,14 @@ export function ClientTable({ clients, getRowActions }: Readonly<ClientTableProp
       header: 'Status',
       cell: (row) => <StatusBadge status={row.status} />,
     },
-  ];
+];
 
+type ClientTableProps = {
+  clients: Client[];
+  getRowActions?: (row: Client) => DataTableAction[];
+};
+
+export function ClientTable({ clients, getRowActions }: Readonly<ClientTableProps>) {
   return (
     <DataTable
       data={clients}

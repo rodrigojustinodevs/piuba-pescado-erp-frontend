@@ -237,9 +237,9 @@ export function BatchesListView({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os cultivos</SelectItem>
-                {(Object.keys(cultivationLabels) as BatchCultivation[]).map((k) => (
+                {Object.entries(cultivationLabels).map(([k, label]) => (
                   <SelectItem key={k} value={k}>
-                    {cultivationLabels[k]}
+                    {label}
                   </SelectItem>
                 ))}
               </SelectContent>

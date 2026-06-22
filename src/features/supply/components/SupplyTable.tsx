@@ -8,7 +8,7 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
-function StatusBadge({ status, statusLabel }: { status: string; statusLabel: string }) {
+function StatusBadge({ status, statusLabel }: Readonly<{ status: string; statusLabel: string }>) {
   const isBelowMin = status === 'below_minimum' || status === 'low_stock';
   return isBelowMin ? (
     <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700">
@@ -26,8 +26,7 @@ type SupplyTableProps = {
   getRowActions?: (row: Supply) => DataTableAction[];
 };
 
-export function SupplyTable({ supplies, getRowActions }: Readonly<SupplyTableProps>) {
-  const columns: Array<DataTableColumn<Supply>> = [
+const columns: Array<DataTableColumn<Supply>> = [
     {
       id: 'sku',
       header: 'SKU',
@@ -90,8 +89,9 @@ export function SupplyTable({ supplies, getRowActions }: Readonly<SupplyTablePro
       header: 'Status',
       cell: (row) => <StatusBadge status={row.status} statusLabel={row.statusLabel} />,
     },
-  ];
+];
 
+export function SupplyTable({ supplies, getRowActions }: Readonly<SupplyTableProps>) {
   return (
     <DataTable
       data={supplies}

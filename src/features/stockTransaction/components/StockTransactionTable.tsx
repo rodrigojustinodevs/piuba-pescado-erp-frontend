@@ -48,8 +48,7 @@ function getReferenceTypeLabel(type: StockTransaction['referenceType']): string 
   }
 }
 
-export function StockTransactionTable({ transactions }: { transactions: StockTransaction[] }) {
-  const columns: Array<DataTableColumn<StockTransaction>> = [
+const columns: Array<DataTableColumn<StockTransaction>> = [
     {
       id: 'createdAt',
       header: 'Data',
@@ -118,8 +117,9 @@ export function StockTransactionTable({ transactions }: { transactions: StockTra
       header: 'Observações',
       cell: (row) => <div className="text-sm text-slate-600">{row.notes || '—'}</div>,
     },
-  ];
+];
 
+export function StockTransactionTable({ transactions }: Readonly<{ transactions: StockTransaction[] }>) {
   return (
     <DataTable
       data={transactions}

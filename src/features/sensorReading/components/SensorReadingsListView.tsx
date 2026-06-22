@@ -59,13 +59,13 @@ function KpiCard({
   icon,
   accent,
   description,
-}: {
+}: Readonly<{
   title: string;
   value: number;
   icon: ReactNode;
   accent?: string;
   description?: string;
-}) {
+}>) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -155,7 +155,7 @@ export function SensorReadingsListView({
     const automatic = filteredReadings.filter((m) => m.type === 'automatic').length;
     const outOfRange = filteredReadings.filter((m) => isOutOfRange(m.type, m.value)).length;
     const last24h = filteredReadings.filter(
-      (m) => new Date().getTime() - new Date(m.measuredAt).getTime() < 24 * 60 * 60 * 1000,
+      (m) => Date.now() - new Date(m.measuredAt).getTime() < 24 * 60 * 60 * 1000,
     ).length;
     return { total, manual, automatic, outOfRange, last24h };
   }, [filteredReadings]);

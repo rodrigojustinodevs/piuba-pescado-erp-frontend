@@ -25,7 +25,7 @@ const handler = withErrorHandling(async function PATCH(req: Request, routeContex
     `/api/company/purchase/${params.id}/receive`,
     {
       method: 'PATCH',
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : JSON.stringify(body),
     },
   );
 

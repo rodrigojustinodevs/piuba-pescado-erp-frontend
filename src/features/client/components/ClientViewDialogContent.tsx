@@ -30,8 +30,8 @@ const STATUS_STYLES: Record<ClientStatus, string> = {
 
 function formatCurrency(value: string | null): string {
   if (!value) return '—';
-  const num = parseFloat(value);
-  if (isNaN(num) || num <= 0) return '—';
+  const num = Number.parseFloat(value);
+  if (Number.isNaN(num) || num <= 0) return '—';
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
 }
 
@@ -48,11 +48,11 @@ function DetailItem({
   icon,
   label,
   value,
-}: {
+}: Readonly<{
   icon: React.ReactNode;
   label: string;
   value: string;
-}) {
+}>) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
       <span className="text-slate-400 shrink-0">{icon}</span>

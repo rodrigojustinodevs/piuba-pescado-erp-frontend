@@ -6,6 +6,10 @@ import { BatchStatusBadge } from './BatchStatusBadge';
 import { formatDate } from '../utils/format';
 import { Badge } from '@/src/shared/components/ui/Badge';
 import { formatNumber } from '@/shared/utils/numberFormat';
+function CultivationBadge({ label }: { label: string }) {
+  return <Badge variant="outline">{label}</Badge>;
+}
+
 export interface BatchTableProps {
   batches: Batch[];
   cultivationLabels: Record<BatchCultivation, string>;
@@ -39,7 +43,7 @@ export function BatchTable({
     {
       id: 'cultivation',
       header: 'Cultivo',
-      cell: (batch) => <Badge variant="outline">{cultivationLabels[batch.cultivation]}</Badge>,
+      cell: (batch) => <CultivationBadge label={cultivationLabels[batch.cultivation]} />,
     },
     {
       id: 'initialQuantity',

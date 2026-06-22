@@ -90,6 +90,35 @@ export function StockingCreateDialog({
     });
   }
 
+  function renderContent() {
+    if (isViewMode) {
+      return <ViewContent stocking={stocking} batchMap={batchMap} onClose={handleClose} />;
+    }
+    if (mode === 'edit' && stocking) {
+      return (
+        <StockingForm
+          key={`${mode}-${stocking.id}-${open ? 'open' : 'closed'}`}
+          mode="update"
+          initialData={stocking}
+          onSubmit={handleSubmit as (d: UpdateStockingFormData) => void}
+          isLoading={isLoading}
+          submitLabel="Atualizar povoamento"
+          onCancel={handleClose}
+        />
+      );
+    }
+    return (
+      <StockingForm
+        key={`create-${open ? 'open' : 'closed'}`}
+        mode="create"
+        onSubmit={handleSubmit as (d: CreateStockingFormData) => void}
+        isLoading={isLoading}
+        submitLabel="Criar povoamento"
+        onCancel={handleClose}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -97,29 +126,7 @@ export function StockingCreateDialog({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-
-        {isViewMode ? (
-          <ViewContent stocking={stocking} batchMap={batchMap} onClose={handleClose} />
-        ) : mode === 'edit' && stocking ? (
-          <StockingForm
-            key={`${mode}-${stocking.id}-${open ? 'open' : 'closed'}`}
-            mode="update"
-            initialData={stocking}
-            onSubmit={handleSubmit as (d: UpdateStockingFormData) => void}
-            isLoading={isLoading}
-            submitLabel="Atualizar povoamento"
-            onCancel={handleClose}
-          />
-        ) : (
-          <StockingForm
-            key={`create-${open ? 'open' : 'closed'}`}
-            mode="create"
-            onSubmit={handleSubmit as (d: CreateStockingFormData) => void}
-            isLoading={isLoading}
-            submitLabel="Criar povoamento"
-            onCancel={handleClose}
-          />
-        )}
+        {renderContent()}
       </DialogContent>
     </Dialog>
   );

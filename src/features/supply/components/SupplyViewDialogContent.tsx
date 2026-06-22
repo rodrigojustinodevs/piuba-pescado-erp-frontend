@@ -1,18 +1,13 @@
 'use client';
 
 import {
-  BarChart2,
   DollarSign,
-  Tag,
   TrendingUp,
   Barcode,
   Grid2x2,
-  Truck,
-  Ruler,
   Boxes,
   Building2,
   Package,
-  Calendar,
 } from 'lucide-react';
 import { STATUS_LABELS, SupplyStatus, type Supply } from '../types';
 import { getSupplyDefaultUnitLabel } from '../utils/defaultUnitLabel';
@@ -34,11 +29,11 @@ function StatCard({
   label,
   icon,
   children,
-}: {
+}: Readonly<{
   label: string;
   icon: React.ReactNode;
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
       <div className="flex items-center justify-between">
@@ -54,11 +49,11 @@ function DetailItem({
   icon,
   label,
   value,
-}: {
+}: Readonly<{
   icon: React.ReactNode;
   label: string;
   value: string;
-}) {
+}>) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
       <span className="text-slate-400 shrink-0">{icon}</span>
@@ -68,6 +63,24 @@ function DetailItem({
       </div>
     </div>
   );
+}
+
+function getMarginStyle(margin: number): { card: string; icon: string; text: string } {
+  if (margin >= 30) return {
+    card: 'border-emerald-500/30 bg-emerald-500/5',
+    icon: 'h-5 w-5 text-emerald-600',
+    text: 'text-lg font-bold text-emerald-600',
+  };
+  if (margin >= 15) return {
+    card: 'border-amber-500/30 bg-amber-500/5',
+    icon: 'h-5 w-5 text-amber-600',
+    text: 'text-lg font-bold text-amber-600',
+  };
+  return {
+    card: 'border-destructive/30 bg-destructive/5',
+    icon: 'h-5 w-5 text-destructive',
+    text: 'text-lg font-bold text-destructive',
+  };
 }
 
 const STATUS_STYLES: Record<SupplyStatus, string> = {
@@ -83,6 +96,8 @@ export function SupplyViewDialogContent({ supply }: Readonly<SupplyViewDialogCon
   }, [supply]);
 
   if (!supply) return null;
+
+  const marginStyle = getMarginStyle(margin);
 
   const unitLabel = getSupplyDefaultUnitLabel(supply.defaultUnit);
   const unitShort = supply.defaultUnit === 'unit' ? 'un' : supply.defaultUnit;
@@ -139,7 +154,7 @@ export function SupplyViewDialogContent({ supply }: Readonly<SupplyViewDialogCon
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-xs font-medium">
-                {supply.isProduct ? 'Preço Venda' : 'Preço Venda'}
+                Preço Venda
               </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -167,37 +182,13 @@ export function SupplyViewDialogContent({ supply }: Readonly<SupplyViewDialogCon
 
         {/* Margem bruta (apenas produtos) */}
         {supply.isProduct && (
-          <Card
-            className={
-              margin >= 30
-                ? 'border-emerald-500/30 bg-emerald-500/5'
-                : margin >= 15
-                  ? 'border-amber-500/30 bg-amber-500/5'
-                  : 'border-destructive/30 bg-destructive/5'
-            }
-          >
+          <Card className={marginStyle.card}>
             <CardContent className="flex items-center justify-between py-4">
               <div className="flex items-center gap-2">
-                <TrendingUp
-                  className={
-                    margin >= 30
-                      ? 'h-5 w-5 text-emerald-600'
-                      : margin >= 15
-                        ? 'h-5 w-5 text-amber-600'
-                        : 'h-5 w-5 text-destructive'
-                  }
-                />
+                <TrendingUp className={marginStyle.icon} />
                 <span className="text-sm font-medium">Margem Bruta Estimada</span>
               </div>
-              <span
-                className={
-                  margin >= 30
-                    ? 'text-lg font-bold text-emerald-600'
-                    : margin >= 15
-                      ? 'text-lg font-bold text-amber-600'
-                      : 'text-lg font-bold text-destructive'
-                }
-              >
+              <span className={marginStyle.text}>
                 {margin.toFixed(1)}%
               </span>
             </CardContent>

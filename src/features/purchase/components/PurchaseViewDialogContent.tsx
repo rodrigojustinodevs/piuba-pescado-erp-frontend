@@ -40,11 +40,11 @@ function DetailCard({
   icon,
   label,
   value,
-}: {
+}: Readonly<{
   icon: ReactNode;
   label: string;
   value: ReactNode;
-}) {
+}>) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
       {icon}
@@ -62,13 +62,13 @@ function PurchaseMetricCard({
   value,
   subtitle,
   valueClassName = 'text-xl font-bold',
-}: {
+}: Readonly<{
   icon: ReactNode;
   title: string;
   value: ReactNode;
   subtitle: string;
   valueClassName?: string;
-}) {
+}>) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">

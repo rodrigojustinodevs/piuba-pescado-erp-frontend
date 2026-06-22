@@ -64,7 +64,7 @@ export function useSuppliesListPage() {
 
   const categories = useMemo(() => {
     const cats = new Set(supplies.map((s) => s.category).filter(Boolean) as string[]);
-    return Array.from(cats).sort();
+    return Array.from(cats).sort((a, b) => a.localeCompare(b, 'pt-BR'));
   }, [supplies]);
 
   const filtered = useMemo(

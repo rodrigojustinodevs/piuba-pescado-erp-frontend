@@ -3,14 +3,13 @@
  */
 
 import type { ApiPagination } from '@/shared/types/api';
-import type { SensorStatus, SensorType } from '../sensor/types';
 
 export type SensorReadingType = 'manual' | 'automatic';
 export interface SensorReadingSensor {
   id: string;
   name?: string | null;
-  sensorType?: SensorType | string;
-  status?: SensorStatus | string;
+  sensorType?: string;
+  status?: string;
   tank?: {
     id: string;
     name: string;

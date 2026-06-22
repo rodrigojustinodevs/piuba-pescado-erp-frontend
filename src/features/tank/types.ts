@@ -8,12 +8,14 @@ export interface TankCompany {
   id?: string;
   name: string;
 }
+export type TankStatus = 'active' | 'inactive' | 'maintenance';
+
 export interface Tank {
   id: string;
   name: string;
   capacityLiters: number;
   location?: string;
-  status: 'active' | 'inactive' | 'maintenance';
+  status: TankStatus;
   tankType: TankType;
   company: TankCompany;
   createdAt: string;
