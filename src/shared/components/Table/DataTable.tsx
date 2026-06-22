@@ -4,7 +4,6 @@ import { useMemo, useState, ReactNode } from 'react';
 
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-import { Card, CardContent } from '@/shared/components/ui/Card';
 import {
   Table,
   TableBody,
@@ -161,7 +160,6 @@ export function DataTable<T>({
                                 key={key}
                                 className={className}
                                 onClick={() => action.onClick?.()}
-
                               >
                                 {action.icon}
                                 {action.label}

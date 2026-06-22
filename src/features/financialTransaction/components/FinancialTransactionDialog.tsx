@@ -6,7 +6,7 @@ import type {
   CreateFinancialTransactionData,
 } from '../types';
 import type { CreateFinancialTransactionFormData } from '../schemas';
-import { transactionTypeValues, transactionStatusValues, transactionMethodValues } from '../schemas';
+import { transactionTypeValues, transactionStatusValues } from '../schemas';
 import { FinancialTransactionForm } from './FinancialTransactionForm';
 import { FinancialTransactionViewDialogContent } from './FinancialTransactionViewDialogContent';
 import { useCreateFinancialTransaction } from '../hooks/useCreateFinancialTransaction';
@@ -45,28 +45,48 @@ const DIALOG_CONFIG = {
     description: 'Registre uma receita, despesa ou transferência.',
     maxWidth: 'sm:max-w-2xl',
   },
-} satisfies Record<FinancialTransactionDialogMode, { title: string; description: string; maxWidth: string }>;
+} satisfies Record<
+  FinancialTransactionDialogMode,
+  { title: string; description: string; maxWidth: string }
+>;
 
-export function FinancialTransactionDialog({ open, onOpenChange, mode, transaction, onSuccess }: Readonly<Props>) {
+export function FinancialTransactionDialog({
+  open,
+  onOpenChange,
+  mode,
+  transaction,
+  onSuccess,
+}: Readonly<Props>) {
   const createTransaction = useCreateFinancialTransaction({ skipNavigateToList: true });
   const updateTransaction = useUpdateFinancialTransaction({ skipNavigateToList: true });
 
   const isLoading = createTransaction.isPending || updateTransaction.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
-  function handleClose() { onOpenChange(false); }
+  function handleClose() {
+    onOpenChange(false);
+  }
 
   function handleCreate(data: CreateFinancialTransactionData) {
     createTransaction.mutate(data, {
-      onSuccess: () => { onSuccess(); handleClose(); },
+      onSuccess: () => {
+        onSuccess();
+        handleClose();
+      },
     });
   }
 
   function handleUpdate(data: CreateFinancialTransactionData) {
     if (!transaction?.id) return;
-    updateTransaction.mutate({ ...data, id: transaction.id }, {
-      onSuccess: () => { onSuccess(); handleClose(); },
-    });
+    updateTransaction.mutate(
+      { ...data, id: transaction.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
+      },
+    );
   }
 
   const editInitialValues: CreateFinancialTransactionFormData | undefined =

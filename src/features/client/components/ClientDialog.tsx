@@ -1,6 +1,6 @@
 'use client';
 
-import type { Client, ClientDialogMode, CreateClientData, UpdateClientData } from '../types';
+import type { Client, ClientDialogMode, CreateClientData } from '../types';
 import { clientPriceGroupValues, clientStatusFormValues, type CreateClientFormData } from '../schemas';
 import { ClientForm } from './ClientForm';
 import { ClientViewDialogContent } from './ClientViewDialogContent';
@@ -53,7 +53,7 @@ function buildEditValues(client: Client): CreateClientFormData {
     city: client.city ?? '',
     state: client.state ?? '',
     status: safeClientStatus(client.status),
-    creditLimit: client.creditLimit ? parseFloat(client.creditLimit) : 0,
+    creditLimit: client.creditLimit ? Number.parseFloat(client.creditLimit) : 0,
     notes: client.notes ?? '',
   };
 }

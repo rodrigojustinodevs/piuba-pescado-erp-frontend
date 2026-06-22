@@ -17,14 +17,50 @@ function SensorTypeIcon({ typeIcon, sensorType }: Readonly<SensorTypeIconProps>)
 import { Badge } from '@/shared/components/ui/Badge';
 import { formatDateTime, formatRelative } from '../../batch/utils/format';
 
+type SourceConfig = Record<SensorReadingType, { label: string; icon: LucideIcon; variant: 'secondary' | 'default' }>;
+
+interface ReadingValueCellProps {
+  row: SensorReading;
+  isOutOfRange: (type: SensorReadingType, value: number) => boolean;
+}
+
+function ReadingValueCell({ row, isOutOfRange }: Readonly<ReadingValueCellProps>) {
+  const readingType: SensorReadingType =
+    row.type === 'manual' || row.type === 'automatic' ? row.type : 'automatic';
+  const out = isOutOfRange(readingType, row.value);
+  return (
+    <div className="flex items-center justify-end gap-1">
+      <span className={`font-semibold tabular-nums ${out ? 'text-destructive' : ''}`}>
+        {row.value}
+      </span>
+      <span className="text-xs text-muted-foreground">{row.unit}</span>
+      {out && <AlertTriangle className="ml-1 h-3.5 w-3.5 text-destructive" />}
+    </div>
+  );
+}
+
+interface ReadingSourceCellProps {
+  row: SensorReading;
+  sourceConfig: SourceConfig;
+  fallbackSource: SourceConfig[SensorReadingType];
+}
+
+function ReadingSourceCell({ row, sourceConfig, fallbackSource }: Readonly<ReadingSourceCellProps>) {
+  const source = sourceConfig[row.type as SensorReadingType] ?? fallbackSource;
+  const SourceIcon = source.icon;
+  return (
+    <Badge variant={source.variant} className="gap-1">
+      <SourceIcon className="h-3 w-3" />
+      {source.label}
+    </Badge>
+  );
+}
+
 interface SensorReadingTableProps {
   sensorReadings: SensorReading[];
   rowActions: (reading: SensorReading) => DataTableAction[];
   typeIcon: Record<SensorType, LucideIcon>;
-  sourceConfig: Record<
-    SensorReadingType,
-    { label: string; icon: LucideIcon; variant: 'secondary' | 'default' }
-  >;
+  sourceConfig: SourceConfig;
   isOutOfRange: (type: SensorReadingType, value: number) => boolean;
 }
 
@@ -68,34 +104,12 @@ export function SensorReadingTable({
       header: 'Valor',
       cellClassName: 'text-right',
       headerClassName: 'text-right',
-      cell: (row) => {
-        const readingType: SensorReadingType =
-          row.type === 'manual' || row.type === 'automatic' ? row.type : 'automatic';
-        const out = isOutOfRange(readingType, row.value);
-        return (
-          <div className="flex items-center justify-end gap-1">
-            <span className={`font-semibold tabular-nums ${out ? 'text-destructive' : ''}`}>
-              {row.value}
-            </span>
-            <span className="text-xs text-muted-foreground">{row.unit}</span>
-            {out && <AlertTriangle className="ml-1 h-3.5 w-3.5 text-destructive" />}
-          </div>
-        );
-      },
+      cell: (row) => <ReadingValueCell row={row} isOutOfRange={isOutOfRange} />,
     },
     {
       id: 'type',
       header: 'Origem',
-      cell: (row) => {
-        const source = sourceConfig[row.type as SensorReadingType] ?? fallbackSource;
-        const SourceIcon = source.icon;
-        return (
-          <Badge variant={source.variant} className="gap-1">
-            <SourceIcon className="h-3 w-3" />
-            {source.label}
-          </Badge>
-        );
-      },
+      cell: (row) => <ReadingSourceCell row={row} sourceConfig={sourceConfig} fallbackSource={fallbackSource} />,
     },
     {
       id: 'measuredAt',

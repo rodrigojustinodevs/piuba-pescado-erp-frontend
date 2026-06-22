@@ -3,7 +3,7 @@ import type { CreateWaterQualityFormData } from '../schemas';
 import type { WaterQuality } from '../types';
 
 function parseMetric(value: string): number {
-  const n = parseFloat(String(value).replace(',', '.'));
+  const n = Number.parseFloat(String(value).replace(',', '.'));
   return Number.isFinite(n) ? n : 0;
 }
 

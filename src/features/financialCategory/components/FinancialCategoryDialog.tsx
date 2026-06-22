@@ -4,7 +4,6 @@ import type {
   FinancialCategory,
   FinancialCategoryDialogMode,
   CreateFinancialCategoryData,
-  UpdateFinancialCategoryData,
 } from '../types';
 import type { CreateFinancialCategoryFormData } from '../schemas';
 import { financialCategoryStatusValues, financialCategoryTypeValues } from '../schemas';

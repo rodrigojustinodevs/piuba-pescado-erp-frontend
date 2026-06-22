@@ -6,22 +6,14 @@ import { BatchStatusBadge } from './BatchStatusBadge';
 import { formatDate } from '../utils/format';
 import { Badge } from '@/src/shared/components/ui/Badge';
 import { formatNumber } from '@/shared/utils/numberFormat';
-function CultivationBadge({ label }: { label: string }) {
+function CultivationBadge({ label }: Readonly<{ label: string }>) {
   return <Badge variant="outline">{label}</Badge>;
 }
 
-export interface BatchTableProps {
-  batches: Batch[];
-  cultivationLabels: Record<BatchCultivation, string>;
-  getRowActions: (batch: Batch) => DataTableAction[];
-}
-
-export function BatchTable({
-  batches,
-  cultivationLabels,
-  getRowActions,
-}: Readonly<BatchTableProps>) {
-  const columns: Array<DataTableColumn<Batch>> = [
+function buildColumns(
+  cultivationLabels: Record<BatchCultivation, string>,
+): Array<DataTableColumn<Batch>> {
+  return [
     {
       id: 'name',
       header: 'Nome',
@@ -73,6 +65,20 @@ export function BatchTable({
       },
     },
   ];
+}
+
+export interface BatchTableProps {
+  batches: Batch[];
+  cultivationLabels: Record<BatchCultivation, string>;
+  getRowActions: (batch: Batch) => DataTableAction[];
+}
+
+export function BatchTable({
+  batches,
+  cultivationLabels,
+  getRowActions,
+}: Readonly<BatchTableProps>) {
+  const columns = buildColumns(cultivationLabels);
 
   if (batches.length === 0) {
     return <div className="p-8 text-center text-slate-500">Nenhum lote encontrado.</div>;

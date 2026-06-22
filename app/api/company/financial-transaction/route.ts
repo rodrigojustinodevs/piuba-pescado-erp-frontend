@@ -1,7 +1,6 @@
 import type {
   ApiFinancialTransaction,
   CreateFinancialTransactionData,
-  FinancialTransaction,
 } from '@/features/financialTransaction/types';
 import {
   buildFinancialTransactionBody,

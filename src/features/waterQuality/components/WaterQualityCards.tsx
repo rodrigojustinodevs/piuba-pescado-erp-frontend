@@ -6,6 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { CircleHelp, Droplets, LucideIcon } from 'lucide-react';
 import { Sensor, SensorType, sensorTypeLabels } from '../../sensor/types';
 
+function getQualityDotClass(quality: Quality): string {
+  if (quality === 'excellent') return 'bg-emerald-500';
+  if (quality === 'good') return 'bg-sky-500';
+  if (quality === 'warning') return 'bg-amber-500';
+  if (quality === 'critical') return 'bg-red-500';
+  return 'bg-muted-foreground';
+}
+
 export interface WaterQualityCardsProps {
   readonly tankSummary: {
     name: string;
@@ -71,18 +79,7 @@ export function WaterQualityCards({
                           : '—'}
                       </span>
                       <span
-                        className={
-                          'h-2 w-2 rounded-full ' +
-                          (sensor.quality === 'excellent'
-                            ? 'bg-emerald-500'
-                            : sensor.quality === 'good'
-                              ? 'bg-sky-500'
-                              : sensor.quality === 'warning'
-                                ? 'bg-amber-500'
-                                : sensor.quality === 'critical'
-                                  ? 'bg-red-500'
-                                  : 'bg-muted-foreground')
-                        }
+                        className={`h-2 w-2 rounded-full ${getQualityDotClass(sensor.quality)}`}
                         title={c.label}
                       />
                     </div>

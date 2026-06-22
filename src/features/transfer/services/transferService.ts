@@ -13,7 +13,7 @@ function mapTransfer422(message: string): string {
     return 'O lote não está no tanque de origem informado.';
   }
   if (message.includes('Transfer quantity') && message.includes('exceeds available stock')) {
-    const match = message.match(/available stock \((\d+)\)/);
+    const match = /available stock \((\d+)\)/.exec(message);
     const available = match?.[1] ?? '';
     return `Quantidade informada excede o estoque disponível (${available} disponíveis).`;
   }

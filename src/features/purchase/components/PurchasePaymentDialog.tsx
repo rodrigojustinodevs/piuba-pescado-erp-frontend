@@ -89,7 +89,12 @@ export function PurchasePaymentDialog({
   const totalPrice = summary?.totalAmount ?? purchase.totalPrice ?? 0;
   const paidAmount = summary?.totalPaid ?? purchase.paidAmount ?? 0;
   const pendingAmount = summary?.balance ?? Math.max(0, totalPrice - paidAmount);
-  const progressPercent = summary ? Math.min(100, Math.round(summary.progress)) : (totalPrice > 0 ? Math.min(100, Math.round((paidAmount / totalPrice) * 100)) : 0);
+  function getProgressPercent() {
+    if (summary) return Math.min(100, Math.round(summary.progress));
+    if (totalPrice > 0) return Math.min(100, Math.round((paidAmount / totalPrice) * 100));
+    return 0;
+  }
+  const progressPercent = getProgressPercent();
 
   function renderPaymentHistory() {
     if (isLoadingPayments) {
@@ -171,7 +176,7 @@ export function PurchasePaymentDialog({
             </div>
             <div>
               <DialogTitle className="text-lg font-semibold text-slate-900">
-                Registrar Pagamento
+                {'Registrar Pagamento'}
                 <span className="ml-2 text-base font-normal text-slate-500">
                   {purchase.referenceCode}
                 </span>

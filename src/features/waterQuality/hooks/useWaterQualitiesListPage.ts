@@ -19,7 +19,7 @@ function sortWaterQualities(items: WaterQuality[], sortBy: string): WaterQuality
     case 'tankName':
       return list.sort((a, b) => (a.tank?.name || '').localeCompare(b.tank?.name || '', 'pt-BR'));
     case 'ph':
-      return list.sort((a, b) => parseFloat(b.ph) - parseFloat(a.ph));
+      return list.sort((a, b) => Number.parseFloat(b.ph) - Number.parseFloat(a.ph));
     default:
       return list;
   }
@@ -44,7 +44,7 @@ export function useWaterQualitiesListPage() {
 
     const uniqueTanksOnPage = new Set(list.map((w) => w.tank?.id).filter(Boolean)).size;
     const numericPhs = list
-      .map((w) => parseFloat(String(w.ph).replace(',', '.')))
+      .map((w) => Number.parseFloat(String(w.ph).replace(',', '.')))
       .filter((n) => Number.isFinite(n));
     const avgPh =
       numericPhs.length > 0

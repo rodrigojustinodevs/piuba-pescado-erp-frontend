@@ -69,62 +69,71 @@ function getRowLabel(row: Purchase): string {
   return `${row.supplierName || 'Fornecedor'} · ${formatPurchaseMoney(row.totalPrice)}`;
 }
 
+function getViewAction(row: Purchase, onView: PurchaseTableProps['onView']): DataTableAction | null {
+  if (!onView) return null;
+  return { label: 'Ver detalhes', onClick: () => onView(row), icon: <EyeIcon className="h-4 w-4" /> };
+}
+
+function getEditAction(row: Purchase, onEdit: PurchaseTableProps['onEdit']): DataTableAction | null {
+  if (!onEdit) return null;
+  return { label: 'Editar', onClick: () => onEdit(row), icon: <EditIcon className="h-4 w-4" /> };
+}
+
+function getReceiveAction(row: Purchase, onReceive: PurchaseTableProps['onReceive'], isReceiving: boolean): DataTableAction | null {
+  if (!onReceive || row.status === 'received' || row.status === 'cancelled') return null;
+  return {
+    label: isReceiving ? 'Recebendo...' : 'Receber compra',
+    onClick: () => onReceive(row),
+    disabled: isReceiving,
+    icon: isReceiving ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <PackageCheck className="h-4 w-4" />,
+  };
+}
+
+function getCancelAction(row: Purchase, onCancel: PurchaseTableProps['onCancel'], isCancelling: boolean): DataTableAction | null {
+  if (!onCancel || row.status === 'received' || row.status === 'cancelled') return null;
+  return {
+    label: isCancelling ? 'Cancelando...' : 'Cancelar compra',
+    onClick: () => onCancel(row.id, getRowLabel(row)),
+    disabled: isCancelling,
+    variant: 'danger',
+    icon: isCancelling ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <CircleX className="h-4 w-4" />,
+  };
+}
+
+function getRegisterPaymentAction(row: Purchase, onRegisterPayment: PurchaseTableProps['onRegisterPayment'], isRegisteringPayment: boolean): DataTableAction | null {
+  if (!onRegisterPayment || row.paymentStatus === 'paid' || row.status === 'cancelled') return null;
+  return {
+    label: isRegisteringPayment ? 'Registrando...' : 'Registrar pagamento',
+    onClick: () => onRegisterPayment(row),
+    disabled: isRegisteringPayment,
+    icon: isRegisteringPayment ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />,
+  };
+}
+
+function getDeleteAction(row: Purchase, onDelete: PurchaseTableProps['onDelete'], isDeleting: boolean): DataTableAction | null {
+  if (!onDelete) return null;
+  return {
+    label: 'Excluir',
+    onClick: () => onDelete(row.id, getRowLabel(row)),
+    variant: 'danger',
+    disabled: isDeleting,
+    icon: isDeleting ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <TrashIcon className="h-4 w-4" />,
+  };
+}
+
 function buildRowActions(row: Purchase, props: PurchaseTableProps): DataTableAction[] {
   const {
     onView, onEdit, onDelete, onReceive, onCancel, onRegisterPayment,
     isDeleting = false, isCancelling = false, isReceiving = false, isRegisteringPayment = false,
   } = props;
-  const actions: DataTableAction[] = [];
-
-  if (onView) {
-    actions.push({ label: 'Ver detalhes', onClick: () => onView(row), icon: <EyeIcon className="h-4 w-4" /> });
-  }
-  if (onEdit) {
-    actions.push({ label: 'Editar', onClick: () => onEdit(row), icon: <EditIcon className="h-4 w-4" /> });
-  }
-
-  const canReceive = row.status !== 'received' && row.status !== 'cancelled';
-  if (onReceive && canReceive) {
-    actions.push({
-      label: isReceiving ? 'Recebendo...' : 'Receber compra',
-      onClick: () => onReceive(row),
-      disabled: isReceiving,
-      icon: isReceiving ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <PackageCheck className="h-4 w-4" />,
-    });
-  }
-
-  const canCancel = row.status !== 'received' && row.status !== 'cancelled';
-  if (onCancel && canCancel) {
-    actions.push({
-      label: isCancelling ? 'Cancelando...' : 'Cancelar compra',
-      onClick: () => onCancel(row.id, getRowLabel(row)),
-      disabled: isCancelling,
-      variant: 'danger',
-      icon: isCancelling ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <CircleX className="h-4 w-4" />,
-    });
-  }
-
-  const canRegisterPayment = row.paymentStatus !== 'paid' && row.status !== 'cancelled';
-  if (onRegisterPayment && canRegisterPayment) {
-    actions.push({
-      label: isRegisteringPayment ? 'Registrando...' : 'Registrar pagamento',
-      onClick: () => onRegisterPayment(row),
-      disabled: isRegisteringPayment,
-      icon: isRegisteringPayment ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />,
-    });
-  }
-
-  if (onDelete) {
-    actions.push({
-      label: 'Excluir',
-      onClick: () => onDelete(row.id, getRowLabel(row)),
-      variant: 'danger',
-      disabled: isDeleting,
-      icon: isDeleting ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <TrashIcon className="h-4 w-4" />,
-    });
-  }
-
-  return actions;
+  return [
+    getViewAction(row, onView),
+    getEditAction(row, onEdit),
+    getReceiveAction(row, onReceive, isReceiving),
+    getCancelAction(row, onCancel, isCancelling),
+    getRegisterPaymentAction(row, onRegisterPayment, isRegisteringPayment),
+    getDeleteAction(row, onDelete, isDeleting),
+  ].filter((a): a is DataTableAction => a !== null);
 }
 
 function calculateReceivedRatio(purchase: Purchase): number {

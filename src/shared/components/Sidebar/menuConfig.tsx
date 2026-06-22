@@ -22,7 +22,6 @@ import {
   PackageSearch,
   CircleDollarSign,
   ShoppingCart,
-  Droplets,
 } from 'lucide-react';
 
 export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {

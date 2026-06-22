@@ -103,7 +103,9 @@ export function SensorCards({
 
                 <div className="rounded-lg border bg-muted/30 p-3">
                   <div className="text-xs text-muted-foreground">Última leitura</div>
-                  {s.lastReading !== null ? (
+                  {s.lastReading === null ? (
+                    <div className="mt-0.5 text-sm text-muted-foreground">Sem leituras</div>
+                  ) : (
                     <>
                       <div className="mt-0.5 text-2xl font-semibold tabular-nums">
                         {s.lastReading}{' '}
@@ -113,8 +115,6 @@ export function SensorCards({
                         {formatNullableDatePtBR(s.createdAt)}
                       </div>
                     </>
-                  ) : (
-                    <div className="mt-0.5 text-sm text-muted-foreground">Sem leituras</div>
                   )}
                 </div>
 

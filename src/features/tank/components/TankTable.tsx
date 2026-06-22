@@ -17,14 +17,12 @@ const statusConfig: Record<
   maintenance: { label: 'Manutenção', variant: 'destructive' },
 };
 
-export function TankTable({ tanks, rowActions }: Readonly<TankTableProps>) {
-  const { isMaster } = useAuthContext();
+function TankTypeBadge({ name }: Readonly<{ name: string | undefined }>) {
+  return <Badge variant="outline">{name}</Badge>;
+}
 
-  if (tanks.length === 0) {
-    return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
-  }
-
-  const columns: Array<DataTableColumn<Tank>> = [
+function buildColumns(showCompanyColumn: boolean): Array<DataTableColumn<Tank>> {
+  return [
     {
       id: 'name',
       header: 'Nome',
@@ -53,7 +51,7 @@ export function TankTable({ tanks, rowActions }: Readonly<TankTableProps>) {
         </div>
       ),
     },
-    ...(isMaster()
+    ...(showCompanyColumn
       ? ([
           {
             id: 'company',
@@ -81,6 +79,15 @@ export function TankTable({ tanks, rowActions }: Readonly<TankTableProps>) {
       cell: (tank) => formatDate(tank.createdAt),
     },
   ];
+}
+
+export function TankTable({ tanks, rowActions }: Readonly<TankTableProps>) {
+  const { isMaster } = useAuthContext();
+  const columns = buildColumns(isMaster());
+
+  if (tanks.length === 0) {
+    return <div className="p-8 text-center text-slate-500">Nenhum tanque encontrado.</div>;
+  }
 
   return (
     <DataTable

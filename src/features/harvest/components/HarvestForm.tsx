@@ -113,7 +113,6 @@ export function HarvestForm({
     companyOptions,
     loadingCompanies,
     companyTanks,
-    isLoadingCompanyData,
     companyDataLoaded,
     batches,
     isLoadingBatchesEffective,

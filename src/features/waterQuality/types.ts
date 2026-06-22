@@ -2,7 +2,6 @@
  * Qualidade da água — contrato com GET /api/company/water-qualities
  */
 
-import type { ApiPagination } from '@/shared/types/api';
 import { Sensor } from '../sensor/types';
 
 export type Quality = 'excellent' | 'good' | 'warning' | 'critical' | 'unknown';

@@ -53,11 +53,12 @@ export function FinancialCategoryViewDialogContent({ category }: Readonly<Props>
     typeIcon = <TrendingDown className="h-5 w-5 text-rose-600" />;
   }
 
-  const amountColorClass = isRevenue
-    ? 'text-emerald-600'
-    : isExpense
-      ? 'text-rose-600'
-      : 'text-slate-900';
+  function getAmountColorClass() {
+    if (isRevenue) return 'text-emerald-600';
+    if (isExpense) return 'text-rose-600';
+    return 'text-slate-900';
+  }
+  const amountColorClass = getAmountColorClass();
 
   return (
     <div className="space-y-5">
