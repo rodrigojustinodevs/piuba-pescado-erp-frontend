@@ -2,8 +2,7 @@
 
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { SaleEditForm, useSale, useUpdateSale } from '@/features/sale';
-import { saleUpdateStatusValues } from '@/features/sale/schemas';
+import { SaleForm, useSale, useUpdateSale } from '@/features/sale';
 import type { UpdateSaleFormData } from '@/features/sale/schemas';
 import type { Sale, UpdateSaleData } from '@/features/sale/types';
 import { DashboardLayout } from '@/shared/components/Layout';
@@ -12,17 +11,28 @@ import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 
 function saleToUpdateFormValues(sale: Sale): UpdateSaleFormData {
-  const status = (saleUpdateStatusValues as readonly string[]).includes(sale.status)
-    ? (sale.status as UpdateSaleFormData['status'])
-    : 'pending';
-  const saleDate = sale.saleDate.slice(0, 10);
   return {
-    totalWeight: sale.totalWeight,
-    pricePerKg: sale.pricePerKg,
-    saleDate,
-    status,
+    clientId: sale.clientId ?? '',
+    financialCategoryId: sale.financialCategoryId ?? '',
+    needsInvoice: sale.needsInvoice ?? false,
+    invoiceNumber: sale.numberNf ?? '',
+    status: sale.status ?? 'pending',
+    paymentMethod: sale.paymentMethod ?? '',
+    saleDate: sale.saleDate.slice(0, 10),
+    dueDate: sale.dueDate ?? '',
+    items: sale.items.map((item) => ({
+      batchId: item.batchId ?? '',
+      stockingId: item.stockingId ?? '',
+      totalWeight: item.totalWeight,
+      pricePerKg: item.pricePerKg,
+      isTotalHarvest: item.isTotalHarvest,
+      category: item.category ?? '',
+      notes: item.notes ?? '',
+    })),
+    discount: sale.discount,
+    shipping: sale.shipping,
+    taxes: sale.taxes,
     notes: sale.notes ?? '',
-    isTotalHarvest: sale.isTotalHarvest,
   };
 }
 
@@ -66,13 +76,7 @@ export default function EditSalePage() {
           subtitle="Atualize os dados da venda"
           icon={<OrdersIcon />}
         />
-        <SaleEditForm
-          readOnlyContext={{
-            clientName: sale.clientName,
-            batchName: sale.batchName,
-            stockingId: sale.stockingId,
-            financialCategoryId: sale.financialCategoryId,
-          }}
+        <SaleForm
           initialValues={initialValues}
           onSubmit={onSubmit}
           isSubmitting={updateSale.isPending}

@@ -7,7 +7,7 @@ import type { CreateSaleData } from '../types';
 import { saleService } from '../services/saleService';
 import { translateSaleApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
 
-export function useCreateSale() {
+export function useCreateSale({ skipNavigateToList }: { skipNavigateToList?: boolean } = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToast();
@@ -17,7 +17,7 @@ export function useCreateSale() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sales', 'list'] });
       showSuccess('Venda cadastrada com sucesso!');
-      router.push('/company/sales');
+      if (!skipNavigateToList) router.push('/company/sales');
     },
     onError: (error: Error) => {
       const message = error.message ? translateSaleApiErrorMessagePtBR(error.message) : '';

@@ -28,12 +28,5 @@ export {
   useDeleteSale,
   useCancelSale,
 } from './hooks';
-export {
-  SaleTable,
-  SalesListView,
-  SaleForm,
-  SaleEditForm,
-  SaleDetailView,
-  type SaleEditReadOnlyContext,
-} from './components';
+export { SaleTable, SalesListView, SaleForm, SaleDetailView } from './components';
 
