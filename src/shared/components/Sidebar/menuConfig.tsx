@@ -143,7 +143,6 @@ export const menuConfig: MenuItemWithAuth[] = [
     label: 'Relatóriosa',
     icon: FileText,
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-    requiresCompany: REQUIRES_COMPANY,
     children: relatoriosChildrenWithAuth(relatoriosSubmenuItems),
   },
   {
@@ -152,7 +151,6 @@ export const menuConfig: MenuItemWithAuth[] = [
     icon: Settings,
     href: '/dashboard/configuracoes',
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-    requiresCompany: REQUIRES_COMPANY,
     children: administracaoChildrenWithAuth(administracaoSubmenuItems),
   },
 ];
