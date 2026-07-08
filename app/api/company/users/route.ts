@@ -13,7 +13,7 @@ interface ApiUserResponse {
 const CONTEXT = 'Users API Proxy';
 
 export const GET = createListGetHandler<ApiUserListResponse, UserListResponse>({
-  backendPath: '/api/admin/users',
+  backendPath: '/api/company/users',
   context: CONTEXT,
   buildQueryString: (searchParams) =>
     buildPaginationQueryString(searchParams, {
@@ -23,7 +23,7 @@ export const GET = createListGetHandler<ApiUserListResponse, UserListResponse>({
 });
 
 export const POST = createUpsertHandler<ApiUserResponse, CreateUserData>({
-  backendPath: '/api/admin/user',
+  backendPath: '/api/company/user',
   method: 'POST',
   context: CONTEXT,
   mapResponse: (data) => data.response,

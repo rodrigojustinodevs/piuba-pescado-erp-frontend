@@ -18,7 +18,7 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  jobTitle?: string;
+  position?: string;
   role: UserRoleType;
   status: UserStatus;
   company: UserCompany;
@@ -32,7 +32,7 @@ export interface CreateUserData {
   name: string;
   email: string;
   phone?: string;
-  jobTitle?: string;
+  position?: string;
   role: UserRoleType;
   status: UserStatus;
   password?: string;
@@ -50,7 +50,7 @@ export interface ApiUser {
   name: string;
   email: string;
   phone?: string;
-  jobTitle?: string;
+  position?: string;
   role: UserRoleType;
   status: UserStatus;
   company: UserCompany;

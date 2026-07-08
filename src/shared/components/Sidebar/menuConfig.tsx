@@ -82,7 +82,7 @@ function relatoriosChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
 function administracaoChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({
     ...item,
-    allowedRoles: item.id === 'integracoes-iot' ? [UserRole.MASTER] : ROLES_COMPANY_ADMIN_MANAGER,
+    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
   }));
 }
 

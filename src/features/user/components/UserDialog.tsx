@@ -9,6 +9,7 @@ import { useUpdateUser } from '../hooks/useUpdateUser';
 import { createUserSchema, type CreateUserFormData } from '../schemas';
 import type { CreateUserData, User, UserDialogMode, UpdateUserData } from '../types';
 import { ROLE_OPTIONS, getRoleLabel } from '../utils/roleLabels';
+import { POSITION_OPTIONS, getPositionLabel } from '../utils/positionLabels';
 import { STATUS_LABELS } from '../utils/statusLabels';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import {
@@ -47,18 +48,20 @@ const initialForm: CreateUserFormData = {
   name: '',
   email: '',
   phone: '',
-  jobTitle: '',
+  position: '',
   role: 'operator',
   status: 'active',
 };
 
 function userToForm(user: User): CreateUserFormData {
+  console.log(user, 'userToForm');
+
   return {
-    companyId: user.company.id ?? '',
+    companyId: String(user.company.id ?? ''),
     name: user.name,
     email: user.email,
     phone: user.phone ?? '',
-    jobTitle: user.jobTitle ?? '',
+    position: user.position ?? '',
     role: user.role,
     status: user.status,
   };
@@ -102,7 +105,7 @@ export function UserDialog({
 
     const nextForm =
       !isMaster() && authUser?.companyId
-        ? { ...initialForm, companyId: authUser.companyId }
+        ? { ...initialForm, companyId: String(authUser.companyId) }
         : initialForm;
     reset(nextForm);
   }, [open, user, reset, isMaster, authUser?.companyId]);
@@ -134,7 +137,7 @@ export function UserDialog({
     if (!value) {
       const nextForm =
         !isMaster() && authUser?.companyId
-          ? { ...initialForm, companyId: authUser.companyId }
+          ? { ...initialForm, companyId: String(authUser.companyId) }
           : initialForm;
       reset(nextForm);
     }
@@ -169,7 +172,7 @@ export function UserDialog({
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate text-lg font-semibold">{user.name}</h3>
-                  <p className="text-sm text-muted-foreground">{user.jobTitle || '—'}</p>
+                  <p className="text-sm text-muted-foreground">{getPositionLabel(user.position)}</p>
                   <Badge variant="outline" className="mt-2">
                     {STATUS_LABELS[user.status]}
                   </Badge>
@@ -177,15 +180,27 @@ export function UserDialog({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <InfoRow icon={<Mail className="h-4 w-4" />} label="E-mail" value={user.email || '—'} />
-                <InfoRow icon={<Phone className="h-4 w-4" />} label="Telefone" value={user.phone || '—'} />
+                <InfoRow
+                  icon={<Mail className="h-4 w-4" />}
+                  label="E-mail"
+                  value={user.email || '—'}
+                />
+                <InfoRow
+                  icon={<Phone className="h-4 w-4" />}
+                  label="Telefone"
+                  value={user.phone || '—'}
+                />
                 <InfoRow
                   icon={<ShieldCheck className="h-4 w-4" />}
                   label="Perfil"
                   value={getRoleLabel(user.role)}
                 />
                 {isMaster() && (
-                  <InfoRow icon={<UserIcon className="h-4 w-4" />} label="Empresa" value={user.company.name || '—'} />
+                  <InfoRow
+                    icon={<UserIcon className="h-4 w-4" />}
+                    label="Empresa"
+                    value={user.company.name || '—'}
+                  />
                 )}
                 <InfoRow
                   icon={<UserIcon className="h-4 w-4" />}
@@ -248,26 +263,52 @@ export function UserDialog({
 
                 <div className="space-y-2">
                   <Label htmlFor="email">E-mail *</Label>
-                  <Input id="email" type="email" placeholder="email@empresa.com" {...register('email')} />
-                  {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="email@empresa.com"
+                    {...register('email')}
+                  />
+                  {errors.email && (
+                    <p className="text-xs text-destructive">{errors.email.message}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="phone">Telefone</Label>
                   <Input id="phone" placeholder="(00) 00000-0000" {...register('phone')} />
-                  {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="jobTitle">Cargo</Label>
-                  <Input id="jobTitle" placeholder="Ex: Gerente de Produção" {...register('jobTitle')} />
-                  {errors.jobTitle && (
-                    <p className="text-xs text-destructive">{errors.jobTitle.message}</p>
+                  {errors.phone && (
+                    <p className="text-xs text-destructive">{errors.phone.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="role">Perfil *</Label>
+                  <Label htmlFor="position">Cargo</Label>
+                  <Controller
+                    name="position"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger id="position">
+                          <SelectValue placeholder="Selecione um cargo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {POSITION_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.position && (
+                    <p className="text-xs text-destructive">{errors.position.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="role">Perfil de acesso *</Label>
                   <Controller
                     name="role"
                     control={control}
@@ -307,7 +348,9 @@ export function UserDialog({
                       </Select>
                     )}
                   />
-                  {errors.status && <p className="text-xs text-destructive">{errors.status.message}</p>}
+                  {errors.status && (
+                    <p className="text-xs text-destructive">{errors.status.message}</p>
+                  )}
                 </div>
               </div>
             </div>

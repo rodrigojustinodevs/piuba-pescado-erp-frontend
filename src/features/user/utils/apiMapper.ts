@@ -6,7 +6,7 @@ export function mapApiUser(apiUser: ApiUser): User {
     name: apiUser.name,
     email: apiUser.email,
     phone: apiUser.phone,
-    jobTitle: apiUser.jobTitle,
+    position: apiUser.position,
     role: apiUser.role,
     status: apiUser.status,
     company: apiUser.company,

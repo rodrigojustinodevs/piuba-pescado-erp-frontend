@@ -1,0 +1,1 @@
+export { useIntegrationsListPage } from './useIntegrationsListPage';

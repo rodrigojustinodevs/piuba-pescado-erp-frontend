@@ -5,6 +5,7 @@ import type { User, UserTableProps } from '../types';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { getAvatarColorClassName, getInitials } from '../utils/avatarColor';
 import { getRoleBadgeClassName, getRoleLabel } from '../utils/roleLabels';
+import { getPositionLabel } from '../utils/positionLabels';
 import { STATUS_BADGE_STYLES, STATUS_LABELS } from '../utils/statusLabels';
 import { formatDateTimeLocal } from '@/shared/utils/dateFormat';
 import { DataTable, type DataTableColumn } from '@/shared/components/Table';
@@ -20,7 +21,7 @@ function UserCell({ user }: Readonly<{ user: User }>) {
       </div>
       <div>
         <div className="text-sm font-medium text-slate-900">{user.name}</div>
-        <div className="text-xs text-slate-400">{user.jobTitle || '—'}</div>
+        <div className="text-xs text-slate-400">{getPositionLabel(user.position)}</div>
       </div>
     </div>
   );

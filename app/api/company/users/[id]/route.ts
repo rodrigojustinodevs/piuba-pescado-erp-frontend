@@ -15,18 +15,18 @@ interface ApiUserResponse {
 const CONTEXT = 'User By Id API Proxy';
 
 export const GET = createDetailGetHandler<ApiUserResponse, User, { id: string }>({
-  backendPathBuilder: ({ id }) => `/api/admin/user/${id}`,
+  backendPathBuilder: ({ id }) => `/api/company/user/${id}`,
   context: CONTEXT,
   mapResponse: (data) => data.response,
 });
 
 export const PUT = createPutHandler<ApiUserResponse, Omit<UpdateUserData, 'id'>, { id: string }>({
-  backendPathBuilder: ({ id }) => `/api/admin/user/${id}`,
+  backendPathBuilder: ({ id }) => `/api/company/user/${id}`,
   context: CONTEXT,
   mapResponse: (data) => data.response,
 });
 
 export const DELETE = createDeleteHandler<{ id: string }>({
-  backendPathBuilder: ({ id }) => `/api/admin/user/${id}`,
+  backendPathBuilder: ({ id }) => `/api/company/user/${id}`,
   context: CONTEXT,
 });
