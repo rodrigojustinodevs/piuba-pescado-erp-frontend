@@ -12,20 +12,22 @@ export const POST = createUpsertHandler<ApiSaleCreateResponse, CreateSaleData>({
   context: CONTEXT,
   mapBody: (payload) => ({
     clientId: payload.clientId,
-    batchId: payload.batchId,
-    stockingId: payload.stockingId,
-    financialCategoryId: payload.financialCategoryId,
-    totalWeight: payload.totalWeight,
-    pricePerKg: payload.pricePerKg,
     saleDate: payload.saleDate,
-    isTotalHarvest: payload.isTotalHarvest,
-    needsInvoice: payload.needsInvoice,
+    financialCategoryId: payload.financialCategoryId,
+    responsibleUserId: payload.responsibleUserId,
+    dueDate: payload.dueDate,
     status: payload.status,
     notes: payload.notes?.trim() ? payload.notes.trim() : null,
+    needsInvoice: payload.needsInvoice,
+    invoiceNumber: payload.invoiceNumber,
+    discount: payload.discount,
+    shipping: payload.shipping,
+    taxes: payload.taxes,
+    paymentMethod: payload.paymentMethod,
+    items: payload.items,
   }),
   mapResponse: (data) => {
     const api = 'response' in data && data.response != null ? data.response : data;
     return mapApiSale(api as ApiSale);
   },
 });
-

@@ -2,14 +2,12 @@
 
 import type { SupplyCatalogStats } from '../types';
 import { Package, Tag, AlertTriangle, DollarSign } from 'lucide-react';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
 type SupplyCatalogStatsProps = {
   stats: SupplyCatalogStats;
 };
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 export function SupplyCatalogStatsCards({ stats }: Readonly<SupplyCatalogStatsProps>) {
   return (

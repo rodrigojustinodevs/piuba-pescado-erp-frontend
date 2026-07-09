@@ -2,12 +2,10 @@
 
 import type { FinancialTransactionCatalogStats } from '../types';
 import { TrendingUp, TrendingDown, AlertTriangle, BarChart2 } from 'lucide-react';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
 type Props = { stats: FinancialTransactionCatalogStats };
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 export function FinancialTransactionCatalogStatsCards({ stats }: Readonly<Props>) {
   return (

@@ -11,29 +11,34 @@ export const updateSaleStatusSchema = z.enum(saleUpdateStatusValues, {
   message: 'Status inválido',
 });
 
-export const updateSaleFormSchema = z.object({
-  totalWeight: z.number().min(0.001, 'Peso total deve ser pelo menos 0,001'),
-  pricePerKg: z.number().min(0, 'Preço por kg não pode ser negativo'),
-  saleDate: z.string().min(1, 'Data da venda é obrigatória'),
-  status: updateSaleStatusSchema,
-  notes: z.string().max(1000, 'Máximo 1000 caracteres').optional(),
+export const saleItemSchema = z.object({
+  batchId: z.string().optional(),
+  stockingId: z.string().optional(),
+  totalWeight: z.number().min(0.001, 'Peso deve ser maior que zero'),
+  pricePerKg: z.number().min(0, 'Preço não pode ser negativo'),
   isTotalHarvest: z.boolean(),
+  category: z.string().optional(),
+  notes: z.string().optional(),
 });
 
-export type UpdateSaleFormData = z.infer<typeof updateSaleFormSchema>;
+export type SaleItemFormData = z.infer<typeof saleItemSchema>;
 
 export const createSaleFormSchema = z.object({
   clientId: z.string().min(1, 'Cliente é obrigatório'),
-  batchId: z.string().min(1, 'Lote é obrigatório'),
-  stockingId: z.string().min(1, 'Povoamento é obrigatório'),
-  financialCategoryId: z.string().min(1, 'Categoria financeira é obrigatória'),
-  totalWeight: z.number().min(0.01, 'Peso total deve ser maior que zero'),
-  pricePerKg: z.number().min(0.01, 'Preço por kg deve ser maior que zero'),
-  saleDate: z.string().min(1, 'Data da venda é obrigatória'),
-  isTotalHarvest: z.boolean(),
-  status: saleStatusSchema,
+  financialCategoryId: z.string().optional(),
   needsInvoice: z.boolean(),
+  invoiceNumber: z.string().optional(),
+  status: z.string().min(1, 'Status é obrigatório'),
+  paymentMethod: z.string().optional(),
+  saleDate: z.string().min(1, 'Data da venda é obrigatória'),
+  dueDate: z.string().optional(),
+  items: z.array(saleItemSchema).min(1, 'Adicione ao menos um item'),
+  discount: z.number().min(0),
+  shipping: z.number().min(0),
+  taxes: z.number().min(0),
   notes: z.string().optional(),
 });
 
 export type CreateSaleFormData = z.infer<typeof createSaleFormSchema>;
+
+export const updateSaleFormSchema = createSaleFormSchema;

@@ -3,10 +3,8 @@
 import type { Supply } from '../types';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { Package } from 'lucide-react';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 function StatusBadge({ status, statusLabel }: Readonly<{ status: string; statusLabel: string }>) {
   const isBelowMin = status === 'below_minimum' || status === 'low_stock';

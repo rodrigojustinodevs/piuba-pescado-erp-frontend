@@ -5,10 +5,8 @@ import type { Supplier, SupplierStatus } from '../types';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { DataTable, type DataTableColumn, type DataTableAction } from '@/shared/components/Table';
 import { Badge } from '@/shared/components/ui/Badge';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 function formatCity(supplier: Supplier): string {
   return [supplier.address.city, supplier.address.state].filter(Boolean).join('/') || '—';

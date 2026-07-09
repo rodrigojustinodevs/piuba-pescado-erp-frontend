@@ -2,29 +2,13 @@
 
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { SaleEditForm, useSale, useUpdateSale } from '@/features/sale';
-import { saleUpdateStatusValues } from '@/features/sale/schemas';
-import type { UpdateSaleFormData } from '@/features/sale/schemas';
-import type { Sale, UpdateSaleData } from '@/features/sale/types';
+import { SaleForm, saleToUpdateFormValues, useSale, useUpdateSale } from '@/features/sale';
+import type { CreateSaleFormData } from '@/features/sale/schemas';
+import type { UpdateSaleData } from '@/features/sale/types';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { PageHeader } from '@/shared/components/ui';
 import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
-
-function saleToUpdateFormValues(sale: Sale): UpdateSaleFormData {
-  const status = (saleUpdateStatusValues as readonly string[]).includes(sale.status)
-    ? (sale.status as UpdateSaleFormData['status'])
-    : 'pending';
-  const saleDate = sale.saleDate.slice(0, 10);
-  return {
-    totalWeight: sale.totalWeight,
-    pricePerKg: sale.pricePerKg,
-    saleDate,
-    status,
-    notes: sale.notes ?? '',
-    isTotalHarvest: sale.isTotalHarvest,
-  };
-}
 
 export default function EditSalePage() {
   const params = useParams();
@@ -36,7 +20,7 @@ export default function EditSalePage() {
     updateSale.mutate({ ...data, id });
   };
 
-  const initialValues = useMemo<UpdateSaleFormData | undefined>(() => {
+  const initialValues = useMemo<CreateSaleFormData | undefined>(() => {
     if (!sale) return undefined;
     return saleToUpdateFormValues(sale);
   }, [sale]);
@@ -66,13 +50,7 @@ export default function EditSalePage() {
           subtitle="Atualize os dados da venda"
           icon={<OrdersIcon />}
         />
-        <SaleEditForm
-          readOnlyContext={{
-            clientName: sale.clientName,
-            batchName: sale.batchName,
-            stockingId: sale.stockingId,
-            financialCategoryId: sale.financialCategoryId,
-          }}
+        <SaleForm
           initialValues={initialValues}
           onSubmit={onSubmit}
           isSubmitting={updateSale.isPending}

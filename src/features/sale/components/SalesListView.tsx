@@ -1,11 +1,52 @@
 'use client';
 
-import { useCallback } from 'react';
-import type { Sale, SaleListResponse } from '../types';
+import React from 'react';
+import { TrendingUp, CheckCircle2, DollarSign, AlertTriangle, Plus } from 'lucide-react';
+import type { Sale, SaleDialogMode, SaleListResponse, SaleStatusFilter } from '../types';
 import { SaleTable } from './SaleTable';
-import { ListHeader, ListPageShell, SearchField, SortButton } from '@/shared/components/list';
+import { SaleDialog } from './SaleDialog';
+import { Pagination, SearchField } from '@/shared/components/list';
 import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
-import { Input, Select } from '@/shared/components/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
+
+function formatMoney(value: number): string {
+  if (!Number.isFinite(value)) return '—';
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+type SummaryStats = {
+  totalRevenue: number;
+  activeSalesCount: number;
+  received: number;
+  toReceive: number;
+  overdue: number;
+};
+
+function SummaryCard({
+  title,
+  value,
+  sub,
+  icon,
+  valueColor = 'text-[#0F172A]',
+}: Readonly<{
+  title: string;
+  value: string;
+  sub?: string;
+  icon: React.ReactNode;
+  valueColor?: string;
+}>) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-slate-500">{title}</span>
+        <span className="text-slate-400">{icon}</span>
+      </div>
+      <p className={`mt-3 text-2xl font-bold ${valueColor}`}>{value}</p>
+      {sub && <p className="mt-1 text-xs text-slate-400">{sub}</p>}
+    </div>
+  );
+}
 
 export type SalesListViewProps = {
   page: number;
@@ -18,16 +59,21 @@ export type SalesListViewProps = {
   isLoading: boolean;
   error: unknown;
   sales: Sale[];
-  status: 'all' | 'pending' | 'confirmed' | 'cancelled';
-  setStatus: (next: 'all' | 'pending' | 'confirmed' | 'cancelled') => void;
-  dateFrom: string;
-  setDateFrom: (next: string) => void;
-  dateTo: string;
-  setDateTo: (next: string) => void;
+  status: SaleStatusFilter;
+  setStatus: (next: SaleStatusFilter) => void;
+  summaryStats: SummaryStats;
   onDeleteSale?: (id: string, label: string) => void;
   isDeletingSale?: boolean;
   onCancelSale?: (id: string, label: string) => void;
   isCancellingSale?: boolean;
+  onNew: () => void;
+  onView: (sale: Sale) => void;
+  onEdit: (sale: Sale) => void;
+  dialogOpen: boolean;
+  dialogMode: SaleDialogMode;
+  selectedSale: Sale | null;
+  onDialogOpenChange: (open: boolean) => void;
+  onDialogSuccess: () => void;
 };
 
 export function SalesListView({
@@ -35,99 +81,169 @@ export function SalesListView({
   setPage,
   search,
   setSearch,
-  sortBy,
-  setSortBy,
   data,
   isLoading,
   error,
   sales,
   status,
   setStatus,
-  dateFrom,
-  setDateFrom,
-  dateTo,
-  setDateTo,
+  summaryStats,
   onDeleteSale,
   isDeletingSale = false,
   onCancelSale,
   isCancellingSale = false,
+  onNew,
+  onView,
+  onEdit,
+  dialogOpen,
+  dialogMode,
+  selectedSale,
+  onDialogOpenChange,
+  onDialogSuccess,
 }: Readonly<SalesListViewProps>) {
-  const handleSort = useCallback((next: string) => setSortBy(next), [setSortBy]);
+  function renderContent() {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
+          Carregando...
+        </div>
+      );
+    }
+    if (error) {
+      return (
+        <div className="flex items-center justify-center py-16 text-red-500 text-sm">
+          Erro ao carregar vendas.
+        </div>
+      );
+    }
+    if (sales.length === 0) {
+      return (
+        <div className="flex items-center justify-center py-16 text-slate-400 text-sm">
+          Nenhuma venda encontrada.
+        </div>
+      );
+    }
+    return (
+      <>
+        <SaleTable
+          sales={sales}
+          onView={onView}
+          onEdit={onEdit}
+          onDelete={onDeleteSale}
+          isDeleting={isDeletingSale}
+          onCancel={onCancelSale}
+          isCancelling={isCancellingSale}
+        />
+        {data && data.total > data.limit && (
+          <Pagination
+            page={page}
+            limit={data.limit}
+            total={data.total}
+            itemLabelPlural="vendas"
+            onPageChange={setPage}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
-    <ListPageShell
-      listHeader={
-        <ListHeader
-          icon={<OrdersIcon />}
-          title="Vendas"
-          subtitle="Relação de vendas por cliente e lote"
-          ctaHref="/company/sales/create"
-          ctaLabel="Nova venda"
-        />
-      }
-      toolbar={
-        <section className="flex flex-wrap items-end gap-3">
-          <SearchField
-            value={search}
-            placeholder="Buscar por cliente ou lote..."
-            onChange={setSearch}
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center text-[#0EA5A4]">
+              <OrdersIcon />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">Vendas</h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Notas fiscais, faturamento e recebimentos.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onNew}
+            className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] transition-colors shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+            Nova Venda
+          </button>
+        </div>
+
+        {/* Summary cards */}
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <SummaryCard
+            title="Faturamento"
+            value={formatMoney(summaryStats.totalRevenue)}
+            sub={`${summaryStats.activeSalesCount} ${summaryStats.activeSalesCount === 1 ? 'venda' : 'vendas'}`}
+            icon={<TrendingUp className="h-5 w-5" />}
           />
-          <Select
-            label="Status"
-            value={status}
-            labelInline={true}
-            onChange={(e) =>
-              setStatus(e.target.value as 'all' | 'pending' | 'confirmed' | 'cancelled')
-            }
-            options={[
-              { value: 'all', label: 'Todos' },
-              { value: 'pending', label: 'Pendente' },
-              { value: 'confirmed', label: 'Confirmado' },
-              { value: 'cancelled', label: 'Cancelado' },
-            ]}
+          <SummaryCard
+            title="Recebido"
+            value={formatMoney(summaryStats.received)}
+            icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
+            valueColor="text-emerald-600"
           />
-          <Input
-            label="De"
-            type="date"
-            value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
+          <SummaryCard
+            title="A Receber"
+            value={formatMoney(summaryStats.toReceive)}
+            icon={<DollarSign className="h-5 w-5 text-blue-500" />}
+            valueColor="text-blue-600"
           />
-          <Input
-            label="Até"
-            type="date"
-            value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
+          <SummaryCard
+            title="Em Atraso"
+            value={formatMoney(summaryStats.overdue)}
+            icon={<AlertTriangle className="h-5 w-5 text-red-500" />}
+            valueColor="text-red-600"
           />
-          <SortButton current={sortBy} onSort={handleSort} value="saleDate" label="Data" />
-        </section>
-      }
-      total={data?.total ?? 0}
-      totalLabelSingular="venda encontrada"
-      totalLabelPlural="vendas encontradas"
-      isLoading={isLoading}
-      error={error}
-      errorMessage="Erro ao carregar vendas."
-      isEmpty={!isLoading && !error && sales.length === 0}
-      emptyMessage="Nenhuma venda encontrada."
-      pagination={
-        data
-          ? {
-              page,
-              limit: data.limit,
-              total: data.total,
-              itemLabelPlural: 'vendas',
-              onPageChange: setPage,
-            }
-          : null
-      }
-    >
-      <SaleTable
-        sales={sales}
-        onDelete={onDeleteSale}
-        isDeleting={isDeletingSale}
-        onCancel={onCancelSale}
-        isCancelling={isCancellingSale}
+        </div>
+
+        {/* Table card */}
+        <Card>
+          <CardHeader className="flex-row items-center justify-between px-5 py-4">
+            <CardTitle className="text-base">Lista de Vendas</CardTitle>
+            <Tabs
+              value={status}
+              onValueChange={(v) => {
+                setStatus(v as SaleStatusFilter);
+                setPage(1);
+              }}
+            >
+              <TabsList>
+                <TabsTrigger value="all">Todos</TabsTrigger>
+                <TabsTrigger value="pending">Pendente</TabsTrigger>
+                <TabsTrigger value="confirmed">Confirmada</TabsTrigger>
+                <TabsTrigger value="paid">Paga</TabsTrigger>
+                <TabsTrigger value="delivered">Entregue</TabsTrigger>
+                <TabsTrigger value="overdue">Atrasada</TabsTrigger>
+                <TabsTrigger value="cancelled">Cancelada</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <SearchField
+              search={search}
+              setSearch={setSearch}
+              setCurrentPage={setPage}
+              placeholder="Buscar por código, NF, cliente..."
+            />
+            <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              {renderContent()}
+            </main>
+          </CardContent>
+        </Card>
+      </div>
+
+      <SaleDialog
+        open={dialogOpen}
+        onOpenChange={onDialogOpenChange}
+        mode={dialogMode}
+        sale={selectedSale}
+        onSuccess={onDialogSuccess}
       />
-    </ListPageShell>
+    </>
   );
 }

@@ -5,37 +5,64 @@ import {
   BanIcon,
   DataTable,
   SpinnerIcon,
-  createCrudListRowActions,
   type DataTableAction,
   type DataTableColumn,
 } from '@/shared/components/Table';
+import { Eye, Pencil, Trash, CheckCircle, AlertTriangle } from 'lucide-react';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
 import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  pix: 'PIX',
+  bank_slip: 'Boleto bancário',
+  bank_transfer: 'Transferência bancária',
+  credit_card: 'Cartão de crédito',
+  debit_card: 'Cartão de débito',
+  cash: 'Dinheiro',
+  check: 'Cheque',
+};
 
 function formatMoney(value: number): string {
   if (!Number.isFinite(value)) return '—';
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
-function formatDateTime(value: string | null): string {
-  if (!value) return '—';
-  try {
-    const d = new Date(value.replace(' ', 'T'));
-    if (Number.isNaN(d.getTime())) return value;
-    return d.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return value;
+function isOverdue(dateStr: string | null): boolean {
+  if (!dateStr) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const d = new Date(dateStr.replace(' ', 'T'));
+  return d < today;
+}
+
+function StatusBadge({ sale }: Readonly<{ sale: Sale }>) {
+  const key = sale.status?.toLowerCase() ?? '';
+  const label = sale.statusLabel || sale.status;
+  const baseClass = `inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(sale.status)}`;
+
+  if (key === 'paid' || key === 'paga') {
+    return (
+      <span className={baseClass}>
+        <CheckCircle className="h-3 w-3" />
+        {label}
+      </span>
+    );
   }
+  if (key === 'overdue' || key === 'atrasada') {
+    return (
+      <span className={baseClass}>
+        <AlertTriangle className="h-3 w-3" />
+        {label}
+      </span>
+    );
+  }
+  return <span className={baseClass}>{label}</span>;
 }
 
 export type SaleTableProps = {
   sales: Sale[];
+  onView?: (sale: Sale) => void;
+  onEdit?: (sale: Sale) => void;
   onDelete?: (id: string, label: string) => void;
   isDeleting?: boolean;
   onCancel?: (id: string, label: string) => void;
@@ -43,87 +70,122 @@ export type SaleTableProps = {
 };
 
 function canCancelSale(row: Sale): boolean {
-  return row.status?.toLowerCase() !== 'cancelled';
+  const s = row.status?.toLowerCase();
+  return s !== 'cancelled' && s !== 'cancelada' && s !== 'paid' && s !== 'paga';
 }
 
 const SALE_COLUMNS: Array<DataTableColumn<Sale>> = [
   {
-    id: 'saleDate',
-    header: 'Data',
+    id: 'code',
+    header: 'Código',
     cell: (row) => (
-      <div className="text-sm font-medium text-[#0F172A]">{formatCalendarDatePtBR(row.saleDate)}</div>
+      <div className="text-xs font-mono text-slate-500 whitespace-nowrap">{row.code || '—'}</div>
+    ),
+  },
+  {
+    id: 'numberNf',
+    header: 'Nota Fiscal',
+    cell: (row) => (
+      <div className="text-xs text-slate-500">{row.numberNf || '—'}</div>
     ),
   },
   {
     id: 'clientName',
     header: 'Cliente',
-    cell: (row) => <div className="text-sm text-slate-600">{row.clientName || '—'}</div>,
-  },
-  {
-    id: 'batchName',
-    header: 'Lote',
-    cell: (row) => <div className="text-sm text-slate-600">{row.batchName || '—'}</div>,
-  },
-  {
-    id: 'totalWeight',
-    header: 'Peso total',
     cell: (row) => (
-      <div className="text-sm text-slate-600 tabular-nums">
-        {row.totalWeight} kg
+      <div className="text-sm font-semibold text-[#0F172A]">{row.clientName || '—'}</div>
+    ),
+  },
+  {
+    id: 'saleDate',
+    header: 'Data',
+    cell: (row) => (
+      <div className="text-sm text-slate-600 whitespace-nowrap">
+        {formatCalendarDatePtBR(row.saleDate)}
       </div>
     ),
   },
   {
-    id: 'pricePerKg',
-    header: 'Preço/kg',
-    cell: (row) => <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.pricePerKg)}</div>,
+    id: 'dueDate',
+    header: 'Vencimento',
+    cell: (row) => {
+      const overdue = isOverdue(row.dueDate);
+      return (
+        <div className={`text-sm whitespace-nowrap font-medium ${overdue ? 'text-red-500' : 'text-slate-600'}`}>
+          {row.dueDate ? formatCalendarDatePtBR(row.dueDate) : '—'}
+        </div>
+      );
+    },
   },
   {
-    id: 'totalRevenue',
-    header: 'Receita total',
+    id: 'paymentMethod',
+    header: 'Pagamento',
     cell: (row) => (
-      <div className="text-sm font-medium text-[#0F172A] tabular-nums">{formatMoney(row.totalRevenue)}</div>
+      <div className="text-sm text-slate-600">{PAYMENT_METHOD_LABELS[row.paymentMethod ?? ''] ?? row.paymentMethod ?? '—'}</div>
     ),
   },
   {
     id: 'status',
     header: 'Status',
-    cell: (row) => (
-      <span
-        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(row.status)}`}
-      >
-        {row.statusLabel || row.status}
-      </span>
-    ),
+    cell: (row) => <StatusBadge sale={row} />,
   },
   {
-    id: 'updatedAt',
-    header: 'Atualizado em',
-    cell: (row) => <div className="text-sm text-slate-500">{formatDateTime(row.updatedAt)}</div>,
+    id: 'totalRevenue',
+    header: 'Total',
+    headerClassName: 'text-right',
+    cell: (row) => (
+      <div className="text-sm font-medium text-[#0F172A] tabular-nums text-right">
+        {formatMoney(row.totalRevenue)}
+      </div>
+    ),
   },
 ];
 
 export function SaleTable({
   sales,
+  onView,
+  onEdit,
   onDelete,
   isDeleting = false,
   onCancel,
   isCancelling = false,
 }: Readonly<SaleTableProps>) {
-  const baseRowActions = createCrudListRowActions<Sale>({
-    basePath: '/company/sales',
-    onDelete,
-    isDeleting,
-    getRowLabel: (row) => row.clientName || row.batchName || row.id,
-  });
-
   const rowActions = (row: Sale): DataTableAction[] => {
-    const actions = baseRowActions(row);
-    if (!onCancel || !canCancelSale(row)) return actions;
     const label = row.clientName || row.batchName || row.id;
-    return [
-      ...actions,
-      {
+    const actions: DataTableAction[] = [];
+
+    if (onView) {
+      actions.push({
+        label: 'Ver detalhes',
+        onClick: () => onView(row),
+        icon: <Eye className="h-4 w-4" />,
+      });
+    }
+
+    if (onEdit) {
+      actions.push({
+        label: 'Editar',
+        onClick: () => onEdit(row),
+        icon: <Pencil className="h-4 w-4" />,
+      });
+    }
+
+    if (onDelete) {
+      actions.push({
+        label: 'Excluir',
+        onClick: () => onDelete(row.id, label),
+        variant: 'danger' as const,
+        disabled: isDeleting,
+        icon: isDeleting ? (
+          <SpinnerIcon className="h-4 w-4 animate-spin" />
+        ) : (
+          <Trash className="h-4 w-4" />
+        ),
+      });
+    }
+
+    if (onCancel && canCancelSale(row)) {
+      actions.push({
         label: 'Cancelar venda',
         onClick: () => onCancel(row.id, label),
         variant: 'danger' as const,
@@ -133,8 +195,10 @@ export function SaleTable({
         ) : (
           <BanIcon className="h-4 w-4" />
         ),
-      },
-    ];
+      });
+    }
+
+    return actions;
   };
 
   return (
@@ -147,4 +211,3 @@ export function SaleTable({
     />
   );
 }
-

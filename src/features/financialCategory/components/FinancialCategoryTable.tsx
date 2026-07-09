@@ -5,10 +5,8 @@ import { displayFinancialCategoryType } from '../utils/labels';
 import { getFinancialCategoryTypeBadgeClassNames } from '../utils/typeBadgeClassNames';
 import { TrendingUp, TrendingDown, BarChart2 } from 'lucide-react';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 function getTypeIcon(isRevenue: boolean, isExpense: boolean) {
   if (isRevenue) return <TrendingUp className="h-3 w-3" />;
