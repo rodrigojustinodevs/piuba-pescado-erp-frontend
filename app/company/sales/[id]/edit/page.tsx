@@ -2,39 +2,13 @@
 
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { SaleForm, useSale, useUpdateSale } from '@/features/sale';
+import { SaleForm, saleToUpdateFormValues, useSale, useUpdateSale } from '@/features/sale';
 import type { UpdateSaleFormData } from '@/features/sale/schemas';
-import type { Sale, UpdateSaleData } from '@/features/sale/types';
+import type { UpdateSaleData } from '@/features/sale/types';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { PageHeader } from '@/shared/components/ui';
 import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
-
-function saleToUpdateFormValues(sale: Sale): UpdateSaleFormData {
-  return {
-    clientId: sale.clientId ?? '',
-    financialCategoryId: sale.financialCategoryId ?? '',
-    needsInvoice: sale.needsInvoice ?? false,
-    invoiceNumber: sale.numberNf ?? '',
-    status: sale.status ?? 'pending',
-    paymentMethod: sale.paymentMethod ?? '',
-    saleDate: sale.saleDate.slice(0, 10),
-    dueDate: sale.dueDate ?? '',
-    items: sale.items.map((item) => ({
-      batchId: item.batchId ?? '',
-      stockingId: item.stockingId ?? '',
-      totalWeight: item.totalWeight,
-      pricePerKg: item.pricePerKg,
-      isTotalHarvest: item.isTotalHarvest,
-      category: item.category ?? '',
-      notes: item.notes ?? '',
-    })),
-    discount: sale.discount,
-    shipping: sale.shipping,
-    taxes: sale.taxes,
-    notes: sale.notes ?? '',
-  };
-}
 
 export default function EditSalePage() {
   const params = useParams();

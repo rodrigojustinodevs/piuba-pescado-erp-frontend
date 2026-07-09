@@ -2,14 +2,12 @@
 
 import type { StockTransactionCatalogStats } from '../types';
 import { ArrowLeftRight, ArrowDownLeft, ArrowUpRight, DollarSign } from 'lucide-react';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
 type StockTransactionCatalogStatsProps = {
   stats: StockTransactionCatalogStats;
 };
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 export function StockTransactionCatalogStatsCards({
   stats,

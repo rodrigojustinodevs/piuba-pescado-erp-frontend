@@ -17,6 +17,7 @@ import { maskPhone } from '@/shared/utils/phoneMask';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { Separator } from '@/src/shared/components/ui/Separator';
 import { Badge } from '@/src/shared/components/ui/Badge';
+import { DetailItem } from '@/shared/components/ui/DetailItem';
 
 type ClientViewDialogContentProps = {
   client: Client | null;
@@ -42,26 +43,6 @@ function priceGroupLabel(value: string): string {
     case 'consumer': return 'Consumidor';
     default: return value || '—';
   }
-}
-
-function DetailItem({
-  icon,
-  label,
-  value,
-}: Readonly<{
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}>) {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-      <span className="text-slate-400 shrink-0">{icon}</span>
-      <div>
-        <p className="text-xs text-slate-500">{label}</p>
-        <p className="text-sm font-medium text-slate-800">{value || '—'}</p>
-      </div>
-    </div>
-  );
 }
 
 export function ClientViewDialogContent({ client }: Readonly<ClientViewDialogContentProps>) {

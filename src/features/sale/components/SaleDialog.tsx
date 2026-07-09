@@ -6,6 +6,7 @@ import { SaleForm } from './SaleForm';
 import { SaleViewDialogContent } from './SaleViewDialogContent';
 import { useCreateSale } from '../hooks/useCreateSale';
 import { useUpdateSale } from '../hooks/useUpdateSale';
+import { saleToUpdateFormValues } from '../utils/apiMapper';
 import {
   Dialog,
   DialogContent,
@@ -79,31 +80,7 @@ export function SaleDialog({
   }
 
   const editInitialValues: UpdateSaleFormData | undefined =
-    sale && mode === 'edit'
-      ? {
-          clientId: sale.clientId ?? '',
-          financialCategoryId: sale.financialCategoryId ?? '',
-          needsInvoice: sale.needsInvoice ?? false,
-          invoiceNumber: sale.numberNf ?? '',
-          status: sale.status ?? 'pending',
-          paymentMethod: sale.paymentMethod ?? '',
-          saleDate: sale.saleDate ?? '',
-          dueDate: sale.dueDate ?? '',
-          items: sale.items.map((item) => ({
-            batchId: item.batchId ?? '',
-            stockingId: item.stockingId ?? '',
-            totalWeight: item.totalWeight,
-            pricePerKg: item.pricePerKg,
-            isTotalHarvest: item.isTotalHarvest,
-            category: item.category ?? '',
-            notes: item.notes ?? '',
-          })),
-          discount: sale.discount,
-          shipping: sale.shipping,
-          taxes: sale.taxes,
-          notes: sale.notes ?? '',
-        }
-      : undefined;
+    sale && mode === 'edit' ? saleToUpdateFormValues(sale) : undefined;
 
   function renderContent() {
     if (mode === 'view') {

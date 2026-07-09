@@ -2,14 +2,12 @@
 
 import { ShoppingCart, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import type { PurchaseCatalogStats } from '../types';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
 type PurchaseCatalogStatsProps = {
   stats: PurchaseCatalogStats;
 };
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 export function PurchaseCatalogStatsCards({ stats }: Readonly<PurchaseCatalogStatsProps>) {
   return (

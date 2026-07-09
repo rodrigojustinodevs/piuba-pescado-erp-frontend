@@ -4,12 +4,10 @@ import { TrendingUp, TrendingDown, ArrowLeftRight, Calendar, Tag, CreditCard, Fi
 import type { FinancialTransaction } from '../types';
 import { formatCalendarDatePtBR, formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { Separator } from '@/src/shared/components/ui/Separator';
+import { formatCurrency } from '@/shared/utils/numberFormat';
+import { DetailItem } from '@/shared/components/ui/DetailItem';
 
 type Props = { transaction: FinancialTransaction | null };
-
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 function getTypeStyle(type: string) {
   if (type === 'income') return { bg: 'bg-emerald-50', icon: <TrendingUp className="h-5 w-5 text-emerald-600" />, amount: 'text-emerald-600' };
@@ -28,18 +26,6 @@ function getStatusBadge(status: string, statusLabel: string) {
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${map[status] ?? 'bg-slate-100 text-slate-700'}`}>
       {statusLabel}
     </span>
-  );
-}
-
-function DetailItem({ icon, label, value }: Readonly<{ icon: React.ReactNode; label: string; value: string }>) {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-      <span className="text-slate-400 shrink-0">{icon}</span>
-      <div>
-        <p className="text-xs text-slate-500">{label}</p>
-        <p className="text-sm font-medium text-slate-800">{value}</p>
-      </div>
-    </div>
   );
 }
 

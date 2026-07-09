@@ -1,4 +1,5 @@
 import type { ApiSale, ApiSaleItem, ApiSaleListResponse, Sale, SaleItem, SaleListResponse } from '../types';
+import type { UpdateSaleFormData } from '../schemas';
 import {
   extractListFromPagedApiResponse,
   getApiPagedListMeta,
@@ -62,6 +63,32 @@ export function mapApiSale(api: ApiSale): Sale {
     items,
     createdAt: api.createdAt ?? null,
     updatedAt: api.updatedAt ?? null,
+  };
+}
+
+export function saleToUpdateFormValues(sale: Sale): UpdateSaleFormData {
+  return {
+    clientId: sale.clientId ?? '',
+    financialCategoryId: sale.financialCategoryId ?? '',
+    needsInvoice: sale.needsInvoice ?? false,
+    invoiceNumber: sale.numberNf ?? '',
+    status: sale.status ?? 'pending',
+    paymentMethod: sale.paymentMethod ?? '',
+    saleDate: sale.saleDate.slice(0, 10),
+    dueDate: sale.dueDate ?? '',
+    items: sale.items.map((item) => ({
+      batchId: item.batchId ?? '',
+      stockingId: item.stockingId ?? '',
+      totalWeight: item.totalWeight,
+      pricePerKg: item.pricePerKg,
+      isTotalHarvest: item.isTotalHarvest,
+      category: item.category ?? '',
+      notes: item.notes ?? '',
+    })),
+    discount: sale.discount,
+    shipping: sale.shipping,
+    taxes: sale.taxes,
+    notes: sale.notes ?? '',
   };
 }
 

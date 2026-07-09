@@ -1,40 +1,26 @@
 'use client';
 
-import { ShoppingCart, Scale, DollarSign, CalendarDays, Building2, Boxes, FileText, User } from 'lucide-react';
+import {
+  ShoppingCart,
+  Scale,
+  DollarSign,
+  CalendarDays,
+  Building2,
+  Boxes,
+  FileText,
+  User,
+} from 'lucide-react';
 import type { Sale } from '../types';
 import { formatCalendarDatePtBR, formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { Separator } from '@/shared/components/ui/Separator';
-import { Badge } from '@/shared/components/ui/Badge';
 import { getStatusBadgeClassNames } from '@/shared/utils/statusBadgeClassNames';
+import { formatCurrency } from '@/shared/utils/numberFormat';
+import { DetailItem } from '@/shared/components/ui/DetailItem';
 
 type SaleViewDialogContentProps = {
   sale: Sale | null;
 };
-
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
-
-function DetailItem({
-  icon,
-  label,
-  value,
-}: Readonly<{
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}>) {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-      <span className="text-slate-400 shrink-0">{icon}</span>
-      <div>
-        <p className="text-xs text-slate-500">{label}</p>
-        <p className="text-sm font-medium text-slate-800">{value}</p>
-      </div>
-    </div>
-  );
-}
 
 export function SaleViewDialogContent({ sale }: Readonly<SaleViewDialogContentProps>) {
   if (!sale) return null;

@@ -1,3 +1,5 @@
+export { DetailItem } from './DetailItem';
+
 export { Input } from './Input';
 export type { InputProps } from './Input';
 

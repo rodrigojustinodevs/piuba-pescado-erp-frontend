@@ -8,7 +8,7 @@ export const MOCK_INTEGRATIONS: Integration[] = [
     model: 'AT-GW-2000',
     type: 'gateway',
     protocol: 'MQTT',
-    endpoint: 'mqtt://gateway-setora.piuba.iot:1883',
+    endpoint: 'mqtts://gateway-setora.piuba.iot:8883',
     deviceCount: 24,
     status: 'connected',
     lastSyncAt: '2026-06-04T06:25:00',

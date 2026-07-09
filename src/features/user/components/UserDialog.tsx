@@ -53,9 +53,16 @@ const initialForm: CreateUserFormData = {
   status: 'active',
 };
 
-function userToForm(user: User): CreateUserFormData {
-  console.log(user, 'userToForm');
+function buildInitialForm(
+  isMaster: boolean,
+  companyId: number | string | null | undefined,
+): CreateUserFormData {
+  return !isMaster && companyId
+    ? { ...initialForm, companyId: String(companyId) }
+    : initialForm;
+}
 
+function userToForm(user: User): CreateUserFormData {
   return {
     companyId: String(user.company.id ?? ''),
     name: user.name,
@@ -103,11 +110,7 @@ export function UserDialog({
       return;
     }
 
-    const nextForm =
-      !isMaster() && authUser?.companyId
-        ? { ...initialForm, companyId: String(authUser.companyId) }
-        : initialForm;
-    reset(nextForm);
+    reset(buildInitialForm(isMaster(), authUser?.companyId));
   }, [open, user, reset, isMaster, authUser?.companyId]);
 
   async function onSubmit(data: CreateUserFormData) {
@@ -135,11 +138,7 @@ export function UserDialog({
 
   function handleClose(value: boolean) {
     if (!value) {
-      const nextForm =
-        !isMaster() && authUser?.companyId
-          ? { ...initialForm, companyId: String(authUser.companyId) }
-          : initialForm;
-      reset(nextForm);
+      reset(buildInitialForm(isMaster(), authUser?.companyId));
     }
     onOpenChange(value);
   }

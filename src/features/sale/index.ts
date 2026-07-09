@@ -8,7 +8,7 @@ export type {
   SaleStatus,
   SaleUpdateStatus,
 } from './types';
-export { mapApiSale, mapApiSaleList } from './utils/apiMapper';
+export { mapApiSale, mapApiSaleList, saleToUpdateFormValues } from './utils/apiMapper';
 export {
   createSaleFormSchema,
   saleStatusSchema,

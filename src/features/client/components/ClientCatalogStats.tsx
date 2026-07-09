@@ -2,14 +2,12 @@
 
 import type { ClientCatalogStats } from '../types';
 import { Users, UserCheck, UserPlus, TrendingUp } from 'lucide-react';
+import { formatCurrency } from '@/shared/utils/numberFormat';
 
 type ClientCatalogStatsProps = {
   stats: ClientCatalogStats;
 };
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 export function ClientCatalogStatsCards({ stats }: Readonly<ClientCatalogStatsProps>) {
   return (

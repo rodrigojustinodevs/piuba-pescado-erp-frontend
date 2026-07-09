@@ -6,14 +6,12 @@ import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { Separator } from '@/src/shared/components/ui/Separator';
 import { Badge } from '@/src/shared/components/ui/Badge';
+import { formatCurrency } from '@/shared/utils/numberFormat';
+import { DetailItem } from '@/shared/components/ui/DetailItem';
 
 type SupplierViewDialogContentProps = {
   supplier: Supplier | null;
 };
-
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
 
 const STATUS_STYLES: Record<SupplierStatus, string> = {
   active: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30',
@@ -26,26 +24,6 @@ const STATUS_LABELS: Record<SupplierStatus, string> = {
   inactive: 'Inativo',
   suspended: 'Suspenso',
 };
-
-function DetailItem({
-  icon,
-  label,
-  value,
-}: Readonly<{
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}>) {
-  return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-      <span className="text-slate-400 shrink-0">{icon}</span>
-      <div>
-        <p className="text-xs text-slate-500">{label}</p>
-        <p className="text-sm font-medium text-slate-800">{value}</p>
-      </div>
-    </div>
-  );
-}
 
 function formatAddress(supplier: Supplier): string {
   const { street, number, neighborhood, city, state, zipCode } = supplier.address;
