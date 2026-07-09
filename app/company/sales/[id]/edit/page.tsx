@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { SaleForm, saleToUpdateFormValues, useSale, useUpdateSale } from '@/features/sale';
-import type { UpdateSaleFormData } from '@/features/sale/schemas';
+import type { CreateSaleFormData } from '@/features/sale/schemas';
 import type { UpdateSaleData } from '@/features/sale/types';
 import { DashboardLayout } from '@/shared/components/Layout';
 import { PageHeader } from '@/shared/components/ui';
@@ -20,7 +20,7 @@ export default function EditSalePage() {
     updateSale.mutate({ ...data, id });
   };
 
-  const initialValues = useMemo<UpdateSaleFormData | undefined>(() => {
+  const initialValues = useMemo<CreateSaleFormData | undefined>(() => {
     if (!sale) return undefined;
     return saleToUpdateFormValues(sale);
   }, [sale]);

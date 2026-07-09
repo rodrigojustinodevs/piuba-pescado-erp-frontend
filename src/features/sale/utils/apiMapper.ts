@@ -1,5 +1,5 @@
 import type { ApiSale, ApiSaleItem, ApiSaleListResponse, Sale, SaleItem, SaleListResponse } from '../types';
-import type { UpdateSaleFormData } from '../schemas';
+import type { CreateSaleFormData } from '../schemas';
 import {
   extractListFromPagedApiResponse,
   getApiPagedListMeta,
@@ -66,7 +66,7 @@ export function mapApiSale(api: ApiSale): Sale {
   };
 }
 
-export function saleToUpdateFormValues(sale: Sale): UpdateSaleFormData {
+export function saleToUpdateFormValues(sale: Sale): CreateSaleFormData {
   return {
     clientId: sale.clientId ?? '',
     financialCategoryId: sale.financialCategoryId ?? '',

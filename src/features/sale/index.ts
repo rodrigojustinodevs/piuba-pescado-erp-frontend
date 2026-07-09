@@ -17,7 +17,7 @@ export {
   updateSaleFormSchema,
   updateSaleStatusSchema,
 } from './schemas';
-export type { CreateSaleFormData, UpdateSaleFormData } from './schemas';
+export type { CreateSaleFormData } from './schemas';
 export { saleService } from './services/saleService';
 export {
   useSales,

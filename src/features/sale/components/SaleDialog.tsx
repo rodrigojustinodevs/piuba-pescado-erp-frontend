@@ -1,7 +1,7 @@
 'use client';
 
 import type { Sale, SaleDialogMode, CreateSaleData, UpdateSaleData } from '../types';
-import type { UpdateSaleFormData } from '../schemas';
+import type { CreateSaleFormData } from '../schemas';
 import { SaleForm } from './SaleForm';
 import { SaleViewDialogContent } from './SaleViewDialogContent';
 import { useCreateSale } from '../hooks/useCreateSale';
@@ -79,7 +79,7 @@ export function SaleDialog({
     });
   }
 
-  const editInitialValues: UpdateSaleFormData | undefined =
+  const editInitialValues: CreateSaleFormData | undefined =
     sale && mode === 'edit' ? saleToUpdateFormValues(sale) : undefined;
 
   function renderContent() {

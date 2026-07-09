@@ -8,9 +8,13 @@ import { useAlertModal } from '@/shared/components/AlertModal';
 import { UserRole, type UserRoleType } from '@/shared/types/auth';
 
 export type UserStatusFilter = 'all' | 'active' | 'inactive' | 'blocked';
-export type UserRoleFilter = 'all' | UserRoleType;
+export type UserRoleFilter = UserRoleType;
 
-const ADMIN_ROLES: UserRoleType[] = [UserRole.MASTER, UserRole.MASTER_ADMIN, UserRole.COMPANY_ADMIN];
+const ADMIN_ROLES = new Set<UserRoleType>([
+  UserRole.MASTER,
+  UserRole.MASTER_ADMIN,
+  UserRole.COMPANY_ADMIN,
+]);
 
 export function useUsersListPage() {
   const listState = useListPageState<UserStatusFilter>({ initialSortBy: 'name' });
@@ -37,7 +41,7 @@ export function useUsersListPage() {
     return {
       total: data?.total ?? users.length,
       active: users.filter((u) => u.status === 'active').length,
-      admins: users.filter((u) => ADMIN_ROLES.includes(u.role)).length,
+      admins: users.filter((u) => ADMIN_ROLES.has(u.role)).length,
       blocked: users.filter((u) => u.status === 'blocked').length,
     };
   }, [data?.users, data?.total]);

@@ -15,6 +15,11 @@ import { useToast } from '@/shared/contexts/ToastContext';
 
 const SYNC_DELAY_MS = 800;
 
+function syncIntegration(integration: Integration, now: string): Integration {
+  if (integration.status === 'disconnected') return integration;
+  return { ...integration, status: 'connected', lastSyncAt: now };
+}
+
 function matchesSearch(integration: Integration, search: string): boolean {
   const term = search.trim().toLowerCase();
   if (!term) return true;
@@ -80,36 +85,37 @@ export function useIntegrationsListPage() {
     [showSuccess],
   );
 
+  const removeIntegration = useCallback(
+    (id: string) => {
+      setIntegrations((prev) => prev.filter((integration) => integration.id !== id));
+      showSuccess('Integração removida com sucesso!');
+    },
+    [showSuccess],
+  );
+
   const handleDelete = useCallback(
     (id: string, name: string) => {
       showError(
         'Confirmar Remoção',
         `Tem certeza que deseja remover a integração "${name}"? Esta ação não pode ser desfeita.`,
         'Sim, Remover',
-        () => {
-          setIntegrations((prev) => prev.filter((integration) => integration.id !== id));
-          showSuccess('Integração removida com sucesso!');
-        },
+        () => removeIntegration(id),
       );
     },
-    [showError, showSuccess],
+    [showError, removeIntegration],
   );
+
+  const reconnectIntegrations = useCallback(() => {
+    const now = new Date().toISOString();
+    setIntegrations((prev) => prev.map((integration) => syncIntegration(integration, now)));
+    setIsSyncing(false);
+    showSuccess('Sincronização concluída com sucesso!');
+  }, [showSuccess]);
 
   const handleSync = useCallback(() => {
     setIsSyncing(true);
-    setTimeout(() => {
-      const now = new Date().toISOString();
-      setIntegrations((prev) =>
-        prev.map((integration) =>
-          integration.status === 'disconnected'
-            ? integration
-            : { ...integration, status: 'connected', lastSyncAt: now },
-        ),
-      );
-      setIsSyncing(false);
-      showSuccess('Sincronização concluída com sucesso!');
-    }, SYNC_DELAY_MS);
-  }, [showSuccess]);
+    setTimeout(reconnectIntegrations, SYNC_DELAY_MS);
+  }, [reconnectIntegrations]);
 
   return {
     search,

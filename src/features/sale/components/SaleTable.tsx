@@ -35,7 +35,7 @@ function isOverdue(dateStr: string | null): boolean {
   return d < today;
 }
 
-function StatusBadge({ sale }: { sale: Sale }) {
+function StatusBadge({ sale }: Readonly<{ sale: Sale }>) {
   const key = sale.status?.toLowerCase() ?? '';
   const label = sale.statusLabel || sale.status;
   const baseClass = `inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClassNames(sale.status)}`;

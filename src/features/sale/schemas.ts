@@ -42,5 +42,3 @@ export const createSaleFormSchema = z.object({
 export type CreateSaleFormData = z.infer<typeof createSaleFormSchema>;
 
 export const updateSaleFormSchema = createSaleFormSchema;
-
-export type UpdateSaleFormData = CreateSaleFormData;

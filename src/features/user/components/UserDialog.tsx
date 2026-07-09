@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, type Control, type UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCompanies } from '@/features/company';
 import { useCreateUser } from '../hooks/useCreateUser';
@@ -62,6 +62,51 @@ function buildInitialForm(
     : initialForm;
 }
 
+type CompanyIdFieldProps = {
+  isMasterUser: boolean;
+  control: Control<CreateUserFormData>;
+  register: UseFormRegister<CreateUserFormData>;
+  companies: { id: string | number; name: string }[];
+  error?: string;
+};
+
+function CompanyIdField({
+  isMasterUser,
+  control,
+  register,
+  companies,
+  error,
+}: Readonly<CompanyIdFieldProps>) {
+  if (!isMasterUser) {
+    return <input type="hidden" {...register('companyId')} />;
+  }
+
+  return (
+    <div className="space-y-2 sm:col-span-2">
+      <Label htmlFor="companyId">Empresa *</Label>
+      <Controller
+        name="companyId"
+        control={control}
+        render={({ field }) => (
+          <Select value={field.value} onValueChange={field.onChange}>
+            <SelectTrigger id="companyId">
+              <SelectValue placeholder="Selecione a empresa" />
+            </SelectTrigger>
+            <SelectContent>
+              {companies.map((company) => (
+                <SelectItem key={company.id} value={String(company.id)}>
+                  {company.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
+
 function userToForm(user: User): CreateUserFormData {
   return {
     companyId: String(user.company.id ?? ''),
@@ -101,6 +146,7 @@ export function UserDialog({
 
   const isView = mode === 'view';
   const isEdit = mode === 'edit';
+  const isMasterUser = isMaster();
 
   useEffect(() => {
     if (!open) return;
@@ -110,8 +156,8 @@ export function UserDialog({
       return;
     }
 
-    reset(buildInitialForm(isMaster(), authUser?.companyId));
-  }, [open, user, reset, isMaster, authUser?.companyId]);
+    reset(buildInitialForm(isMasterUser, authUser?.companyId));
+  }, [open, user, reset, isMasterUser, authUser?.companyId]);
 
   async function onSubmit(data: CreateUserFormData) {
     if (isView) return;
@@ -138,7 +184,7 @@ export function UserDialog({
 
   function handleClose(value: boolean) {
     if (!value) {
-      reset(buildInitialForm(isMaster(), authUser?.companyId));
+      reset(buildInitialForm(isMasterUser, authUser?.companyId));
     }
     onOpenChange(value);
   }
@@ -194,7 +240,7 @@ export function UserDialog({
                   label="Perfil"
                   value={getRoleLabel(user.role)}
                 />
-                {isMaster() && (
+                {isMasterUser && (
                   <InfoRow
                     icon={<UserIcon className="h-4 w-4" />}
                     label="Empresa"
@@ -225,34 +271,13 @@ export function UserDialog({
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-muted-foreground">Dados do usuário</h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                {isMaster() ? (
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="companyId">Empresa *</Label>
-                    <Controller
-                      name="companyId"
-                      control={control}
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger id="companyId">
-                            <SelectValue placeholder="Selecione a empresa" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(companiesData?.companies ?? []).map((company) => (
-                              <SelectItem key={company.id} value={String(company.id)}>
-                                {company.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {errors.companyId && (
-                      <p className="text-xs text-destructive">{errors.companyId.message}</p>
-                    )}
-                  </div>
-                ) : (
-                  <input type="hidden" {...register('companyId')} />
-                )}
+                <CompanyIdField
+                  isMasterUser={isMasterUser}
+                  control={control}
+                  register={register}
+                  companies={companiesData?.companies ?? []}
+                  error={errors.companyId?.message}
+                />
 
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome *</Label>

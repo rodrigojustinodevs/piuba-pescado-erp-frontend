@@ -5,8 +5,7 @@ import { TrendingUp, CheckCircle2, DollarSign, AlertTriangle, Plus } from 'lucid
 import type { Sale, SaleDialogMode, SaleListResponse, SaleStatusFilter } from '../types';
 import { SaleTable } from './SaleTable';
 import { SaleDialog } from './SaleDialog';
-import { Pagination } from '@/shared/components/list';
-import { SearchField } from '@/shared/components/list';
+import { Pagination, SearchField } from '@/shared/components/list';
 import { OrdersIcon } from '@/shared/components/Sidebar/menuIcons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
@@ -30,13 +29,13 @@ function SummaryCard({
   sub,
   icon,
   valueColor = 'text-[#0F172A]',
-}: {
+}: Readonly<{
   title: string;
   value: string;
   sub?: string;
   icon: React.ReactNode;
   valueColor?: string;
-}) {
+}>) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">

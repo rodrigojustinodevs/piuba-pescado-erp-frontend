@@ -162,7 +162,7 @@ export function SaleForm({
       {/* Row 1: Cliente + Categoria financeira */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>
+          <label className={labelClass} htmlFor="clientId">
             Cliente <span className="text-red-500">*</span>
           </label>
           <Controller
@@ -171,6 +171,7 @@ export function SaleForm({
             render={({ field }) => (
               <select
                 {...field}
+                id="clientId"
                 value={field.value ?? ''}
                 className={selectClass}
                 disabled={isSubmitting || isLoadingClients}
@@ -188,13 +189,16 @@ export function SaleForm({
         </div>
 
         <div>
-          <label className={labelClass}>Categoria financeira</label>
+          <label className={labelClass} htmlFor="financialCategoryId">
+            Categoria financeira
+          </label>
           <Controller
             name="financialCategoryId"
             control={control}
             render={({ field }) => (
               <select
                 {...field}
+                id="financialCategoryId"
                 value={field.value ?? ''}
                 className={selectClass}
                 disabled={isSubmitting || isLoadingCategories}
@@ -235,6 +239,7 @@ export function SaleForm({
         {needsInvoiceWatch && (
           <input
             type="text"
+            aria-label="Número da nota fiscal"
             placeholder="NF-2026/000"
             className={inputClass + ' max-w-48'}
             disabled={isSubmitting}
@@ -246,8 +251,15 @@ export function SaleForm({
       {/* Row 2: Status + Forma de pagamento */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Status</label>
-          <select className={selectClass} disabled={isSubmitting} {...register('status')}>
+          <label className={labelClass} htmlFor="status">
+            Status
+          </label>
+          <select
+            id="status"
+            className={selectClass}
+            disabled={isSubmitting}
+            {...register('status')}
+          >
             {STATUS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
@@ -257,8 +269,15 @@ export function SaleForm({
         </div>
 
         <div>
-          <label className={labelClass}>Forma de pagamento</label>
-          <select className={selectClass} disabled={isSubmitting} {...register('paymentMethod')}>
+          <label className={labelClass} htmlFor="paymentMethod">
+            Forma de pagamento
+          </label>
+          <select
+            id="paymentMethod"
+            className={selectClass}
+            disabled={isSubmitting}
+            {...register('paymentMethod')}
+          >
             {PAYMENT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
@@ -271,10 +290,11 @@ export function SaleForm({
       {/* Row 3: Data da venda + Vencimento */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>
+          <label className={labelClass} htmlFor="saleDate">
             Data da venda <span className="text-red-500">*</span>
           </label>
           <input
+            id="saleDate"
             type="date"
             className={inputClass}
             disabled={isSubmitting}
@@ -284,8 +304,11 @@ export function SaleForm({
         </div>
 
         <div>
-          <label className={labelClass}>Vencimento</label>
+          <label className={labelClass} htmlFor="dueDate">
+            Vencimento
+          </label>
           <input
+            id="dueDate"
             type="date"
             className={inputClass}
             disabled={isSubmitting}
@@ -352,8 +375,11 @@ export function SaleForm({
       {/* Row: Desconto + Frete + Impostos */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div>
-          <label className={labelClass}>Desconto (R$)</label>
+          <label className={labelClass} htmlFor="discount">
+            Desconto (R$)
+          </label>
           <input
+            id="discount"
             type="number"
             min={0}
             step={0.01}
@@ -363,8 +389,11 @@ export function SaleForm({
           />
         </div>
         <div>
-          <label className={labelClass}>Frete (R$)</label>
+          <label className={labelClass} htmlFor="shipping">
+            Frete (R$)
+          </label>
           <input
+            id="shipping"
             type="number"
             min={0}
             step={0.01}
@@ -374,8 +403,11 @@ export function SaleForm({
           />
         </div>
         <div>
-          <label className={labelClass}>Impostos (R$)</label>
+          <label className={labelClass} htmlFor="taxes">
+            Impostos (R$)
+          </label>
           <input
+            id="taxes"
             type="number"
             min={0}
             step={0.01}
@@ -414,8 +446,11 @@ export function SaleForm({
 
       {/* Observações */}
       <div>
-        <label className={labelClass}>Observações</label>
+        <label className={labelClass} htmlFor="notes">
+          Observações
+        </label>
         <textarea
+          id="notes"
           rows={3}
           className={`${inputClass} resize-none`}
           disabled={isSubmitting}
@@ -509,7 +544,7 @@ function ItemRow({
   inputClass,
   selectClass,
   labelClass,
-}: ItemRowProps) {
+}: Readonly<ItemRowProps>) {
   const { data: stockingsData, isLoading: isLoadingStockings } = useStockings({
     batchId: batchIdForItem || undefined,
     enabled: !!batchIdForItem,
@@ -554,13 +589,16 @@ function ItemRow({
       {/* Lote + Povoamento */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Lote</label>
+          <label className={labelClass} htmlFor={`items.${index}.batchId`}>
+            Lote
+          </label>
           <Controller
             name={`items.${index}.batchId`}
             control={control}
             render={({ field }) => (
               <select
                 {...field}
+                id={`items.${index}.batchId`}
                 value={field.value ?? ''}
                 className={selectClass}
                 disabled={isSubmitting || isLoadingBatches}
@@ -579,13 +617,16 @@ function ItemRow({
           />
         </div>
         <div>
-          <label className={labelClass}>Povoamento</label>
+          <label className={labelClass} htmlFor={`items.${index}.stockingId`}>
+            Povoamento
+          </label>
           <Controller
             name={`items.${index}.stockingId`}
             control={control}
             render={({ field }) => (
               <select
                 {...field}
+                id={`items.${index}.stockingId`}
                 value={field.value ?? ''}
                 className={selectClass}
                 disabled={isSubmitting || isLoadingStockings || !batchIdForItem}
@@ -615,8 +656,11 @@ function ItemRow({
       {/* Peso + Preço/kg + Categoria */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div>
-          <label className={labelClass}>Peso total (kg)</label>
+          <label className={labelClass} htmlFor={`items.${index}.totalWeight`}>
+            Peso total (kg)
+          </label>
           <input
+            id={`items.${index}.totalWeight`}
             type="number"
             min={0.001}
             step={0.001}
@@ -626,8 +670,11 @@ function ItemRow({
           />
         </div>
         <div>
-          <label className={labelClass}>Preço / kg (R$)</label>
+          <label className={labelClass} htmlFor={`items.${index}.pricePerKg`}>
+            Preço / kg (R$)
+          </label>
           <input
+            id={`items.${index}.pricePerKg`}
             type="number"
             min={0}
             step={0.01}
@@ -637,8 +684,11 @@ function ItemRow({
           />
         </div>
         <div>
-          <label className={labelClass}>Categoria</label>
+          <label className={labelClass} htmlFor={`items.${index}.category`}>
+            Categoria
+          </label>
           <input
+            id={`items.${index}.category`}
             type="text"
             placeholder="Ex: G"
             className={inputClass}
@@ -672,8 +722,11 @@ function ItemRow({
       </div>
 
       <div>
-        <label className={labelClass}>Observações do item</label>
+        <label className={labelClass} htmlFor={`items.${index}.notes`}>
+          Observações do item
+        </label>
         <input
+          id={`items.${index}.notes`}
           type="text"
           placeholder="Observações..."
           className={inputClass}
