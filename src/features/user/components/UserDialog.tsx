@@ -53,13 +53,14 @@ const initialForm: CreateUserFormData = {
   status: 'active',
 };
 
-function buildInitialForm(
-  isMaster: boolean,
+function buildInitialFormForMaster(): CreateUserFormData {
+  return initialForm;
+}
+
+function buildInitialFormForCompanyUser(
   companyId: number | string | null | undefined,
 ): CreateUserFormData {
-  return !isMaster && companyId
-    ? { ...initialForm, companyId: String(companyId) }
-    : initialForm;
+  return companyId ? { ...initialForm, companyId: String(companyId) } : initialForm;
 }
 
 type CompanyIdFieldProps = {
@@ -156,7 +157,9 @@ export function UserDialog({
       return;
     }
 
-    reset(buildInitialForm(isMasterUser, authUser?.companyId));
+    reset(
+      isMasterUser ? buildInitialFormForMaster() : buildInitialFormForCompanyUser(authUser?.companyId),
+    );
   }, [open, user, reset, isMasterUser, authUser?.companyId]);
 
   async function onSubmit(data: CreateUserFormData) {
@@ -184,7 +187,9 @@ export function UserDialog({
 
   function handleClose(value: boolean) {
     if (!value) {
-      reset(buildInitialForm(isMasterUser, authUser?.companyId));
+      reset(
+        isMasterUser ? buildInitialFormForMaster() : buildInitialFormForCompanyUser(authUser?.companyId),
+      );
     }
     onOpenChange(value);
   }
