@@ -320,9 +320,9 @@ export function SaleForm({
       {/* Items */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className={labelClass + ' mb-0'}>
+          <span className={labelClass + ' mb-0'}>
             Itens <span className="text-red-500">*</span>
-          </label>
+          </span>
           <button
             type="button"
             onClick={() => append({ ...DEFAULT_ITEM })}
