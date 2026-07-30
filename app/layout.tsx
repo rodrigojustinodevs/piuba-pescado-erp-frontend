@@ -4,6 +4,7 @@ import { QueryProvider } from '@/shared/contexts/QueryProvider';
 import { ToastProvider } from '@/shared/contexts/ToastContext';
 import { AlertModalProvider } from '@/shared/components/AlertModal';
 import { AuthProvider } from '@/shared/contexts/AuthContext';
+import { OnboardingWizardModal } from '@/features/onboarding';
 import './globals.css';
 
   const geistSans = Geist({
@@ -28,7 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <AuthProvider>
             <ToastProvider>
-              <AlertModalProvider>{children}</AlertModalProvider>
+              <AlertModalProvider>
+                {children}
+                <OnboardingWizardModal />
+              </AlertModalProvider>
             </ToastProvider>
           </AuthProvider>
         </QueryProvider>

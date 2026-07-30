@@ -21,7 +21,7 @@ export interface User {
   position?: string;
   role: UserRoleType;
   status: UserStatus;
-  company: UserCompany;
+  company: UserCompany | null;
   lastAccessAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -42,6 +42,12 @@ export interface UpdateUserData extends Partial<CreateUserData> {
   id: string;
 }
 
+export interface UpdateUserRoleData {
+  id: string;
+  role: UserRoleType;
+  companyId: string;
+}
+
 /**
  * Formato de usuário retornado pela API (camelCase com objetos aninhados)
  */
@@ -53,7 +59,7 @@ export interface ApiUser {
   position?: string;
   role: UserRoleType;
   status: UserStatus;
-  company: UserCompany;
+  company: UserCompany | null;
   lastAccessAt?: string;
   createdAt: string;
   updatedAt: string;

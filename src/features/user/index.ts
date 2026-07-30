@@ -7,6 +7,7 @@ export type {
   User,
   CreateUserData,
   UpdateUserData,
+  UpdateUserRoleData,
   UserListResponse,
   UserStatus,
   ApiUser,
@@ -27,10 +28,11 @@ export {
   useUser,
   useCreateUser,
   useUpdateUser,
+  useUpdateUserRole,
   useDeleteUser,
   useUsersListPage,
 } from './hooks';
 export type { UserStatusFilter, UserRoleFilter } from './hooks';
 
 // Components
-export { UserTable, UserDialog, UsersListView } from './components';
+export { UserTable, UserDialog, UserRoleDialog, UsersListView } from './components';

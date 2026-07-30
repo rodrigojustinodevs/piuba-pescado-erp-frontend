@@ -5,6 +5,7 @@ import type { User, UserListResponse, UserDialogMode } from '../types';
 import type { UserRoleFilter, UserStatusFilter } from '../hooks/useUsersListPage';
 import { UserTable } from './UserTable';
 import { UserDialog } from './UserDialog';
+import { UserRoleDialog } from './UserRoleDialog';
 import { ListHeader, Pagination, SearchField, StatusFilterTabs } from '@/shared/components/list';
 import {
   ListEmptyState,
@@ -60,11 +61,18 @@ export function UsersListView({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<UserDialogMode>('create');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [selectedRoleUser, setSelectedRoleUser] = useState<User | null>(null);
 
   const openUserDialog = useCallback((mode: UserDialogMode, user: User | null = null) => {
     setDialogMode(mode);
     setSelectedUser(user);
     setDialogOpen(true);
+  }, []);
+
+  const openRoleDialog = useCallback((user: User) => {
+    setSelectedRoleUser(user);
+    setRoleDialogOpen(true);
   }, []);
 
   const getRowActions = useCallback(
@@ -80,6 +88,11 @@ export function UsersListView({
         icon: <Pencil className="h-4 w-4" />,
       },
       {
+        label: 'Alterar perfil',
+        onClick: () => openRoleDialog(user),
+        icon: <ShieldCheck className="h-4 w-4" />,
+      },
+      {
         label: 'Excluir',
         onClick: () => handleDelete(user.id, user.name),
         variant: 'danger' as const,
@@ -91,7 +104,7 @@ export function UsersListView({
         ),
       },
     ],
-    [handleDelete, openUserDialog, isDeleting],
+    [handleDelete, openUserDialog, openRoleDialog, isDeleting],
   );
 
   const renderContent = () => {
@@ -137,6 +150,12 @@ export function UsersListView({
         onSuccess={() => setDialogOpen(false)}
         mode={dialogMode}
         user={selectedUser}
+      />
+      <UserRoleDialog
+        open={roleDialogOpen}
+        onOpenChange={setRoleDialogOpen}
+        onSuccess={() => setRoleDialogOpen(false)}
+        user={selectedRoleUser}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

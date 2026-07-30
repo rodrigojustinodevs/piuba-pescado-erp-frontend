@@ -2,8 +2,10 @@ export enum UserRole {
   MASTER = 'master',
   MASTER_ADMIN = 'master_admin',
   COMPANY_ADMIN = 'company_admin',
+  ADMIN = 'admin',
   MANAGER = 'manager',
   OPERATOR = 'operator',
+  GUEST = 'guest',
 }
 
 export type UserRoleType = UserRole | string;
