@@ -110,7 +110,7 @@ function CompanyIdField({
 
 function userToForm(user: User): CreateUserFormData {
   return {
-    companyId: String(user.company.id ?? ''),
+    companyId: String(user.company?.id ?? ''),
     name: user.name,
     email: user.email,
     phone: user.phone ?? '',
@@ -167,7 +167,9 @@ export function UserDialog({
 
     if (isEdit) {
       if (!user?.id) return;
-      const payload: UpdateUserData = { id: user.id, ...data };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- role must never be sent by this generic update
+      const { role: _role, ...editableFields } = data;
+      const payload: UpdateUserData = { id: user.id, ...editableFields };
       updateUser.mutate(payload, {
         onSuccess: () => {
           onOpenChange(false);
@@ -249,7 +251,7 @@ export function UserDialog({
                   <InfoRow
                     icon={<UserIcon className="h-4 w-4" />}
                     label="Empresa"
-                    value={user.company.name || '—'}
+                    value={user.company?.name || '—'}
                   />
                 )}
                 <InfoRow
@@ -336,28 +338,43 @@ export function UserDialog({
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="role">Perfil de acesso *</Label>
-                  <Controller
-                    name="role"
-                    control={control}
-                    render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger id="role">
-                          <SelectValue placeholder="Selecione um perfil" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ROLE_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                {isEdit ? (
+                  <div className="space-y-2">
+                    <Label>Perfil de acesso</Label>
+                    <div>
+                      <Badge variant="outline">{user ? getRoleLabel(user.role) : '—'}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Para alterar o perfil de acesso, utilize a ação &quot;Alterar perfil&quot; na
+                      listagem de usuários.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Perfil de acesso *</Label>
+                    <Controller
+                      name="role"
+                      control={control}
+                      render={({ field }) => (
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger id="role">
+                            <SelectValue placeholder="Selecione um perfil" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ROLE_OPTIONS.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.role && (
+                      <p className="text-xs text-destructive">{errors.role.message}</p>
                     )}
-                  />
-                  {errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
-                </div>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="status">Status *</Label>

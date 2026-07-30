@@ -1,4 +1,10 @@
-import type { User, CreateUserData, UpdateUserData, UserListResponse } from '../types';
+import type {
+  User,
+  CreateUserData,
+  UpdateUserData,
+  UpdateUserRoleData,
+  UserListResponse,
+} from '../types';
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { buildQueryString } from '@/shared/utils/queryString';
 
@@ -37,5 +43,12 @@ export const userService = {
 
   async delete(id: string): Promise<void> {
     await browserHttpClient.delete<null>(`/api/company/users/${id}`);
+  },
+
+  async updateRole(data: UpdateUserRoleData): Promise<User> {
+    return browserHttpClient.patch<User>(`/api/company/users/${data.id}/role`, {
+      role: data.role,
+      companyId: data.companyId,
+    });
   },
 };

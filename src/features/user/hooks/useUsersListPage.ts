@@ -14,6 +14,7 @@ const ADMIN_ROLES = new Set<UserRoleType>([
   UserRole.MASTER,
   UserRole.MASTER_ADMIN,
   UserRole.COMPANY_ADMIN,
+  UserRole.ADMIN,
 ]);
 
 export function useUsersListPage() {
