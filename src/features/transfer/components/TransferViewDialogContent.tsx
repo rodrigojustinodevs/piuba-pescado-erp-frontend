@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { Transfer, TransferStatus } from '../types';
 import { REASON_LABELS, STATUS_LABELS } from '../types';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';

@@ -5,9 +5,10 @@ import { useDeleteCompany } from './useDeleteCompany';
 import { useCompanies } from './useCompanies';
 import { useListPageState } from '@/shared/hooks/useListPageState';
 import { useAlertModal } from '@/shared/components/AlertModal';
+import type { CompanyFilter } from '../components/CompaniesListView';
 
 export function useCompaniesListPage() {
-  const listState = useListPageState({ initialSortBy: 'name' });
+  const listState = useListPageState<CompanyFilter>({ initialSortBy: 'name' });
   const { page, setPage, search, setSearch, filter, setFilter } = listState;
 
   const { data, isLoading, error } = useCompanies({ page, limit: 6, search });

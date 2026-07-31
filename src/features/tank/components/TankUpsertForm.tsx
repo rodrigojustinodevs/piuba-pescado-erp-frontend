@@ -8,7 +8,8 @@ import { createTankSchema } from '@/features/tank/schemas';
 import { useCompanies } from '@/features/company';
 import { useTankTypes } from '@/features/tank/hooks/useTankTypes';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { Input, Select } from '@/shared/components/ui';
+import { Input } from '@/shared/components/ui';
+import { Select } from '@/shared/components/form';
 import { PhotoPlaceholderIcon } from '@/shared/components/icons/AppIcons';
 
 type TankUpsertFormProps = {
@@ -44,7 +45,8 @@ export function TankUpsertForm({
   const { isMaster, user } = useAuthContext();
   const { data: companiesData } = useCompanies({ limit: 1000 });
   const companies = companiesData?.companies || [];
-  const { data: tankTypes = [], isLoading: isLoadingTypes } = useTankTypes();
+  const { data: tankTypesData, isLoading: isLoadingTypes } = useTankTypes();
+  const tankTypes = tankTypesData?.tankTypes ?? [];
 
   const [photos, setPhotos] = useState<Array<File | null>>([null, null, null, null]);
   const previews = useMemo(() => photos.map((f) => (f ? URL.createObjectURL(f) : null)), [photos]);
@@ -108,12 +110,15 @@ export function TankUpsertForm({
                 control={control}
                 render={({ field }) => (
                   <Select
+                    label="Empresa"
+                    required
+                    placeholder="Selecione a empresa"
                     options={companies.map((company) => ({
                       value: String(company.id),
                       label: company.name,
                     }))}
-                    value={field.value}
-                    onValueChange={(value) => field.onChange(value)}
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(e.target.value)}
                     disabled={isSubmitting}
                     error={errors.companyId?.message}
                   />
@@ -138,7 +143,7 @@ export function TankUpsertForm({
               render={({ field }) => (
                 <Select
                   label="Tipo de tanque"
-                  requiredIndicator
+                  required
                   placeholder={isLoadingTypes ? 'Carregando tipos...' : 'Selecione um tipo'}
                   options={tankTypes.map((type) => ({
                     value: String(type.id),
@@ -176,7 +181,7 @@ export function TankUpsertForm({
             <div className="md:col-span-2">
               <Select
                 label="Status"
-                requiredIndicator
+                required
                 placeholder="Selecione um status"
                 disabled={isSubmitting}
                 options={[

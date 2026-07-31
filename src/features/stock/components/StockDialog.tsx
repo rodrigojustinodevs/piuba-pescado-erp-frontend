@@ -1,7 +1,7 @@
 'use client';
 
 import type { StockDialogMode, StockLocation, UpdateStockLocationData } from '../types';
-import type { UpdateStockFormData } from '../schemas';
+import type { CreateStockFormData } from '../schemas';
 import { StockForm } from './StockForm';
 import { StockViewDialogContent } from './StockViewDialogContent';
 import { useCreateStock } from '../hooks/useCreateStock';
@@ -67,9 +67,10 @@ export function StockDialog({ open, onOpenChange, mode, stock, onSuccess }: Read
     );
   }
 
-  const editInitialValues: UpdateStockFormData | undefined =
+  const editInitialValues: CreateStockFormData | undefined =
     stock && mode === 'edit'
       ? {
+          code: stock.code,
           name: stock.name,
           type: stock.type,
           location: stock.location,

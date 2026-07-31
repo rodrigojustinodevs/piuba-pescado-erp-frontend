@@ -21,7 +21,12 @@ export function ListSearchAndSortBar({
 }: Readonly<ListSearchAndSortBarProps>) {
   return (
     <section className="flex flex-wrap items-center gap-3">
-      <SearchField value={search} placeholder={searchPlaceholder} onChange={onSearchChange} />
+      <SearchField
+        search={search}
+        setSearch={onSearchChange}
+        setCurrentPage={() => {}}
+        placeholder={searchPlaceholder}
+      />
       <SortButton current={sortBy} onSort={onSort} />
     </section>
   );

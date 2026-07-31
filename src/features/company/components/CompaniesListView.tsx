@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Building, Calendar, Mail, MapPin, Phone, Eye, Loader2, Trash, Pencil } from 'lucide-react';
 import { CompanyCreateDialog, CompanyDialogMode } from './CompanyCreateDialog';
 
-type CompanyFilter = 'all' | 'active' | 'inactive';
+export type CompanyFilter = 'all' | 'active' | 'inactive';
 
 const statusConfig: Record<
   Company['status'],

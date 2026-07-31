@@ -24,11 +24,11 @@ export default function EditFeedingPage() {
   const initialValues = useMemo<CreateFeedingFormData | undefined>(() => {
     if (!feeding) return undefined;
     return {
-      batchId: feeding.batchId,
+      batchId: feeding.batch.id,
       feedingDate: toDateTimeLocalValue(feeding.feedingDate),
       quantityProvided: feeding.quantityProvided,
       feedType: feeding.feedType,
-      stockId: feeding.stockId,
+      stockId: feeding.stock.id,
       stockReductionQuantity: feeding.stockReductionQuantity,
     };
   }, [feeding]);

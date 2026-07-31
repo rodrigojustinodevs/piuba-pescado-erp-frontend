@@ -102,7 +102,9 @@ export function Dropdown({
                 : 'text-white/70 group-hover:text-white'
             }`}
           >
-            <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
+            <span className="w-5 h-5 flex items-center justify-center">
+              <item.icon className="w-5 h-5" />
+            </span>
           </span>
         )}
         {!isCollapsed && (
@@ -162,7 +164,9 @@ export function Dropdown({
                   : 'text-white/70 group-hover:text-white'
               }`}
             >
-              <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
+              <span className="w-5 h-5 flex items-center justify-center">
+              <item.icon className="w-5 h-5" />
+            </span>
             </span>
           )}
           {!isCollapsed && (

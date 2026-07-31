@@ -121,7 +121,7 @@ export default function CompanyDetailPage() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
               <p className="text-sm text-slate-600 mb-2">Data de criação</p>
               <p className="text-2xl font-semibold text-[#0F172A]">
-                {formatDatePtBR(company.created_at)}
+                {formatDatePtBR(company.createdAt)}
               </p>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function CompanyDetailPage() {
                       ÚLTIMA ATUALIZAÇÃO
                     </p>
                     <p className="text-sm font-medium text-[#0F172A]">
-                      {formatRelativeDateTimePtBR(company.updated_at)}
+                      {formatRelativeDateTimePtBR(company.updatedAt)}
                     </p>
                   </div>
                 </div>

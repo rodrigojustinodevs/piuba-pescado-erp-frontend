@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useCompany, useUpdateCompany } from '@/features/company';
 import { CompanyForm } from '@/features/company/components';
 import { DashboardLayout } from '@/shared/components/Layout';
-import type { CreateCompanyFormData } from '@/features/company';
+import type { CreateCompanyFormData, UpdateCompanyFormData } from '@/features/company';
 
 export default function EditCompanyPage() {
   const params = useParams();
@@ -12,7 +12,7 @@ export default function EditCompanyPage() {
   const { data: company, isLoading } = useCompany(id);
   const updateCompany = useUpdateCompany();
 
-  const handleSubmit = (data: CreateCompanyFormData) => {
+  const handleSubmit = (data: CreateCompanyFormData | UpdateCompanyFormData) => {
     updateCompany.mutate({ ...data, id });
   };
 

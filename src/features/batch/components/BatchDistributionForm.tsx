@@ -5,8 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { batchDistributionSchema, type BatchDistributionFormData } from '../schemas';
 import { useSuppliers } from '@/features/supplier';
 import { useTanksWithoutBatches } from '@/features/tank';
-import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { FormActions, Select } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
 
 const CULTIVATION_OPTIONS = [
   { value: 'growout', label: 'Engorda' },
@@ -28,7 +28,7 @@ export function BatchDistributionForm({
   });
   const { data: tanksData, isLoading: isLoadingTanks } = useTanksWithoutBatches({
     page: 1,
-    per_page: 500,
+    perPage: 500,
   });
 
   const suppliers = suppliersData?.suppliers ?? [];
@@ -70,7 +70,7 @@ export function BatchDistributionForm({
             render={({ field }) => (
               <Select
                 label="Fornecedor"
-                requiredIndicator
+                required
                 disabled={isLoadingSuppliers || isLoading}
                 placeholder={
                   isLoadingSuppliers ? 'Carregando fornecedores...' : 'Selecione o fornecedor'
@@ -122,7 +122,7 @@ export function BatchDistributionForm({
               render={({ field }) => (
                 <Select
                   label="Tipo de cultivo"
-                  requiredIndicator
+                  required
                   placeholder="Selecione o tipo de cultivo"
                   options={CULTIVATION_OPTIONS}
                   value={field.value || ''}
@@ -192,7 +192,7 @@ export function BatchDistributionForm({
                   render={({ field: f }) => (
                     <Select
                       label="Tanque"
-                      requiredIndicator
+                      required
                       disabled={isLoadingTanks || isLoading}
                       placeholder={
                         isLoadingTanks ? 'Carregando tanques sem lote...' : 'Selecione o tanque'

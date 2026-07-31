@@ -111,7 +111,7 @@ export default function TankDetailPage() {
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
               <p className="text-sm text-slate-600 mb-2">Tipo de Tanque</p>
-              <p className="text-2xl font-semibold text-[#0F172A]">{tankType}</p>
+              <p className="text-2xl font-semibold text-[#0F172A]">{tank.tankType.name}</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
               <p className="text-sm text-slate-600 mb-2">Localização</p>
@@ -120,7 +120,7 @@ export default function TankDetailPage() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
               <p className="text-sm text-slate-600 mb-2">Data de criação</p>
               <p className="text-2xl font-semibold text-[#0F172A]">
-                {formatDatePtBR(tank.created_at)}
+                {formatDatePtBR(tank.createdAt)}
               </p>
             </div>
           </div>
@@ -139,14 +139,14 @@ export default function TankDetailPage() {
                 {isMaster() && (
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">EMPRESA</p>
-                    <p className="text-sm font-medium text-[#0F172A]">{companyName}</p>
+                    <p className="text-sm font-medium text-[#0F172A]">{tank.company.name}</p>
                   </div>
                 )}
                 {/* TIPO e CAPACIDADE - lado a lado */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">TIPO</p>
-                    <p className="text-sm font-medium text-[#0F172A]">{tankType}</p>
+                    <p className="text-sm font-medium text-[#0F172A]">{tank.tankType.name}</p>
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <p className="text-xs font-medium text-slate-600 uppercase mb-2">CAPACIDADE</p>
@@ -178,7 +178,7 @@ export default function TankDetailPage() {
                       ÚLTIMA ATUALIZAÇÃO
                     </p>
                     <p className="text-sm font-medium text-[#0F172A]">
-                      {formatRelativeDateTimePtBR(tank.updated_at)}
+                      {formatRelativeDateTimePtBR(tank.updatedAt)}
                     </p>
                   </div>
                 </div>

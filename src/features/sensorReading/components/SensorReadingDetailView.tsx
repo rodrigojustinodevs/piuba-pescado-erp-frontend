@@ -22,12 +22,12 @@ export function SensorReadingDetailView({
   onDelete,
   isDeleting = false,
 }: Readonly<SensorReadingDetailViewProps>) {
-  const typeLabel = getSensorTypeLabel(reading.sensorType);
-  const titleLabel = `${formatSensorReadingValue(reading.value, reading.unit)} — ${reading.tankName || 'Tanque'}`;
+  const typeLabel = getSensorTypeLabel(reading.sensor?.sensorType);
+  const titleLabel = `${formatSensorReadingValue(reading.value, reading.unit)} — ${reading.sensor?.tank?.name || 'Tanque'}`;
   const measuredAt = formatNullableDatePtBR(reading.measuredAt, true);
   const metricCards = [
     { label: 'Valor', value: formatSensorReadingValue(reading.value, reading.unit) },
-    { label: 'Tanque', value: reading.tankName || '—' },
+    { label: 'Tanque', value: reading.sensor?.tank?.name || '—' },
     { label: 'Data da medição', value: measuredAt },
     { label: 'Atualizado em', value: formatNullableDatePtBR(reading.updatedAt, true) },
   ];

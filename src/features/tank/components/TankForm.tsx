@@ -26,7 +26,8 @@ export function TankForm({
   const { isMaster, user } = useAuthContext();
   const { data: companiesData } = useCompanies({ limit: 1000 });
   const companies = companiesData?.companies || [];
-  const { data: tankTypes = [], isLoading: isLoadingTypes } = useTankTypes();
+  const { data: tankTypesData, isLoading: isLoadingTypes } = useTankTypes();
+  const tankTypes = tankTypesData?.tankTypes ?? [];
 
   const {
     register,
@@ -40,12 +41,12 @@ export function TankForm({
     reValidateMode: 'onChange',
     defaultValues: initialData
       ? {
-          companyId: initialData.companyId,
-          tankTypeId: initialData.tankTypeId,
+          companyId: initialData.company.id ?? '',
+          tankTypeId: initialData.tankType.id,
           name: initialData.name,
           capacityLiters: initialData.capacityLiters,
           location: initialData.location || '',
-          status: initialData.status,
+          status: initialData.status === 'maintenance' ? 'active' : initialData.status,
         }
       : {
           companyId: '',

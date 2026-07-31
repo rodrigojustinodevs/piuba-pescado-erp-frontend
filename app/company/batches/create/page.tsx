@@ -1,14 +1,25 @@
 'use client';
 
-import { useCreateBatch, BatchForm, BatchPageShell } from '@/features/batch';
-import type { CreateBatchFormData } from '@/features/batch';
+import {
+  useCreateBatch,
+  useDistributeBatch,
+  isBatchDistributionData,
+  BatchForm,
+  BatchPageShell,
+} from '@/features/batch';
+import type { CreateBatchFormData, BatchDistributionFormData } from '@/features/batch';
 import { DashboardLayout } from '@/shared/components/Layout';
 
 export default function BatchCreatePage() {
   const createBatch = useCreateBatch();
+  const distributeBatch = useDistributeBatch();
 
-  const onSubmit = (data: CreateBatchFormData) => {
-    createBatch.mutate(data);
+  const onSubmit = (data: CreateBatchFormData | BatchDistributionFormData) => {
+    if (isBatchDistributionData(data)) {
+      distributeBatch.mutate(data);
+    } else {
+      createBatch.mutate(data);
+    }
   };
 
   return (
@@ -22,7 +33,7 @@ export default function BatchCreatePage() {
           <BatchForm
             mode="create"
             onSubmit={onSubmit}
-            isLoading={createBatch.isPending}
+            isLoading={createBatch.isPending || distributeBatch.isPending}
             submitLabel="Criar Lote"
           />
         </div>

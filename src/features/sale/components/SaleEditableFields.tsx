@@ -1,8 +1,8 @@
 'use client';
 
 import type { UseFormRegisterReturn } from 'react-hook-form';
-import { TextArea } from '@/shared/components/form';
-import { Input, Select, type SelectOption } from '@/shared/components/ui';
+import { Select, TextArea, type SelectOption } from '@/shared/components/form';
+import { Input } from '@/shared/components/ui';
 
 type SaleEditableFieldsProps = {
   isSubmitting: boolean;
@@ -55,7 +55,7 @@ export function SaleEditableFields({
 
       <Select
         label="Status"
-        requiredIndicator
+        required
         disabled={isSubmitting}
         options={statusOptions}
         {...statusRegister}

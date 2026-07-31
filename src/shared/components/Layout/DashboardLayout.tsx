@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import { isValidElement, cloneElement } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronRight, Fish } from "lucide-react"
 import {
@@ -31,12 +30,6 @@ import type { MenuItem, SidebarProps } from '../Sidebar/types';
 
 function renderMenuIcon(icon?: MenuItem['icon']) {
   if (!icon) return null;
-
-  if (isValidElement(icon)) {
-    return cloneElement(icon, {
-      className: 'h-4 w-4',
-    });
-  }
 
   const Icon = icon;
   return <Icon className="h-4 w-4" />;

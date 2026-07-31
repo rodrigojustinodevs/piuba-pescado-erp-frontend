@@ -6,7 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useSensors } from '@/features/sensor/hooks/useSensors';
 import { getSensorTypeLabel } from '@/features/sensor/utils/sensorDisplayLabels';
 import { FormActions, FormCardSection } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
+import { Input } from '@/shared/components/ui';
+import { Select } from '@/shared/components/form';
 import { toMeasuredAtBackendString } from '@/shared/utils/datetimeForm';
 import type { CreateSensorReadingData } from '../types';
 import { createSensorReadingSchema, type CreateSensorReadingFormData } from '../schemas';
@@ -80,7 +81,7 @@ export function SensorReadingForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Select
             label="Sensor *"
-            requiredIndicator
+            required
             disabled={isSubmitting || isLoadingSensors}
             options={sensors.map((s) => ({
               value: s.id,

@@ -25,12 +25,12 @@ export default function EditTankPage() {
   const initialValues = useMemo<CreateTankFormData | undefined>(() => {
     if (!tank) return undefined;
     return {
-      companyId: tank.companyId,
-      tankTypeId: tank.tankTypeId,
+      companyId: tank.company.id ?? '',
+      tankTypeId: tank.tankType.id,
       name: tank.name,
       capacityLiters: tank.capacityLiters,
       location: tank.location || '',
-      status: tank.status,
+      status: tank.status === 'maintenance' ? 'active' : tank.status,
     };
   }, [tank]);
 

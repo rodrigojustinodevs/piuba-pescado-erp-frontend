@@ -84,6 +84,7 @@ const typeIcon: Record<SensorType, typeof Thermometer> = {
   temperature: Thermometer,
   ph: FlaskConical,
   oxygen: AirVent,
+  dissolved_oxygen: AirVent,
   ammonia: Gauge,
   etc: Ruler,
 };
@@ -92,6 +93,7 @@ const idealRanges: Record<SensorType, { min: number; max: number }> = {
   temperature: { min: 24, max: 30 },
   ph: { min: 6.5, max: 8.5 },
   oxygen: { min: 5, max: 12 },
+  dissolved_oxygen: { min: 5, max: 12 },
   ammonia: { min: 0, max: 35 },
   etc: { min: 0, max: 25 },
 };

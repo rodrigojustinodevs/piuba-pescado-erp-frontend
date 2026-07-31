@@ -13,7 +13,7 @@ import {
 import { StatCard } from '@/shared/components/Cards/StatCard';
 import { Card, CardContent } from '@/shared/components/ui/Card';
 import { Building, Droplets, Eye, Pencil, Trash } from 'lucide-react';
-type TankFilter = 'all' | 'active' | 'inactive';
+type TankFilter = 'all' | 'active' | 'inactive' | 'maintenance';
 
 export type TanksListViewProps = {
   page: number;
@@ -171,7 +171,6 @@ export function TanksListView({
               all: 'Todas',
               active: 'Ativas',
               inactive: 'Inativas',
-              maintenance: 'Manutenção',
             }}
           />
         </CardContent>
