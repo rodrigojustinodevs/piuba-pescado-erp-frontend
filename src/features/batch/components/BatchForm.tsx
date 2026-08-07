@@ -8,6 +8,7 @@ import {
   createBatchSchema,
   type BatchDistributionFormData,
   type CreateBatchFormData,
+  type UpdateBatchFormData,
 } from '../schemas';
 import type { Batch, BatchCultivation } from '../types';
 import { Tank, useTanksWithoutBatches } from '@/features/tank';
@@ -105,7 +106,7 @@ export type BatchFormProps =
   | (BatchFormCommonProps & {
       mode: 'edit' | 'update' | 'view';
       initialData?: Batch;
-      onSubmit: (data: CreateBatchFormData) => void;
+      onSubmit: (data: UpdateBatchFormData) => void;
     });
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -127,7 +128,7 @@ export function BatchForm({
 
   const { data: tanksData, isLoading: isLoadingTanks } = useTanksWithoutBatches({
     page: 1,
-    per_page: 1000,
+    perPage: 1000,
   });
 
   const tanks = useMemo<Tank[]>(() => {
@@ -208,7 +209,12 @@ export function BatchForm({
   const submitSimple = async (data: CreateBatchFormData) => {
     setSubmitting(true);
     try {
-      onSubmit(data);
+      if (isEdit) {
+        const payload: UpdateBatchFormData = { ...data, id: initialData?.id ?? '' };
+        (onSubmit as (data: UpdateBatchFormData) => void)(payload);
+      } else {
+        (onSubmit as (data: CreateBatchFormData | BatchDistributionFormData) => void)(data);
+      }
       toast.success(isEdit ? 'Lote atualizado com sucesso!' : 'Lote criado com sucesso!');
     } catch {
       toast.error(isEdit ? 'Erro ao atualizar lote.' : 'Erro ao criar lote.');
@@ -220,7 +226,7 @@ export function BatchForm({
   const submitDistributed = async (data: BatchDistributionFormData) => {
     setSubmitting(true);
     try {
-      onSubmit(data as unknown as CreateBatchFormData);
+      (onSubmit as (data: CreateBatchFormData | BatchDistributionFormData) => void)(data);
       toast.success(`Lote distribuído em ${data.distribution.length} viveiro(s) criado!`);
     } catch {
       toast.error('Erro ao criar lote distribuído.');

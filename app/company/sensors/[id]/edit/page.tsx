@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useSensor, useUpdateSensor } from '@/features/sensor';
 import type { CreateSensorFormData } from '@/features/sensor/schemas';
+import type { SensorStatus, SensorType } from '@/features/sensor/types';
 import { SensorForm, SensorPageShell, toDateInputValue } from '@/features/sensor/components';
 import { SensorIcon } from '@/shared/components/Sidebar/menuIcons';
 import { DashboardLayout } from '@/shared/components/Layout';
@@ -21,7 +22,12 @@ export default function EditSensorPage() {
     status: string;
     tankId: string;
   }) => {
-    updateSensor.mutate({ ...data, id });
+    updateSensor.mutate({
+      ...data,
+      id,
+      sensorType: data.sensorType as SensorType,
+      status: data.status as SensorStatus,
+    });
   };
 
   const initialValues = useMemo<CreateSensorFormData | undefined>(() => {

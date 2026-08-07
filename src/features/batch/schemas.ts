@@ -45,3 +45,9 @@ export const batchDistributionSchema = z.object({
 });
 
 export type BatchDistributionFormData = z.infer<typeof batchDistributionSchema>;
+
+export function isBatchDistributionData(
+  data: CreateBatchFormData | BatchDistributionFormData,
+): data is BatchDistributionFormData {
+  return 'distribution' in data && Array.isArray(data.distribution);
+}

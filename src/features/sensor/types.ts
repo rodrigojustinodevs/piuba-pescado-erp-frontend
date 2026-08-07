@@ -3,16 +3,16 @@
  */
 
 import type { ApiListResponse } from '@/shared/types/api';
-import type { StatusFilter } from '@/shared/hooks/useListPageState';
 
-export type SensorType = 'ph' | 'temperature' | 'oxygen' | 'ammonia' | 'etc';
-export type SensorStatus = 'online' | 'offline' | 'maintenance';
+export type SensorType = 'ph' | 'temperature' | 'oxygen' | 'dissolved_oxygen' | 'ammonia' | 'etc';
+export type SensorStatus = 'online' | 'offline' | 'active' | 'inactive' | 'maintenance';
 export type SensorTypeFilter = 'all' | SensorType;
 
 export const sensorTypeLabels: Record<SensorType, string> = {
   temperature: 'Temperatura',
   ph: 'pH',
   oxygen: 'Oxigênio Dissolvido',
+  dissolved_oxygen: 'Oxigênio Dissolvido',
   ammonia: 'Amônia',
   etc: 'Outros',
 };
@@ -97,8 +97,8 @@ export type SensorsListViewProps = {
   setPage: (next: number) => void;
   search: string;
   setSearch: (next: string) => void;
-  filter: StatusFilter;
-  setFilter: (next: StatusFilter) => void;
+  filter: SensorStatus;
+  setFilter: (next: SensorStatus) => void;
   sensorTypeFilter: SensorTypeFilter;
   setSensorTypeFilter: (next: SensorTypeFilter) => void;
   sortBy: string;
@@ -109,7 +109,7 @@ export type SensorsListViewProps = {
   filteredSensors: Sensor[];
   stats: {
     total: number;
-    inactive: number;
+    offline: number;
     maintenance: number;
   };
   handleDelete: (id: string, label: string) => void;

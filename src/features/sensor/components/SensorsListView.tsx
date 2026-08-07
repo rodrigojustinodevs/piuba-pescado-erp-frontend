@@ -5,6 +5,7 @@ import type {
   Sensor,
   SensorDialogMode,
   SensorsListViewProps,
+  SensorStatus,
   SensorType,
   SensorTypeFilter,
 } from '../types';
@@ -38,7 +39,6 @@ import {
   SelectValue,
 } from '@/src/shared/components/ui/Select';
 import { useAuthContext } from '@/src/shared/contexts/AuthContext';
-import { StatusFilter } from '@/src/shared/hooks/useListPageState';
 
 export function SensorsListView({
   page,
@@ -110,6 +110,7 @@ export function SensorsListView({
     temperature: Thermometer,
     ph: FlaskConical,
     oxygen: Wind,
+    dissolved_oxygen: Wind,
     ammonia: Gauge,
     etc: Ruler,
   };
@@ -253,7 +254,7 @@ export function SensorsListView({
             <Select
               value={filter}
               onValueChange={(v) => {
-                setFilter(v as StatusFilter);
+                setFilter(v as SensorStatus);
               }}
             >
               <SelectTrigger className="w-full sm:w-[180px]">

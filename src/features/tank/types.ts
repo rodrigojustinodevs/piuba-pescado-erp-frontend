@@ -3,6 +3,7 @@
  */
 
 import type { ApiListResponse, ApiResponse } from '@/shared/types/api';
+import type { DataTableAction } from '@/shared/components/Table';
 
 export interface TankCompany {
   id?: string;

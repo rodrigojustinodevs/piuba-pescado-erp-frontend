@@ -1,10 +1,15 @@
 'use client';
 
-import type { BatchDistributionFormData, CreateBatchFormData } from '../schemas';
+import {
+  isBatchDistributionData,
+  type BatchDistributionFormData,
+  type CreateBatchFormData,
+  type UpdateBatchFormData,
+} from '../schemas';
 import { useCreateBatch } from '../hooks/useCreateBatch';
 import { useDistributeBatch } from '../hooks/useDistributeBatch';
 import { useUpdateBatch } from '../hooks/useUpdateBatch';
-import { BatchForm } from './BatchForm';
+import { BatchForm, type BatchFormProps } from './BatchForm';
 import { BatchViewDialogContent } from './BatchViewDialogContent';
 import {
   Dialog,
@@ -43,12 +48,6 @@ const DIALOG_CONFIG = {
   },
 } satisfies Record<BatchDialogMode, { title: string; description: string; maxWidth: string }>;
 
-function isDistributionData(
-  data: CreateBatchFormData | BatchDistributionFormData,
-): data is BatchDistributionFormData {
-  return 'distribution' in data && Array.isArray(data.distribution);
-}
-
 export function BatchCreateDialog({
   open,
   onOpenChange,
@@ -68,10 +67,10 @@ export function BatchCreateDialog({
     onOpenChange(false);
   }
 
-  function handleSubmit(data: CreateBatchFormData | BatchDistributionFormData) {
+  function handleSubmit(data: CreateBatchFormData | BatchDistributionFormData | UpdateBatchFormData) {
     if (mode === 'edit') {
       if (!batch?.id) return;
-      const payload: UpdateBatchData = { id: batch.id, ...(data as CreateBatchFormData) };
+      const payload: UpdateBatchData = { ...(data as CreateBatchFormData), id: batch.id };
       updateBatch.mutate(payload, {
         onSuccess: () => {
           onSuccess();
@@ -81,7 +80,9 @@ export function BatchCreateDialog({
       return;
     }
 
-    const mutation = isDistributionData(data) ? distributeBatch : createBatch;
+    const mutation = isBatchDistributionData(data as CreateBatchFormData | BatchDistributionFormData)
+      ? distributeBatch
+      : createBatch;
     mutation.mutate(data as never, {
       onSuccess: () => {
         onSuccess();
@@ -90,16 +91,16 @@ export function BatchCreateDialog({
     });
   }
 
-  const batchFormProps =
+  const batchFormProps: BatchFormProps =
     mode === 'create'
       ? {
-          mode: 'create' as const,
+          mode: 'create',
           onSubmit: handleSubmit,
         }
       : {
           mode: mode === 'edit' ? 'edit' : 'update',
           initialData: batch ?? undefined,
-          onSubmit: handleSubmit as (data: CreateBatchFormData) => void,
+          onSubmit: handleSubmit as (data: UpdateBatchFormData) => void,
         };
 
   return (

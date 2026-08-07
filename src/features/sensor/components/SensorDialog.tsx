@@ -88,6 +88,8 @@ const createDefaults: CreateSensorDialogFormData = {
 const statusBadgeVariant: Record<SensorStatus, 'default' | 'secondary' | 'destructive'> = {
   active: 'default',
   inactive: 'destructive',
+  online: 'default',
+  offline: 'destructive',
   maintenance: 'secondary',
 };
 
@@ -102,14 +104,14 @@ function toUpdateDefaults(sensor: Sensor): CreateSensorDialogFormData {
   return {
     companyId: '',
     tankId: sensor.tankId,
-    sensorType: sensor.sensorType,
+    sensorType: sensor.sensorType as CreateSensorDialogFormData['sensorType'],
     name: sensor.name,
     serialNumber: sensor.serialNumber,
     battery: sensor.battery ?? 0,
     unit: sensor.unit,
     lastReading: sensor.lastReading ?? 0,
     installationDate,
-    status: (sensor.status as SensorStatus) || 'active',
+    status: (sensor.status as CreateSensorDialogFormData['status']) || 'active',
     notes: sensor.notes ?? '',
   };
 }

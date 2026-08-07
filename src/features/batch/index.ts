@@ -44,7 +44,12 @@ export {
 } from './components';
 export type { BatchFormProps, BatchDetailViewProps } from './components';
 
-export { createBatchSchema, updateBatchSchema, batchDistributionSchema } from './schemas';
+export {
+  createBatchSchema,
+  updateBatchSchema,
+  batchDistributionSchema,
+  isBatchDistributionData,
+} from './schemas';
 export type {
   CreateBatchFormData,
   UpdateBatchFormData,

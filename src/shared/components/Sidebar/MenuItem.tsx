@@ -28,7 +28,11 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
         <div
           className={`flex items-center justify-center px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${itemStateClasses}`}
         >
-          {item.icon && <span className="w-5 h-5">{item.icon}</span>}
+          {item.icon && (
+            <span className="w-5 h-5">
+              <item.icon className="w-5 h-5" />
+            </span>
+          )}
         </div>
         {/* Tooltip no hover quando colapsado */}
         <div className="absolute left-full ml-2 px-2 py-1 bg-slate-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
@@ -56,7 +60,9 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuIt
             isActive ? 'text-[color:var(--sidebar-accent-foreground)]' : 'text-white/70 group-hover:text-white'
           }`}
         >
-          <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
+          <span className="w-5 h-5 flex items-center justify-center">
+            <item.icon className="w-5 h-5" />
+          </span>
         </span>
       )}
       {!isCollapsed && (

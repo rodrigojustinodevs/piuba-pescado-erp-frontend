@@ -30,7 +30,7 @@ function formatNumber(value: number): string {
 }
 
 export function FeedingDetailView({ feeding }: Readonly<FeedingDetailViewProps>) {
-  const titleLabel = feeding.batchName || `Alimentação ${formatDateTime(feeding.feedingDate)}`;
+  const titleLabel = feeding.batch.name || `Alimentação ${formatDateTime(feeding.feedingDate)}`;
 
   return (
     <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
@@ -75,7 +75,7 @@ export function FeedingDetailView({ feeding }: Readonly<FeedingDetailViewProps>)
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-8">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
             <p className="text-sm text-slate-600 mb-2">Lote</p>
-            <p className="text-2xl font-semibold text-[#0F172A]">{feeding.batchName || '—'}</p>
+            <p className="text-2xl font-semibold text-[#0F172A]">{feeding.batch.name || '—'}</p>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 max-w-sm">
             <p className="text-sm text-slate-600 mb-2">Data da alimentação</p>
@@ -105,7 +105,7 @@ export function FeedingDetailView({ feeding }: Readonly<FeedingDetailViewProps>)
             <div className="space-y-4">
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                 <p className="text-xs font-medium text-slate-600 uppercase mb-2">LOTE</p>
-                <p className="text-sm font-medium text-[#0F172A]">{feeding.batchName || '—'}</p>
+                <p className="text-sm font-medium text-[#0F172A]">{feeding.batch.name || '—'}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">

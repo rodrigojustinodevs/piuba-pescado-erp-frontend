@@ -46,6 +46,7 @@ const idealRanges: Record<
   temperature: { min: 24, max: 30, critical: { min: 20, max: 34 } },
   ph: { min: 6.5, max: 8.5, critical: { min: 5.5, max: 9.5 } },
   oxygen: { min: 5, max: 10, critical: { min: 3, max: 12 } },
+  dissolved_oxygen: { min: 5, max: 10, critical: { min: 3, max: 12 } },
   ammonia: { min: 0, max: 35, critical: { min: 0, max: 35 } },
   etc: { min: 0, max: 25, critical: { min: 0, max: 25 } },
 };
@@ -54,6 +55,7 @@ const typeIcon: Record<SensorType, typeof Thermometer> = {
   temperature: Thermometer,
   ph: FlaskConical,
   oxygen: Wind,
+  dissolved_oxygen: Wind,
   ammonia: Gauge,
   etc: Ruler,
 };

@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTanks } from '@/features/tank/hooks/useTanks';
-import { FormActions } from '@/shared/components/form';
-import { Input, Select } from '@/shared/components/ui';
-import type { CreateSensorData } from '../types';
+import { Input } from '@/shared/components/ui';
+import { Select, FormActions } from '@/shared/components/form';
+import type { CreateSensorData, SensorStatus, SensorType } from '../types';
 import { createSensorSchema, type CreateSensorFormData } from '../schemas';
 import { SENSOR_STATUS_OPTIONS, SENSOR_TYPE_OPTIONS } from '../utils/sensorDisplayLabels';
 
@@ -62,8 +62,15 @@ export function SensorForm({
     }
   }, [initialValues, reset]);
 
+  const submitForm = (data: CreateSensorFormData) =>
+    onSubmit({
+      ...data,
+      sensorType: data.sensorType as SensorType,
+      status: data.status as SensorStatus,
+    });
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitForm)}>
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
         <div className="mb-6">
           <h2 className="text-base font-semibold text-[#0F172A]">Informações do Sensor</h2>
@@ -75,7 +82,7 @@ export function SensorForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Select
             label="Tipo do sensor"
-            requiredIndicator
+            required
             disabled={isSubmitting}
             options={SENSOR_TYPE_OPTIONS}
             placeholder="Selecione o tipo"
@@ -94,7 +101,7 @@ export function SensorForm({
 
           <Select
             label="Status"
-            requiredIndicator
+            required
             disabled={isSubmitting}
             options={SENSOR_STATUS_OPTIONS}
             placeholder="Selecione o status"
@@ -104,7 +111,7 @@ export function SensorForm({
 
           <Select
             label="Tanque"
-            requiredIndicator
+            required
             disabled={isSubmitting || isLoadingTanks}
             options={tanks.map((tank) => ({ value: tank.id, label: tank.name }))}
             placeholder={isLoadingTanks ? 'Carregando tanques...' : 'Selecione o tanque'}
