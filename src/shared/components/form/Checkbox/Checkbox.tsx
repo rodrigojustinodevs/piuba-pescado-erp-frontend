@@ -47,7 +47,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const hasError = !!error;
     const finalVariant = variant || (hasError ? 'error' : 'default');
 
-    const checkboxClasses = `w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 ${
+    const checkboxClasses = `w-4 h-4 rounded border-gray-300 accent-primary focus:ring-primary focus:ring-2 ${
       hasError ? 'border-red-500' : ''
     } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${inputClassName}`;
 

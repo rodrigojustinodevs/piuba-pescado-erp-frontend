@@ -11,6 +11,9 @@ import {
   formatBatchShortLabel,
 } from '../utils/format';
 import { PencilIcon } from '@/shared/components/icons/AppIcons';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
+import { ManagementPlanSection, MANAGEMENT_PLAN_VIEW_ROLES } from '@/features/managementPlan';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/components/ui/Tabs';
 
 export type BatchDetailViewProps = {
   batch: Batch;
@@ -18,6 +21,8 @@ export type BatchDetailViewProps = {
 
 export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
   const titleLabel = formatBatchShortLabel(batch);
+  const { canAccess } = useAuthContext();
+  const canViewManagementPlan = canAccess(MANAGEMENT_PLAN_VIEW_ROLES);
 
   return (
     <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
@@ -86,8 +91,17 @@ export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
           </div>
         </div>
 
+        <Tabs defaultValue="detalhes" className="mx-8 mb-8">
+          <TabsList>
+            <TabsTrigger value="detalhes">Detalhes</TabsTrigger>
+            {canViewManagementPlan && (
+              <TabsTrigger value="plano-manejo">Plano de Manejo (IA)</TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="detalhes">
         {/* Informações do Lote */}
-        <div className="mb-8 mr-8 ml-8 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div className="mb-8 mt-6 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-6 w-1 rounded-full bg-[#0EA5A4]" />
             <h2 className="text-base font-semibold text-[#0F172A]">Informações do Lote</h2>
@@ -141,7 +155,7 @@ export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
         </div>
 
         {/* Informações Adicionais */}
-        <div className="bg-white m-8 p-8 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white mt-8 p-8 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-6 w-1 rounded-full bg-[#0EA5A4]" />
             <h2 className="text-base font-semibold text-[#0F172A]">Informações Adicionais</h2>
@@ -162,6 +176,16 @@ export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
             </div>
           </div>
         </div>
+          </TabsContent>
+
+          {canViewManagementPlan && (
+            <TabsContent value="plano-manejo">
+              <div className="mt-6 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
+                <ManagementPlanSection batchId={batch.id} />
+              </div>
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     </div>
   );

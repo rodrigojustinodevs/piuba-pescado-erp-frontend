@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   isBatchDistributionData,
   type BatchDistributionFormData,
@@ -21,6 +22,9 @@ import {
 } from '@/shared/components/ui/Dialog';
 import { Button } from '@/shared/components/ui/Button';
 import { Batch, BatchDialogMode, UpdateBatchData } from '../types';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
+import { GenerateManagementPlanDialog, MANAGEMENT_PLAN_VIEW_ROLES } from '@/features/managementPlan';
+import { Sparkles } from 'lucide-react';
 
 type BatchCreateDialogProps = {
   open: boolean;
@@ -133,14 +137,38 @@ type ViewContentProps = {
 };
 
 function ViewContent({ batch, onClose }: Readonly<ViewContentProps>) {
+  const { canAccess } = useAuthContext();
+  const canViewManagementPlan = canAccess(MANAGEMENT_PLAN_VIEW_ROLES);
+  const [generatePlanOpen, setGeneratePlanOpen] = useState(false);
+
   return (
     <>
       <BatchViewDialogContent batch={batch} />
       <DialogFooter>
+        {canViewManagementPlan && batch && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setGeneratePlanOpen(true)}
+            className="gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            Criar Plano de Manejo
+          </Button>
+        )}
         <Button type="button" variant="outline" onClick={onClose}>
           Fechar
         </Button>
       </DialogFooter>
+
+      {canViewManagementPlan && batch && (
+        <GenerateManagementPlanDialog
+          open={generatePlanOpen}
+          onOpenChange={setGeneratePlanOpen}
+          batchId={batch.id}
+          hasSpecies={!!batch.species}
+        />
+      )}
     </>
   );
 }

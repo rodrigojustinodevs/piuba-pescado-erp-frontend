@@ -10,6 +10,7 @@ export const viveirosSubmenuItems: MenuItem[] = [
 
 export const producaoSubmenuItems: MenuItem[] = [
   { id: 'lotes', label: 'Lotes', href: '/company/batches' },
+  { id: 'especies', label: 'Espécies', href: '/company/species' },
   { id: 'povoamentos', label: 'Povoamentos', href: '/company/stockings' },
   { id: 'alimentacoes', label: 'Alimentações', href: '/company/feedings' },
   { id: 'biometrias', label: 'Biometrias', href: '/company/biometries' },
