@@ -1,4 +1,3 @@
-// Não use a pasta 'app' aqui, o middleware.ts deve estar na raiz.
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
