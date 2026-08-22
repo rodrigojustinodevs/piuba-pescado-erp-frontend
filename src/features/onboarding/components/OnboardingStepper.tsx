@@ -14,7 +14,7 @@ export function OnboardingStepper({ current, total }: OnboardingStepperProps) {
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          Passo {current} de {total}
+          {current} de {total} etapas concluídas
         </span>
         <span>{percent}%</span>
       </div>

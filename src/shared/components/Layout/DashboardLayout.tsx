@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, Fish } from "lucide-react"
+import { ChevronRight } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +18,7 @@ import {
   SidebarInset,
   SidebarProvider,
   useSidebar,
-} from "../Sidebar/Sidebar";
+} from '../Sidebar/Sidebar';
 import { menuConfig } from '../Sidebar/menuConfig';
 import { useMenuAuthorization } from '../Sidebar/hooks/useMenuAuthorization';
 import { Header, type HeaderProps } from '../Header';
@@ -25,7 +26,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/shared/components/ui/Collapsible";
+} from '@/shared/components/ui/Collapsible';
 import type { MenuItem, SidebarProps } from '../Sidebar/types';
 
 function renderMenuIcon(icon?: MenuItem['icon']) {
@@ -64,7 +65,7 @@ function SidebarItemWithChildren({ item, pathname }: Readonly<SidebarItemNavProp
             {item.children?.map((child) => (
               <SidebarMenuSubItem key={child.id}>
                 <SidebarMenuSubButton asChild isActive={pathname === child.href}>
-                  <Link href={child.href ?? "/"} className="transition-colors duration-150">
+                  <Link href={child.href ?? '/'} className="transition-colors duration-150">
                     <span>{child.label}</span>
                   </Link>
                 </SidebarMenuSubButton>
@@ -82,7 +83,7 @@ function SidebarItemSimple({ item, pathname }: Readonly<SidebarItemNavProps>) {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
-        <Link href={item.href ?? "/"} className="transition-colors duration-150">
+        <Link href={item.href ?? '/'} className="transition-colors duration-150">
           {renderMenuIcon(item.icon)}
           <span>{item.label}</span>
         </Link>
@@ -91,12 +92,7 @@ function SidebarItemSimple({ item, pathname }: Readonly<SidebarItemNavProps>) {
   );
 }
 
-
-export function DashboardLayout({
-  children,
-  menuItems,
-  headerProps,
-}: DashboardLayoutProps) {
+export function DashboardLayout({ children, menuItems, headerProps }: DashboardLayoutProps) {
   // Filtra itens de menu baseado nas permissões do usuário
   const authorizedMenuItems = useMenuAuthorization(menuConfig);
   // Se menuItems for passado como prop, usa ele diretamente (sem filtro de autorização)
@@ -120,8 +116,6 @@ export function DashboardLayout({
   );
 }
 
-
-
 interface DashboardSidebarProps {
   readonly menuItems: SidebarProps['items'];
 }
@@ -133,10 +127,20 @@ function DashboardSidebar({ menuItems }: Readonly<DashboardSidebarProps>) {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="gap-2 ">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-            <Fish className="h-5 w-5" />
+          <div
+            className={`flex shrink-0 items-center justify-center transition-all duration-200 ${
+              isCollapsed ? 'h-8 w-8' : 'h-10.5 w-10.5'
+            }`}
+          >
+            <Image
+              src="/icone-piuba-pescados.svg"
+              alt="Piúba Pescado"
+              width={42}
+              height={42}
+              className="h-full w-full"
+            />
           </div>
           {!isCollapsed && (
             <span className="text-lg font-bold tracking-tight text-sidebar-foreground">
@@ -154,7 +158,7 @@ function DashboardSidebar({ menuItems }: Readonly<DashboardSidebarProps>) {
                   <SidebarItemWithChildren key={item.id} item={item} pathname={pathname} />
                 ) : (
                   <SidebarItemSimple key={item.id} item={item} pathname={pathname} />
-                )
+                ),
               )}
             </SidebarMenu>
           </SidebarGroupContent>
