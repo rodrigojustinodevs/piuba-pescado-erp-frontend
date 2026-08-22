@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Tank, TankListResponse, TankDialogMode } from '../types';
 import { TankTable } from './TankTable';
 import { TankDialog } from './TankDialog';
@@ -34,6 +34,7 @@ export type TanksListViewProps = {
   };
   handleDelete: (id: string, name: string) => void;
   isDeleting: boolean;
+  autoOpenCreate?: boolean;
 };
 
 export function TanksListView({
@@ -50,6 +51,7 @@ export function TanksListView({
   stats,
   handleDelete,
   isDeleting,
+  autoOpenCreate = false,
 }: Readonly<TanksListViewProps>) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<TankDialogMode>('create');
@@ -60,6 +62,13 @@ export function TanksListView({
     setSelectedTank(tank);
     setDialogOpen(true);
   }, []);
+
+  useEffect(() => {
+    if (autoOpenCreate) {
+      openTankDialog('create');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpenCreate]);
 
   const getRowActions = useCallback(
     (tank: Tank) => [

@@ -25,6 +25,7 @@ export function OnboardingWizardModal() {
   // Único passo hoje; ao adicionar mais, calcular o índice do primeiro passo pendente.
   const step = ONBOARDING_STEPS[0];
   const total = ONBOARDING_STEPS.length;
+  const completed = gate.canFinishTanksStep ? 1 : 0;
 
   return (
     <Dialog
@@ -39,7 +40,7 @@ export function OnboardingWizardModal() {
           <DialogDescription>{step.description}</DialogDescription>
         </DialogHeader>
 
-        <OnboardingStepper current={1} total={total} />
+        <OnboardingStepper current={completed} total={total} />
 
         <div className="py-2">{step.render()}</div>
 
@@ -49,7 +50,10 @@ export function OnboardingWizardModal() {
               ? 'Etapa concluída — você já pode fechar.'
               : 'Cadastre pelo menos um tanque para concluir esta etapa.'}
           </p>
-          <Button disabled={!gate.canFinishTanksStep} onClick={() => dismiss.mutate()}>
+          <Button
+            disabled={!gate.canFinishTanksStep}
+            onClick={() => dismiss.mutate(undefined, { onSuccess: () => setClosedForNow(true) })}
+          >
             Concluir
           </Button>
         </DialogFooter>

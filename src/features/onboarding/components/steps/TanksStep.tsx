@@ -5,7 +5,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { useTanks } from '@/features/tank';
 import { Button } from '@/shared/components/ui/Button';
 
-const TANKS_CREATE_ROUTE = '/company/tanks/create';
+const TANKS_CREATE_ROUTE = '/company/tanks?new=true';
 
 export function TanksStep() {
   const router = useRouter();

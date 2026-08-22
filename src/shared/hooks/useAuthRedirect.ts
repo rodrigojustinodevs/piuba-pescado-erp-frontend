@@ -1,22 +1,9 @@
 'use client';
 
-import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-
-function extractStatus(error: unknown): number | null {
-  if (axios.isAxiosError(error)) {
-    return error.response?.status ?? null;
-  }
-
-  if (typeof error === 'object' && error !== null && 'status' in error) {
-    const status = (error as { status?: unknown }).status;
-    return typeof status === 'number' ? status : null;
-  }
-
-  return null;
-}
+import { extractHttpStatus } from '@/shared/lib/http/httpError';
 
 export function useAuthRedirect() {
   const router = useRouter();
@@ -34,7 +21,7 @@ export function useAuthRedirect() {
         return;
       }
 
-      if (extractStatus(error) === 401) {
+      if (extractHttpStatus(error) === 401) {
         isRedirectingRef.current = true;
         queryClient.clear();
         router.push('/login');
