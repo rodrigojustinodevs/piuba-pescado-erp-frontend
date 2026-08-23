@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TanksListView, useTanksListPage } from '@/features/tank';
 import { DashboardLayout } from '@/shared/components/Layout';
 
-export default function TanksPage() {
+function TanksPageContent() {
   const state = useTanksListPage();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -22,5 +22,13 @@ export default function TanksPage() {
     <DashboardLayout>
       <TanksListView {...state} autoOpenCreate={autoOpenCreate} />
     </DashboardLayout>
+  );
+}
+
+export default function TanksPage() {
+  return (
+    <Suspense fallback={null}>
+      <TanksPageContent />
+    </Suspense>
   );
 }
