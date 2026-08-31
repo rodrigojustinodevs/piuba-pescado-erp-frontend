@@ -5,7 +5,7 @@
 import type { ApiListResponse } from '@/shared/types/api';
 
 export type SensorType = 'ph' | 'temperature' | 'oxygen' | 'dissolved_oxygen' | 'ammonia' | 'etc';
-export type SensorStatus = 'online' | 'offline' | 'active' | 'inactive' | 'maintenance';
+export type SensorStatus = 'online' | 'offline' | 'maintenance';
 export type SensorTypeFilter = 'all' | SensorType;
 
 export const sensorTypeLabels: Record<SensorType, string> = {
