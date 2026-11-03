@@ -1,0 +1,55 @@
+  .ds-build-meta.json: 210 components (package)
+  _ds_bundle.js: 1532 KB, syntax OK
+  _ds_bundle.js header: window.PiubaDS, 210 components, 1 inlined externals
+  _ds_sync.json: 210 render hash(es), anchor matches the bundle
+  _ds_sync.json render hashes match disk (210 recomputed)
+  styles.css: 1 @import(s), all resolve
+  _ds_bundle.css: 129 KB
+  tokens: 294 defined, 214 referenced (2 missing, below threshold)
+  components/: 210 previews, 210 .prompt.md
+  all .d.ts parse cleanly
+  window.PiubaDS: 226 exports (210 fn + 0 compound)
+! [RENDER_THIN] components/form/Radio/Radio.html: mounts have no text and paint nothing — author .design-sync/previews/Radio.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/AdjustIcon/AdjustIcon.html: mounts have no text and paint nothing — author .design-sync/previews/AdjustIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/BanIcon/BanIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BanIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/BatchIcon/BatchIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BatchIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/BiometryIcon/BiometryIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BiometryIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/ChevronDownIcon/ChevronDownIcon.html: mounts have no text and paint nothing — .design-sync/previews/ChevronDownIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/general/CircleIcon/CircleIcon.html: mounts have no text and paint nothing — author .design-sync/previews/CircleIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/CloseIcon/CloseIcon.html: mounts have no text and paint nothing — .design-sync/previews/CloseIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/general/DashboardIcon/DashboardIcon.html: mounts have no text and paint nothing — author .design-sync/previews/DashboardIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/DoubleChevronLeftIcon/DoubleChevronLeftIcon.html: mounts have no text and paint nothing — author .design-sync/previews/DoubleChevronLeftIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/DoubleChevronRightIcon/DoubleChevronRightIcon.html: mounts have no text and paint nothing — author .design-sync/previews/DoubleChevronRightIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/EditIcon/EditIcon.html: mounts have no text and paint nothing — author .design-sync/previews/EditIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/EnableIcon/EnableIcon.html: mounts have no text and paint nothing — author .design-sync/previews/EnableIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/FeedingIcon/FeedingIcon.html: mounts have no text and paint nothing — author .design-sync/previews/FeedingIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/FilterIcon/FilterIcon.html: mounts have no text and paint nothing — author .design-sync/previews/FilterIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/LogoutIcon/LogoutIcon.html: mounts have no text and paint nothing — author .design-sync/previews/LogoutIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/MoneyIcon/MoneyIcon.html: mounts have no text and paint nothing — author .design-sync/previews/MoneyIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/MortalityIcon/MortalityIcon.html: mounts have no text and paint nothing — author .design-sync/previews/MortalityIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/OrdersIcon/OrdersIcon.html: mounts have no text and paint nothing — author .design-sync/previews/OrdersIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/PencilIcon/PencilIcon.html: mounts have no text and paint nothing — author .design-sync/previews/PencilIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/PhotoPlaceholderIcon/PhotoPlaceholderIcon.html: mounts have no text and paint nothing — author .design-sync/previews/PhotoPlaceholderIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/PlusIcon/PlusIcon.html: mounts have no text and paint nothing — .design-sync/previews/PlusIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/general/ProductsIcon/ProductsIcon.html: mounts have no text and paint nothing — author .design-sync/previews/ProductsIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/ReportsIcon/ReportsIcon.html: mounts have no text and paint nothing — author .design-sync/previews/ReportsIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SearchIcon/SearchIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SearchIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SensorIcon/SensorIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SensorIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SensorReadingBarChartIcon/SensorReadingBarChartIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SensorReadingBarChartIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SettingsIcon/SettingsIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SettingsIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/StockingIcon/StockingIcon.html: mounts have no text and paint nothing — author .design-sync/previews/StockingIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/TankDocumentIcon/TankDocumentIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TankDocumentIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/TankIcon/TankIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TankIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/TransferIcon/TransferIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TransferIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/UserIcon/UserIcon.html: mounts have no text and paint nothing — author .design-sync/previews/UserIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/WaterQualityDropletIcon/WaterQualityDropletIcon.html: mounts have no text and paint nothing — author .design-sync/previews/WaterQualityDropletIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/BuildingIcon/BuildingIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BuildingIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/ChevronLeftIcon/ChevronLeftIcon.html: mounts have no text and paint nothing — .design-sync/previews/ChevronLeftIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/icons/ChevronRightIcon/ChevronRightIcon.html: mounts have no text and paint nothing — .design-sync/previews/ChevronRightIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/icons/EyeIcon/EyeIcon.html: mounts have no text and paint nothing — author .design-sync/previews/EyeIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/SpinnerIcon/SpinnerIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SpinnerIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/TrashIcon/TrashIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TrashIcon.tsx — owned files win over generated ones
+  render check: 210/210 previews render cleanly (107 showing the typographic floor card — unauthored previews, not failures) (screenshots in _screenshots/)
+  contact sheets: 14 sheet(s) → _screenshots/contact-sheet-1.png … contact-sheet-14.png
+
+✓ bundle is complete (40 warning(s) — review above, non-blocking)

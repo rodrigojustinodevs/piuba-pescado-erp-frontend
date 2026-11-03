@@ -1,0 +1,846 @@
+[OVERRIDE] using .design-sync/overrides/source-kit.mjs — synth entry: explicit re-exports for names exported by 2+ files (prefer ui/ then icons/); always union src-derived components with componentSrcMap pins
+» piuba-pescado-erp@0.1.0 → /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend/ds-bundle (window.PiubaDS)
+  react@19.2.0 has no UMD — bundling via esbuild
+[DETECT] searched /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend (depth 4), found .storybook at [] → shape=package
+  source shape: package (from cfg.shape)
+  [DTS] parsed 1 .d.ts files from /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend
+[NO_DIST] --entry /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend/.design-sync/.cache/none.js doesn't exist — run the DS's build.
+[ENTRY_CONFLICT] Alert: src/shared/components/ui/Alert.tsx | src/shared/components/Alert/Alert.tsx -> src/shared/components/ui/Alert.tsx
+[ENTRY_CONFLICT] Card: src/shared/components/ui/Card.tsx | src/shared/components/Cards/Card.tsx -> src/shared/components/ui/Card.tsx
+[ENTRY_CONFLICT] Select: src/shared/components/ui/Select.tsx | src/shared/components/form/Select/Select.tsx -> src/shared/components/ui/Select.tsx
+[ENTRY_CONFLICT] SpinnerIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Table/ActionIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] TrashIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Table/ActionIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] BuildingIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Sidebar/menuIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] ChevronLeftIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Sidebar/SidebarIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] ChevronRightIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Sidebar/SidebarIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] EyeIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Table/ActionIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[NO_DIST] no built entry — synthesizing from 84 src files (run the package's build for best results)
+  package: 210 components (70 src-matched)
+  bundle: 1471 KB
+  inlined npm packages: 1
+  (decorator auto-detect skipped — no .storybook/ dir found)
+  css: .design-sync/.cache/compiled.css (129 KB, copied)
+  exported PascalCase symbols: 210
+  components: 210
+  (excluded 0 enum/type/context/hook exports; 210 components)
+  ! guidelinesGlob: docs/guides not found — skipped
+  docs: 1/210 components matched (cfg.docsDir=docs)
+[DOCS_UNMAPPED] AdjustIcon
+[DOCS_UNMAPPED] Alert
+[DOCS_UNMAPPED] AlertDescription
+[DOCS_UNMAPPED] AlertModal
+[DOCS_UNMAPPED] AlertModalProvider
+[DOCS_UNMAPPED] AlertTitle
+[DOCS_UNMAPPED] AppHeader
+[DOCS_UNMAPPED] AuthCompanyGate
+[DOCS_UNMAPPED] Avatar
+[DOCS_UNMAPPED] AvatarFallback
+[DOCS_UNMAPPED] AvatarImage
+[DOCS_UNMAPPED] Badge
+[DOCS_UNMAPPED] BanIcon
+[DOCS_UNMAPPED] BarChart
+[DOCS_UNMAPPED] BaseInput
+[DOCS_UNMAPPED] BatchIcon
+[DOCS_UNMAPPED] BiometryIcon
+[DOCS_UNMAPPED] Breadcrumb
+[DOCS_UNMAPPED] BuildingIcon
+[DOCS_UNMAPPED] Button
+[DOCS_UNMAPPED] Card
+[DOCS_UNMAPPED] CardContent
+[DOCS_UNMAPPED] CardDescription
+[DOCS_UNMAPPED] CardFooter
+[DOCS_UNMAPPED] CardHeader
+[DOCS_UNMAPPED] CardTitle
+[DOCS_UNMAPPED] ChartContainer
+[DOCS_UNMAPPED] ChartLegend
+[DOCS_UNMAPPED] ChartLegendContent
+[DOCS_UNMAPPED] ChartStyle
+[DOCS_UNMAPPED] ChartTooltip
+[DOCS_UNMAPPED] ChartTooltipContent
+[DOCS_UNMAPPED] Checkbox
+[DOCS_UNMAPPED] ChevronDownIcon
+[DOCS_UNMAPPED] ChevronLeftIcon
+[DOCS_UNMAPPED] ChevronRightIcon
+[DOCS_UNMAPPED] CircleIcon
+[DOCS_UNMAPPED] CloseIcon
+[DOCS_UNMAPPED] Collapsible
+[DOCS_UNMAPPED] CollapsibleContent
+[DOCS_UNMAPPED] CollapsibleTrigger
+[DOCS_UNMAPPED] CompanyAndNameFields
+[DOCS_UNMAPPED] ControlledSelect
+[DOCS_UNMAPPED] DashboardIcon
+[DOCS_UNMAPPED] DashboardLayout
+[DOCS_UNMAPPED] DataTable
+[DOCS_UNMAPPED] DetailInfoField
+[DOCS_UNMAPPED] DetailInfoSection
+[DOCS_UNMAPPED] DetailItem
+[DOCS_UNMAPPED] DetailPageHero
+[DOCS_UNMAPPED] DetailSummaryCard
+[DOCS_UNMAPPED] Dialog
+[DOCS_UNMAPPED] DialogClose
+[DOCS_UNMAPPED] DialogContent
+[DOCS_UNMAPPED] DialogDescription
+[DOCS_UNMAPPED] DialogFooter
+[DOCS_UNMAPPED] DialogHeader
+[DOCS_UNMAPPED] DialogOverlay
+[DOCS_UNMAPPED] DialogPortal
+[DOCS_UNMAPPED] DialogTitle
+[DOCS_UNMAPPED] DialogTrigger
+[DOCS_UNMAPPED] DonutChart
+[DOCS_UNMAPPED] DoubleChevronLeftIcon
+[DOCS_UNMAPPED] DoubleChevronRightIcon
+[DOCS_UNMAPPED] Dropdown
+[DOCS_UNMAPPED] DropdownMenu
+[DOCS_UNMAPPED] DropdownMenuCheckboxItem
+[DOCS_UNMAPPED] DropdownMenuContent
+[DOCS_UNMAPPED] DropdownMenuGroup
+[DOCS_UNMAPPED] DropdownMenuItem
+[DOCS_UNMAPPED] DropdownMenuLabel
+[DOCS_UNMAPPED] DropdownMenuPortal
+[DOCS_UNMAPPED] DropdownMenuRadioGroup
+[DOCS_UNMAPPED] DropdownMenuRadioItem
+[DOCS_UNMAPPED] DropdownMenuSeparator
+[DOCS_UNMAPPED] DropdownMenuShortcut
+[DOCS_UNMAPPED] DropdownMenuSub
+[DOCS_UNMAPPED] DropdownMenuSubContent
+[DOCS_UNMAPPED] DropdownMenuSubTrigger
+[DOCS_UNMAPPED] DropdownMenuTrigger
+[DOCS_UNMAPPED] EditIcon
+[DOCS_UNMAPPED] EmailInput
+[DOCS_UNMAPPED] EnableIcon
+[DOCS_UNMAPPED] EntityDetailMetricsBody
+[DOCS_UNMAPPED] EntityDetailShell
+[DOCS_UNMAPPED] EyeIcon
+[DOCS_UNMAPPED] FeedingIcon
+[DOCS_UNMAPPED] FilterIcon
+[DOCS_UNMAPPED] FilterSelect
+[DOCS_UNMAPPED] FormActions
+[DOCS_UNMAPPED] FormCardSection
+[DOCS_UNMAPPED] InfoRow
+[DOCS_UNMAPPED] Input
+[DOCS_UNMAPPED] InputHeader
+[DOCS_UNMAPPED] Label
+[DOCS_UNMAPPED] LineChart
+[DOCS_UNMAPPED] ListEmptyState
+[DOCS_UNMAPPED] ListErrorState
+[DOCS_UNMAPPED] ListHeader
+[DOCS_UNMAPPED] ListLoadingState
+[DOCS_UNMAPPED] ListPageShell
+[DOCS_UNMAPPED] ListSearchAndSortBar
+[DOCS_UNMAPPED] ListSummaryBar
+[DOCS_UNMAPPED] LoadingState
+[DOCS_UNMAPPED] LogoutIcon
+[DOCS_UNMAPPED] MenuItem
+[DOCS_UNMAPPED] MetricCard
+[DOCS_UNMAPPED] MoneyIcon
+[DOCS_UNMAPPED] MortalityIcon
+[DOCS_UNMAPPED] NotFoundState
+[DOCS_UNMAPPED] NumberInput
+[DOCS_UNMAPPED] OrdersIcon
+[DOCS_UNMAPPED] PageHeader
+[DOCS_UNMAPPED] Pagination
+[DOCS_UNMAPPED] PasswordInput
+[DOCS_UNMAPPED] PencilIcon
+[DOCS_UNMAPPED] PhotoPlaceholderIcon
+[DOCS_UNMAPPED] PlusIcon
+[DOCS_UNMAPPED] PrimitiveInput
+[DOCS_UNMAPPED] ProductsIcon
+[DOCS_UNMAPPED] Progress
+[DOCS_UNMAPPED] Radio
+[DOCS_UNMAPPED] RadioGroup
+[DOCS_UNMAPPED] ReportsIcon
+[DOCS_UNMAPPED] ScrollArea
+[DOCS_UNMAPPED] ScrollBar
+[DOCS_UNMAPPED] SearchField
+[DOCS_UNMAPPED] SearchIcon
+[DOCS_UNMAPPED] Select
+[DOCS_UNMAPPED] SelectContent
+[DOCS_UNMAPPED] SelectGroup
+[DOCS_UNMAPPED] SelectItem
+[DOCS_UNMAPPED] SelectLabel
+[DOCS_UNMAPPED] SelectScrollDownButton
+[DOCS_UNMAPPED] SelectScrollUpButton
+[DOCS_UNMAPPED] SelectSeparator
+[DOCS_UNMAPPED] SelectTrigger
+[DOCS_UNMAPPED] SelectValue
+[DOCS_UNMAPPED] SensorIcon
+[DOCS_UNMAPPED] SensorReadingBarChartIcon
+[DOCS_UNMAPPED] Separator
+[DOCS_UNMAPPED] SettingsIcon
+[DOCS_UNMAPPED] Sheet
+[DOCS_UNMAPPED] SheetClose
+[DOCS_UNMAPPED] SheetContent
+[DOCS_UNMAPPED] SheetDescription
+[DOCS_UNMAPPED] SheetFooter
+[DOCS_UNMAPPED] SheetHeader
+[DOCS_UNMAPPED] SheetOverlay
+[DOCS_UNMAPPED] SheetPortal
+[DOCS_UNMAPPED] SheetTitle
+[DOCS_UNMAPPED] SheetTrigger
+[DOCS_UNMAPPED] SidebarContent
+[DOCS_UNMAPPED] SidebarFooter
+[DOCS_UNMAPPED] SidebarGroup
+[DOCS_UNMAPPED] SidebarGroupAction
+[DOCS_UNMAPPED] SidebarGroupContent
+[DOCS_UNMAPPED] SidebarGroupLabel
+[DOCS_UNMAPPED] SidebarHeader
+[DOCS_UNMAPPED] SidebarInput
+[DOCS_UNMAPPED] SidebarInset
+[DOCS_UNMAPPED] SidebarMenu
+[DOCS_UNMAPPED] SidebarMenuAction
+[DOCS_UNMAPPED] SidebarMenuBadge
+[DOCS_UNMAPPED] SidebarMenuButton
+[DOCS_UNMAPPED] SidebarMenuItem
+[DOCS_UNMAPPED] SidebarMenuSkeleton
+[DOCS_UNMAPPED] SidebarMenuSub
+[DOCS_UNMAPPED] SidebarMenuSubButton
+[DOCS_UNMAPPED] SidebarMenuSubItem
+[DOCS_UNMAPPED] SidebarProvider
+[DOCS_UNMAPPED] SidebarRail
+[DOCS_UNMAPPED] SidebarSeparator
+[DOCS_UNMAPPED] SidebarTrigger
+[DOCS_UNMAPPED] Skeleton
+[DOCS_UNMAPPED] SortButton
+[DOCS_UNMAPPED] Spinner
+[DOCS_UNMAPPED] SpinnerIcon
+[DOCS_UNMAPPED] StatCard
+[DOCS_UNMAPPED] StatusFilterTabs
+[DOCS_UNMAPPED] StockingIcon
+[DOCS_UNMAPPED] Switch
+[DOCS_UNMAPPED] Table
+[DOCS_UNMAPPED] TableBody
+[DOCS_UNMAPPED] TableCaption
+[DOCS_UNMAPPED] TableCell
+[DOCS_UNMAPPED] TableFooter
+[DOCS_UNMAPPED] TableHead
+[DOCS_UNMAPPED] TableHeader
+[DOCS_UNMAPPED] TableRow
+[DOCS_UNMAPPED] Tabs
+[DOCS_UNMAPPED] TabsContent
+[DOCS_UNMAPPED] TabsList
+[DOCS_UNMAPPED] TabsTrigger
+[DOCS_UNMAPPED] TankDocumentIcon
+[DOCS_UNMAPPED] TankIcon
+[DOCS_UNMAPPED] Textarea
+[DOCS_UNMAPPED] TextArea
+[DOCS_UNMAPPED] TextInput
+[DOCS_UNMAPPED] ToastComponent
+[DOCS_UNMAPPED] ToastContainer
+[DOCS_UNMAPPED] Tooltip
+[DOCS_UNMAPPED] TooltipContent
+[DOCS_UNMAPPED] TooltipProvider
+[DOCS_UNMAPPED] TooltipTrigger
+[DOCS_UNMAPPED] TransferIcon
+[DOCS_UNMAPPED] TrashIcon
+[DOCS_UNMAPPED] UserIcon
+[DOCS_UNMAPPED] WaterQualityDropletIcon
+  (preview override: Avatar)
+  (preview override: Badge)
+  (preview override: Card)
+  (preview override: CardContent)
+  (preview override: CardFooter)
+  (preview override: CardHeader)
+  (preview override: Checkbox)
+  (preview override: ChevronDownIcon)
+  (preview override: ChevronLeftIcon)
+  (preview override: ChevronRightIcon)
+  (preview override: CloseIcon)
+  (preview override: DropdownMenuLabel)
+  (preview override: EntityDetailShell)
+  (preview override: ListEmptyState)
+  (preview override: ListHeader)
+  (preview override: MetricCard)
+  (preview override: NotFoundState)
+  (preview override: PageHeader)
+  (preview override: PlusIcon)
+  (preview override: Progress)
+  (preview override: SidebarFooter)
+  (preview override: SidebarGroup)
+  (preview override: SidebarGroupLabel)
+  (preview override: SidebarHeader)
+  (preview override: SidebarMenuItem)
+  (preview override: SidebarMenuSkeleton)
+  (preview override: SidebarMenuSub)
+  (preview override: SidebarMenuSubButton)
+  (preview override: SidebarMenuSubItem)
+  (preview override: SidebarProvider)
+  (preview override: TableCaption)
+  (preview override: TableCell)
+  (preview override: TableHead)
+  previews: 0 generated → .design-sync/.cache/previews/ (33 user-owned)
+  [DTS] 20/210 components
+  [DTS] 40/210 components
+  [DTS] 60/210 components
+  [DTS] 80/210 components
+  [DTS] 100/210 components
+  [DTS] 120/210 components
+  [DTS] 140/210 components
+  [DTS] 160/210 components
+  [DTS] 180/210 components
+  [DTS] 200/210 components
+  [DTS] 210/210 components
+  styles.css: 1 @import(s) (incl. _ds_bundle.css — component styles ship to designs via this closure)
+  readmeHeader: stitching .design-sync/conventions.md
+  _ds_sync.json: 210 render hash(es) + source key(s) (verification anchor)
+✓ wrote /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend/ds-bundle: _ds_bundle.js + styles.css + 210 component previews
+no remote anchor — full scope (210 component(s) verify + upload)
+→ /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend/ds-bundle/.sync-diff.json
+  .ds-build-meta.json: 210 components (package)
+  _ds_bundle.js: 1532 KB, syntax OK
+  _ds_bundle.js header: window.PiubaDS, 210 components, 1 inlined externals
+  _ds_sync.json: 210 render hash(es), anchor matches the bundle
+  _ds_sync.json render hashes match disk (210 recomputed)
+  styles.css: 1 @import(s), all resolve
+  _ds_bundle.css: 129 KB
+  tokens: 294 defined, 214 referenced (2 missing, below threshold)
+  components/: 210 previews, 210 .prompt.md
+  all .d.ts parse cleanly
+  window.PiubaDS: 226 exports (210 fn + 0 compound)
+! [RENDER_THIN] components/form/Radio/Radio.html: mounts have no text and paint nothing — author .design-sync/previews/Radio.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/AdjustIcon/AdjustIcon.html: mounts have no text and paint nothing — author .design-sync/previews/AdjustIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/BanIcon/BanIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BanIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/BatchIcon/BatchIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BatchIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/BiometryIcon/BiometryIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BiometryIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/ChevronDownIcon/ChevronDownIcon.html: mounts have no text and paint nothing — .design-sync/previews/ChevronDownIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/general/CircleIcon/CircleIcon.html: mounts have no text and paint nothing — author .design-sync/previews/CircleIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/CloseIcon/CloseIcon.html: mounts have no text and paint nothing — .design-sync/previews/CloseIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/general/DashboardIcon/DashboardIcon.html: mounts have no text and paint nothing — author .design-sync/previews/DashboardIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/DoubleChevronLeftIcon/DoubleChevronLeftIcon.html: mounts have no text and paint nothing — author .design-sync/previews/DoubleChevronLeftIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/DoubleChevronRightIcon/DoubleChevronRightIcon.html: mounts have no text and paint nothing — author .design-sync/previews/DoubleChevronRightIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/EditIcon/EditIcon.html: mounts have no text and paint nothing — author .design-sync/previews/EditIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/EnableIcon/EnableIcon.html: mounts have no text and paint nothing — author .design-sync/previews/EnableIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/FeedingIcon/FeedingIcon.html: mounts have no text and paint nothing — author .design-sync/previews/FeedingIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/FilterIcon/FilterIcon.html: mounts have no text and paint nothing — author .design-sync/previews/FilterIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/LogoutIcon/LogoutIcon.html: mounts have no text and paint nothing — author .design-sync/previews/LogoutIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/MoneyIcon/MoneyIcon.html: mounts have no text and paint nothing — author .design-sync/previews/MoneyIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/MortalityIcon/MortalityIcon.html: mounts have no text and paint nothing — author .design-sync/previews/MortalityIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/OrdersIcon/OrdersIcon.html: mounts have no text and paint nothing — author .design-sync/previews/OrdersIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/PencilIcon/PencilIcon.html: mounts have no text and paint nothing — author .design-sync/previews/PencilIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/PhotoPlaceholderIcon/PhotoPlaceholderIcon.html: mounts have no text and paint nothing — author .design-sync/previews/PhotoPlaceholderIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/PlusIcon/PlusIcon.html: mounts have no text and paint nothing — .design-sync/previews/PlusIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/general/ProductsIcon/ProductsIcon.html: mounts have no text and paint nothing — author .design-sync/previews/ProductsIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/ReportsIcon/ReportsIcon.html: mounts have no text and paint nothing — author .design-sync/previews/ReportsIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SearchIcon/SearchIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SearchIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SensorIcon/SensorIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SensorIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SensorReadingBarChartIcon/SensorReadingBarChartIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SensorReadingBarChartIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/SettingsIcon/SettingsIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SettingsIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/StockingIcon/StockingIcon.html: mounts have no text and paint nothing — author .design-sync/previews/StockingIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/TankDocumentIcon/TankDocumentIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TankDocumentIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/TankIcon/TankIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TankIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/TransferIcon/TransferIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TransferIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/UserIcon/UserIcon.html: mounts have no text and paint nothing — author .design-sync/previews/UserIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/general/WaterQualityDropletIcon/WaterQualityDropletIcon.html: mounts have no text and paint nothing — author .design-sync/previews/WaterQualityDropletIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/BuildingIcon/BuildingIcon.html: mounts have no text and paint nothing — author .design-sync/previews/BuildingIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/ChevronLeftIcon/ChevronLeftIcon.html: mounts have no text and paint nothing — .design-sync/previews/ChevronLeftIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/icons/ChevronRightIcon/ChevronRightIcon.html: mounts have no text and paint nothing — .design-sync/previews/ChevronRightIcon.tsx is already authored and still trips this check — portals/fixed positioning can collapse measured output; confirm the screenshot and record in NOTES.md if benign, or rework the preview
+! [RENDER_THIN] components/icons/EyeIcon/EyeIcon.html: mounts have no text and paint nothing — author .design-sync/previews/EyeIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/SpinnerIcon/SpinnerIcon.html: mounts have no text and paint nothing — author .design-sync/previews/SpinnerIcon.tsx — owned files win over generated ones
+! [RENDER_THIN] components/icons/TrashIcon/TrashIcon.html: mounts have no text and paint nothing — author .design-sync/previews/TrashIcon.tsx — owned files win over generated ones
+  render check: 210/210 previews render cleanly (107 showing the typographic floor card — unauthored previews, not failures) (screenshots in _screenshots/)
+  contact sheets: 14 sheet(s) → _screenshots/contact-sheet-1.png … contact-sheet-14.png
+
+✓ bundle is complete (40 warning(s) — review above, non-blocking)
+(AdjustIcon, Alert, AlertDescription, AlertModal, AlertModalProvider, AlertTitle, AppHeader, AuthCompanyGate, AvatarFallback, AvatarImage, BanIcon, BarChart, BaseInput, BatchIcon, BiometryIcon, Breadcrumb, BuildingIcon, Button, CardDescription, CardTitle, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, CircleIcon, Collapsible, CollapsibleContent, CollapsibleTrigger, CompanyAndNameFields, ControlledSelect, DashboardIcon, DashboardLayout, DataTable, DetailInfoField, DetailInfoSection, DetailItem, DetailPageHero, DetailSummaryCard, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, DonutChart, DoubleChevronLeftIcon, DoubleChevronRightIcon, Dropdown, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, EditIcon, EmailInput, EnableIcon, EntityDetailMetricsBody, EyeIcon, FeedingIcon, FilterIcon, FilterSelect, FormActions, FormCardSection, InfoRow, Input, InputHeader, Label, LineChart, ListErrorState, ListLoadingState, ListPageShell, ListSearchAndSortBar, ListSummaryBar, LoadingState, LogoutIcon, MenuItem, MoneyIcon, MortalityIcon, NumberInput, OrdersIcon, Pagination, PasswordInput, PencilIcon, PhotoPlaceholderIcon, PrimitiveInput, ProductsIcon, Radio, RadioGroup, ReportsIcon, ScrollArea, ScrollBar, SearchField, SearchIcon, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, SensorIcon, SensorReadingBarChartIcon, Separator, SettingsIcon, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarGroupAction, SidebarGroupContent, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, SortButton, Spinner, SpinnerIcon, StatCard, StatusFilterTabs, StockingIcon, Switch, Table, TableBody, TableFooter, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, TankDocumentIcon, TankIcon, Textarea, TextArea, TextInput, ToastComponent, ToastContainer, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TransferIcon, TrashIcon, UserIcon, WaterQualityDropletIcon: nothing to capture — re-ships via the upload partition, no grading needed)
+○ [CAPTURE] Avatar: carried forward
+○ [CAPTURE] Badge: carried forward
+○ [CAPTURE] Card: carried forward
+○ [CAPTURE] CardContent: carried forward
+○ [CAPTURE] CardFooter: carried forward
+○ [CAPTURE] CardHeader: carried forward
+○ [CAPTURE] Checkbox: carried forward
+○ [CAPTURE] ChevronDownIcon: carried forward
+○ [CAPTURE] ChevronLeftIcon: carried forward
+○ [CAPTURE] ChevronRightIcon: carried forward
+○ [CAPTURE] CloseIcon: carried forward
+○ [CAPTURE] DropdownMenuLabel: carried forward
+○ [CAPTURE] EntityDetailShell: carried forward
+○ [CAPTURE] ListEmptyState: carried forward
+○ [CAPTURE] ListHeader: carried forward
+○ [CAPTURE] MetricCard: carried forward
+○ [CAPTURE] NotFoundState: carried forward
+○ [CAPTURE] PageHeader: carried forward
+○ [CAPTURE] PlusIcon: carried forward
+○ [CAPTURE] Progress: carried forward
+○ [CAPTURE] SidebarFooter: carried forward
+○ [CAPTURE] SidebarGroup: carried forward
+○ [CAPTURE] SidebarGroupLabel: carried forward
+○ [CAPTURE] SidebarHeader: carried forward
+○ [CAPTURE] SidebarMenuItem: carried forward
+○ [CAPTURE] SidebarMenuSkeleton: carried forward
+○ [CAPTURE] SidebarMenuSub: carried forward
+○ [CAPTURE] SidebarMenuSubButton: carried forward
+○ [CAPTURE] SidebarMenuSubItem: carried forward
+○ [CAPTURE] SidebarProvider: carried forward
+○ [CAPTURE] TableCaption: carried forward
+○ [CAPTURE] TableCell: carried forward
+○ [CAPTURE] TableHead: carried forward
+
+package-capture: 33 component(s) — 33 carried forward, 0 captured, 0 with errors
+Grade from the sheets: Read each _screenshots/review/<group>__<Name>.png, then Write verdicts to .design-sync/.cache/review/<Name>.grade.json (keys must equal the cell labels exactly).
+{
+  "version": 2,
+  "ok": true,
+  "shape": "package",
+  "anchor": "not_provided",
+  "learningsUnmerged": [],
+  "stages": {
+    "build": {
+      "ok": true,
+      "exit": 0,
+      "skipped": null
+    },
+    "diff": {
+      "ok": true,
+      "exit": 0,
+      "skipped": null
+    },
+    "validate": {
+      "ok": true,
+      "exit": 0,
+      "skipped": null
+    },
+    "capture": {
+      "ok": true,
+      "exit": 0,
+      "skipped": null
+    }
+  },
+  "verification": {
+    "unchanged": [],
+    "changed": [],
+    "added": [
+      "AdjustIcon",
+      "Alert",
+      "AlertDescription",
+      "AlertModal",
+      "AlertModalProvider",
+      "AlertTitle",
+      "AppHeader",
+      "AuthCompanyGate",
+      "Avatar",
+      "AvatarFallback",
+      "AvatarImage",
+      "Badge",
+      "BanIcon",
+      "BarChart",
+      "BaseInput",
+      "BatchIcon",
+      "BiometryIcon",
+      "Breadcrumb",
+      "BuildingIcon",
+      "Button",
+      "Card",
+      "CardContent",
+      "CardDescription",
+      "CardFooter",
+      "CardHeader",
+      "CardTitle",
+      "ChartContainer",
+      "ChartLegend",
+      "ChartLegendContent",
+      "ChartStyle",
+      "ChartTooltip",
+      "ChartTooltipContent",
+      "Checkbox",
+      "ChevronDownIcon",
+      "ChevronLeftIcon",
+      "ChevronRightIcon",
+      "CircleIcon",
+      "CloseIcon",
+      "Collapsible",
+      "CollapsibleContent",
+      "CollapsibleTrigger",
+      "CompanyAndNameFields",
+      "ControlledSelect",
+      "DashboardIcon",
+      "DashboardLayout",
+      "DataTable",
+      "DetailInfoField",
+      "DetailInfoSection",
+      "DetailItem",
+      "DetailPageHero",
+      "DetailSummaryCard",
+      "Dialog",
+      "DialogClose",
+      "DialogContent",
+      "DialogDescription",
+      "DialogFooter",
+      "DialogHeader",
+      "DialogOverlay",
+      "DialogPortal",
+      "DialogTitle",
+      "DialogTrigger",
+      "DonutChart",
+      "DoubleChevronLeftIcon",
+      "DoubleChevronRightIcon",
+      "Dropdown",
+      "DropdownMenu",
+      "DropdownMenuCheckboxItem",
+      "DropdownMenuContent",
+      "DropdownMenuGroup",
+      "DropdownMenuItem",
+      "DropdownMenuLabel",
+      "DropdownMenuPortal",
+      "DropdownMenuRadioGroup",
+      "DropdownMenuRadioItem",
+      "DropdownMenuSeparator",
+      "DropdownMenuShortcut",
+      "DropdownMenuSub",
+      "DropdownMenuSubContent",
+      "DropdownMenuSubTrigger",
+      "DropdownMenuTrigger",
+      "EditIcon",
+      "EmailInput",
+      "EnableIcon",
+      "EntityDetailMetricsBody",
+      "EntityDetailShell",
+      "EyeIcon",
+      "FeedingIcon",
+      "FilterIcon",
+      "FilterSelect",
+      "FormActions",
+      "FormCardSection",
+      "InfoRow",
+      "Input",
+      "InputHeader",
+      "Label",
+      "LineChart",
+      "ListEmptyState",
+      "ListErrorState",
+      "ListHeader",
+      "ListLoadingState",
+      "ListPageShell",
+      "ListSearchAndSortBar",
+      "ListSummaryBar",
+      "LoadingState",
+      "LogoutIcon",
+      "MenuItem",
+      "MetricCard",
+      "MoneyIcon",
+      "MortalityIcon",
+      "NotFoundState",
+      "NumberInput",
+      "OrdersIcon",
+      "PageHeader",
+      "Pagination",
+      "PasswordInput",
+      "PencilIcon",
+      "PhotoPlaceholderIcon",
+      "PlusIcon",
+      "PrimitiveInput",
+      "ProductsIcon",
+      "Progress",
+      "Radio",
+      "RadioGroup",
+      "ReportsIcon",
+      "ScrollArea",
+      "ScrollBar",
+      "SearchField",
+      "SearchIcon",
+      "Select",
+      "SelectContent",
+      "SelectGroup",
+      "SelectItem",
+      "SelectLabel",
+      "SelectScrollDownButton",
+      "SelectScrollUpButton",
+      "SelectSeparator",
+      "SelectTrigger",
+      "SelectValue",
+      "SensorIcon",
+      "SensorReadingBarChartIcon",
+      "Separator",
+      "SettingsIcon",
+      "Sheet",
+      "SheetClose",
+      "SheetContent",
+      "SheetDescription",
+      "SheetFooter",
+      "SheetHeader",
+      "SheetOverlay",
+      "SheetPortal",
+      "SheetTitle",
+      "SheetTrigger",
+      "Sidebar",
+      "SidebarContent",
+      "SidebarFooter",
+      "SidebarGroup",
+      "SidebarGroupAction",
+      "SidebarGroupContent",
+      "SidebarGroupLabel",
+      "SidebarHeader",
+      "SidebarInput",
+      "SidebarInset",
+      "SidebarMenu",
+      "SidebarMenuAction",
+      "SidebarMenuBadge",
+      "SidebarMenuButton",
+      "SidebarMenuItem",
+      "SidebarMenuSkeleton",
+      "SidebarMenuSub",
+      "SidebarMenuSubButton",
+      "SidebarMenuSubItem",
+      "SidebarProvider",
+      "SidebarRail",
+      "SidebarSeparator",
+      "SidebarTrigger",
+      "Skeleton",
+      "SortButton",
+      "Spinner",
+      "SpinnerIcon",
+      "StatCard",
+      "StatusFilterTabs",
+      "StockingIcon",
+      "Switch",
+      "Table",
+      "TableBody",
+      "TableCaption",
+      "TableCell",
+      "TableFooter",
+      "TableHead",
+      "TableHeader",
+      "TableRow",
+      "Tabs",
+      "TabsContent",
+      "TabsList",
+      "TabsTrigger",
+      "TankDocumentIcon",
+      "TankIcon",
+      "Textarea",
+      "TextArea",
+      "TextInput",
+      "ToastComponent",
+      "ToastContainer",
+      "Tooltip",
+      "TooltipContent",
+      "TooltipProvider",
+      "TooltipTrigger",
+      "TransferIcon",
+      "TrashIcon",
+      "UserIcon",
+      "WaterQualityDropletIcon"
+    ],
+    "removed": [],
+    "pendingGrade": [],
+    "canary": null
+  },
+  "upload": {
+    "any": true,
+    "components": [
+      "AdjustIcon",
+      "Alert",
+      "AlertDescription",
+      "AlertModal",
+      "AlertModalProvider",
+      "AlertTitle",
+      "AppHeader",
+      "AuthCompanyGate",
+      "Avatar",
+      "AvatarFallback",
+      "AvatarImage",
+      "Badge",
+      "BanIcon",
+      "BarChart",
+      "BaseInput",
+      "BatchIcon",
+      "BiometryIcon",
+      "Breadcrumb",
+      "BuildingIcon",
+      "Button",
+      "Card",
+      "CardContent",
+      "CardDescription",
+      "CardFooter",
+      "CardHeader",
+      "CardTitle",
+      "ChartContainer",
+      "ChartLegend",
+      "ChartLegendContent",
+      "ChartStyle",
+      "ChartTooltip",
+      "ChartTooltipContent",
+      "Checkbox",
+      "ChevronDownIcon",
+      "ChevronLeftIcon",
+      "ChevronRightIcon",
+      "CircleIcon",
+      "CloseIcon",
+      "Collapsible",
+      "CollapsibleContent",
+      "CollapsibleTrigger",
+      "CompanyAndNameFields",
+      "ControlledSelect",
+      "DashboardIcon",
+      "DashboardLayout",
+      "DataTable",
+      "DetailInfoField",
+      "DetailInfoSection",
+      "DetailItem",
+      "DetailPageHero",
+      "DetailSummaryCard",
+      "Dialog",
+      "DialogClose",
+      "DialogContent",
+      "DialogDescription",
+      "DialogFooter",
+      "DialogHeader",
+      "DialogOverlay",
+      "DialogPortal",
+      "DialogTitle",
+      "DialogTrigger",
+      "DonutChart",
+      "DoubleChevronLeftIcon",
+      "DoubleChevronRightIcon",
+      "Dropdown",
+      "DropdownMenu",
+      "DropdownMenuCheckboxItem",
+      "DropdownMenuContent",
+      "DropdownMenuGroup",
+      "DropdownMenuItem",
+      "DropdownMenuLabel",
+      "DropdownMenuPortal",
+      "DropdownMenuRadioGroup",
+      "DropdownMenuRadioItem",
+      "DropdownMenuSeparator",
+      "DropdownMenuShortcut",
+      "DropdownMenuSub",
+      "DropdownMenuSubContent",
+      "DropdownMenuSubTrigger",
+      "DropdownMenuTrigger",
+      "EditIcon",
+      "EmailInput",
+      "EnableIcon",
+      "EntityDetailMetricsBody",
+      "EntityDetailShell",
+      "EyeIcon",
+      "FeedingIcon",
+      "FilterIcon",
+      "FilterSelect",
+      "FormActions",
+      "FormCardSection",
+      "InfoRow",
+      "Input",
+      "InputHeader",
+      "Label",
+      "LineChart",
+      "ListEmptyState",
+      "ListErrorState",
+      "ListHeader",
+      "ListLoadingState",
+      "ListPageShell",
+      "ListSearchAndSortBar",
+      "ListSummaryBar",
+      "LoadingState",
+      "LogoutIcon",
+      "MenuItem",
+      "MetricCard",
+      "MoneyIcon",
+      "MortalityIcon",
+      "NotFoundState",
+      "NumberInput",
+      "OrdersIcon",
+      "PageHeader",
+      "Pagination",
+      "PasswordInput",
+      "PencilIcon",
+      "PhotoPlaceholderIcon",
+      "PlusIcon",
+      "PrimitiveInput",
+      "ProductsIcon",
+      "Progress",
+      "Radio",
+      "RadioGroup",
+      "ReportsIcon",
+      "ScrollArea",
+      "ScrollBar",
+      "SearchField",
+      "SearchIcon",
+      "Select",
+      "SelectContent",
+      "SelectGroup",
+      "SelectItem",
+      "SelectLabel",
+      "SelectScrollDownButton",
+      "SelectScrollUpButton",
+      "SelectSeparator",
+      "SelectTrigger",
+      "SelectValue",
+      "SensorIcon",
+      "SensorReadingBarChartIcon",
+      "Separator",
+      "SettingsIcon",
+      "Sheet",
+      "SheetClose",
+      "SheetContent",
+      "SheetDescription",
+      "SheetFooter",
+      "SheetHeader",
+      "SheetOverlay",
+      "SheetPortal",
+      "SheetTitle",
+      "SheetTrigger",
+      "Sidebar",
+      "SidebarContent",
+      "SidebarFooter",
+      "SidebarGroup",
+      "SidebarGroupAction",
+      "SidebarGroupContent",
+      "SidebarGroupLabel",
+      "SidebarHeader",
+      "SidebarInput",
+      "SidebarInset",
+      "SidebarMenu",
+      "SidebarMenuAction",
+      "SidebarMenuBadge",
+      "SidebarMenuButton",
+      "SidebarMenuItem",
+      "SidebarMenuSkeleton",
+      "SidebarMenuSub",
+      "SidebarMenuSubButton",
+      "SidebarMenuSubItem",
+      "SidebarProvider",
+      "SidebarRail",
+      "SidebarSeparator",
+      "SidebarTrigger",
+      "Skeleton",
+      "SortButton",
+      "Spinner",
+      "SpinnerIcon",
+      "StatCard",
+      "StatusFilterTabs",
+      "StockingIcon",
+      "Switch",
+      "Table",
+      "TableBody",
+      "TableCaption",
+      "TableCell",
+      "TableFooter",
+      "TableHead",
+      "TableHeader",
+      "TableRow",
+      "Tabs",
+      "TabsContent",
+      "TabsList",
+      "TabsTrigger",
+      "TankDocumentIcon",
+      "TankIcon",
+      "Textarea",
+      "TextArea",
+      "TextInput",
+      "ToastComponent",
+      "ToastContainer",
+      "Tooltip",
+      "TooltipContent",
+      "TooltipProvider",
+      "TooltipTrigger",
+      "TransferIcon",
+      "TrashIcon",
+      "UserIcon",
+      "WaterQualityDropletIcon"
+    ],
+    "deletePaths": [],
+    "bundle": true,
+    "styling": true,
+    "aux": true
+  }
+}

@@ -1,0 +1,37 @@
+  (177 component(s) on the floor card — author previews to bring them into grading)
+○ [CAPTURE] Avatar: carried forward
+○ [CAPTURE] Badge: carried forward
+○ [CAPTURE] Card: carried forward
+○ [CAPTURE] CardContent: carried forward
+○ [CAPTURE] CardFooter: carried forward
+○ [CAPTURE] CardHeader: carried forward
+○ [CAPTURE] Checkbox: carried forward
+○ [CAPTURE] ChevronDownIcon: carried forward
+○ [CAPTURE] ChevronLeftIcon: carried forward
+○ [CAPTURE] ChevronRightIcon: carried forward
+○ [CAPTURE] CloseIcon: carried forward
+○ [CAPTURE] DropdownMenuLabel: carried forward
+○ [CAPTURE] EntityDetailShell: carried forward
+○ [CAPTURE] ListEmptyState: carried forward
+○ [CAPTURE] ListHeader: carried forward
+○ [CAPTURE] MetricCard: carried forward
+○ [CAPTURE] NotFoundState: carried forward
+○ [CAPTURE] PageHeader: carried forward
+○ [CAPTURE] PlusIcon: carried forward
+○ [CAPTURE] Progress: carried forward
+○ [CAPTURE] SidebarFooter: carried forward
+○ [CAPTURE] SidebarGroup: carried forward
+○ [CAPTURE] SidebarGroupLabel: carried forward
+○ [CAPTURE] SidebarHeader: carried forward
+○ [CAPTURE] SidebarMenuItem: carried forward
+○ [CAPTURE] SidebarMenuSkeleton: carried forward
+○ [CAPTURE] SidebarMenuSub: carried forward
+○ [CAPTURE] SidebarMenuSubButton: carried forward
+○ [CAPTURE] SidebarMenuSubItem: carried forward
+○ [CAPTURE] SidebarProvider: carried forward
+○ [CAPTURE] TableCaption: carried forward
+○ [CAPTURE] TableCell: carried forward
+○ [CAPTURE] TableHead: carried forward
+
+package-capture: 33 component(s) — 33 carried forward, 0 captured, 0 with errors; 177 on the floor card (not graded)
+Grade from the sheets: Read each _screenshots/review/<group>__<Name>.png, then Write verdicts to .design-sync/.cache/review/<Name>.grade.json (keys must equal the cell labels exactly).

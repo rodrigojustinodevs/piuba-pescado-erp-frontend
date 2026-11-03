@@ -1,0 +1,284 @@
+[OVERRIDE] using .design-sync/overrides/source-kit.mjs — synth entry: explicit re-exports for names exported by 2+ files (prefer ui/ then icons/); always union src-derived components with componentSrcMap pins
+» piuba-pescado-erp@0.1.0 → ./ds-bundle (window.PiubaDS)
+  react@19.2.0 has no UMD — bundling via esbuild
+[DETECT] searched /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend (depth 4), found .storybook at [] → shape=package
+  source shape: package (from cfg.shape)
+  [DTS] parsed 1 .d.ts files from /home/rodrigo-dev/frontend/piuba-pescado-erp-frontend
+[NO_DIST] --entry ./.design-sync/.cache/none.js doesn't exist — run the DS's build.
+[ENTRY_CONFLICT] Alert: src/shared/components/ui/Alert.tsx | src/shared/components/Alert/Alert.tsx -> src/shared/components/ui/Alert.tsx
+[ENTRY_CONFLICT] Card: src/shared/components/ui/Card.tsx | src/shared/components/Cards/Card.tsx -> src/shared/components/ui/Card.tsx
+[ENTRY_CONFLICT] Select: src/shared/components/ui/Select.tsx | src/shared/components/form/Select/Select.tsx -> src/shared/components/ui/Select.tsx
+[ENTRY_CONFLICT] SpinnerIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Table/ActionIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] TrashIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Table/ActionIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] BuildingIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Sidebar/menuIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] ChevronLeftIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Sidebar/SidebarIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] ChevronRightIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Sidebar/SidebarIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[ENTRY_CONFLICT] EyeIcon: src/shared/components/icons/AppIcons.tsx | src/shared/components/Table/ActionIcons.tsx -> src/shared/components/icons/AppIcons.tsx
+[NO_DIST] no built entry — synthesizing from 84 src files (run the package's build for best results)
+  package: 210 components (70 src-matched)
+  bundle: 1471 KB
+  inlined npm packages: 1
+  (decorator auto-detect skipped — no .storybook/ dir found)
+  css: .design-sync/.cache/compiled.css (129 KB, copied)
+  exported PascalCase symbols: 210
+  components: 210
+  (excluded 0 enum/type/context/hook exports; 210 components)
+  guidelines: 2 file(s) → guidelines/
+  docs: 1/210 components matched (cfg.docsDir=docs)
+[DOCS_UNMAPPED] AdjustIcon
+[DOCS_UNMAPPED] Alert
+[DOCS_UNMAPPED] AlertDescription
+[DOCS_UNMAPPED] AlertModal
+[DOCS_UNMAPPED] AlertModalProvider
+[DOCS_UNMAPPED] AlertTitle
+[DOCS_UNMAPPED] AppHeader
+[DOCS_UNMAPPED] AuthCompanyGate
+[DOCS_UNMAPPED] Avatar
+[DOCS_UNMAPPED] AvatarFallback
+[DOCS_UNMAPPED] AvatarImage
+[DOCS_UNMAPPED] Badge
+[DOCS_UNMAPPED] BanIcon
+[DOCS_UNMAPPED] BarChart
+[DOCS_UNMAPPED] BaseInput
+[DOCS_UNMAPPED] BatchIcon
+[DOCS_UNMAPPED] BiometryIcon
+[DOCS_UNMAPPED] Breadcrumb
+[DOCS_UNMAPPED] BuildingIcon
+[DOCS_UNMAPPED] Button
+[DOCS_UNMAPPED] Card
+[DOCS_UNMAPPED] CardContent
+[DOCS_UNMAPPED] CardDescription
+[DOCS_UNMAPPED] CardFooter
+[DOCS_UNMAPPED] CardHeader
+[DOCS_UNMAPPED] CardTitle
+[DOCS_UNMAPPED] ChartContainer
+[DOCS_UNMAPPED] ChartLegend
+[DOCS_UNMAPPED] ChartLegendContent
+[DOCS_UNMAPPED] ChartStyle
+[DOCS_UNMAPPED] ChartTooltip
+[DOCS_UNMAPPED] ChartTooltipContent
+[DOCS_UNMAPPED] Checkbox
+[DOCS_UNMAPPED] ChevronDownIcon
+[DOCS_UNMAPPED] ChevronLeftIcon
+[DOCS_UNMAPPED] ChevronRightIcon
+[DOCS_UNMAPPED] CircleIcon
+[DOCS_UNMAPPED] CloseIcon
+[DOCS_UNMAPPED] Collapsible
+[DOCS_UNMAPPED] CollapsibleContent
+[DOCS_UNMAPPED] CollapsibleTrigger
+[DOCS_UNMAPPED] CompanyAndNameFields
+[DOCS_UNMAPPED] ControlledSelect
+[DOCS_UNMAPPED] DashboardIcon
+[DOCS_UNMAPPED] DashboardLayout
+[DOCS_UNMAPPED] DataTable
+[DOCS_UNMAPPED] DetailInfoField
+[DOCS_UNMAPPED] DetailInfoSection
+[DOCS_UNMAPPED] DetailItem
+[DOCS_UNMAPPED] DetailPageHero
+[DOCS_UNMAPPED] DetailSummaryCard
+[DOCS_UNMAPPED] Dialog
+[DOCS_UNMAPPED] DialogClose
+[DOCS_UNMAPPED] DialogContent
+[DOCS_UNMAPPED] DialogDescription
+[DOCS_UNMAPPED] DialogFooter
+[DOCS_UNMAPPED] DialogHeader
+[DOCS_UNMAPPED] DialogOverlay
+[DOCS_UNMAPPED] DialogPortal
+[DOCS_UNMAPPED] DialogTitle
+[DOCS_UNMAPPED] DialogTrigger
+[DOCS_UNMAPPED] DonutChart
+[DOCS_UNMAPPED] DoubleChevronLeftIcon
+[DOCS_UNMAPPED] DoubleChevronRightIcon
+[DOCS_UNMAPPED] Dropdown
+[DOCS_UNMAPPED] DropdownMenu
+[DOCS_UNMAPPED] DropdownMenuCheckboxItem
+[DOCS_UNMAPPED] DropdownMenuContent
+[DOCS_UNMAPPED] DropdownMenuGroup
+[DOCS_UNMAPPED] DropdownMenuItem
+[DOCS_UNMAPPED] DropdownMenuLabel
+[DOCS_UNMAPPED] DropdownMenuPortal
+[DOCS_UNMAPPED] DropdownMenuRadioGroup
+[DOCS_UNMAPPED] DropdownMenuRadioItem
+[DOCS_UNMAPPED] DropdownMenuSeparator
+[DOCS_UNMAPPED] DropdownMenuShortcut
+[DOCS_UNMAPPED] DropdownMenuSub
+[DOCS_UNMAPPED] DropdownMenuSubContent
+[DOCS_UNMAPPED] DropdownMenuSubTrigger
+[DOCS_UNMAPPED] DropdownMenuTrigger
+[DOCS_UNMAPPED] EditIcon
+[DOCS_UNMAPPED] EmailInput
+[DOCS_UNMAPPED] EnableIcon
+[DOCS_UNMAPPED] EntityDetailMetricsBody
+[DOCS_UNMAPPED] EntityDetailShell
+[DOCS_UNMAPPED] EyeIcon
+[DOCS_UNMAPPED] FeedingIcon
+[DOCS_UNMAPPED] FilterIcon
+[DOCS_UNMAPPED] FilterSelect
+[DOCS_UNMAPPED] FormActions
+[DOCS_UNMAPPED] FormCardSection
+[DOCS_UNMAPPED] InfoRow
+[DOCS_UNMAPPED] Input
+[DOCS_UNMAPPED] InputHeader
+[DOCS_UNMAPPED] Label
+[DOCS_UNMAPPED] LineChart
+[DOCS_UNMAPPED] ListEmptyState
+[DOCS_UNMAPPED] ListErrorState
+[DOCS_UNMAPPED] ListHeader
+[DOCS_UNMAPPED] ListLoadingState
+[DOCS_UNMAPPED] ListPageShell
+[DOCS_UNMAPPED] ListSearchAndSortBar
+[DOCS_UNMAPPED] ListSummaryBar
+[DOCS_UNMAPPED] LoadingState
+[DOCS_UNMAPPED] LogoutIcon
+[DOCS_UNMAPPED] MenuItem
+[DOCS_UNMAPPED] MetricCard
+[DOCS_UNMAPPED] MoneyIcon
+[DOCS_UNMAPPED] MortalityIcon
+[DOCS_UNMAPPED] NotFoundState
+[DOCS_UNMAPPED] NumberInput
+[DOCS_UNMAPPED] OrdersIcon
+[DOCS_UNMAPPED] PageHeader
+[DOCS_UNMAPPED] Pagination
+[DOCS_UNMAPPED] PasswordInput
+[DOCS_UNMAPPED] PencilIcon
+[DOCS_UNMAPPED] PhotoPlaceholderIcon
+[DOCS_UNMAPPED] PlusIcon
+[DOCS_UNMAPPED] PrimitiveInput
+[DOCS_UNMAPPED] ProductsIcon
+[DOCS_UNMAPPED] Progress
+[DOCS_UNMAPPED] Radio
+[DOCS_UNMAPPED] RadioGroup
+[DOCS_UNMAPPED] ReportsIcon
+[DOCS_UNMAPPED] ScrollArea
+[DOCS_UNMAPPED] ScrollBar
+[DOCS_UNMAPPED] SearchField
+[DOCS_UNMAPPED] SearchIcon
+[DOCS_UNMAPPED] Select
+[DOCS_UNMAPPED] SelectContent
+[DOCS_UNMAPPED] SelectGroup
+[DOCS_UNMAPPED] SelectItem
+[DOCS_UNMAPPED] SelectLabel
+[DOCS_UNMAPPED] SelectScrollDownButton
+[DOCS_UNMAPPED] SelectScrollUpButton
+[DOCS_UNMAPPED] SelectSeparator
+[DOCS_UNMAPPED] SelectTrigger
+[DOCS_UNMAPPED] SelectValue
+[DOCS_UNMAPPED] SensorIcon
+[DOCS_UNMAPPED] SensorReadingBarChartIcon
+[DOCS_UNMAPPED] Separator
+[DOCS_UNMAPPED] SettingsIcon
+[DOCS_UNMAPPED] Sheet
+[DOCS_UNMAPPED] SheetClose
+[DOCS_UNMAPPED] SheetContent
+[DOCS_UNMAPPED] SheetDescription
+[DOCS_UNMAPPED] SheetFooter
+[DOCS_UNMAPPED] SheetHeader
+[DOCS_UNMAPPED] SheetOverlay
+[DOCS_UNMAPPED] SheetPortal
+[DOCS_UNMAPPED] SheetTitle
+[DOCS_UNMAPPED] SheetTrigger
+[DOCS_UNMAPPED] SidebarContent
+[DOCS_UNMAPPED] SidebarFooter
+[DOCS_UNMAPPED] SidebarGroup
+[DOCS_UNMAPPED] SidebarGroupAction
+[DOCS_UNMAPPED] SidebarGroupContent
+[DOCS_UNMAPPED] SidebarGroupLabel
+[DOCS_UNMAPPED] SidebarHeader
+[DOCS_UNMAPPED] SidebarInput
+[DOCS_UNMAPPED] SidebarInset
+[DOCS_UNMAPPED] SidebarMenu
+[DOCS_UNMAPPED] SidebarMenuAction
+[DOCS_UNMAPPED] SidebarMenuBadge
+[DOCS_UNMAPPED] SidebarMenuButton
+[DOCS_UNMAPPED] SidebarMenuItem
+[DOCS_UNMAPPED] SidebarMenuSkeleton
+[DOCS_UNMAPPED] SidebarMenuSub
+[DOCS_UNMAPPED] SidebarMenuSubButton
+[DOCS_UNMAPPED] SidebarMenuSubItem
+[DOCS_UNMAPPED] SidebarProvider
+[DOCS_UNMAPPED] SidebarRail
+[DOCS_UNMAPPED] SidebarSeparator
+[DOCS_UNMAPPED] SidebarTrigger
+[DOCS_UNMAPPED] Skeleton
+[DOCS_UNMAPPED] SortButton
+[DOCS_UNMAPPED] Spinner
+[DOCS_UNMAPPED] SpinnerIcon
+[DOCS_UNMAPPED] StatCard
+[DOCS_UNMAPPED] StatusFilterTabs
+[DOCS_UNMAPPED] StockingIcon
+[DOCS_UNMAPPED] Switch
+[DOCS_UNMAPPED] Table
+[DOCS_UNMAPPED] TableBody
+[DOCS_UNMAPPED] TableCaption
+[DOCS_UNMAPPED] TableCell
+[DOCS_UNMAPPED] TableFooter
+[DOCS_UNMAPPED] TableHead
+[DOCS_UNMAPPED] TableHeader
+[DOCS_UNMAPPED] TableRow
+[DOCS_UNMAPPED] Tabs
+[DOCS_UNMAPPED] TabsContent
+[DOCS_UNMAPPED] TabsList
+[DOCS_UNMAPPED] TabsTrigger
+[DOCS_UNMAPPED] TankDocumentIcon
+[DOCS_UNMAPPED] TankIcon
+[DOCS_UNMAPPED] Textarea
+[DOCS_UNMAPPED] TextArea
+[DOCS_UNMAPPED] TextInput
+[DOCS_UNMAPPED] ToastComponent
+[DOCS_UNMAPPED] ToastContainer
+[DOCS_UNMAPPED] Tooltip
+[DOCS_UNMAPPED] TooltipContent
+[DOCS_UNMAPPED] TooltipProvider
+[DOCS_UNMAPPED] TooltipTrigger
+[DOCS_UNMAPPED] TransferIcon
+[DOCS_UNMAPPED] TrashIcon
+[DOCS_UNMAPPED] UserIcon
+[DOCS_UNMAPPED] WaterQualityDropletIcon
+  (preview override: Avatar)
+  (preview override: Badge)
+  (preview override: Card)
+  (preview override: CardContent)
+  (preview override: CardFooter)
+  (preview override: CardHeader)
+  (preview override: Checkbox)
+  (preview override: ChevronDownIcon)
+  (preview override: ChevronLeftIcon)
+  (preview override: ChevronRightIcon)
+  (preview override: CloseIcon)
+  (preview override: DropdownMenuLabel)
+  (preview override: EntityDetailShell)
+  (preview override: ListEmptyState)
+  (preview override: ListHeader)
+  (preview override: MetricCard)
+  (preview override: NotFoundState)
+  (preview override: PageHeader)
+  (preview override: PlusIcon)
+  (preview override: Progress)
+  (preview override: SidebarFooter)
+  (preview override: SidebarGroup)
+  (preview override: SidebarGroupLabel)
+  (preview override: SidebarHeader)
+  (preview override: SidebarMenuItem)
+  (preview override: SidebarMenuSkeleton)
+  (preview override: SidebarMenuSub)
+  (preview override: SidebarMenuSubButton)
+  (preview override: SidebarMenuSubItem)
+  (preview override: SidebarProvider)
+  (preview override: TableCaption)
+  (preview override: TableCell)
+  (preview override: TableHead)
+  previews: 0 generated → .design-sync/.cache/previews/ (33 user-owned)
+  [DTS] 20/210 components
+  [DTS] 40/210 components
+  [DTS] 60/210 components
+  [DTS] 80/210 components
+  [DTS] 100/210 components
+  [DTS] 120/210 components
+  [DTS] 140/210 components
+  [DTS] 160/210 components
+  [DTS] 180/210 components
+  [DTS] 200/210 components
+  [DTS] 210/210 components
+  styles.css: 1 @import(s) (incl. _ds_bundle.css — component styles ship to designs via this closure)
+  _ds_sync.json: 210 render hash(es) + source key(s) (verification anchor)
+✓ wrote ./ds-bundle: _ds_bundle.js + styles.css + 210 component previews

@@ -1,0 +1,37 @@
+{
+  "projectId": "c82fdf32-3ec6-4213-9d39-30a3affb067a",
+  "shape": "package",
+  "pkg": "piuba-pescado-erp",
+  "globalName": "PiubaDS",
+  "buildCmd": "node .design-sync/build-css.mjs",
+  "srcDir": "src/shared/components",
+  "tsconfig": ".design-sync/tsconfig.json",
+  "cssEntry": ".design-sync/.cache/compiled.css",
+  "libOverrides": {
+    "source-kit.mjs": "synth entry: explicit re-exports for names exported by 2+ files (prefer ui/ then icons/); always union src-derived components with componentSrcMap pins"
+  },
+  "componentSrcMap": {
+    "Alert": "src/shared/components/ui/Alert.tsx",
+    "Card": "src/shared/components/ui/Card.tsx",
+    "Select": "src/shared/components/ui/Select.tsx",
+    "SpinnerIcon": "src/shared/components/icons/AppIcons.tsx",
+    "TrashIcon": "src/shared/components/icons/AppIcons.tsx",
+    "BuildingIcon": "src/shared/components/icons/AppIcons.tsx",
+    "ChevronLeftIcon": "src/shared/components/icons/AppIcons.tsx",
+    "ChevronRightIcon": "src/shared/components/icons/AppIcons.tsx",
+    "EyeIcon": "src/shared/components/icons/AppIcons.tsx"
+  },
+  "overrides": {
+    "DropdownMenuLabel": {
+      "cardMode": "single",
+      "viewport": "320x260"
+    },
+    "ListHeader": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md",
+  "guidelinesGlob": [
+    "docs/guides/**/*.md"
+  ]
+}

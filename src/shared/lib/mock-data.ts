@@ -1,8 +1,8 @@
 export const metricCards = [
-    { title: "Total de Tanques", value: "24", change: "+2 este mês", icon: "Container" as const },
-    { title: "Lotes Ativos", value: "18", change: "+3 esta semana", icon: "Fish" as const },
-    { title: "Temperatura Média", value: "27.4°C", change: "+0.3°C hoje", icon: "Thermometer" as const },
-    { title: "Nível de Oxigênio", value: "6.8 mg/L", change: "Estável", icon: "Waves" as const },
+    { title: "Tanques", value: "24", change: "+2 vs mês anterior" },
+    { title: "Lotes ativos", value: "18", change: "+3 vs semana anterior" },
+    { title: "Temperatura média", value: "27,4 °C", change: "+0,3 °C vs ontem" },
+    { title: "Oxigênio dissolvido", value: "6,8 mg/L", change: "Sem variação vs ontem" },
   ];
   
   export const temperatureData = [
@@ -31,10 +31,10 @@ export const metricCards = [
   ];
   
   export const alertsData = [
-    { id: 1, tanque: "T-03", tipo: "Temperatura Alta", status: "Crítico", data: "14/04/2026 08:32" },
-    { id: 2, tanque: "T-07", tipo: "Oxigênio Baixo", status: "Alerta", data: "14/04/2026 07:15" },
-    { id: 3, tanque: "T-01", tipo: "pH Instável", status: "Aviso", data: "13/04/2026 22:48" },
+    { id: 1, tanque: "T-03", tipo: "Temperatura alta", status: "Crítico", data: "14/04/2026 08:32" },
+    { id: 2, tanque: "T-07", tipo: "Oxigênio baixo", status: "Alerta", data: "14/04/2026 07:15" },
+    { id: 3, tanque: "T-01", tipo: "pH instável", status: "Aviso", data: "13/04/2026 22:48" },
     { id: 4, tanque: "T-12", tipo: "Sensor Offline", status: "Info", data: "13/04/2026 18:00" },
-    { id: 5, tanque: "T-05", tipo: "Alimentação Atrasada", status: "Aviso", data: "13/04/2026 14:30" },
+    { id: 5, tanque: "T-05", tipo: "Alimentação atrasada", status: "Aviso", data: "13/04/2026 14:30" },
   ];
   
