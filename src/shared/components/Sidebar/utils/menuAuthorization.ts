@@ -69,9 +69,12 @@ export function filterMenuItemsByAuth(
 }
 
 export function toMenuItem(menuItem: MenuItemWithAuth): MenuItem {
-  const { allowedRoles, requiresCompany, children, ...uiProps } = menuItem;
-  void allowedRoles;
-  void requiresCompany;
+  const {
+    allowedRoles: _allowedRoles,
+    requiresCompany: _requiresCompany,
+    children,
+    ...uiProps
+  } = menuItem;
   return {
     ...uiProps,
     children: children?.map(toMenuItem),

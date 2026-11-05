@@ -12,8 +12,7 @@ export const POST = createUpsertHandler<ApiSupplierCreateResponse, CreateSupplie
   context: CONTEXT,
   mapBody: (payload) => {
     if (payload.companyId?.trim()) return payload;
-    const { companyId, ...rest } = payload;
-    void companyId;
+    const { companyId: _companyId, ...rest } = payload;
     return rest;
   },
   mapResponse: (data) => {

@@ -124,7 +124,7 @@ export function TankDialog({
     reset(nextForm);
   }, [open, tank, reset, isMaster, user?.companyId]);
 
-  async function onSubmit(data: CreateTankFormData) {
+  function onSubmit(data: CreateTankFormData) {
     if (isView) return;
 
     if (isEdit) {

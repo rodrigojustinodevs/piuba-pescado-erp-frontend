@@ -8,7 +8,7 @@ type IconBaseProps = {
 };
 
 const IconBase = ({ children, className = 'w-5 h-5' }: IconBaseProps) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     {children}
   </svg>
 );
@@ -29,8 +29,8 @@ export function createStrokeIcon(paths: string | string[]) {
   return function StrokeIcon({ className }: StrokeIconProps) {
     return (
       <IconBase className={className}>
-        {ds.map((d, idx) => (
-          <IconPath key={idx} d={d} />
+        {ds.map((d) => (
+          <IconPath key={d} d={d} />
         ))}
       </IconBase>
     );

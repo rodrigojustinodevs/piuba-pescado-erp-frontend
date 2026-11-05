@@ -62,7 +62,7 @@ export function SensorReadingForm({
           value: data.value,
           unit: data.unit.trim(),
           measuredAt: toMeasuredAtBackendString(data.measuredAt),
-          notes: notesTrimmed ? notesTrimmed : null,
+          notes: notesTrimmed || null,
         });
       })}
     >

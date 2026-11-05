@@ -115,7 +115,7 @@ export function CompanyCreateDialog({
     }
   }, [open, company, reset]);
 
-  async function onSubmit(data: CreateCompanyFormData) {
+  function onSubmit(data: CreateCompanyFormData) {
     if (isView) return;
 
     if (isEdit) {

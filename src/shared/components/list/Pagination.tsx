@@ -13,13 +13,13 @@ export function Pagination({
   total,
   itemLabelPlural,
   onPageChange,
-}: {
+}: Readonly<{
   page: number;
   limit: number;
   total: number;
   itemLabelPlural: string;
   onPageChange: (nextPage: number) => void;
-}) {
+}>) {
   const totalPages = Math.ceil(total / limit);
   if (totalPages <= 1) return null;
 

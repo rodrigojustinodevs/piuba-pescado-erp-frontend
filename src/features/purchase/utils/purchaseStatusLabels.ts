@@ -9,5 +9,5 @@ const LABELS: Record<string, string> = {
 
 export function getPurchaseStatusLabel(status: string): string {
   const key = status?.toLowerCase?.() ?? '';
-  return LABELS[key] ?? (status ? status : '—');
+  return LABELS[key] ?? (status || '—');
 }

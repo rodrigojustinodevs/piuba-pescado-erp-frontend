@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { Feeding } from '../types';
-import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
+import { formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 import { PencilIcon } from '@/shared/components/icons/AppIcons';
 
 export type FeedingDetailViewProps = {

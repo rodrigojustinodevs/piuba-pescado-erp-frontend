@@ -26,7 +26,7 @@ export function GrowthCurveFieldArray({
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-medium text-[#0F172A]">Curva de crescimento</label>
+        <span className="text-sm font-medium text-[#0F172A]">Curva de crescimento</span>
         <button
           type="button"
           disabled={disabled}

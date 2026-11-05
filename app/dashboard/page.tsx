@@ -42,6 +42,15 @@ const batchTone: Record<string, string> = {
   Planejado: "bg-foreground/15",
 };
 
+type TemperatureDotProps = { cx?: number; cy?: number; payload?: { day: string }; index?: number };
+
+function renderTemperatureDot(props: TemperatureDotProps, lastDay: string | undefined) {
+  if (props.payload?.day !== lastDay) return <g key={props.index} />;
+  return (
+    <circle key={props.index} cx={props.cx} cy={props.cy} r={5} fill="var(--color-chart-1)" stroke="var(--card)" strokeWidth={2} />
+  );
+}
+
 const cardClass = "rounded-xl border border-border bg-card shadow-none";
 
 export default function DashboardPage() {
@@ -66,7 +75,7 @@ export default function DashboardPage() {
     return null;
   }
 
-  const lastDay = temperatureData[temperatureData.length - 1].day;
+  const lastDay = temperatureData.at(-1)?.day;
   const feedSorted = [...feedConsumptionData].sort((a, b) => b.consumo - a.consumo);
   const feedMax = feedSorted[0].consumo;
   const batchTotal = batchStatusData.reduce((sum, b) => sum + b.count, 0);
@@ -117,13 +126,7 @@ export default function DashboardPage() {
                     dataKey="temp"
                     stroke="var(--color-chart-1)"
                     strokeWidth={2}
-                    dot={(props: { cx?: number; cy?: number; payload?: { day: string }; index?: number }) =>
-                      props.payload?.day === lastDay ? (
-                        <circle key={props.index} cx={props.cx} cy={props.cy} r={5} fill="var(--color-chart-1)" stroke="var(--card)" strokeWidth={2} />
-                      ) : (
-                        <g key={props.index} />
-                      )
-                    }
+                    dot={(props: TemperatureDotProps) => renderTemperatureDot(props, lastDay)}
                     activeDot={{ r: 4 }}
                   />
                 </LineChart>

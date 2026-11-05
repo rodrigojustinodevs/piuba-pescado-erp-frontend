@@ -162,7 +162,7 @@ export function UserDialog({
     );
   }, [open, user, reset, isMasterUser, authUser?.companyId]);
 
-  async function onSubmit(data: CreateUserFormData) {
+  function onSubmit(data: CreateUserFormData) {
     if (isView) return;
 
     if (isEdit) {

@@ -38,7 +38,7 @@ function renderMenuIcon(icon?: MenuItem['icon']) {
 interface DashboardLayoutProps {
   children: React.ReactNode;
   menuItems?: SidebarProps['items'];
-  user?: SidebarProps['user'];
+  user?: NonNullable<SidebarProps['user']>;
   headerProps?: HeaderProps;
 }
 
