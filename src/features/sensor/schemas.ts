@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const sensorTypeEnum = z.enum(['ph', 'temperature', 'dissolved_oxygen', 'ammonia', 'etc']);
-const sensorStatusEnum = z.enum(['active', 'inactive', 'maintenance']);
+const sensorStatusEnum = z.enum(['online', 'offline', 'maintenance']);
 
 export const createSensorSchema = z.object({
   sensorType: z.string().min(1, 'Tipo do sensor é obrigatório'),

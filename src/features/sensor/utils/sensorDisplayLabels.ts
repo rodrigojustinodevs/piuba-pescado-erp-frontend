@@ -8,8 +8,8 @@ export const SENSOR_TYPE_LABELS: Record<string, string> = {
 };
 
 export const SENSOR_STATUS_LABELS: Record<string, string> = {
-  active: 'Ativo',
-  inactive: 'Inativo',
+  online: 'Online',
+  offline: 'Offline',
   maintenance: 'Manutenção',
 };
 
