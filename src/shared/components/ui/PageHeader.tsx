@@ -7,7 +7,7 @@ export type PageHeaderProps = {
   icon?: React.ReactNode;
 };
 
-export function PageHeader({ breadcrumb, title, subtitle, icon }: PageHeaderProps) {
+export function PageHeader({ breadcrumb, title, subtitle, icon }: Readonly<PageHeaderProps>) {
   return (
     <div className="mb-8">
       <p className="text-sm text-slate-600">{breadcrumb}</p>

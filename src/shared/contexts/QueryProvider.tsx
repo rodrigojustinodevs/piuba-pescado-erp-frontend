@@ -4,7 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'; // Importe se instalou
 import { queryClient } from '../lib/react-query-client';
 
-export function QueryProvider({ children }: { children: React.ReactNode }) {
+export function QueryProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}

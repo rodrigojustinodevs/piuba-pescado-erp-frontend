@@ -9,14 +9,13 @@ const sizeClasses = {
   lg: 'w-12 h-12',
 };
 
-export function Spinner({ size = 'md', className = '' }: SpinnerProps) {
+export function Spinner({ size = 'md', className = '' }: Readonly<SpinnerProps>) {
   return (
-    <div
-      className={`${sizeClasses[size]} animate-spin rounded-full border-2 border-gray-300 border-t-blue-600 ${className}`}
-      role="status"
+    <output
+      className={`block ${sizeClasses[size]} animate-spin rounded-full border-2 border-gray-300 border-t-blue-600 ${className}`}
       aria-label="Carregando"
     >
       <span className="sr-only">Carregando...</span>
-    </div>
+    </output>
   );
 }

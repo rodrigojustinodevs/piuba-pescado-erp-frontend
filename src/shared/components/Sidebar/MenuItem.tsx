@@ -12,7 +12,7 @@ interface MenuItemProps {
   isCollapsed?: boolean;
 }
 
-export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: MenuItemProps) {
+export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: Readonly<MenuItemProps>) {
   const pathname = usePathname();
   const isActive = item.href
     ? pathname === item.href || pathname.startsWith(`${item.href}/`)

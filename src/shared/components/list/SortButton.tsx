@@ -13,7 +13,7 @@ export type SortButtonProps = {
   label?: string;
 };
 
-export function SortButton({ current, onSort, value = 'name', label = 'Nome' }: SortButtonProps) {
+export function SortButton({ current, onSort, value = 'name', label = 'Nome' }: Readonly<SortButtonProps>) {
   const ariaLabel = current ? `Ordenar por: ${current}` : 'Ordenar por';
 
   return (

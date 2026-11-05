@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { BaseInput } from '../BaseInput';
 import { useFieldId } from '../utils';
 import type { CheckboxProps } from '../types';
+import { getDescribedBy } from '../getDescribedBy';
 
 /**
  * Componente de checkbox reutilizável e acessível.
@@ -75,9 +76,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           required={required}
           className={checkboxClasses}
           aria-invalid={hasError}
-          aria-describedby={
-            error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
-          }
+          aria-describedby={getDescribedBy(fieldId, error, helperText)}
           {...checkboxProps}
         />
       </BaseInput>

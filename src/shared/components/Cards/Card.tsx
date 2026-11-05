@@ -7,7 +7,7 @@ interface CardProps {
   headerAction?: ReactNode;
 }
 
-export function Card({ title, children, className = '', headerAction }: CardProps) {
+export function Card({ title, children, className = '', headerAction }: Readonly<CardProps>) {
   return (
     <div className={`bg-white rounded-lg shadow-sm border border-border ${className}`}>
       <div className="flex items-center justify-between px-6 py-4 border-b border-border">

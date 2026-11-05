@@ -8,14 +8,14 @@ interface BarChartProps {
   height?: number;
 }
 
-export function BarChart({ data, height = 200 }: BarChartProps) {
+export function BarChart({ data, height = 200 }: Readonly<BarChartProps>) {
   const maxValue = Math.max(...data.map((d) => d.value), 1000);
   const barWidth = 60;
   const spacing = 20;
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
-      <svg
+      <svg role="img" aria-label="Gráfico de barras"
         viewBox={`0 0 ${data.length * (barWidth + spacing)} ${height}`}
         className="w-full h-full"
         preserveAspectRatio="none"

@@ -5,6 +5,7 @@ import { BaseInput } from '../BaseInput';
 import { Radio } from '../Radio';
 import { useFieldId } from '../utils';
 import type { RadioGroupProps } from '../types';
+import { getDescribedBy } from '../getDescribedBy';
 
 /**
  * Componente de grupo de radio buttons reutilizável e acessível.
@@ -67,9 +68,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
           ref={ref}
           role="radiogroup"
           aria-labelledby={label ? `${groupId}-label` : undefined}
-          aria-describedby={
-            error ? `${groupId}-error` : helperText ? `${groupId}-helper` : undefined
-          }
+          aria-describedby={getDescribedBy(groupId, error, helperText)}
           className={containerClasses}
         >
           {options.map((option) => {

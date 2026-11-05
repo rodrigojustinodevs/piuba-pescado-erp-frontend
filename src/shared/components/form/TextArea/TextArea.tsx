@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { BaseInput } from '../BaseInput';
 import { useFieldId, getInputBaseClasses } from '../utils';
 import type { TextAreaProps } from '../types';
+import { getDescribedBy } from '../getDescribedBy';
 
 /**
  * Componente de textarea reutilizável e acessível.
@@ -66,9 +67,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           required={required}
           className={textareaClasses}
           aria-invalid={hasError}
-          aria-describedby={
-            error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
-          }
+          aria-describedby={getDescribedBy(fieldId, error, helperText)}
           {...textareaProps}
         />
       </BaseInput>

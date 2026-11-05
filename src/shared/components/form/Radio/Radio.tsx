@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { BaseInput } from '../BaseInput';
 import { useFieldId } from '../utils';
 import type { RadioProps } from '../types';
+import { getDescribedBy } from '../getDescribedBy';
 
 /**
  * Componente de radio button reutilizável e acessível.
@@ -69,9 +70,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           disabled={disabled}
           required={required}
           className={radioClasses}
-          aria-describedby={
-            error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
-          }
+          aria-describedby={getDescribedBy(fieldId, error, helperText)}
           {...radioProps}
         />
       </BaseInput>

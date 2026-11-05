@@ -12,7 +12,7 @@ interface DonutChartProps {
   size?: number;
 }
 
-export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
+export function DonutChart({ percentage, data, size = 120 }: Readonly<DonutChartProps>) {
   const radius = size / 2 - 10;
   const circumference = 2 * Math.PI * radius;
   const strokeDasharray = circumference;
@@ -21,7 +21,7 @@ export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
   return (
     <div className="flex items-center gap-6">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="transform -rotate-90">
+        <svg role="img" aria-label="Gráfico de rosca" width={size} height={size} className="transform -rotate-90">
           {/* Background circle */}
           <circle
             cx={size / 2}
@@ -49,8 +49,8 @@ export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
         </div>
       </div>
       <div className="space-y-3">
-        {data.map((item, index) => (
-          <div key={index} className="flex items-center gap-2">
+        {data.map((item) => (
+          <div key={item.label} className="flex items-center gap-2">
             <div className="w-3 h-3 rounded" style={{ backgroundColor: item.color }} />
             <span className="text-sm text-gray-600">{item.label}</span>
             <span
@@ -59,7 +59,7 @@ export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
               }`}
             >
               {item.isPositive ? (
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <svg aria-hidden="true" className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
@@ -67,7 +67,7 @@ export function DonutChart({ percentage, data, size = 120 }: DonutChartProps) {
                   />
                 </svg>
               ) : (
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <svg aria-hidden="true" className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"

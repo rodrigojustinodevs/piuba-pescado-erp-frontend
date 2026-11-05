@@ -17,7 +17,7 @@ export interface BatchStatusBadgeProps {
   status: BatchStatus;
 }
 
-export function BatchStatusBadge({ status }: BatchStatusBadgeProps) {
+export function BatchStatusBadge({ status }: Readonly<BatchStatusBadgeProps>) {
   const config = statusConfig[status] ?? {
     label: status,
     className: 'bg-slate-100 text-slate-600',

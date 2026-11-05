@@ -22,12 +22,12 @@ export function useListPageState<TFilter extends string = StatusFilter>({
   initialSortBy = 'name',
 }: UseListPageStateArgs<TFilter> = {}) {
   const [page, setPage] = useState(initialPage);
-  const [search, setSearchState] = useState(initialSearch);
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [filter, setFilter] = useState<TFilter>(initialFilter);
   const [sortBy, setSortBy] = useState(initialSortBy);
 
   const setSearch = useCallback((next: string) => {
-    setSearchState(next);
+    setSearchValue(next);
     // Mantém o comportamento existente nas páginas: ao buscar, voltar para a página 1.
     setPage(1);
   }, []);
@@ -35,7 +35,7 @@ export function useListPageState<TFilter extends string = StatusFilter>({
   return {
     page,
     setPage,
-    search,
+    search: searchValue,
     setSearch,
     filter,
     setFilter,

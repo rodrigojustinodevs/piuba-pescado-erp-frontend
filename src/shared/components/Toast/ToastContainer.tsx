@@ -7,7 +7,7 @@ interface ToastContainerProps {
   onClose: (id: string) => void;
 }
 
-export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
+export function ToastContainer({ toasts, onClose }: Readonly<ToastContainerProps>) {
   if (toasts.length === 0) return null;
 
   return (
