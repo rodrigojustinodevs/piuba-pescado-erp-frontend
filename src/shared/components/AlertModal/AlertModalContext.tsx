@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useMemo, useState, useCallback, ReactNode } from 'react';
 import { AlertModal, type AlertModalType } from './AlertModal';
 
 interface AlertModalState {
@@ -39,7 +39,7 @@ interface AlertModalContextType {
 
 const AlertModalContext = createContext<AlertModalContextType | undefined>(undefined);
 
-export function AlertModalProvider({ children }: { children: ReactNode }) {
+export function AlertModalProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [modalState, setModalState] = useState<AlertModalState>({
     isOpen: false,
     type: 'info',
@@ -99,17 +99,13 @@ export function AlertModalProvider({ children }: { children: ReactNode }) {
     setModalState((prev) => ({ ...prev, isOpen: false }));
   }, []);
 
+  const contextValue = useMemo(
+    () => ({ showAlert, showSuccess, showError, showWarning, showInfo, closeAlert }),
+    [showAlert, showSuccess, showError, showWarning, showInfo, closeAlert],
+  );
+
   return (
-    <AlertModalContext.Provider
-      value={{
-        showAlert,
-        showSuccess,
-        showError,
-        showWarning,
-        showInfo,
-        closeAlert,
-      }}
-    >
+    <AlertModalContext.Provider value={contextValue}>
       {children}
       <AlertModal
         isOpen={modalState.isOpen}

@@ -17,7 +17,7 @@ interface CommerceCardProps {
   showMetrics?: boolean;
 }
 
-export function CommerceCard({ showMetrics = true }: CommerceCardProps) {
+export function CommerceCard({ showMetrics = true }: Readonly<CommerceCardProps>) {
   return (
     <Card title="Commerce">
       <div className="space-y-6">

@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { BaseInput } from '../BaseInput';
 import { useFieldId } from '../utils';
 import type { SwitchProps } from '../types';
+import { getDescribedBy } from '../getDescribedBy';
 
 /**
  * Componente de switch (toggle) reutilizável e acessível.
@@ -72,9 +73,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             required={required}
             className="sr-only"
             aria-invalid={hasError}
-            aria-describedby={
-              error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
-            }
+            aria-describedby={getDescribedBy(fieldId, error, helperText)}
             {...switchProps}
           />
           <span className={switchClasses}>

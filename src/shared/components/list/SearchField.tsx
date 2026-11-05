@@ -8,12 +8,12 @@ export function SearchField({
   setSearch,
   setCurrentPage,
   placeholder,
-}: {
+}: Readonly<{
   search: string;
   setSearch: (next: string) => void;
   setCurrentPage: (next: number) => void;
   placeholder: string;
-}) {
+}>) {
   return (
     <div className="relative flex-1">
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

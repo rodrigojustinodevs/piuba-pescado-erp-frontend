@@ -22,7 +22,7 @@ export function TankForm({
   onSubmit,
   isLoading = false,
   submitLabel = 'Salvar',
-}: TankFormProps) {
+}: Readonly<TankFormProps>) {
   const { isMaster, user } = useAuthContext();
   const { data: companiesData } = useCompanies({ limit: 1000 });
   const companies = companiesData?.companies || [];

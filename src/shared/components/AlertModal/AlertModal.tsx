@@ -97,7 +97,7 @@ export function AlertModal({
   buttonText = 'Okay, Got It',
   onClose,
   onConfirm,
-}: AlertModalProps) {
+}: Readonly<AlertModalProps>) {
   const config = TYPE_CONFIG[type];
 
   function handleConfirm() {

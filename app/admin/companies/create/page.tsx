@@ -56,7 +56,7 @@ export default function NewCompanyPage() {
                             }`}
                           >
                             {step.icon === 'building' && (
-                              <svg
+                              <svg aria-hidden="true"
                                 className="h-4 w-4"
                                 fill="none"
                                 stroke="currentColor"
@@ -71,7 +71,7 @@ export default function NewCompanyPage() {
                               </svg>
                             )}
                             {step.icon === 'mail' && (
-                              <svg
+                              <svg aria-hidden="true"
                                 className="h-4 w-4"
                                 fill="none"
                                 stroke="currentColor"
@@ -86,7 +86,7 @@ export default function NewCompanyPage() {
                               </svg>
                             )}
                             {step.icon === 'pin' && (
-                              <svg
+                              <svg aria-hidden="true"
                                 className="h-4 w-4"
                                 fill="none"
                                 stroke="currentColor"
@@ -107,7 +107,7 @@ export default function NewCompanyPage() {
                               </svg>
                             )}
                             {step.icon === 'check' && (
-                              <svg
+                              <svg aria-hidden="true"
                                 className="h-4 w-4"
                                 fill="none"
                                 stroke="currentColor"
@@ -131,7 +131,7 @@ export default function NewCompanyPage() {
                             )}
                           </div>
                         </div>
-                        <svg
+                        <svg aria-hidden="true"
                           className="h-4 w-4 text-slate-300"
                           fill="none"
                           stroke="currentColor"
@@ -160,7 +160,7 @@ export default function NewCompanyPage() {
                       Prepare os tanques e configure os sensores
                     </p>
                   </div>
-                  <svg
+                  <svg aria-hidden="true"
                     className="h-5 w-5 text-[#0EA5A4]"
                     fill="none"
                     stroke="currentColor"

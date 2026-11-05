@@ -9,14 +9,14 @@ interface LineChartProps {
   height?: number;
 }
 
-export function LineChart({ data, height = 200 }: LineChartProps) {
+export function LineChart({ data, height = 200 }: Readonly<LineChartProps>) {
   // Placeholder para gráfico de linha
   // Em produção, usar uma biblioteca como recharts ou chart.js
   const maxValue = Math.max(...data.flatMap((d) => [d.value1, d.value2]), 1000);
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
-      <svg
+      <svg role="img" aria-label="Gráfico de linhas"
         viewBox={`0 0 ${data.length * 100} ${height}`}
         className="w-full h-full"
         preserveAspectRatio="none"

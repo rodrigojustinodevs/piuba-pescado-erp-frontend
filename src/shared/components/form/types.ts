@@ -71,6 +71,9 @@ export interface TextInputProps
   type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search';
 }
 
+/** Atributos nativos de input controlados pelos componentes do design system. */
+type ControlledInputKeys = 'size' | 'id' | 'type';
+
 /** Valor numérico aceito por atributos HTML como min, max e step (ex.: `'any'`). */
 type NumericValue = number | string;
 
@@ -78,7 +81,7 @@ type NumericValue = number | string;
  * Props para componentes de input numérico
  */
 export interface NumberInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type'>, BaseFormFieldProps {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, ControlledInputKeys>, BaseFormFieldProps {
   /**
    * Valor mínimo permitido
    */
@@ -142,7 +145,7 @@ export interface SelectProps
  */
 export interface CheckboxProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type' | 'value'>,
+    Omit<InputHTMLAttributes<HTMLInputElement>, ControlledInputKeys | 'value'>,
     Omit<BaseFormFieldProps, 'size'> {
   /**
    * Se o checkbox está marcado
@@ -159,7 +162,7 @@ export interface CheckboxProps
  */
 export interface RadioProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type'>,
+    Omit<InputHTMLAttributes<HTMLInputElement>, ControlledInputKeys>,
     Omit<BaseFormFieldProps, 'size'> {
   /**
    * Se o radio está selecionado
@@ -202,7 +205,7 @@ export interface RadioGroupProps extends Omit<BaseFormFieldProps, 'id' | 'name'>
  */
 export interface SwitchProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type'>,
+    Omit<InputHTMLAttributes<HTMLInputElement>, ControlledInputKeys>,
     Omit<BaseFormFieldProps, 'size'> {
   /**
    * Se o switch está ativado

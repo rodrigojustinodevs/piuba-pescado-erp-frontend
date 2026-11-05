@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { BaseInput } from '../BaseInput';
 import { useFieldId, getInputBaseClasses } from '../utils';
 import type { SelectProps } from '../types';
+import { getDescribedBy } from '../getDescribedBy';
 
 /**
  * Componente de select reutilizável e acessível.
@@ -69,9 +70,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           required={required}
           className={selectClasses}
           aria-invalid={hasError}
-          aria-describedby={
-            error ? `${fieldId}-error` : helperText ? `${fieldId}-helper` : undefined
-          }
+          aria-describedby={getDescribedBy(fieldId, error, helperText)}
           {...selectProps}
         >
           {placeholder && (
