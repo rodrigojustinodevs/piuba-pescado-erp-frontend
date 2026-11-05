@@ -81,7 +81,7 @@ export function SensorCards({
                     <DropdownMenuItem onClick={() => openSensorDialog('view', s)}>
                       <Eye /> Visualizar
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => openSensorDialog('edit', s)}>
                       <Pencil /> Editar
                     </DropdownMenuItem>
                     <DropdownMenuItem className="text-destructive focus:text-destructive">

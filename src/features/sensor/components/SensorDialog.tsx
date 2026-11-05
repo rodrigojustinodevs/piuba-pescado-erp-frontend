@@ -66,8 +66,8 @@ const sensorTypeOptions: Array<{ value: SensorType; label: string }> = [
 ];
 
 const sensorStatusOptions: Array<{ value: SensorStatus; label: string }> = [
-  { value: 'active', label: 'Ativo' },
-  { value: 'inactive', label: 'Inativo' },
+  { value: 'online', label: 'Online' },
+  { value: 'offline', label: 'Offline' },
   { value: 'maintenance', label: 'Manutenção' },
 ];
 
@@ -81,20 +81,22 @@ const createDefaults: CreateSensorDialogFormData = {
   unit: '',
   lastReading: 0,
   installationDate: '',
-  status: 'active',
+  status: 'online',
   notes: '',
 };
 
 const statusBadgeVariant: Record<SensorStatus, 'default' | 'secondary' | 'destructive'> = {
-  active: 'default',
-  inactive: 'destructive',
   online: 'default',
   offline: 'destructive',
   maintenance: 'secondary',
 };
 
-const createDialogResolver = zodResolver(createSensorDialogSchema) as Resolver<SensorDialogFormData>;
-const updateDialogResolver = zodResolver(updateSensorDialogSchema) as unknown as Resolver<SensorDialogFormData>;
+const createDialogResolver = zodResolver(
+  createSensorDialogSchema,
+) as Resolver<SensorDialogFormData>;
+const updateDialogResolver = zodResolver(
+  updateSensorDialogSchema,
+) as unknown as Resolver<SensorDialogFormData>;
 
 function toUpdateDefaults(sensor: Sensor): CreateSensorDialogFormData {
   const installationDate = sensor.installationDate
@@ -111,7 +113,7 @@ function toUpdateDefaults(sensor: Sensor): CreateSensorDialogFormData {
     unit: sensor.unit,
     lastReading: sensor.lastReading ?? 0,
     installationDate,
-    status: (sensor.status as CreateSensorDialogFormData['status']) || 'active',
+    status: (sensor.status as CreateSensorDialogFormData['status']) || 'online',
     notes: sensor.notes ?? '',
   };
 }
@@ -277,7 +279,7 @@ export function SensorDialog({
     description = 'Atualize os dados operacionais do sensor.';
   }
 
-  const sensorStatus = (sensor?.status as SensorStatus) || 'active';
+  const sensorStatus = (sensor?.status as SensorStatus) || 'online';
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -306,20 +308,53 @@ export function SensorDialog({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <InfoRow icon={<Droplets className="h-4 w-4" />} label="Viveiro" value={sensor.tank?.name || '—'} />
+                <InfoRow
+                  icon={<Droplets className="h-4 w-4" />}
+                  label="Viveiro"
+                  value={sensor.tank?.name || '—'}
+                />
                 {isMaster() && (
-                  <InfoRow icon={<Building2 className="h-4 w-4" />} label="Empresa" value={sensor.company?.name || '—'} />
+                  <InfoRow
+                    icon={<Building2 className="h-4 w-4" />}
+                    label="Empresa"
+                    value={sensor.company?.name || '—'}
+                  />
                 )}
-                <InfoRow icon={<Wrench className="h-4 w-4" />} label="Serial" value={sensor.serialNumber || '—'} />
+                <InfoRow
+                  icon={<Wrench className="h-4 w-4" />}
+                  label="Serial"
+                  value={sensor.serialNumber || '—'}
+                />
                 <InfoRow
                   icon={<Gauge className="h-4 w-4" />}
                   label="Última leitura"
-                  value={sensor.lastReading === null ? '—' : formatSensorReadingValue(sensor.lastReading, sensor.unit)}
+                  value={
+                    sensor.lastReading === null
+                      ? '—'
+                      : formatSensorReadingValue(sensor.lastReading, sensor.unit)
+                  }
                 />
-                <InfoRow icon={<Gauge className="h-4 w-4" />} label="Bateria" value={`${sensor.battery ?? 0}%`} />
-                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Instalação" value={formatNullableDatePtBR(sensor.installationDate, true)} />
-                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Atualizado em" value={formatNullableDatePtBR(sensor.updatedAt, true)} />
-                <InfoRow icon={<Wrench className="h-4 w-4" />} label="Observações" value={sensor.notes || '—'} className="sm:col-span-2" />
+                <InfoRow
+                  icon={<Gauge className="h-4 w-4" />}
+                  label="Bateria"
+                  value={`${sensor.battery ?? 0}%`}
+                />
+                <InfoRow
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Instalação"
+                  value={formatNullableDatePtBR(sensor.installationDate, true)}
+                />
+                <InfoRow
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Atualizado em"
+                  value={formatNullableDatePtBR(sensor.updatedAt, true)}
+                />
+                <InfoRow
+                  icon={<Wrench className="h-4 w-4" />}
+                  label="Observações"
+                  value={sensor.notes || '—'}
+                  className="sm:col-span-2"
+                />
               </div>
             </div>
 
@@ -330,231 +365,238 @@ export function SensorDialog({
             </DialogFooter>
           </>
         ) : (
-        <form
-          onSubmit={handleSubmit(onSubmit, onInvalid)}
-          className="space-y-4"
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            {!isEdit && showCompanyField && (
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="companyId">Empresa *</Label>
-                <Controller
-                  name="companyId"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={isSubmitting || isLoadingCompanies}
-                    >
-                      <SelectTrigger id="companyId">
-                        <SelectValue
-                          placeholder={
-                            isLoadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {companies.map((company) => (
-                          <SelectItem key={company.id} value={company.id}>
-                            {company.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {!isEdit && showCompanyField && (
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="companyId">Empresa *</Label>
+                  <Controller
+                    name="companyId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={isSubmitting || isLoadingCompanies}
+                      >
+                        <SelectTrigger id="companyId">
+                          <SelectValue
+                            placeholder={
+                              isLoadingCompanies ? 'Carregando empresas...' : 'Selecione a empresa'
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {companies.map((company) => (
+                            <SelectItem key={company.id} value={company.id}>
+                              {company.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.companyId && (
+                    <p className="text-xs text-destructive">{errors.companyId.message}</p>
                   )}
-                />
-                {errors.companyId && (
-                  <p className="text-xs text-destructive">{errors.companyId.message}</p>
-                )}
-              </div>
-            )}
+                </div>
+              )}
 
-            {!isEdit && (
+              {!isEdit && (
+                <div className="space-y-2">
+                  <Label htmlFor="tankId">Tanque *</Label>
+                  <Controller
+                    name="tankId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={isSubmitting || isLoadingTanks}
+                      >
+                        <SelectTrigger id="tankId">
+                          <SelectValue
+                            placeholder={
+                              isLoadingTanks ? 'Carregando tanques...' : 'Selecione o tanque'
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {tanks.map((tank) => (
+                            <SelectItem key={tank.id} value={tank.id}>
+                              {tank.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.tankId && (
+                    <p className="text-xs text-destructive">{errors.tankId.message}</p>
+                  )}
+                </div>
+              )}
+
               <div className="space-y-2">
-                <Label htmlFor="tankId">Tanque *</Label>
+                <Label htmlFor="sensorType">Tipo *</Label>
                 <Controller
-                  name="tankId"
+                  name="sensorType"
                   control={control}
                   render={({ field }) => (
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
-                      disabled={isSubmitting || isLoadingTanks}
+                      disabled={isSubmitting}
                     >
-                      <SelectTrigger id="tankId">
-                        <SelectValue
-                          placeholder={
-                            isLoadingTanks ? 'Carregando tanques...' : 'Selecione o tanque'
-                          }
-                        />
+                      <SelectTrigger id="sensorType">
+                        <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {tanks.map((tank) => (
-                          <SelectItem key={tank.id} value={tank.id}>
-                            {tank.name}
+                        {sensorTypeOptions.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   )}
                 />
-                {errors.tankId && (
-                  <p className="text-xs text-destructive">{errors.tankId.message}</p>
+                {errors.sensorType && (
+                  <p className="text-xs text-destructive">{errors.sensorType.message}</p>
                 )}
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label htmlFor="sensorType">Tipo *</Label>
-              <Controller
-                name="sensorType"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={isSubmitting}
-                  >
-                    <SelectTrigger id="sensorType">
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sensorTypeOptions.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-2">
+                <Label htmlFor="serialNumber">Número de série *</Label>
+                <Input
+                  id="serialNumber"
+                  placeholder="SN-TEMP-0001"
+                  disabled={isSubmitting}
+                  {...register('serialNumber')}
+                />
+                {errors.serialNumber && (
+                  <p className="text-xs text-destructive">{errors.serialNumber.message}</p>
                 )}
-              />
-              {errors.sensorType && (
-                <p className="text-xs text-destructive">{errors.sensorType.message}</p>
-              )}
-            </div>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="serialNumber">Número de série *</Label>
-              <Input
-                id="serialNumber"
-                placeholder="SN-TEMP-0001"
-                disabled={isSubmitting}
-                {...register('serialNumber')}
-              />
-              {errors.serialNumber && (
-                <p className="text-xs text-destructive">{errors.serialNumber.message}</p>
-              )}
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="unit">Unidade *</Label>
+                <Input
+                  id="unit"
+                  placeholder="Ex.: C"
+                  disabled={isSubmitting}
+                  {...register('unit')}
+                />
+                {errors.unit && <p className="text-xs text-destructive">{errors.unit.message}</p>}
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="unit">Unidade *</Label>
-              <Input id="unit" placeholder="Ex.: C" disabled={isSubmitting} {...register('unit')} />
-              {errors.unit && <p className="text-xs text-destructive">{errors.unit.message}</p>}
-            </div>
-
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="installationDate">Data de instalação *</Label>
-              <Input
-                id="installationDate"
-                type="datetime-local"
-                disabled={isSubmitting}
-                {...register('installationDate')}
-              />
-              {errors.installationDate && (
-                <p className="text-xs text-destructive">{errors.installationDate.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="name">Nome *</Label>
-              <Input id="name" placeholder="Sensor Temperatura Viveiro 01" {...register('name')} />
-              {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="battery">Bateria (%) *</Label>
-              <Input
-                id="battery"
-                type="number"
-                min={0}
-                max={100}
-                {...register('battery', { valueAsNumber: true })}
-              />
-              {errors.battery && (
-                <p className="text-xs text-destructive">{errors.battery.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lastReading">Última leitura *</Label>
-              <Input
-                id="lastReading"
-                type="number"
-                step="any"
-                {...register('lastReading', { valueAsNumber: true })}
-              />
-              {errors.lastReading && (
-                <p className="text-xs text-destructive">{errors.lastReading.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="status">Status *</Label>
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="status">
-                      <SelectValue placeholder="Selecione o status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {sensorStatusOptions.map((status) => (
-                        <SelectItem key={status.value} value={status.value}>
-                          {status.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="installationDate">Data de instalação *</Label>
+                <Input
+                  id="installationDate"
+                  type="datetime-local"
+                  disabled={isSubmitting}
+                  {...register('installationDate')}
+                />
+                {errors.installationDate && (
+                  <p className="text-xs text-destructive">{errors.installationDate.message}</p>
                 )}
-              />
-              {errors.status && <p className="text-xs text-destructive">{errors.status.message}</p>}
+              </div>
             </div>
 
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="notes">Observações</Label>
-              <textarea
-                id="notes"
-                rows={3}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                placeholder="Observações opcionais"
-                {...register('notes')}
-              />
-              {errors.notes && <p className="text-xs text-destructive">{errors.notes.message}</p>}
-            </div>
-          </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="name">Nome *</Label>
+                <Input
+                  id="name"
+                  placeholder="Sensor Temperatura Viveiro 01"
+                  {...register('name')}
+                />
+                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+              </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleClose(false)}
-              disabled={isSubmitting}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? 'Salvar alterações' : 'Cadastrar'}
-            </Button>
-          </DialogFooter>
-        </form>
+              <div className="space-y-2">
+                <Label htmlFor="battery">Bateria (%) *</Label>
+                <Input
+                  id="battery"
+                  type="number"
+                  min={0}
+                  max={100}
+                  {...register('battery', { valueAsNumber: true })}
+                />
+                {errors.battery && (
+                  <p className="text-xs text-destructive">{errors.battery.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lastReading">Última leitura *</Label>
+                <Input
+                  id="lastReading"
+                  type="number"
+                  step="any"
+                  {...register('lastReading', { valueAsNumber: true })}
+                />
+                {errors.lastReading && (
+                  <p className="text-xs text-destructive">{errors.lastReading.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="status">Status *</Label>
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="status">
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sensorStatusOptions.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.status && (
+                  <p className="text-xs text-destructive">{errors.status.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="notes">Observações</Label>
+                <textarea
+                  id="notes"
+                  rows={3}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  placeholder="Observações opcionais"
+                  {...register('notes')}
+                />
+                {errors.notes && <p className="text-xs text-destructive">{errors.notes.message}</p>}
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleClose(false)}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isEdit ? 'Salvar alterações' : 'Cadastrar'}
+              </Button>
+            </DialogFooter>
+          </form>
         )}
       </DialogContent>
     </Dialog>
   );
 }
-

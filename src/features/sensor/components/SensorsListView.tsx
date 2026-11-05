@@ -189,7 +189,7 @@ export function SensorsListView({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(data?.sensors ?? []).filter((s) => s.status === 'active').length}
+              {(data?.sensors ?? []).filter((s) => s.status === 'online').length}
             </div>
           </CardContent>
         </Card>
@@ -200,7 +200,7 @@ export function SensorsListView({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(data?.sensors ?? []).filter((s) => s.status !== 'active').length}
+              {(data?.sensors ?? []).filter((s) => s.status === 'offline').length}
             </div>
           </CardContent>
         </Card>
