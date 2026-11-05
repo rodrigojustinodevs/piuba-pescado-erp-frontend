@@ -76,7 +76,7 @@ export function DataTable<T>({
   showPagination = false,
   initialPerPage = 25,
   perPageOptions = PER_PAGE_OPTIONS,
-}: DataTableProps<T>) {
+}: Readonly<DataTableProps<T>>) {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(initialPerPage);
   const hasActionsColumn = Boolean(rowActions);

@@ -36,7 +36,7 @@ export function StatusFilterTabs<T extends string = DefaultFilterType>({
   options,
   inactiveCount = 0,
   labels = { all: 'Todas', active: 'Ativos', inactive: 'Inativos' },
-}: StatusFilterTabsProps<T>) {
+}: Readonly<StatusFilterTabsProps<T>>) {
   const computedOptions: Array<StatusFilterTabsOption<T>> =
     options ??
     ([

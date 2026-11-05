@@ -6,7 +6,7 @@ import type { ApiListResponse, ApiResponse } from '@/shared/types/api';
 
 export type BatchStatus = 'active' | 'finished';
 
-export type BatchCultivation = 'daycare' | string;
+export type BatchCultivation = 'daycare' | (string & {});
 
 export interface BatchTank {
   id: string;

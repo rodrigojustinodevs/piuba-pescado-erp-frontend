@@ -1,7 +1,7 @@
 'use client';
 
 const MicrophoneIcon = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -25,7 +25,7 @@ export function DashboardBanner({
   buttonText = 'Announcements',
   onButtonClick,
   className = '',
-}: DashboardBannerProps) {
+}: Readonly<DashboardBannerProps>) {
   return (
     <div
       className={`bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 relative overflow-hidden rounded-2xl shadow-lg h-full w-full ${className}`}

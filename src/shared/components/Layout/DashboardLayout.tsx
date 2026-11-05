@@ -92,7 +92,7 @@ function SidebarItemSimple({ item, pathname }: Readonly<SidebarItemNavProps>) {
   );
 }
 
-export function DashboardLayout({ children, menuItems, headerProps }: DashboardLayoutProps) {
+export function DashboardLayout({ children, menuItems, headerProps }: Readonly<DashboardLayoutProps>) {
   // Filtra itens de menu baseado nas permissões do usuário
   const authorizedMenuItems = useMenuAuthorization(menuConfig);
   // Se menuItems for passado como prop, usa ele diretamente (sem filtro de autorização)

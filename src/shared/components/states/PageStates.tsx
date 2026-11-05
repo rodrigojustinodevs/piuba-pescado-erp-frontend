@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { SpinnerIcon } from '@/shared/components/icons/AppIcons';
 
-export function LoadingState({ label = 'Carregando...' }: { label?: string }) {
+export function LoadingState({ label = 'Carregando...' }: Readonly<{ label?: string }>) {
   return (
     <div className="text-center py-8">
       <div className="flex items-center justify-center gap-2 text-slate-500">
@@ -18,11 +18,11 @@ export function NotFoundState({
   message,
   backHref,
   backLabel = 'Voltar para lista',
-}: {
+}: Readonly<{
   message: string;
   backHref?: string;
   backLabel?: string;
-}) {
+}>) {
   return (
     <div className="text-center py-8">
       <p className="text-red-600">{message}</p>
