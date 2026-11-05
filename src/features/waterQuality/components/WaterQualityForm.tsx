@@ -80,7 +80,7 @@ export function WaterQualityForm({
           ammonia: data.ammonia,
           salinity: data.salinity,
           turbidity: data.turbidity,
-          notes: notesTrimmed ? notesTrimmed : null,
+          notes: notesTrimmed || null,
         });
       })}
     >

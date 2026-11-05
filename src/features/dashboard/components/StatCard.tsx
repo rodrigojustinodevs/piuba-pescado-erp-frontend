@@ -19,7 +19,7 @@ const ArrowUpRightIcon = () => (
   </svg>
 );
 
-export function StatCard({ label, value, accent = 'blue' }: StatCardProps) {
+export function StatCard({ label, value, accent = 'blue' }: Readonly<StatCardProps>) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-center gap-4">
       <div

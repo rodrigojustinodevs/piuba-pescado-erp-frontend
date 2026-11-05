@@ -24,7 +24,7 @@ const PHOTO_SLOTS = ['photo-1', 'photo-2', 'photo-3', 'photo-4'] as const;
 
 function Spinner() {
   return (
-    <svg className="h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg aria-hidden="true" className="h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

@@ -1,7 +1,7 @@
 import type { ApiPagination } from '@/shared/types/api';
 
 export type ClientPersonType = 'company' | 'individual';
-export type ClientPriceGroup = 'retail' | 'wholesale' | string;
+export type ClientPriceGroup = 'retail' | 'wholesale' | (string & {});
 export type ClientStatus = 'active' | 'inactive' | 'prospect';
 export type ClientDialogMode = 'create' | 'edit' | 'view';
 

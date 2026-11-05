@@ -71,6 +71,9 @@ export interface TextInputProps
   type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search';
 }
 
+/** Valor numérico aceito por atributos HTML como min, max e step (ex.: `'any'`). */
+type NumericValue = number | string;
+
 /**
  * Props para componentes de input numérico
  */
@@ -79,15 +82,15 @@ export interface NumberInputProps
   /**
    * Valor mínimo permitido
    */
-  min?: number | string;
+  min?: NumericValue;
   /**
    * Valor máximo permitido
    */
-  max?: number | string;
+  max?: NumericValue;
   /**
    * Incremento/decremento (step)
    */
-  step?: number | string | 'any';
+  step?: NumericValue;
 }
 
 /**

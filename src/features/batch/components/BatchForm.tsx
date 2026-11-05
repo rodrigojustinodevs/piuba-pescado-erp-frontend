@@ -206,7 +206,7 @@ export function BatchForm({
 
   // ─── Submit handlers ────────────────────────────────────────────────────────
 
-  const submitSimple = async (data: CreateBatchFormData) => {
+  const submitSimple = (data: CreateBatchFormData) => {
     setSubmitting(true);
     try {
       if (isEdit) {
@@ -223,7 +223,7 @@ export function BatchForm({
     }
   };
 
-  const submitDistributed = async (data: BatchDistributionFormData) => {
+  const submitDistributed = (data: BatchDistributionFormData) => {
     setSubmitting(true);
     try {
       (onSubmit as (data: CreateBatchFormData | BatchDistributionFormData) => void)(data);

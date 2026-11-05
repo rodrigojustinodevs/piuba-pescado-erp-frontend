@@ -33,7 +33,7 @@ export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
         <div className="flex items-start justify-between mb-8 bg-white rounded-t-2xl border border-slate-200 shadow-sm p-8">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#0EA5A4]/10 border-2 border-[#0EA5A4]/20">
-              <svg
+              <svg aria-hidden="true"
                 className="h-8 w-8 text-[#0EA5A4]"
                 fill="none"
                 stroke="currentColor"

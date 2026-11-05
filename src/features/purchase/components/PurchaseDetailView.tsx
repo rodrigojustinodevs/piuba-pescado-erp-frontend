@@ -36,6 +36,44 @@ function summarizeItems(purchase: Purchase): string {
     .join(' | ');
 }
 
+const itemColumns: Array<DataTableColumn<Purchase['items'][number]>> = [
+  {
+    id: 'supplyName',
+    header: 'Insumo',
+    cell: (item) => <div className="text-sm text-slate-700">{item.supplyName || '—'}</div>,
+  },
+  {
+    id: 'quantity',
+    header: 'Quantidade',
+    align: 'right',
+    cell: (item) => <div className="text-sm text-slate-700 tabular-nums">{item.quantity}</div>,
+  },
+  {
+    id: 'unit',
+    header: 'Unidade',
+    align: 'center',
+    cell: (item) => <div className="text-sm text-slate-700">{item.unit || '—'}</div>,
+  },
+  {
+    id: 'unitPrice',
+    header: 'Valor unitario',
+    align: 'right',
+    cell: (item) => (
+      <div className="text-sm text-slate-700 tabular-nums">{formatPurchaseMoney(item.unitPrice)}</div>
+    ),
+  },
+  {
+    id: 'totalPrice',
+    header: 'Subtotal',
+    align: 'right',
+    cell: (item) => (
+      <div className="text-sm font-medium text-[#0F172A] tabular-nums">
+        {formatPurchaseMoney(item.totalPrice)}
+      </div>
+    ),
+  },
+];
+
 export function PurchaseDetailView({
   purchase,
   onDelete,
@@ -46,43 +84,6 @@ export function PurchaseDetailView({
   isCancelling = false,
 }: Readonly<PurchaseDetailViewProps>) {
   const titleLabel = `${purchase.supplierName || 'Fornecedor'} — ${formatPurchaseMoney(purchase.totalPrice)}`;
-  const itemColumns: Array<DataTableColumn<Purchase['items'][number]>> = [
-    {
-      id: 'supplyName',
-      header: 'Insumo',
-      cell: (item) => <div className="text-sm text-slate-700">{item.supplyName || '—'}</div>,
-    },
-    {
-      id: 'quantity',
-      header: 'Quantidade',
-      align: 'right',
-      cell: (item) => <div className="text-sm text-slate-700 tabular-nums">{item.quantity}</div>,
-    },
-    {
-      id: 'unit',
-      header: 'Unidade',
-      align: 'center',
-      cell: (item) => <div className="text-sm text-slate-700">{item.unit || '—'}</div>,
-    },
-    {
-      id: 'unitPrice',
-      header: 'Valor unitario',
-      align: 'right',
-      cell: (item) => (
-        <div className="text-sm text-slate-700 tabular-nums">{formatPurchaseMoney(item.unitPrice)}</div>
-      ),
-    },
-    {
-      id: 'totalPrice',
-      header: 'Subtotal',
-      align: 'right',
-      cell: (item) => (
-        <div className="text-sm font-medium text-[#0F172A] tabular-nums">
-          {formatPurchaseMoney(item.totalPrice)}
-        </div>
-      ),
-    },
-  ];
   const metricCards = [
     { label: 'Fornecedor', value: purchase.supplierName || '—' },
     { label: 'Data da compra', value: formatPurchaseDate(purchase.orderDate) },

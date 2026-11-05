@@ -6,8 +6,9 @@ import { usePathname } from 'next/navigation';
 import type { MenuItem } from './types';
 
 // Ícone de seta para baixo
-const ChevronDownIcon = ({ className }: { className?: string }) => (
+const ChevronDownIcon = ({ className }: Readonly<{ className?: string }>) => (
   <svg
+    aria-hidden="true"
     className={className}
     fill="none"
     stroke="currentColor"
@@ -26,161 +27,159 @@ interface DropdownProps {
   isCollapsed?: boolean;
 }
 
+const ACTIVE_CLASSES =
+  'bg-[color:var(--sidebar-accent)] text-[color:var(--sidebar-accent-foreground)]';
+const INACTIVE_CLASSES = 'text-white/85 hover:bg-white/10 hover:text-white';
+
+function isRouteActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function hasActiveDescendant(node: MenuItem, pathname: string): boolean {
+  if (node.href && isRouteActive(pathname, node.href)) return true;
+  return node.children?.some((child) => hasActiveDescendant(child, pathname)) ?? false;
+}
+
+interface ItemContentProps {
+  item: MenuItem;
+  highlighted: boolean;
+  isCollapsed: boolean;
+}
+
+function ItemContent({ item, highlighted, isCollapsed }: Readonly<ItemContentProps>) {
+  return (
+    <>
+      {item.icon && (
+        <span
+          className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
+            highlighted
+              ? 'text-[color:var(--sidebar-accent-foreground)]'
+              : 'text-white/70 group-hover:text-white'
+          }`}
+        >
+          <span className="w-5 h-5 flex items-center justify-center">
+            <item.icon className="w-5 h-5" />
+          </span>
+        </span>
+      )}
+      {!isCollapsed && (
+        <>
+          <span className="flex-1">{item.label}</span>
+          {item.badge && (
+            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/15 text-white/90">
+              {item.badge}
+            </span>
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+interface LeafItemProps {
+  item: MenuItem;
+  active: boolean;
+  isCollapsed: boolean;
+  paddingLeft: number;
+  onToggle: () => void;
+}
+
+function LeafItem({ item, active, isCollapsed, paddingLeft, onToggle }: Readonly<LeafItemProps>) {
+  const content = (
+    <div
+      className={`group relative w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${
+        active ? ACTIVE_CLASSES : INACTIVE_CLASSES
+      }`}
+      style={isCollapsed ? undefined : { paddingLeft: `${paddingLeft + 1}rem` }}
+      title={isCollapsed ? item.label : undefined}
+    >
+      <ItemContent item={item} highlighted={active} isCollapsed={isCollapsed} />
+    </div>
+  );
+
+  if (item.href) {
+    return (
+      <Link href={item.href} onClick={onToggle} className="block w-full">
+        {content}
+      </Link>
+    );
+  }
+
+  if (item.onClick) {
+    return (
+      <button
+        onClick={() => {
+          item.onClick?.();
+          onToggle();
+        }}
+        className="w-full text-left"
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return content;
+}
+
 export function Dropdown({
   item,
   isOpen,
   onToggle,
   level = 0,
   isCollapsed = false,
-}: DropdownProps) {
+}: Readonly<DropdownProps>) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
+    if (!isExpanded) return;
+
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsExpanded(false);
       }
     }
 
-    if (isExpanded) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isExpanded]);
 
-  const hasChildren = item.children && item.children.length > 0;
+  const children = item.children ?? [];
   const paddingLeft = level * 1.5; // rem
 
-  const isRouteActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-
-  const hasActiveDescendant = (node: MenuItem): boolean => {
-    if (node.href && isRouteActive(node.href)) return true;
-    if (!node.children || node.children.length === 0) return false;
-    return node.children.some(hasActiveDescendant);
-  };
-
-  const isActive = hasActiveDescendant(item);
-  const isActuallyExpanded = isExpanded || (!isCollapsed && isActive);
-  const itemStateClasses =
-    isActuallyExpanded || isActive
-      ? 'bg-[color:var(--sidebar-accent)] text-[color:var(--sidebar-accent-foreground)]'
-      : 'text-white/85 hover:bg-white/10 hover:text-white';
-
-  const handleClick = () => {
-    if (hasChildren) {
-      setIsExpanded(!isExpanded);
-    } else if (item.onClick) {
-      item.onClick();
-    }
-  };
-
   // Item "folha" (sem filhos): link / ação
-  if (!hasChildren) {
-    const leafActive = item.href ? isRouteActive(item.href) : false;
-    const leafClasses = `group relative w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${
-      leafActive
-        ? 'bg-[color:var(--sidebar-accent)] text-[color:var(--sidebar-accent-foreground)]'
-        : 'text-white/85 hover:bg-white/10 hover:text-white'
-    }`;
-
-    const leafContent = (
-      <div
-        className={leafClasses}
-        style={!isCollapsed ? { paddingLeft: `${paddingLeft + 1}rem` } : undefined}
-        title={isCollapsed ? item.label : undefined}
-      >
-        {item.icon && (
-          <span
-            className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
-              leafActive
-                ? 'text-[color:var(--sidebar-accent-foreground)]'
-                : 'text-white/70 group-hover:text-white'
-            }`}
-          >
-            <span className="w-5 h-5 flex items-center justify-center">
-              <item.icon className="w-5 h-5" />
-            </span>
-          </span>
-        )}
-        {!isCollapsed && (
-          <>
-            <span className="flex-1">{item.label}</span>
-            {item.badge && (
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/15 text-white/90">
-                {item.badge}
-              </span>
-            )}
-          </>
-        )}
-      </div>
+  if (children.length === 0) {
+    const leafActive = item.href ? isRouteActive(pathname, item.href) : false;
+    return (
+      <LeafItem
+        item={item}
+        active={leafActive}
+        isCollapsed={isCollapsed}
+        paddingLeft={paddingLeft}
+        onToggle={onToggle}
+      />
     );
-
-    if (item.href) {
-      return (
-        <Link href={item.href} onClick={onToggle} className="block w-full">
-          {leafContent}
-        </Link>
-      );
-    }
-
-    if (item.onClick) {
-      return (
-        <button
-          onClick={() => {
-            item.onClick?.();
-            onToggle();
-          }}
-          className="w-full text-left"
-        >
-          {leafContent}
-        </button>
-      );
-    }
-
-    return leafContent;
   }
+
+  const isActive = hasActiveDescendant(item, pathname);
+  const isActuallyExpanded = isExpanded || (!isCollapsed && isActive);
 
   return (
     <div ref={dropdownRef} className="w-full group relative">
       <button
-        onClick={handleClick}
-        className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${itemStateClasses} ${
-          isCollapsed ? 'justify-center' : ''
-        }`}
-        style={!isCollapsed ? { paddingLeft: `${paddingLeft + 1}rem` } : undefined}
+        onClick={() => setIsExpanded(!isExpanded)}
+        className={`w-full flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-xl transition-colors ${
+          isActuallyExpanded || isActive ? ACTIVE_CLASSES : INACTIVE_CLASSES
+        } ${isCollapsed ? 'justify-center' : ''}`}
+        style={isCollapsed ? undefined : { paddingLeft: `${paddingLeft + 1}rem` }}
         title={isCollapsed ? item.label : undefined}
       >
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-          {item.icon && (
-            <span
-              className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
-                isExpanded || isActive
-                  ? 'text-[color:var(--sidebar-accent-foreground)]'
-                  : 'text-white/70 group-hover:text-white'
-              }`}
-            >
-              <span className="w-5 h-5 flex items-center justify-center">
-              <item.icon className="w-5 h-5" />
-            </span>
-            </span>
-          )}
-          {!isCollapsed && (
-            <>
-              <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-white/15 text-white/90">
-                  {item.badge}
-                </span>
-              )}
-            </>
-          )}
+          <ItemContent item={item} highlighted={isExpanded || isActive} isCollapsed={isCollapsed} />
         </div>
-        {hasChildren && !isCollapsed && (
+        {!isCollapsed && (
           <ChevronDownIcon
             className={`w-4 h-4 transition-transform flex-shrink-0 ${
               isActuallyExpanded ? 'transform rotate-180' : ''
@@ -195,9 +194,9 @@ export function Dropdown({
         </div>
       )}
 
-      {hasChildren && isActuallyExpanded && !isCollapsed && (
+      {isActuallyExpanded && !isCollapsed && (
         <div className="mt-1 space-y-1">
-          {item.children!.map((child) => (
+          {children.map((child) => (
             <Dropdown
               key={child.id}
               item={child}

@@ -1,6 +1,6 @@
 /** Ícones usados em listas e detalhes de features (mesmo traço visual). */
 
-export function WaterQualityDropletIcon({ className = 'h-8 w-8 text-[#0EA5A4]' }: { className?: string }) {
+export function WaterQualityDropletIcon({ className = 'h-8 w-8 text-[#0EA5A4]' }: Readonly<{ className?: string }>) {
   return (
     <svg
       className={className}
@@ -19,7 +19,7 @@ export function WaterQualityDropletIcon({ className = 'h-8 w-8 text-[#0EA5A4]' }
   );
 }
 
-export function SensorReadingBarChartIcon({ className = 'h-8 w-8 text-[#0EA5A4]' }: { className?: string }) {
+export function SensorReadingBarChartIcon({ className = 'h-8 w-8 text-[#0EA5A4]' }: Readonly<{ className?: string }>) {
   return (
     <svg
       className={className}

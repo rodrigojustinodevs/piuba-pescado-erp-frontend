@@ -28,8 +28,7 @@ export const POST = createUpsertHandler<ApiClientCreateResponse, CreateClientDat
       status: payload.status ?? 'active',
     };
     if (body.company_id) return body;
-    const { company_id, ...rest } = body;
-    void company_id;
+    const { company_id: _companyId, ...rest } = body;
     return rest;
   },
   mapResponse: (data) => {

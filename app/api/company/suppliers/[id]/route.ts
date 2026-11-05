@@ -27,8 +27,7 @@ export const PUT = createPutHandler<ApiSupplierDetailEnvelope, UpdateSupplierDat
   mapBody: (payload) => {
     const { ...rest } = payload;
     if (rest.companyId?.trim()) return rest;
-    const { companyId, ...withoutCompanyId } = rest;
-    void companyId;
+    const { companyId: _companyId, ...withoutCompanyId } = rest;
     return withoutCompanyId;
   },
   mapResponse: mapDetailResponse,

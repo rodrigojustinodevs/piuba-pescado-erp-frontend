@@ -43,8 +43,7 @@ export const PUT = createPutHandler<ApiClientDetailEnvelope, UpdateClientData, {
       status: rest.status ?? 'active',
     };
     if (body.company_id) return body;
-    const { company_id, ...withoutCompanyId } = body;
-    void company_id;
+    const { company_id: _companyId, ...withoutCompanyId } = body;
     return withoutCompanyId;
   },
   mapResponse: mapDetailResponse,

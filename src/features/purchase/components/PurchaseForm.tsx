@@ -241,7 +241,7 @@ export function PurchaseForm({
     onSubmit({
       companyId,
       supplierId: form.supplierId,
-      invoiceNumber: inv ? inv : null,
+      invoiceNumber: inv || null,
       orderDate: form.orderDate,
       status: form.status,
       paymentStatus: 'pending',
