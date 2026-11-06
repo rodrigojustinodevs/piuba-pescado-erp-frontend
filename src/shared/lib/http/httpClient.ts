@@ -1,4 +1,4 @@
-import { HttpError, extractErrorMessage } from './httpError';
+import { HttpError, extractErrorDetails } from './httpError';
 import { HttpRequestOptions } from './httpTypes';
 import { TokenProvider } from './httpAuth';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
@@ -49,8 +49,8 @@ export class HttpClient {
     });
 
     if (!response.ok) {
-      const message = await extractErrorMessage(response);
-      throw new HttpError(message, response.status);
+      const { message, fieldErrors } = await extractErrorDetails(response);
+      throw new HttpError(message, response.status, fieldErrors);
     }
 
     if (!expectJson || response.status === 204) {
