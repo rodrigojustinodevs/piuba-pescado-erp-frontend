@@ -14,6 +14,12 @@ export interface MenuItem {
   children?: MenuItem[];
 }
 
+export interface NavGroup {
+  id: string;
+  label: string;
+  items: MenuItem[];
+}
+
 export interface SidebarProps {
   items: MenuItem[];
   isOpen?: boolean;
