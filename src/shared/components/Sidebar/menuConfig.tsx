@@ -1,6 +1,6 @@
 'use client';
 
-import type { MenuItem } from './types';
+import type { MenuItem, NavGroup } from './types';
 import {
   administracaoSubmenuItems,
   comercialSubmenuItems,
@@ -79,7 +79,11 @@ function relatoriosChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   }));
 }
 
-export const menuConfig: MenuItemWithAuth[] = [
+export interface NavGroupWithAuth extends Omit<NavGroup, 'items'> {
+  items: MenuItemWithAuth[];
+}
+
+const geralItems: MenuItemWithAuth[] = [
   {
     id: 'dashboard',
     label: 'Dashboard',
@@ -87,6 +91,9 @@ export const menuConfig: MenuItemWithAuth[] = [
     href: '/dashboard',
     allowedRoles: ROLES_ALL,
   },
+];
+
+const operacaoItems: MenuItemWithAuth[] = [
   {
     id: 'empresas',
     label: 'Empresas/Fazendas',
@@ -117,6 +124,9 @@ export const menuConfig: MenuItemWithAuth[] = [
     allowedRoles: ROLES_COMPANY_ALL,
     children: childrenAllCompanyAdminManager(insumosEstoqueSubmenuItems),
   },
+];
+
+const gestaoItems: MenuItemWithAuth[] = [
   {
     id: 'financeiro',
     label: 'Financeiro',
@@ -133,7 +143,7 @@ export const menuConfig: MenuItemWithAuth[] = [
   },
   {
     id: 'relatorios',
-    label: 'Relatóriosa',
+    label: 'Relatórios',
     icon: FileText,
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
     children: relatoriosChildrenWithAuth(relatoriosSubmenuItems),
@@ -147,3 +157,13 @@ export const menuConfig: MenuItemWithAuth[] = [
     children: childrenAllCompanyAdminManager(administracaoSubmenuItems),
   },
 ];
+
+/** Menu agrupado (label + items): fonte única da navegação lateral. */
+export const menuGroupsConfig: NavGroupWithAuth[] = [
+  { id: 'geral', label: 'Geral', items: geralItems },
+  { id: 'operacao', label: 'Operação', items: operacaoItems },
+  { id: 'gestao', label: 'Gestão', items: gestaoItems },
+];
+
+/** Lista plana, mantida por compatibilidade com consumidores existentes. */
+export const menuConfig: MenuItemWithAuth[] = menuGroupsConfig.flatMap((group) => group.items);
