@@ -39,9 +39,7 @@ function getSurvivalClass(survival: number): string {
 function survivalBadge(row: Harvest) {
   const survival = calcSurvivalRate(row);
   return (
-    <span
-      className={getSurvivalClass(survival)}
-    >
+    <span className={getSurvivalClass(survival)}>
       {fmt(survival, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
     </span>
   );

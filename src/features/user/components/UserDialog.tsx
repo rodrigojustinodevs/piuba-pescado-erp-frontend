@@ -158,7 +158,9 @@ export function UserDialog({
     }
 
     reset(
-      isMasterUser ? buildInitialFormForMaster() : buildInitialFormForCompanyUser(authUser?.companyId),
+      isMasterUser
+        ? buildInitialFormForMaster()
+        : buildInitialFormForCompanyUser(authUser?.companyId),
     );
   }, [open, user, reset, isMasterUser, authUser?.companyId]);
 
@@ -190,7 +192,9 @@ export function UserDialog({
   function handleClose(value: boolean) {
     if (!value) {
       reset(
-        isMasterUser ? buildInitialFormForMaster() : buildInitialFormForCompanyUser(authUser?.companyId),
+        isMasterUser
+          ? buildInitialFormForMaster()
+          : buildInitialFormForCompanyUser(authUser?.companyId),
       );
     }
     onOpenChange(value);

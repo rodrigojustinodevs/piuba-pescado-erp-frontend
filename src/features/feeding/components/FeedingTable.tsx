@@ -17,56 +17,56 @@ export function getFeedingRowLabel(row: Feeding): string {
 }
 
 const columns: Array<DataTableColumn<Feeding>> = [
-    {
-      id: 'feedingDate',
-      header: 'Data da alimentação',
-      cell: (row) => (
-        <div className="text-sm text-slate-600">{formatDateTimeLocal(row.feedingDate)}</div>
-      ),
+  {
+    id: 'feedingDate',
+    header: 'Data da alimentação',
+    cell: (row) => (
+      <div className="text-sm text-slate-600">{formatDateTimeLocal(row.feedingDate)}</div>
+    ),
+  },
+  {
+    id: 'batchName',
+    header: 'Lote',
+    cellClassName: 'font-medium',
+    cell: (row) => (
+      <div className="text-sm font-medium text-[#0F172A]">{row.batch.name || '—'}</div>
+    ),
+  },
+  {
+    id: 'feedType',
+    header: 'Tipo de ração',
+    cell: (row) => (
+      <Badge variant="secondary" className="capitalize">
+        {row.feedType || '—'}
+      </Badge>
+    ),
+  },
+  {
+    id: 'quantityProvided',
+    header: 'Qtd. fornecida',
+    headerClassName: 'text-right',
+    cellClassName: 'text-right font-medium',
+    cell: (row) => {
+      return row.quantityProvided > 0 ? `${formatNumber(row.quantityProvided)} kg` : '—';
     },
-    {
-      id: 'batchName',
-      header: 'Lote',
-      cellClassName: 'font-medium',
-      cell: (row) => (
-        <div className="text-sm font-medium text-[#0F172A]">{row.batch.name || '—'}</div>
-      ),
+  },
+  {
+    id: 'stockName',
+    header: 'Estoque',
+    cellClassName: 'max-w-[200px] truncate text-sm text-muted-foreground',
+    cell: (row) => <div className="text-sm text-slate-600">{row.stock?.name || '—'}</div>,
+  },
+  {
+    id: 'stockReductionQuantity',
+    header: 'Baixa Estoque',
+    headerClassName: 'text-right',
+    cellClassName: 'text-right',
+    cell: (row) => {
+      return row.stockReductionQuantity > 0
+        ? `${formatNumber(row.stockReductionQuantity)} kg`
+        : '—';
     },
-    {
-      id: 'feedType',
-      header: 'Tipo de ração',
-      cell: (row) => (
-        <Badge variant="secondary" className="capitalize">
-          {row.feedType || '—'}
-        </Badge>
-      ),
-    },
-    {
-      id: 'quantityProvided',
-      header: 'Qtd. fornecida',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right font-medium',
-      cell: (row) => {
-        return row.quantityProvided > 0 ? `${formatNumber(row.quantityProvided)} kg` : '—';
-      },
-    },
-    {
-      id: 'stockName',
-      header: 'Estoque',
-      cellClassName: 'max-w-[200px] truncate text-sm text-muted-foreground',
-      cell: (row) => <div className="text-sm text-slate-600">{row.stock?.name || '—'}</div>,
-    },
-    {
-      id: 'stockReductionQuantity',
-      header: 'Baixa Estoque',
-      headerClassName: 'text-right',
-      cellClassName: 'text-right',
-      cell: (row) => {
-        return row.stockReductionQuantity > 0
-          ? `${formatNumber(row.stockReductionQuantity)} kg`
-          : '—';
-      },
-    },
+  },
 ];
 
 export interface FeedingTableProps {

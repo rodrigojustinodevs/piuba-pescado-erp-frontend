@@ -12,8 +12,7 @@ export function useUpdateFinancialTransaction({ skipNavigateToList: _ = false }:
   const { showSuccess, showError } = useToast();
 
   return useMutation({
-    mutationFn: (data: UpdateFinancialTransactionData) =>
-      financialTransactionService.update(data),
+    mutationFn: (data: UpdateFinancialTransactionData) => financialTransactionService.update(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financialTransactions', 'list'] });
       showSuccess('Transação atualizada com sucesso!');

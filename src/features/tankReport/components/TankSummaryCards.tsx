@@ -36,25 +36,19 @@ export function TankSummaryCards({ summary }: Readonly<{ summary: Summary }>) {
   return (
     <div className="space-y-3">
       {summary.tanksWithoutBiometry > 0 && (
-        <div
-          role="status"
-          className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-        >
+        <output className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <p>
+          <span>
             {fmtNumber(summary.tanksWithoutBiometry)} tanque(s) com lote sem biometria: biomassa e
             densidade indisponíveis ou parciais.
-          </p>
-        </div>
+          </span>
+        </output>
       )}
       {summary.inactiveWithBatch > 0 && (
-        <div
-          role="status"
-          className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-        >
+        <output className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <p>{fmtNumber(summary.inactiveWithBatch)} tanque(s) inativo(s) com lote ativo.</p>
-        </div>
+          <span>{fmtNumber(summary.inactiveWithBatch)} tanque(s) inativo(s) com lote ativo.</span>
+        </output>
       )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (

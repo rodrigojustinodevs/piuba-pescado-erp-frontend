@@ -8,7 +8,6 @@ type PurchaseCatalogStatsProps = {
   stats: PurchaseCatalogStats;
 };
 
-
 export function PurchaseCatalogStatsCards({ stats }: Readonly<PurchaseCatalogStatsProps>) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -29,13 +28,19 @@ export function PurchaseCatalogStatsCards({ stats }: Readonly<PurchaseCatalogSta
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-slate-500">Pendentes</p>
-            <p className={`mt-1 text-3xl font-bold ${stats.pendingCount > 0 ? 'text-amber-500' : 'text-slate-900'}`}>
+            <p
+              className={`mt-1 text-3xl font-bold ${stats.pendingCount > 0 ? 'text-amber-500' : 'text-slate-900'}`}
+            >
               {stats.pendingCount}
             </p>
             <p className="mt-0.5 text-xs text-slate-400">aguardando recebimento</p>
           </div>
-          <div className={`rounded-lg p-2 ${stats.pendingCount > 0 ? 'bg-amber-50' : 'bg-slate-100'}`}>
-            <Clock className={`h-5 w-5 ${stats.pendingCount > 0 ? 'text-amber-500' : 'text-slate-500'}`} />
+          <div
+            className={`rounded-lg p-2 ${stats.pendingCount > 0 ? 'bg-amber-50' : 'bg-slate-100'}`}
+          >
+            <Clock
+              className={`h-5 w-5 ${stats.pendingCount > 0 ? 'text-amber-500' : 'text-slate-500'}`}
+            />
           </div>
         </div>
       </div>

@@ -14,7 +14,11 @@ export function mapApiMortality(api: ApiMortality): Mortality {
     id: api.id,
     batchId: api.batchId ?? api.batch?.id ?? '',
     batch: api.batch
-      ? { id: api.batch.id ?? '', name: api.batch.name ?? '', initialQuantity: api.batch.initialQuantity }
+      ? {
+          id: api.batch.id ?? '',
+          name: api.batch.name ?? '',
+          initialQuantity: api.batch.initialQuantity,
+        }
       : undefined,
     mortalityDate: api.mortalityDate,
     quantity: api.quantity,

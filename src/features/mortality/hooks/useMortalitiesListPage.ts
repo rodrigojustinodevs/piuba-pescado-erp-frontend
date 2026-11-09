@@ -15,9 +15,7 @@ function sortMortalities(mortalities: Mortality[], sortBy: string): Mortality[] 
         (a, b) => new Date(b.mortalityDate).getTime() - new Date(a.mortalityDate).getTime(),
       );
     case 'batchName':
-      return list.sort((a, b) =>
-        (a.batch?.name ?? '').localeCompare(b.batch?.name ?? '', 'pt-BR'),
-      );
+      return list.sort((a, b) => (a.batch?.name ?? '').localeCompare(b.batch?.name ?? '', 'pt-BR'));
     case 'quantity':
       return list.sort((a, b) => b.quantity - a.quantity);
     default:

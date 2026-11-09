@@ -91,7 +91,9 @@ export function SuppliesListView({
 
   function renderContent() {
     if (isLoading) {
-      return <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>;
+      return (
+        <div className="flex items-center justify-center py-16 text-slate-400">Carregando...</div>
+      );
     }
     if (error) {
       return (

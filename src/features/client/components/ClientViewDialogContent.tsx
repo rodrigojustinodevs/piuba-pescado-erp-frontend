@@ -38,10 +38,14 @@ function formatCurrency(value: string | null): string {
 
 function priceGroupLabel(value: string): string {
   switch (value?.toLowerCase()) {
-    case 'wholesale': return 'Atacado';
-    case 'retail': return 'Varejo';
-    case 'consumer': return 'Consumidor';
-    default: return value || '—';
+    case 'wholesale':
+      return 'Atacado';
+    case 'retail':
+      return 'Varejo';
+    case 'consumer':
+      return 'Consumidor';
+    default:
+      return value || '—';
   }
 }
 

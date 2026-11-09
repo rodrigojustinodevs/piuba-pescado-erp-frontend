@@ -17,13 +17,7 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
-import {
-  ArrowLeftRight,
-  ArrowRightLeft,
-  Boxes,
-  CalendarClock,
-  Scale,
-} from 'lucide-react';
+import { ArrowLeftRight, ArrowRightLeft, Boxes, CalendarClock, Scale } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
 import { formatNumber } from '@/shared/utils/numberFormat';
 import type { DataTableAction } from '@/shared/components/Table';
@@ -209,7 +203,9 @@ export function TransfersListView({
             <Scale className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(stats.totalBiomassKg, { maximumFractionDigits: 2 })}</div>
+            <div className="text-2xl font-bold">
+              {formatNumber(stats.totalBiomassKg, { maximumFractionDigits: 2 })}
+            </div>
             <p className="text-xs text-muted-foreground">total transferida</p>
           </CardContent>
         </Card>

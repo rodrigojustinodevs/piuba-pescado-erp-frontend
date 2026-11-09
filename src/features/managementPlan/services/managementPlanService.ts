@@ -38,6 +38,9 @@ export const managementPlanService = {
 
   async review(data: ReviewManagementPlanData): Promise<ManagementPlan> {
     const { id, ...body } = data;
-    return browserHttpClient.post<ManagementPlan>(`/api/company/management-plan/${id}/review`, body);
+    return browserHttpClient.post<ManagementPlan>(
+      `/api/company/management-plan/${id}/review`,
+      body,
+    );
   },
 };

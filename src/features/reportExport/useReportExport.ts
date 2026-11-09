@@ -7,7 +7,7 @@ import { EXPORT_POLL_MAX_MS, EXPORT_POLL_MIN_MS, EXPORT_POLL_TIMEOUT_MS } from '
 import type { ExportStatus, StartExportResult } from './types';
 import { usePersistedExport } from './usePersistedExport';
 
-const TERMINAL: ExportStatus['status'][] = ['done', 'failed'];
+const TERMINAL = new Set<ExportStatus['status']>(['done', 'failed']);
 
 function nextInterval(updateCount: number): number {
   return Math.min(EXPORT_POLL_MIN_MS + updateCount * 500, EXPORT_POLL_MAX_MS);
@@ -48,7 +48,7 @@ export function useReportExport<TInput>({
     gcTime: 0,
     refetchInterval: (query) => {
       const status = query.state.data?.status;
-      if (status && TERMINAL.includes(status)) return false;
+      if (status && TERMINAL.has(status)) return false;
       if (startedAt && Date.now() - startedAt > EXPORT_POLL_TIMEOUT_MS) return false;
       return nextInterval(query.state.dataUpdateCount);
     },
@@ -58,7 +58,7 @@ export function useReportExport<TInput>({
 
   // Teto de espera no cliente: depois disso, orienta a consultar mais tarde.
   useEffect(() => {
-    if (!startedAt || (status && TERMINAL.includes(status))) return;
+    if (!startedAt || (status && TERMINAL.has(status))) return;
     const remaining = Math.max(startedAt + EXPORT_POLL_TIMEOUT_MS - Date.now(), 0);
     const timer = setTimeout(() => setTimedOutFor(startedAt), remaining);
     return () => clearTimeout(timer);
@@ -77,7 +77,7 @@ export function useReportExport<TInput>({
     },
   });
 
-  const isActive = Boolean(exportId) && !timedOut && !(status && TERMINAL.includes(status));
+  const isActive = Boolean(exportId) && !timedOut && !(status && TERMINAL.has(status));
 
   /** Gera nova URL assinada a cada clique e abre o PDF. */
   const download = useCallback(async () => {

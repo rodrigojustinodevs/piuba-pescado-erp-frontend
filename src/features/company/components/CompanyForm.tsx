@@ -186,7 +186,8 @@ export function CompanyForm({
               {/* Status Section */}
               <div className="flex items-center justify-between rounded-xl border border-green-200 bg-green-50 px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <svg aria-hidden="true"
+                  <svg
+                    aria-hidden="true"
                     className="h-5 w-5 text-green-600"
                     fill="none"
                     stroke="currentColor"
@@ -222,7 +223,8 @@ export function CompanyForm({
           {/* Right Column: Endereço */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <svg aria-hidden="true"
+              <svg
+                aria-hidden="true"
                 className="h-5 w-5 text-[#0EA5A4]"
                 fill="none"
                 stroke="currentColor"
@@ -387,7 +389,8 @@ export function CompanyForm({
             className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading && (
-              <svg aria-hidden="true"
+              <svg
+                aria-hidden="true"
                 className="h-4 w-4 animate-spin"
                 fill="none"
                 stroke="currentColor"
@@ -690,7 +693,8 @@ export function CompanyForm({
           className="flex items-center gap-2 rounded-lg bg-[#0EA5A4] px-4 py-2 text-sm font-medium text-white hover:bg-[#0F766E] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading && (
-            <svg aria-hidden="true"
+            <svg
+              aria-hidden="true"
               className="h-4 w-4 animate-spin"
               fill="none"
               stroke="currentColor"

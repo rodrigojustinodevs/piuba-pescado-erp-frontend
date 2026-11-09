@@ -1,7 +1,7 @@
 import type { InventoryPreview } from '@/features/inventoryReport/types';
 import { createListGetHandler } from '@/shared/lib/api/routeFactories';
 
-const ALLOWED_PARAMS = [
+const ALLOWED_PARAMS = new Set([
   'cutoffDate',
   'periodStart',
   'periodEnd',
@@ -10,7 +10,7 @@ const ALLOWED_PARAMS = [
   'categories[]',
   'stockTypes[]',
   'supplyIds[]',
-];
+]);
 
 export const GET = createListGetHandler<{ response: InventoryPreview }, InventoryPreview>({
   backendPath: '/api/company/reports/inventory/preview',
@@ -19,7 +19,7 @@ export const GET = createListGetHandler<{ response: InventoryPreview }, Inventor
   buildQueryString: (searchParams) => {
     const out = new URLSearchParams();
     for (const [key, value] of searchParams.entries()) {
-      if (ALLOWED_PARAMS.includes(key) && value !== '') out.append(key, value);
+      if (ALLOWED_PARAMS.has(key) && value !== '') out.append(key, value);
     }
     return out.toString();
   },

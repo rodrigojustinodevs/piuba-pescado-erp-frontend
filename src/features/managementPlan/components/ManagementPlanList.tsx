@@ -11,9 +11,7 @@ export function ManagementPlanList({ plans }: Readonly<{ plans: ManagementPlan[]
 
   if (plans.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
-        Nenhum plano de manejo gerado para este lote ainda.
-      </p>
+      <p className="text-sm text-slate-500">Nenhum plano de manejo gerado para este lote ainda.</p>
     );
   }
 
@@ -22,7 +20,10 @@ export function ManagementPlanList({ plans }: Readonly<{ plans: ManagementPlan[]
       {plans.map((plan) => {
         const isExpanded = expandedId === plan.id;
         return (
-          <div key={plan.id} className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+          <div
+            key={plan.id}
+            className="rounded-xl border border-slate-200 bg-white overflow-hidden"
+          >
             <button
               type="button"
               onClick={() => setExpandedId(isExpanded ? null : plan.id)}

@@ -23,7 +23,10 @@ import {
 import { Button } from '@/shared/components/ui/Button';
 import { Batch, BatchDialogMode, UpdateBatchData } from '../types';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { GenerateManagementPlanDialog, MANAGEMENT_PLAN_VIEW_ROLES } from '@/features/managementPlan';
+import {
+  GenerateManagementPlanDialog,
+  MANAGEMENT_PLAN_VIEW_ROLES,
+} from '@/features/managementPlan';
 import { Sparkles } from 'lucide-react';
 
 type BatchCreateDialogProps = {
@@ -71,7 +74,9 @@ export function BatchCreateDialog({
     onOpenChange(false);
   }
 
-  function handleSubmit(data: CreateBatchFormData | BatchDistributionFormData | UpdateBatchFormData) {
+  function handleSubmit(
+    data: CreateBatchFormData | BatchDistributionFormData | UpdateBatchFormData,
+  ) {
     if (mode === 'edit') {
       if (!batch?.id) return;
       const payload: UpdateBatchData = { ...(data as CreateBatchFormData), id: batch.id };
@@ -84,7 +89,9 @@ export function BatchCreateDialog({
       return;
     }
 
-    const mutation = isBatchDistributionData(data as CreateBatchFormData | BatchDistributionFormData)
+    const mutation = isBatchDistributionData(
+      data as CreateBatchFormData | BatchDistributionFormData,
+    )
       ? distributeBatch
       : createBatch;
     mutation.mutate(data as never, {

@@ -41,10 +41,7 @@ const DIALOG_CONFIG = {
     description: 'Cadastre uma nova biometria para o lote.',
     maxWidth: 'sm:max-w-xl',
   },
-} satisfies Record<
-  BiometryDialogMode,
-  { title: string; description: string; maxWidth: string }
->;
+} satisfies Record<BiometryDialogMode, { title: string; description: string; maxWidth: string }>;
 
 export function BiometryDialog({
   open,

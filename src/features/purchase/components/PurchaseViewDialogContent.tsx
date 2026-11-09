@@ -128,13 +128,18 @@ export function PurchaseViewDialogContent({
       id: 'unitPrice',
       header: 'Preço unit.',
       align: 'right',
-      cell: (item) => itemCell(formatPurchaseMoney(item.unitPrice), 'text-sm text-slate-700 tabular-nums'),
+      cell: (item) =>
+        itemCell(formatPurchaseMoney(item.unitPrice), 'text-sm text-slate-700 tabular-nums'),
     },
     {
       id: 'totalPrice',
       header: 'Subtotal',
       align: 'right',
-      cell: (item) => itemCell(formatPurchaseMoney(item.totalPrice), 'text-sm font-medium text-[#0F172A] tabular-nums'),
+      cell: (item) =>
+        itemCell(
+          formatPurchaseMoney(item.totalPrice),
+          'text-sm font-medium text-[#0F172A] tabular-nums',
+        ),
     },
   ];
 

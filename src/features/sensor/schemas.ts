@@ -12,8 +12,7 @@ export const createSensorSchema = z.object({
 
 export type CreateSensorFormData = z.infer<typeof createSensorSchema>;
 
-const finiteNumber = (message: string) =>
-  z.number().refine((n) => Number.isFinite(n), { message });
+const finiteNumber = (message: string) => z.number().refine((n) => Number.isFinite(n), { message });
 
 const baseSensorDialogSchema = z.object({
   companyId: z.string().optional(),

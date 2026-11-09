@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createFieldErrorHelpers, type FieldErrors } from '@/features/reportExport/fieldErrors';
 
 export const tankFiltersSchema = z.object({
   cutoffDate: z.string(),
@@ -8,10 +9,12 @@ export const tankFiltersSchema = z.object({
   tankTypeIds: z.array(z.string()).max(50, 'Selecione no máximo 50 tipos de tanque.'),
 });
 
-export type FilterFieldErrors = Partial<Record<keyof z.infer<typeof tankFiltersSchema>, string>>;
+type Filters = z.infer<typeof tankFiltersSchema>;
 
-/** Converte as chaves snake_case do 422 (`tank_ids.0`) para os campos do form. */
-const SERVER_FIELD_MAP: Record<string, keyof FilterFieldErrors> = {
+export type FilterFieldErrors = FieldErrors<Filters>;
+
+/** Converte as chaves snake_case do 422 (ex.: `period_end`) para os campos do form. */
+const SERVER_FIELD_MAP: Record<string, keyof Filters> = {
   cutoff_date: 'cutoffDate',
   status: 'status',
   occupancy: 'occupancy',
@@ -19,25 +22,7 @@ const SERVER_FIELD_MAP: Record<string, keyof FilterFieldErrors> = {
   tank_type_ids: 'tankTypeIds',
 };
 
-export function mapServerFieldErrors(
-  errors: Record<string, string[]> | undefined,
-): FilterFieldErrors {
-  const result: FilterFieldErrors = {};
-  if (!errors) return result;
-  for (const [key, messages] of Object.entries(errors)) {
-    const field = SERVER_FIELD_MAP[key.split('.')[0]];
-    if (field && !result[field]) result[field] = messages[0];
-  }
-  return result;
-}
-
-export function validateFilters(filters: z.infer<typeof tankFiltersSchema>): FilterFieldErrors {
-  const parsed = tankFiltersSchema.safeParse(filters);
-  if (parsed.success) return {};
-  const errors: FilterFieldErrors = {};
-  for (const issue of parsed.error.issues) {
-    const field = issue.path[0] as keyof FilterFieldErrors | undefined;
-    if (field && !errors[field]) errors[field] = issue.message;
-  }
-  return errors;
-}
+export const { mapServerFieldErrors, validateFilters } = createFieldErrorHelpers<Filters>(
+  tankFiltersSchema,
+  SERVER_FIELD_MAP,
+);

@@ -59,7 +59,9 @@ const itemColumns: Array<DataTableColumn<Purchase['items'][number]>> = [
     header: 'Valor unitario',
     align: 'right',
     cell: (item) => (
-      <div className="text-sm text-slate-700 tabular-nums">{formatPurchaseMoney(item.unitPrice)}</div>
+      <div className="text-sm text-slate-700 tabular-nums">
+        {formatPurchaseMoney(item.unitPrice)}
+      </div>
     ),
   },
   {
@@ -108,7 +110,8 @@ export function PurchaseDetailView({
         title={titleLabel}
         subtitle={
           <>
-            Fornecedor: {purchase.supplierName || '—'} · Data: {formatPurchaseDate(purchase.orderDate)}
+            Fornecedor: {purchase.supplierName || '—'} · Data:{' '}
+            {formatPurchaseDate(purchase.orderDate)}
           </>
         }
         editHref={`/company/purchases/${purchase.id}/edit`}
@@ -150,7 +153,9 @@ export function PurchaseDetailView({
           data={purchase.items}
           columns={itemColumns}
           getRowId={(item) => item.id || `${item.supplyId}-${item.unit}`}
-          emptyState={<div className="p-8 text-center text-slate-500">Nenhum item nesta compra.</div>}
+          emptyState={
+            <div className="p-8 text-center text-slate-500">Nenhum item nesta compra.</div>
+          }
         />
       </DetailInfoSection>
     </EntityDetailShell>

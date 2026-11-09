@@ -29,7 +29,9 @@ export function SaleDetailView({
   onDelete,
   isDeleting = false,
 }: Readonly<SaleDetailViewProps>) {
-  const titleLabel = sale.clientName ? `Venda — ${sale.clientName}` : `Venda ${sale.id.slice(0, 8)}…`;
+  const titleLabel = sale.clientName
+    ? `Venda — ${sale.clientName}`
+    : `Venda ${sale.id.slice(0, 8)}…`;
   const showCancel = Boolean(onCancel && sale.status?.toLowerCase() !== 'cancelled');
   const metricCards = [
     { label: 'Cliente', value: sale.clientName || '—' },
@@ -66,7 +68,11 @@ export function SaleDetailView({
         onDeleteClick={onDelete ? () => onDelete(sale.id, titleLabel) : undefined}
         isDeleting={isDeleting}
       />
-      <EntityDetailMetricsBody metricCards={metricCards} infoSectionTitle="Detalhes" infoItems={infoItems} />
+      <EntityDetailMetricsBody
+        metricCards={metricCards}
+        infoSectionTitle="Detalhes"
+        infoItems={infoItems}
+      />
     </EntityDetailShell>
   );
 }

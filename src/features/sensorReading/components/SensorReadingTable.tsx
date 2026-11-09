@@ -17,7 +17,10 @@ function SensorTypeIcon({ typeIcon, sensorType }: Readonly<SensorTypeIconProps>)
 import { Badge } from '@/shared/components/ui/Badge';
 import { formatDateTime, formatRelative } from '../../batch/utils/format';
 
-type SourceConfig = Record<SensorReadingType, { label: string; icon: LucideIcon; variant: 'secondary' | 'default' }>;
+type SourceConfig = Record<
+  SensorReadingType,
+  { label: string; icon: LucideIcon; variant: 'secondary' | 'default' }
+>;
 
 interface ReadingValueCellProps {
   row: SensorReading;
@@ -45,7 +48,11 @@ interface ReadingSourceCellProps {
   fallbackSource: SourceConfig[SensorReadingType];
 }
 
-function ReadingSourceCell({ row, sourceConfig, fallbackSource }: Readonly<ReadingSourceCellProps>) {
+function ReadingSourceCell({
+  row,
+  sourceConfig,
+  fallbackSource,
+}: Readonly<ReadingSourceCellProps>) {
   const source = sourceConfig[row.type as SensorReadingType] ?? fallbackSource;
   const SourceIcon = source.icon;
   return (
@@ -104,7 +111,9 @@ function buildColumns(
     {
       id: 'type',
       header: 'Origem',
-      cell: (row) => <ReadingSourceCell row={row} sourceConfig={sourceConfig} fallbackSource={fallbackSource} />,
+      cell: (row) => (
+        <ReadingSourceCell row={row} sourceConfig={sourceConfig} fallbackSource={fallbackSource} />
+      ),
     },
     {
       id: 'measuredAt',

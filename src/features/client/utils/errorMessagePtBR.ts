@@ -7,13 +7,16 @@ const EXACT_MAP: Record<string, string> = {
   'The name may not be greater than 255 characters.': 'O nome não pode ter mais de 255 caracteres.',
 
   'The contact must be a string.': 'O contato deve ser um texto.',
-  'The contact may not be greater than 255 characters.': 'O contato não pode ter mais de 255 caracteres.',
+  'The contact may not be greater than 255 characters.':
+    'O contato não pode ter mais de 255 caracteres.',
 
   'The phone must be a string.': 'O telefone deve ser um texto.',
-  'The phone may not be greater than 20 characters.': 'O telefone não pode ter mais de 20 caracteres.',
+  'The phone may not be greater than 20 characters.':
+    'O telefone não pode ter mais de 20 caracteres.',
 
   'The email must be a valid email address.': 'O e-mail deve ser um endereço válido.',
-  'The email may not be greater than 255 characters.': 'O e-mail não pode ter mais de 255 caracteres.',
+  'The email may not be greater than 255 characters.':
+    'O e-mail não pode ter mais de 255 caracteres.',
 
   'The person type is required.': 'O tipo de pessoa é obrigatório.',
   'The person type must be a string.': 'O tipo de pessoa deve ser um texto.',
@@ -26,7 +29,8 @@ const EXACT_MAP: Record<string, string> = {
     'Este CPF/CNPJ já está cadastrado para esta empresa.',
 
   'The address must be a string.': 'O endereço deve ser um texto.',
-  'The address may not be greater than 255 characters.': 'O endereço não pode ter mais de 255 caracteres.',
+  'The address may not be greater than 255 characters.':
+    'O endereço não pode ter mais de 255 caracteres.',
 
   'The credit limit must be a numeric value.': 'O limite de crédito deve ser um número.',
   'The credit limit cannot be negative.': 'O limite de crédito não pode ser negativo.',
@@ -44,4 +48,3 @@ export function translateClientApiErrorMessagePtBR(message: string): string {
   const withoutDoubleDot = normalized.replace(/\.\.$/, '.');
   return EXACT_MAP[normalized] ?? EXACT_MAP[withoutDoubleDot] ?? message;
 }
-

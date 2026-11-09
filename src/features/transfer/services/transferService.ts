@@ -20,7 +20,10 @@ function mapTransfer422(message: string): string {
   if (message.includes('already has an active batch')) {
     return 'O tanque de destino já possui um lote ativo.';
   }
-  if (message.toLowerCase().includes('same tank') || message.includes('TransferSameTankException')) {
+  if (
+    message.toLowerCase().includes('same tank') ||
+    message.includes('TransferSameTankException')
+  ) {
     return 'Origem e destino não podem ser o mesmo tanque.';
   }
   return message;

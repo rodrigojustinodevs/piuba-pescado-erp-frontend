@@ -71,12 +71,15 @@ export function SupplierDialog({
 
   function handleUpdate(data: CreateSupplierData) {
     if (!supplier?.id) return;
-    updateSupplier.mutate({ ...data, id: supplier.id }, {
-      onSuccess: () => {
-        onSuccess();
-        handleClose();
+    updateSupplier.mutate(
+      { ...data, id: supplier.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
       },
-    });
+    );
   }
 
   const editInitialValues: CreateSupplierFormData | undefined =

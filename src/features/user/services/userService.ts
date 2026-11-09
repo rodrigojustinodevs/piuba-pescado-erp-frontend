@@ -22,9 +22,7 @@ export const userService = {
       },
       { skipEmptyString: true },
     );
-    const endpoint = queryString
-      ? `/api/company/users?${queryString}`
-      : '/api/company/users';
+    const endpoint = queryString ? `/api/company/users?${queryString}` : '/api/company/users';
     return browserHttpClient.get<UserListResponse>(endpoint);
   },
 

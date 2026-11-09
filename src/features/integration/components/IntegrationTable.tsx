@@ -5,7 +5,12 @@ import type { Integration, IntegrationTableProps } from '../types';
 import { DataTable, type DataTableColumn } from '@/shared/components/Table';
 import { Badge } from '@/shared/components/ui/Badge';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
-import { STATUS_BADGE_STYLES, STATUS_LABELS, TYPE_ICONS, TYPE_LABELS } from '../utils/integrationLabels';
+import {
+  STATUS_BADGE_STYLES,
+  STATUS_LABELS,
+  TYPE_ICONS,
+  TYPE_LABELS,
+} from '../utils/integrationLabels';
 
 const STATUS_DOT_STYLES: Record<Integration['status'], string> = {
   connected: 'bg-emerald-500',

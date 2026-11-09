@@ -1,6 +1,11 @@
 'use client';
 
-import { useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
+import {
+  useFieldArray,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
+} from 'react-hook-form';
 import type { CreateSpeciesFormData } from '../schemas';
 import { Input } from '@/shared/components/ui';
 import { Plus, Trash } from 'lucide-react';

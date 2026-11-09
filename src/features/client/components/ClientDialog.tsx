@@ -1,7 +1,11 @@
 'use client';
 
 import type { Client, ClientDialogMode, CreateClientData } from '../types';
-import { clientPriceGroupValues, clientStatusFormValues, type CreateClientFormData } from '../schemas';
+import {
+  clientPriceGroupValues,
+  clientStatusFormValues,
+  type CreateClientFormData,
+} from '../schemas';
 import { ClientForm } from './ClientForm';
 import { ClientViewDialogContent } from './ClientViewDialogContent';
 import { useCreateClient } from '../hooks/useCreateClient';
@@ -105,12 +109,15 @@ export function ClientDialog({
 
   function handleUpdate(data: CreateClientData) {
     if (!client?.id) return;
-    updateClient.mutate({ ...data, id: client.id }, {
-      onSuccess: () => {
-        onSuccess();
-        handleClose();
+    updateClient.mutate(
+      { ...data, id: client.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
       },
-    });
+    );
   }
 
   const editInitialValues = client && mode === 'edit' ? buildEditValues(client) : undefined;

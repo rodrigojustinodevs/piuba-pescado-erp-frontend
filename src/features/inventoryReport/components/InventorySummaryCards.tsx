@@ -39,14 +39,13 @@ export function InventorySummaryCards({ summary }: Readonly<{ summary: Summary }
   return (
     <div className="space-y-3">
       {notes.map((note) => (
-        <div
+        <output
           key={note}
-          role="status"
           className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
         >
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <p>{note}</p>
-        </div>
+          <span>{note}</span>
+        </output>
       ))}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (

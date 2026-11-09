@@ -33,7 +33,8 @@ export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
         <div className="flex items-start justify-between mb-8 bg-white rounded-t-2xl border border-slate-200 shadow-sm p-8">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[#0EA5A4]/10 border-2 border-[#0EA5A4]/20">
-              <svg aria-hidden="true"
+              <svg
+                aria-hidden="true"
                 className="h-8 w-8 text-[#0EA5A4]"
                 fill="none"
                 stroke="currentColor"
@@ -100,82 +101,88 @@ export function BatchDetailView({ batch }: Readonly<BatchDetailViewProps>) {
           </TabsList>
 
           <TabsContent value="detalhes">
-        {/* Informações do Lote */}
-        <div className="mb-8 mt-6 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-6 w-1 rounded-full bg-[#0EA5A4]" />
-            <h2 className="text-base font-semibold text-[#0F172A]">Informações do Lote</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                <p className="text-xs font-medium text-slate-600 uppercase mb-2">TANQUE</p>
-                <p className="text-sm font-medium text-[#0F172A]">{batch.tank?.name ?? '—'}</p>
+            {/* Informações do Lote */}
+            <div className="mb-8 mt-6 p-8 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-6 w-1 rounded-full bg-[#0EA5A4]" />
+                <h2 className="text-base font-semibold text-[#0F172A]">Informações do Lote</h2>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">TANQUE</p>
+                    <p className="text-sm font-medium text-[#0F172A]">{batch.tank?.name ?? '—'}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                      <p className="text-xs font-medium text-slate-600 uppercase mb-2">ESPÉCIE</p>
+                      <p className="text-sm font-medium text-[#0F172A]">{batch.species}</p>
+                    </div>
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                      <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                        QUANTIDADE INICIAL
+                      </p>
+                      <p className="text-sm font-medium text-[#0F172A]">
+                        {formatQuantity(batch.initialQuantity)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                      TIPO DE CULTIVO
+                    </p>
+                    <p className="text-sm font-medium text-[#0F172A]">
+                      {getCultivationLabel(batch.cultivation)}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                      <p className="text-xs font-medium text-slate-600 uppercase mb-2">STATUS</p>
+                      <BatchStatusBadge status={batch.status} />
+                    </div>
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                      <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                        DATA DE ENTRADA
+                      </p>
+                      <p className="text-sm font-medium text-[#0F172A]">
+                        {formatDate(batch.entryDate)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Informações Adicionais */}
+            <div className="bg-white mt-8 p-8 rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-6 w-1 rounded-full bg-[#0EA5A4]" />
+                <h2 className="text-base font-semibold text-[#0F172A]">Informações Adicionais</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">ESPÉCIE</p>
-                  <p className="text-sm font-medium text-[#0F172A]">{batch.species}</p>
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                    DATA DE CRIAÇÃO
+                  </p>
+                  <p className="text-sm font-medium text-[#0F172A]">
+                    {formatDate(batch.createdAt)}
+                  </p>
                 </div>
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                   <p className="text-xs font-medium text-slate-600 uppercase mb-2">
-                    QUANTIDADE INICIAL
+                    ÚLTIMA ATUALIZAÇÃO
                   </p>
                   <p className="text-sm font-medium text-[#0F172A]">
-                    {formatQuantity(batch.initialQuantity)}
+                    {formatDateTime(batch.updatedAt)}
                   </p>
                 </div>
               </div>
             </div>
-
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                <p className="text-xs font-medium text-slate-600 uppercase mb-2">TIPO DE CULTIVO</p>
-                <p className="text-sm font-medium text-[#0F172A]">
-                  {getCultivationLabel(batch.cultivation)}
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">STATUS</p>
-                  <BatchStatusBadge status={batch.status} />
-                </div>
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">
-                    DATA DE ENTRADA
-                  </p>
-                  <p className="text-sm font-medium text-[#0F172A]">
-                    {formatDate(batch.entryDate)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Informações Adicionais */}
-        <div className="bg-white mt-8 p-8 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-6 w-1 rounded-full bg-[#0EA5A4]" />
-            <h2 className="text-base font-semibold text-[#0F172A]">Informações Adicionais</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">DATA DE CRIAÇÃO</p>
-              <p className="text-sm font-medium text-[#0F172A]">{formatDate(batch.createdAt)}</p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-              <p className="text-xs font-medium text-slate-600 uppercase mb-2">
-                ÚLTIMA ATUALIZAÇÃO
-              </p>
-              <p className="text-sm font-medium text-[#0F172A]">
-                {formatDateTime(batch.updatedAt)}
-              </p>
-            </div>
-          </div>
-        </div>
           </TabsContent>
 
           {canViewManagementPlan && (

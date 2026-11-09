@@ -1,11 +1,5 @@
 import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
-import type {
-  ExportStatus,
-  StartExportInput,
-  StartExportResult,
-  TankFilters,
-  TankPreview,
-} from '../types';
+import type { ExportStatus, StartExportResult, TankFilters, TankPreview } from '../types';
 
 const BASE = '/api/company/reports';
 
@@ -19,7 +13,7 @@ function buildFilterQuery(filters: TankFilters): string {
   return params.toString();
 }
 
-function buildExportBody(input: StartExportInput) {
+function buildExportBody(input: TankFilters) {
   return {
     ...(input.cutoffDate && { cutoffDate: input.cutoffDate }),
     status: input.status,
@@ -37,7 +31,7 @@ export const tankReportService = {
     );
   },
 
-  startExport(input: StartExportInput): Promise<StartExportResult> {
+  startExport(input: TankFilters): Promise<StartExportResult> {
     return browserHttpClient.post<StartExportResult>(`${BASE}/tank`, buildExportBody(input));
   },
 

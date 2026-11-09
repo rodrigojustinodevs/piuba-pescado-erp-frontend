@@ -1,7 +1,7 @@
 import type { CommercialPreview } from '@/features/commercialReport/types';
 import { createListGetHandler } from '@/shared/lib/api/routeFactories';
 
-const ALLOWED_PARAMS = [
+const ALLOWED_PARAMS = new Set([
   'cutoffDate',
   'periodStart',
   'periodEnd',
@@ -9,7 +9,7 @@ const ALLOWED_PARAMS = [
   'paymentMethod',
   'clientIds[]',
   'batchIds[]',
-];
+]);
 
 export const GET = createListGetHandler<{ response: CommercialPreview }, CommercialPreview>({
   backendPath: '/api/company/reports/commercial/preview',
@@ -18,7 +18,7 @@ export const GET = createListGetHandler<{ response: CommercialPreview }, Commerc
   buildQueryString: (searchParams) => {
     const out = new URLSearchParams();
     for (const [key, value] of searchParams.entries()) {
-      if (ALLOWED_PARAMS.includes(key) && value !== '') out.append(key, value);
+      if (ALLOWED_PARAMS.has(key) && value !== '') out.append(key, value);
     }
     return out.toString();
   },

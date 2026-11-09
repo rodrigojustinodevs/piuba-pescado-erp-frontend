@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type {
-  Purchase,
-  PurchaseDialogMode,
-  CreatePurchaseData,
-} from '../types';
+import type { Purchase, PurchaseDialogMode, CreatePurchaseData } from '../types';
 import type { CreatePurchaseFormData } from '../schemas';
 import { PurchaseForm } from './PurchaseForm';
 import { PurchaseViewDialogContent } from './PurchaseViewDialogContent';
@@ -93,12 +89,15 @@ export function PurchaseDialog({
 
   function handleUpdate(data: CreatePurchaseData) {
     if (!purchase?.id) return;
-    updatePurchase.mutate({ ...data, id: purchase.id }, {
-      onSuccess: () => {
-        onSuccess();
-        handleClose();
+    updatePurchase.mutate(
+      { ...data, id: purchase.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
       },
-    });
+    );
   }
 
   function handleReceive(_id: string) {

@@ -3,7 +3,11 @@ import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { buildQueryString } from '@/shared/utils/queryString';
 
 export const speciesService = {
-  async list(params?: { page?: number; limit?: number; search?: string }): Promise<SpeciesListResponse> {
+  async list(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }): Promise<SpeciesListResponse> {
     const queryString = buildQueryString(
       {
         page: params?.page,

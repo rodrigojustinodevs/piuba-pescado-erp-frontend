@@ -1,5 +1,6 @@
 'use client';
 
+import { sortedCopy } from '@/features/reportExport/signature';
 import { useReportExport } from '@/features/reportExport/useReportExport';
 import { INVENTORY_EXPORT_STORAGE_KEY } from '../constants';
 import { inventoryReportService } from '../services/inventoryReportService';
@@ -8,9 +9,9 @@ import type { StartExportInput } from '../types';
 export function filtersSignature(input: StartExportInput): string {
   return JSON.stringify({
     ...input,
-    categories: [...input.categories].sort(),
-    stockTypes: [...input.stockTypes].sort(),
-    supplyIds: [...input.supplyIds].sort(),
+    categories: sortedCopy(input.categories),
+    stockTypes: sortedCopy(input.stockTypes),
+    supplyIds: sortedCopy(input.supplyIds),
   });
 }
 

@@ -106,7 +106,9 @@ export function PurchasePaymentDialog({
       );
     }
     if (!payments || payments.length === 0) {
-      return <p className="text-sm text-slate-400 py-3 text-center">Nenhum pagamento registrado.</p>;
+      return (
+        <p className="text-sm text-slate-400 py-3 text-center">Nenhum pagamento registrado.</p>
+      );
     }
     return (
       <div className="rounded-lg border border-slate-200 overflow-hidden">
@@ -127,7 +129,9 @@ export function PurchasePaymentDialog({
                   {formatPaymentDate(payment.paymentDate)}
                 </td>
                 <td className="px-3 py-2 text-slate-700">
-                  {PAYMENT_METHOD_LABELS[payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] ?? payment.paymentMethod}
+                  {PAYMENT_METHOD_LABELS[
+                    payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS
+                  ] ?? payment.paymentMethod}
                 </td>
                 <td className="px-3 py-2 text-slate-500">{payment.reference ?? '—'}</td>
                 <td className="px-3 py-2 text-right font-medium text-emerald-700 whitespace-nowrap">
@@ -198,7 +202,9 @@ export function PurchasePaymentDialog({
                   <DollarSign className="h-3.5 w-3.5 text-slate-400" />
                   <span className="text-xs text-slate-500">Valor total</span>
                 </div>
-                <p className="text-base font-bold text-slate-900">{formatPurchaseMoney(totalPrice)}</p>
+                <p className="text-base font-bold text-slate-900">
+                  {formatPurchaseMoney(totalPrice)}
+                </p>
               </CardContent>
             </Card>
             <Card className="border-emerald-200 bg-emerald-50/40">
@@ -207,7 +213,9 @@ export function PurchasePaymentDialog({
                   <Wallet className="h-3.5 w-3.5 text-emerald-500" />
                   <span className="text-xs text-emerald-700">Valor pago</span>
                 </div>
-                <p className="text-base font-bold text-emerald-700">{formatPurchaseMoney(paidAmount)}</p>
+                <p className="text-base font-bold text-emerald-700">
+                  {formatPurchaseMoney(paidAmount)}
+                </p>
               </CardContent>
             </Card>
             <Card className="border-amber-200 bg-amber-50/40">
@@ -216,7 +224,9 @@ export function PurchasePaymentDialog({
                   <TrendingDown className="h-3.5 w-3.5 text-amber-500" />
                   <span className="text-xs text-amber-700">Saldo pendente</span>
                 </div>
-                <p className="text-base font-bold text-amber-700">{formatPurchaseMoney(pendingAmount)}</p>
+                <p className="text-base font-bold text-amber-700">
+                  {formatPurchaseMoney(pendingAmount)}
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -265,9 +275,7 @@ export function PurchasePaymentDialog({
                 {...register('amount', { valueAsNumber: true })}
                 className="w-full h-9 rounded-md border border-slate-300 px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
-              {errors.amount && (
-                <p className="text-xs text-red-500">{errors.amount.message}</p>
-              )}
+              {errors.amount && <p className="text-xs text-red-500">{errors.amount.message}</p>}
             </div>
           </div>
 
@@ -295,7 +303,9 @@ export function PurchasePaymentDialog({
 
           {/* Reference */}
           <div className="space-y-1.5">
-            <label htmlFor="reference" className="text-sm font-medium text-slate-700">Referência</label>
+            <label htmlFor="reference" className="text-sm font-medium text-slate-700">
+              Referência
+            </label>
             <input
               id="reference"
               type="text"
@@ -307,7 +317,9 @@ export function PurchasePaymentDialog({
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <label htmlFor="notes" className="text-sm font-medium text-slate-700">Observações</label>
+            <label htmlFor="notes" className="text-sm font-medium text-slate-700">
+              Observações
+            </label>
             <textarea
               id="notes"
               rows={2}

@@ -17,7 +17,9 @@ export const createFinancialTransactionFormSchema = z.object({
   type: z.enum(transactionTypeValues, { message: 'Tipo inválido' }),
   status: z.enum(transactionStatusValues, { message: 'Status inválido' }),
   method: z.enum(transactionMethodValues).optional(),
-  amount: z.number({ message: 'Valor obrigatório' }).positive({ message: 'Valor deve ser maior que zero' }),
+  amount: z
+    .number({ message: 'Valor obrigatório' })
+    .positive({ message: 'Valor deve ser maior que zero' }),
   dueDate: z.string().optional(),
   paymentDate: z.string().optional(),
   description: z.string().optional(),
@@ -25,4 +27,6 @@ export const createFinancialTransactionFormSchema = z.object({
   categoryId: z.string().optional(),
 });
 
-export type CreateFinancialTransactionFormData = z.infer<typeof createFinancialTransactionFormSchema>;
+export type CreateFinancialTransactionFormData = z.infer<
+  typeof createFinancialTransactionFormSchema
+>;

@@ -10,7 +10,12 @@ interface UseSensorsParams {
   enabled?: boolean;
 }
 
-export function useSensors({ page = 1, limit = 25, search, enabled = true }: UseSensorsParams = {}) {
+export function useSensors({
+  page = 1,
+  limit = 25,
+  search,
+  enabled = true,
+}: UseSensorsParams = {}) {
   return useQuery({
     queryKey: ['sensors', 'list', page, limit, search],
     queryFn: () => sensorService.list({ page, limit, search }),

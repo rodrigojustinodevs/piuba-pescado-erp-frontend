@@ -23,9 +23,6 @@ export type TankFilters = {
   tankTypeIds: string[];
 };
 
-/** O relatório de viveiros não tem anexo analítico. */
-export type StartExportInput = TankFilters;
-
 export type Summary = {
   tanks: number;
   activeTanks: number;
