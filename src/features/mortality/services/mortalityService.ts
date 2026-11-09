@@ -21,7 +21,9 @@ export const mortalityService = {
       },
       { skipEmptyString: true },
     );
-    const endpoint = queryString ? `/api/company/mortalities?${queryString}` : '/api/company/mortalities';
+    const endpoint = queryString
+      ? `/api/company/mortalities?${queryString}`
+      : '/api/company/mortalities';
     return browserHttpClient.get<MortalityListResponse>(endpoint);
   },
 

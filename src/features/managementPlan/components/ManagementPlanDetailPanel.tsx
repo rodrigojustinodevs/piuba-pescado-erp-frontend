@@ -21,9 +21,7 @@ export function ManagementPlanDetailPanel({ plan }: Readonly<{ plan: ManagementP
         <div className="flex items-center gap-3">
           <ManagementPlanStatusBadge status={plan.status} />
           <span className="text-sm text-slate-500">Modelo: {plan.aiModelVersion}</span>
-          <span className="text-sm text-slate-500">
-            Gerado em {formatDateTime(plan.createdAt)}
-          </span>
+          <span className="text-sm text-slate-500">Gerado em {formatDateTime(plan.createdAt)}</span>
         </div>
 
         {canReview && plan.status === 'draft' && (

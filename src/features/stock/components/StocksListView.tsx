@@ -92,13 +92,26 @@ export function StocksListView({
 
   const renderContent = () => {
     if (isLoading) return <ListLoadingState />;
-    if (error) return <ListErrorState title="Erro ao carregar locais" message="Não foi possível carregar os locais de armazenamento. Tente novamente." />;
-    if (stocks.length === 0) return <ListEmptyState title="Nenhum local de armazenamento encontrado." />;
+    if (error)
+      return (
+        <ListErrorState
+          title="Erro ao carregar locais"
+          message="Não foi possível carregar os locais de armazenamento. Tente novamente."
+        />
+      );
+    if (stocks.length === 0)
+      return <ListEmptyState title="Nenhum local de armazenamento encontrado." />;
     return (
       <>
         <StockTable stocks={pagedStocks} getRowActions={getRowActions} />
         {!isLoading && !error && stocks.length > 0 && (
-          <Pagination page={page} limit={perPage} total={total} itemLabelPlural="locais" onPageChange={setPage} />
+          <Pagination
+            page={page}
+            limit={perPage}
+            total={total}
+            itemLabelPlural="locais"
+            onPageChange={setPage}
+          />
         )}
       </>
     );
@@ -150,10 +163,18 @@ export function StocksListView({
                 placeholder="Buscar por código, nome, localização..."
               />
             </div>
-            <FilterSelect value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}>
+            <FilterSelect
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                setPage(1);
+              }}
+            >
               <option value="">Todos os tipos</option>
               {stockLocationTypeOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </FilterSelect>
           </div>
@@ -174,7 +195,6 @@ export function StocksListView({
         stock={selectedStock}
         onSuccess={() => setDialogOpen(false)}
       />
-
     </div>
   );
 }

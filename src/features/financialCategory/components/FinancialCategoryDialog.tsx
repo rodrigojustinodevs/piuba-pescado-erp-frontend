@@ -45,7 +45,10 @@ const DIALOG_CONFIG = {
     description: 'Cadastre uma categoria de receita, despesa ou investimento.',
     maxWidth: 'sm:max-w-lg',
   },
-} satisfies Record<FinancialCategoryDialogMode, { title: string; description: string; maxWidth: string }>;
+} satisfies Record<
+  FinancialCategoryDialogMode,
+  { title: string; description: string; maxWidth: string }
+>;
 
 export function FinancialCategoryDialog({
   open,
@@ -76,12 +79,15 @@ export function FinancialCategoryDialog({
 
   function handleUpdate(data: CreateFinancialCategoryData) {
     if (!category?.id) return;
-    updateCategory.mutate({ ...data, id: category.id }, {
-      onSuccess: () => {
-        onSuccess();
-        handleClose();
+    updateCategory.mutate(
+      { ...data, id: category.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
       },
-    });
+    );
   }
 
   const editInitialValues: CreateFinancialCategoryFormData | undefined =

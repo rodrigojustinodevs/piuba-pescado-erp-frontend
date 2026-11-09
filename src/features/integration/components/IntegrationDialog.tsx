@@ -151,8 +151,16 @@ export function IntegrationDialog({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <InfoRow icon={<Radio className="h-4 w-4" />} label="Tipo" value={TYPE_LABELS[integration.type]} />
-                <InfoRow icon={<Cpu className="h-4 w-4" />} label="Protocolo" value={integration.protocol} />
+                <InfoRow
+                  icon={<Radio className="h-4 w-4" />}
+                  label="Tipo"
+                  value={TYPE_LABELS[integration.type]}
+                />
+                <InfoRow
+                  icon={<Cpu className="h-4 w-4" />}
+                  label="Protocolo"
+                  value={integration.protocol}
+                />
                 <InfoRow
                   icon={<Link2 className="h-4 w-4" />}
                   label="Endpoint"

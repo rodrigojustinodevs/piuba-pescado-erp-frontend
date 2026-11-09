@@ -71,12 +71,15 @@ export function SaleDialog({
 
   function handleUpdate(data: Omit<UpdateSaleData, 'id'>) {
     if (!sale?.id) return;
-    updateSale.mutate({ ...data, id: sale.id }, {
-      onSuccess: () => {
-        onSuccess();
-        handleClose();
+    updateSale.mutate(
+      { ...data, id: sale.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
       },
-    });
+    );
   }
 
   const editInitialValues: CreateSaleFormData | undefined =

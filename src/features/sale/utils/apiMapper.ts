@@ -1,4 +1,11 @@
-import type { ApiSale, ApiSaleItem, ApiSaleListResponse, Sale, SaleItem, SaleListResponse } from '../types';
+import type {
+  ApiSale,
+  ApiSaleItem,
+  ApiSaleListResponse,
+  Sale,
+  SaleItem,
+  SaleListResponse,
+} from '../types';
 import type { CreateSaleFormData } from '../schemas';
 import {
   extractListFromPagedApiResponse,

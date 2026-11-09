@@ -42,7 +42,13 @@ const DIALOG_CONFIG = {
   },
 } satisfies Record<StockDialogMode, { title: string; description: string; maxWidth: string }>;
 
-export function StockDialog({ open, onOpenChange, mode, stock, onSuccess }: Readonly<StockDialogProps>) {
+export function StockDialog({
+  open,
+  onOpenChange,
+  mode,
+  stock,
+  onSuccess,
+}: Readonly<StockDialogProps>) {
   const createStock = useCreateStock({ skipNavigateToList: true });
   const updateStock = useUpdateStock({ skipNavigateToList: true });
 

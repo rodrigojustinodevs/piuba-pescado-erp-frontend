@@ -1,6 +1,15 @@
 'use client';
 
-import { TrendingUp, TrendingDown, ArrowLeftRight, Calendar, Tag, CreditCard, FileText, Building2 } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  ArrowLeftRight,
+  Calendar,
+  Tag,
+  CreditCard,
+  FileText,
+  Building2,
+} from 'lucide-react';
 import type { FinancialTransaction } from '../types';
 import { formatCalendarDatePtBR, formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { Separator } from '@/src/shared/components/ui/Separator';
@@ -10,9 +19,23 @@ import { DetailItem } from '@/shared/components/ui/DetailItem';
 type Props = { transaction: FinancialTransaction | null };
 
 function getTypeStyle(type: string) {
-  if (type === 'income') return { bg: 'bg-emerald-50', icon: <TrendingUp className="h-5 w-5 text-emerald-600" />, amount: 'text-emerald-600' };
-  if (type === 'expense') return { bg: 'bg-rose-50', icon: <TrendingDown className="h-5 w-5 text-rose-600" />, amount: 'text-rose-600' };
-  return { bg: 'bg-slate-100', icon: <ArrowLeftRight className="h-5 w-5 text-slate-500" />, amount: 'text-slate-900' };
+  if (type === 'income')
+    return {
+      bg: 'bg-emerald-50',
+      icon: <TrendingUp className="h-5 w-5 text-emerald-600" />,
+      amount: 'text-emerald-600',
+    };
+  if (type === 'expense')
+    return {
+      bg: 'bg-rose-50',
+      icon: <TrendingDown className="h-5 w-5 text-rose-600" />,
+      amount: 'text-rose-600',
+    };
+  return {
+    bg: 'bg-slate-100',
+    icon: <ArrowLeftRight className="h-5 w-5 text-slate-500" />,
+    amount: 'text-slate-900',
+  };
 }
 
 function getStatusBadge(status: string, statusLabel: string) {
@@ -23,7 +46,9 @@ function getStatusBadge(status: string, statusLabel: string) {
     cancelled: 'bg-slate-100 text-slate-500',
   };
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${map[status] ?? 'bg-slate-100 text-slate-700'}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${map[status] ?? 'bg-slate-100 text-slate-700'}`}
+    >
       {statusLabel}
     </span>
   );
@@ -62,7 +87,9 @@ export function FinancialTransactionViewDialogContent({ transaction }: Readonly<
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
           <p className="text-xs text-slate-500 mb-1">Vencimento</p>
-          <p className="text-sm font-medium text-slate-800">{formatCalendarDatePtBR(transaction.dueDate)}</p>
+          <p className="text-sm font-medium text-slate-800">
+            {formatCalendarDatePtBR(transaction.dueDate)}
+          </p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
           <p className="text-xs text-slate-500 mb-1">Pagamento</p>
@@ -79,13 +106,25 @@ export function FinancialTransactionViewDialogContent({ transaction }: Readonly<
         <p className="text-sm font-semibold text-slate-700">Detalhes</p>
         <div className="grid grid-cols-2 gap-2">
           {transaction.categoryName && (
-            <DetailItem icon={<Tag className="h-4 w-4" />} label="Categoria" value={transaction.categoryName} />
+            <DetailItem
+              icon={<Tag className="h-4 w-4" />}
+              label="Categoria"
+              value={transaction.categoryName}
+            />
           )}
           {transaction.methodLabel && (
-            <DetailItem icon={<CreditCard className="h-4 w-4" />} label="Forma de Pagamento" value={transaction.methodLabel} />
+            <DetailItem
+              icon={<CreditCard className="h-4 w-4" />}
+              label="Forma de Pagamento"
+              value={transaction.methodLabel}
+            />
           )}
           {transaction.companyName && (
-            <DetailItem icon={<Building2 className="h-4 w-4" />} label="Empresa" value={transaction.companyName} />
+            <DetailItem
+              icon={<Building2 className="h-4 w-4" />}
+              label="Empresa"
+              value={transaction.companyName}
+            />
           )}
         </div>
       </div>

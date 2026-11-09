@@ -71,12 +71,15 @@ export function SupplyDialog({
 
   function handleUpdate(data: CreateSupplyData) {
     if (!supply?.id) return;
-    updateSupply.mutate({ ...data, id: supply.id }, {
-      onSuccess: () => {
-        onSuccess();
-        handleClose();
+    updateSupply.mutate(
+      { ...data, id: supply.id },
+      {
+        onSuccess: () => {
+          onSuccess();
+          handleClose();
+        },
       },
-    });
+    );
   }
 
   const editInitialValues: CreateSupplyFormData | undefined =

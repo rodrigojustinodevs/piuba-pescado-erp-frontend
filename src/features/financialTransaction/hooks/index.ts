@@ -3,4 +3,3 @@ export { useFinancialTransactionsListPage } from './useFinancialTransactionsList
 export { useCreateFinancialTransaction } from './useCreateFinancialTransaction';
 export { useUpdateFinancialTransaction } from './useUpdateFinancialTransaction';
 export { useDeleteFinancialTransaction } from './useDeleteFinancialTransaction';
-

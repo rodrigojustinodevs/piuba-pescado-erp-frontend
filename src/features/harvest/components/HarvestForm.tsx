@@ -11,11 +11,7 @@ import {
   type UpdateHarvestFormData,
 } from '../schemas';
 import type { Harvest, PatchHarvestPayload } from '../types';
-import {
-  HARVEST_DESTINATION_LABELS,
-  HARVEST_STATUS_LABELS,
-  HARVEST_TYPE_LABELS,
-} from '../types';
+import { HARVEST_DESTINATION_LABELS, HARVEST_STATUS_LABELS, HARVEST_TYPE_LABELS } from '../types';
 import type { Tank } from '@/features/tank/types';
 import { tankService } from '@/features/tank/services/tankService';
 import { formatBatchOptionLabel } from '@/features/batch/utils/format';
@@ -47,9 +43,14 @@ export type HarvestFormProps =
       onSubmit: (data: PatchHarvestPayload) => void;
     });
 
-const TABLE_INPUT_CLS = 'w-full rounded border-0 bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5';
+const TABLE_INPUT_CLS =
+  'w-full rounded border-0 bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-primary px-1 py-0.5';
 
-function SummaryItem({ label, value, className }: Readonly<{ label: string; value: string; className?: string }>) {
+function SummaryItem({
+  label,
+  value,
+  className,
+}: Readonly<{ label: string; value: string; className?: string }>) {
   return (
     <div>
       <p className="text-xs text-slate-500">{label}</p>
@@ -94,8 +95,7 @@ const fmt = (n: number, opts?: Intl.NumberFormatOptions) =>
   new Intl.NumberFormat('pt-BR', opts).format(n);
 
 const fmtCurrency = (n: number) => fmt(n, { style: 'currency', currency: 'BRL' });
-const fmtPct = (n: number) =>
-  fmt(n, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+const fmtPct = (n: number) => fmt(n, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
 
 export function HarvestForm({
   mode,
@@ -191,11 +191,12 @@ export function HarvestForm({
   const averageWeight = watchNum('averageWeight');
   const initialPopulation = watchNum('initialPopulation');
   const operationalCost = watchNum('operationalCost');
-  const sizeClassifications = (watch('sizeClassifications' as never) as unknown as Array<{
-    quantity: number;
-    averageWeight: number;
-    pricePerKg: number;
-  }>) ?? [];
+  const sizeClassifications =
+    (watch('sizeClassifications' as never) as unknown as Array<{
+      quantity: number;
+      averageWeight: number;
+      pricePerKg: number;
+    }>) ?? [];
 
   // Summary calculations
   const biomassKg = (Number(harvestedQuantity) * Number(averageWeight)) / 1000;
@@ -278,7 +279,9 @@ export function HarvestForm({
               <Select
                 label="Lote"
                 required
-                disabled={isLoading || isLoadingBatchesEffective || (showCompanyField && !companyDataLoaded)}
+                disabled={
+                  isLoading || isLoadingBatchesEffective || (showCompanyField && !companyDataLoaded)
+                }
                 placeholder={isLoadingBatchesEffective ? 'Carregando lotes...' : 'Selecione o lote'}
                 options={batches.map((b) => ({ value: b.id, label: formatBatchOptionLabel(b) }))}
                 value={(field.value as string) || ''}
@@ -314,7 +317,12 @@ export function HarvestForm({
             if (allTanks.length > 0) {
               tankOptions = allTanks.map((t) => ({ value: t.id, label: t.name }));
             } else if (field.value) {
-              tankOptions = [{ value: field.value as string, label: initialData?.tankName ?? (field.value as string) }];
+              tankOptions = [
+                {
+                  value: field.value as string,
+                  label: initialData?.tankName ?? (field.value as string),
+                },
+              ];
             } else {
               tankOptions = [];
             }
@@ -410,7 +418,9 @@ export function HarvestForm({
             variant="outline"
             size="sm"
             disabled={isLoading}
-            onClick={() => append({ class: '', quantity: 0, averageWeight: 0, pricePerKg: 0 } as never)}
+            onClick={() =>
+              append({ class: '', quantity: 0, averageWeight: 0, pricePerKg: 0 } as never)
+            }
           >
             <Plus className="h-3.5 w-3.5 mr-1" />
             Adicionar classe
@@ -450,7 +460,9 @@ export function HarvestForm({
                   step={1}
                   className={`${TABLE_INPUT_CLS} text-right`}
                   disabled={isLoading}
-                  {...register(`sizeClassifications.${index}.quantity` as never, { valueAsNumber: true })}
+                  {...register(`sizeClassifications.${index}.quantity` as never, {
+                    valueAsNumber: true,
+                  })}
                 />
               </div>
               <div className="bg-white px-2 py-1.5">
@@ -460,7 +472,9 @@ export function HarvestForm({
                   step={0.1}
                   className={`${TABLE_INPUT_CLS} text-right`}
                   disabled={isLoading}
-                  {...register(`sizeClassifications.${index}.averageWeight` as never, { valueAsNumber: true })}
+                  {...register(`sizeClassifications.${index}.averageWeight` as never, {
+                    valueAsNumber: true,
+                  })}
                 />
               </div>
               <div className="bg-white px-2 py-1.5">
@@ -470,7 +484,9 @@ export function HarvestForm({
                   step={0.01}
                   className={`${TABLE_INPUT_CLS} text-right`}
                   disabled={isLoading}
-                  {...register(`sizeClassifications.${index}.pricePerKg` as never, { valueAsNumber: true })}
+                  {...register(`sizeClassifications.${index}.pricePerKg` as never, {
+                    valueAsNumber: true,
+                  })}
                 />
               </div>
               <div className="bg-white flex items-center justify-center">

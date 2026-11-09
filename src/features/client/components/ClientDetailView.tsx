@@ -71,8 +71,11 @@ export function ClientDetailView({
         onDeleteClick={onDelete ? () => onDelete(client.id, titleLabel) : undefined}
         isDeleting={isDeleting}
       />
-      <EntityDetailMetricsBody metricCards={metricCards} infoSectionTitle="Detalhes" infoItems={infoItems} />
+      <EntityDetailMetricsBody
+        metricCards={metricCards}
+        infoSectionTitle="Detalhes"
+        infoItems={infoItems}
+      />
     </EntityDetailShell>
   );
 }
-

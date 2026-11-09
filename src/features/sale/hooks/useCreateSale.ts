@@ -25,4 +25,3 @@ export function useCreateSale({ skipNavigateToList }: { skipNavigateToList?: boo
     },
   });
 }
-

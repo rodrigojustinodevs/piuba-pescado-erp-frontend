@@ -133,8 +133,13 @@ export function ClientForm({
           });
         })}
       >
-        <div className={inDialog ? 'space-y-4' : 'bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-4'}>
-
+        <div
+          className={
+            inDialog
+              ? 'space-y-4'
+              : 'bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-4'
+          }
+        >
           {/* Linha 1 — company select (apenas master) */}
           {showCompanySelect && (
             <div>
@@ -188,7 +193,9 @@ export function ClientForm({
               inputMode="numeric"
               maxLength={18}
               {...register('documentNumber', {
-                onChange: (e) => { e.target.value = maskCpfCnpj(e.target.value); },
+                onChange: (e) => {
+                  e.target.value = maskCpfCnpj(e.target.value);
+                },
               })}
               error={errors.documentNumber?.message}
             />
@@ -220,7 +227,9 @@ export function ClientForm({
               placeholder="(00) 00000-0000"
               maxLength={15}
               {...register('phone', {
-                onChange: (e) => { e.target.value = maskPhone(e.target.value); },
+                onChange: (e) => {
+                  e.target.value = maskPhone(e.target.value);
+                },
               })}
               error={errors.phone?.message}
             />

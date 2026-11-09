@@ -6,7 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthCompanyGate } from '@/shared/components/states/AuthCompanyGate';
 import { useFormWithCompany } from '@/shared/hooks/useFormWithCompany';
 import { useSuppliers } from '@/features/supplier/hooks/useSuppliers';
-import { FormActions, FormCardSection, Switch, ControlledSelect, TextArea } from '@/shared/components/form';
+import {
+  FormActions,
+  FormCardSection,
+  Switch,
+  ControlledSelect,
+  TextArea,
+} from '@/shared/components/form';
 import { Input } from '@/shared/components/ui';
 import type { CreateSupplyData } from '../types';
 import {

@@ -18,11 +18,12 @@ const STATUS_BADGE_CLASS: Record<TransferStatus, string> = {
 };
 
 const formatNumber = (value: number, decimals = 2) =>
-  new Intl.NumberFormat('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+  new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
 
-export function TransferViewDialogContent({
-  transfer,
-}: Readonly<TransferViewDialogContentProps>) {
+export function TransferViewDialogContent({ transfer }: Readonly<TransferViewDialogContentProps>) {
   if (!transfer) {
     return (
       <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
@@ -174,4 +175,3 @@ function MetricCard({ icon, label, value, unit, highlight }: MetricCardProps) {
     </div>
   );
 }
-

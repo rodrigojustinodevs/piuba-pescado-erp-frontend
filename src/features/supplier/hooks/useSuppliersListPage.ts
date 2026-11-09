@@ -51,8 +51,16 @@ export function useSuppliersListPage() {
     initialSortBy: 'name',
     initialFilter: 'all',
   });
-  const { page, setPage, search, setSearch, sortBy, setSortBy, filter: statusFilter, setFilter: setStatusFilter } =
-    listState;
+  const {
+    page,
+    setPage,
+    search,
+    setSearch,
+    sortBy,
+    setSortBy,
+    filter: statusFilter,
+    setFilter: setStatusFilter,
+  } = listState;
   const [categoryFilter, setCategoryFilter] = useState('');
 
   const { data, isLoading, error } = useSuppliers({ limit: 500 });

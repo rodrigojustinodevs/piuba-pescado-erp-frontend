@@ -29,4 +29,3 @@ export {
   useCancelSale,
 } from './hooks';
 export { SaleTable, SalesListView, SaleForm, SaleDetailView } from './components';
-

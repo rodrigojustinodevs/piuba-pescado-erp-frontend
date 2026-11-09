@@ -151,9 +151,7 @@ export function FinancialTransactionsListView({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Transações Financeiras</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Contas a pagar e a receber da empresa.
-          </p>
+          <p className="mt-1 text-sm text-slate-500">Contas a pagar e a receber da empresa.</p>
         </div>
         <Button className="gap-2 shrink-0" onClick={() => openDialog('create')}>
           <Plus className="h-4 w-4" />

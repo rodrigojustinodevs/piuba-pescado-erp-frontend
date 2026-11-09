@@ -43,9 +43,7 @@ export const createPurchaseSchema = createPurchaseFormSchema;
 
 export const registerPaymentSchema = z.object({
   payment_date: z.string().min(1, 'Data do pagamento é obrigatória'),
-  amount: z
-    .number({ error: 'Valor inválido' })
-    .positive('Valor deve ser maior que zero'),
+  amount: z.number({ error: 'Valor inválido' }).positive('Valor deve ser maior que zero'),
   payment_method: z.string().min(1, 'Método de pagamento é obrigatório'),
   reference: z.string().optional(),
   notes: z.string().optional(),

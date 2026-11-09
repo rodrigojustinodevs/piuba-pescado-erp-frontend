@@ -79,7 +79,13 @@ export function ClientsListView({
 
   const renderContent = () => {
     if (isLoading) return <ListLoadingState />;
-    if (error) return <ListErrorState title="Erro ao carregar clientes" message="Não foi possível carregar os clientes. Tente novamente." />;
+    if (error)
+      return (
+        <ListErrorState
+          title="Erro ao carregar clientes"
+          message="Não foi possível carregar os clientes. Tente novamente."
+        />
+      );
     if (clients.length === 0) return <ListEmptyState title="Nenhum cliente encontrado." />;
     return <ClientTable clients={pagedClients} getRowActions={getRowActions} />;
   };
@@ -119,14 +125,26 @@ export function ClientsListView({
               />
             </div>
 
-            <FilterSelect value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}>
+            <FilterSelect
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+            >
               <option value="">Todos os status</option>
               <option value="active">Ativo</option>
               <option value="prospect">Prospect</option>
               <option value="inactive">Inativo</option>
             </FilterSelect>
 
-            <FilterSelect value={segmentFilter} onChange={(e) => { setSegmentFilter(e.target.value); setPage(1); }}>
+            <FilterSelect
+              value={segmentFilter}
+              onChange={(e) => {
+                setSegmentFilter(e.target.value);
+                setPage(1);
+              }}
+            >
               <option value="">Todos os segmentos</option>
               <option value="retail">Varejo</option>
               <option value="wholesale">Atacado</option>

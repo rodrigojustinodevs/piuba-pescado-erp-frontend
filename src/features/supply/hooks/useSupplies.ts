@@ -10,4 +10,3 @@ export function useSupplies(params: { page: number; limit: number; search?: stri
     staleTime: 1000 * 60 * 5,
   });
 }
-

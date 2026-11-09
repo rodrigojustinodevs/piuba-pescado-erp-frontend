@@ -55,70 +55,68 @@ function formatCurrency(value: string | number | null | undefined): string {
 }
 
 const columns: Array<DataTableColumn<Client>> = [
-    {
-      id: 'name',
-      header: 'Cliente',
-      cell: (row) => (
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100">
-            <User className="h-4 w-4 text-slate-400" />
-          </div>
-          <div>
-            <div className="text-sm font-medium text-slate-900">{row.name}</div>
-            {row.companyName && <div className="text-xs text-slate-400">{row.companyName}</div>}
-          </div>
+  {
+    id: 'name',
+    header: 'Cliente',
+    cell: (row) => (
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100">
+          <User className="h-4 w-4 text-slate-400" />
         </div>
-      ),
-    },
-    {
-      id: 'documentNumber',
-      header: 'Documento',
-      cell: (row) => (
-        <div className="text-sm text-slate-600">
-          {row.documentNumber ? maskCpfCnpj(row.documentNumber) : '—'}
-        </div>
-      ),
-    },
-    {
-      id: 'contact',
-      header: 'Contato',
-      cell: (row) => (
         <div>
-          {row.contact && <div className="text-sm text-slate-700">{row.contact}</div>}
-          {row.phone && <div className="text-xs text-slate-400">{maskPhone(row.phone)}</div>}
-          {!row.contact && !row.phone && <span className="text-sm text-slate-400">—</span>}
+          <div className="text-sm font-medium text-slate-900">{row.name}</div>
+          {row.companyName && <div className="text-xs text-slate-400">{row.companyName}</div>}
         </div>
-      ),
-    },
-    {
-      id: 'priceGroup',
-      header: 'Segmento',
-      cell: (row) => <SegmentBadge value={row.priceGroup} />,
-    },
-    {
-      id: 'address',
-      header: 'Cidade/UF',
-      cell: (row) => <div className="text-sm text-slate-600">{row.address ?? '—'}</div>,
-    },
-    {
-      id: 'creditLimit',
-      header: 'Limite',
-      cell: (row) => (
-        <div className="text-sm text-slate-700">{formatCurrency(row.creditLimit)}</div>
-      ),
-    },
-    {
-      id: 'purchaseTotal',
-      header: 'Venda Total',
-      cell: (row) => (
-        <div className="text-sm text-slate-700">{formatCurrency(row.purchaseTotal)}</div>
-      ),
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      cell: (row) => <StatusBadge status={row.status} />,
-    },
+      </div>
+    ),
+  },
+  {
+    id: 'documentNumber',
+    header: 'Documento',
+    cell: (row) => (
+      <div className="text-sm text-slate-600">
+        {row.documentNumber ? maskCpfCnpj(row.documentNumber) : '—'}
+      </div>
+    ),
+  },
+  {
+    id: 'contact',
+    header: 'Contato',
+    cell: (row) => (
+      <div>
+        {row.contact && <div className="text-sm text-slate-700">{row.contact}</div>}
+        {row.phone && <div className="text-xs text-slate-400">{maskPhone(row.phone)}</div>}
+        {!row.contact && !row.phone && <span className="text-sm text-slate-400">—</span>}
+      </div>
+    ),
+  },
+  {
+    id: 'priceGroup',
+    header: 'Segmento',
+    cell: (row) => <SegmentBadge value={row.priceGroup} />,
+  },
+  {
+    id: 'address',
+    header: 'Cidade/UF',
+    cell: (row) => <div className="text-sm text-slate-600">{row.address ?? '—'}</div>,
+  },
+  {
+    id: 'creditLimit',
+    header: 'Limite',
+    cell: (row) => <div className="text-sm text-slate-700">{formatCurrency(row.creditLimit)}</div>,
+  },
+  {
+    id: 'purchaseTotal',
+    header: 'Venda Total',
+    cell: (row) => (
+      <div className="text-sm text-slate-700">{formatCurrency(row.purchaseTotal)}</div>
+    ),
+  },
+  {
+    id: 'status',
+    header: 'Status',
+    cell: (row) => <StatusBadge status={row.status} />,
+  },
 ];
 
 type ClientTableProps = {

@@ -49,77 +49,79 @@ function getReferenceTypeLabel(type: StockTransaction['referenceType']): string 
 }
 
 const columns: Array<DataTableColumn<StockTransaction>> = [
-    {
-      id: 'createdAt',
-      header: 'Data',
-      cell: (row) => <div className="text-sm text-slate-600">{formatDateTime(row.createdAt)}</div>,
-    },
-    {
-      id: 'direction',
-      header: 'Direção',
-      cell: (row) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-            row.direction === 'in' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-          }`}
-        >
-          {getDirectionLabel(row.direction)}
-        </span>
-      ),
-    },
-    {
-      id: 'location',
-      header: 'Local',
-      cell: (row) => <div className="text-sm text-slate-600">{row.location || '—'}</div>,
-    },
-    {
-      id: 'supplyName',
-      header: 'Insumo',
-      cell: (row) => <div className="text-sm text-slate-600">{row.supplyName || '—'}</div>,
-    },
-    {
-      id: 'quantity',
-      header: 'Quantidade',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">
-          {row.quantity} {row.unit}
-        </div>
-      ),
-    },
-    {
-      id: 'unitPrice',
-      header: 'Preço unit.',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.unitPrice)}</div>
-      ),
-    },
-    {
-      id: 'totalCost',
-      header: 'Custo total',
-      cell: (row) => (
-        <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.totalCost)}</div>
-      ),
-    },
-    {
-      id: 'referenceType',
-      header: 'Referência',
-      cell: (row) => (
-        <div className="text-sm text-slate-600">{getReferenceTypeLabel(row.referenceType)}</div>
-      ),
-    },
-    {
-      id: 'responsible',
-      header: 'Responsável',
-      cell: (row) => <div className="text-sm text-slate-600">{row.responsible || '—'}</div>,
-    },
-    {
-      id: 'notes',
-      header: 'Observações',
-      cell: (row) => <div className="text-sm text-slate-600">{row.notes || '—'}</div>,
-    },
+  {
+    id: 'createdAt',
+    header: 'Data',
+    cell: (row) => <div className="text-sm text-slate-600">{formatDateTime(row.createdAt)}</div>,
+  },
+  {
+    id: 'direction',
+    header: 'Direção',
+    cell: (row) => (
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+          row.direction === 'in' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+        }`}
+      >
+        {getDirectionLabel(row.direction)}
+      </span>
+    ),
+  },
+  {
+    id: 'location',
+    header: 'Local',
+    cell: (row) => <div className="text-sm text-slate-600">{row.location || '—'}</div>,
+  },
+  {
+    id: 'supplyName',
+    header: 'Insumo',
+    cell: (row) => <div className="text-sm text-slate-600">{row.supplyName || '—'}</div>,
+  },
+  {
+    id: 'quantity',
+    header: 'Quantidade',
+    cell: (row) => (
+      <div className="text-sm text-slate-600 tabular-nums">
+        {row.quantity} {row.unit}
+      </div>
+    ),
+  },
+  {
+    id: 'unitPrice',
+    header: 'Preço unit.',
+    cell: (row) => (
+      <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.unitPrice)}</div>
+    ),
+  },
+  {
+    id: 'totalCost',
+    header: 'Custo total',
+    cell: (row) => (
+      <div className="text-sm text-slate-600 tabular-nums">{formatMoney(row.totalCost)}</div>
+    ),
+  },
+  {
+    id: 'referenceType',
+    header: 'Referência',
+    cell: (row) => (
+      <div className="text-sm text-slate-600">{getReferenceTypeLabel(row.referenceType)}</div>
+    ),
+  },
+  {
+    id: 'responsible',
+    header: 'Responsável',
+    cell: (row) => <div className="text-sm text-slate-600">{row.responsible || '—'}</div>,
+  },
+  {
+    id: 'notes',
+    header: 'Observações',
+    cell: (row) => <div className="text-sm text-slate-600">{row.notes || '—'}</div>,
+  },
 ];
 
-export function StockTransactionTable({ transactions }: Readonly<{ transactions: StockTransaction[] }>) {
+export function StockTransactionTable({
+  transactions,
+}: Readonly<{ transactions: StockTransaction[] }>) {
   return (
     <DataTable
       data={transactions}

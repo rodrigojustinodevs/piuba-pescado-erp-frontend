@@ -7,10 +7,24 @@ import { Minus, Radio, TrendingDown, TrendingUp, type LucideIcon } from 'lucide-
 import { Badge } from '@/shared/components/ui/Badge';
 
 type Trend = 'up' | 'down' | 'stable';
-type IdealRanges = Record<SensorType, { min: number; max: number; critical: { min: number; max: number } }>;
-type QualityConfig = Record<Quality, { label: string; variant: 'default' | 'secondary' | 'destructive'; className: string; icon: LucideIcon }>;
+type IdealRanges = Record<
+  SensorType,
+  { min: number; max: number; critical: { min: number; max: number } }
+>;
+type QualityConfig = Record<
+  Quality,
+  {
+    label: string;
+    variant: 'default' | 'secondary' | 'destructive';
+    className: string;
+    icon: LucideIcon;
+  }
+>;
 
-function WaterQualitySensorCell({ row, typeIcon }: Readonly<{ row: WaterQuality; typeIcon: Record<SensorType, LucideIcon> }>) {
+function WaterQualitySensorCell({
+  row,
+  typeIcon,
+}: Readonly<{ row: WaterQuality; typeIcon: Record<SensorType, LucideIcon> }>) {
   const Icon = typeIcon[row.tank?.sensor?.sensorType as SensorType] ?? Radio;
   return (
     <div className="flex items-center gap-2">
@@ -38,7 +52,10 @@ function WaterQualityLastReadingCell({ row }: Readonly<{ row: WaterQuality }>) {
   );
 }
 
-function WaterQualityRangeCell({ row, idealRanges }: Readonly<{ row: WaterQuality; idealRanges: IdealRanges }>) {
+function WaterQualityRangeCell({
+  row,
+  idealRanges,
+}: Readonly<{ row: WaterQuality; idealRanges: IdealRanges }>) {
   const sensorType = row.tank?.sensor?.sensorType as SensorType;
   const range = idealRanges[sensorType];
   if (!range) {
@@ -74,7 +91,10 @@ function WaterQualityTrendCell({ getTrend }: Readonly<{ getTrend: () => Trend }>
   return <TrendIcon className={`h-4 w-4 ${getTrendClass(trend)}`} />;
 }
 
-function WaterQualityBadgeCell({ row, qualityConfig }: Readonly<{ row: WaterQuality; qualityConfig: QualityConfig }>) {
+function WaterQualityBadgeCell({
+  row,
+  qualityConfig,
+}: Readonly<{ row: WaterQuality; qualityConfig: QualityConfig }>) {
   const cfg = qualityConfig[row.quality as Quality];
   const QIcon = cfg.icon;
   return (

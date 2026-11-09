@@ -46,11 +46,7 @@ export const createSupplierFormSchema = z.object({
   category: z.enum(supplierCategoryValues).optional(),
   paymentTerms: z.string().optional(),
   status: z.enum(supplierStatusValues),
-  rating: z
-    .number()
-    .min(0, 'Avaliação mínima é 0')
-    .max(5, 'Avaliação máxima é 5')
-    .optional(),
+  rating: z.number().min(0, 'Avaliação mínima é 0').max(5, 'Avaliação máxima é 5').optional(),
   address: z.object({
     street: z.string().optional(),
     number: z.string().optional(),

@@ -168,7 +168,9 @@ function parseCreditLimitByName(message: string): {
   return { name, limit, exposure, newSale, total };
 }
 
-function parseCreditLimitById(message: string): { id: string; limit: string; exposure: string } | null {
+function parseCreditLimitById(
+  message: string,
+): { id: string; limit: string; exposure: string } | null {
   const source = message.trim();
   const lower = source.toLowerCase();
   const prefix = 'the client (id:';

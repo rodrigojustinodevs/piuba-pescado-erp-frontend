@@ -44,7 +44,9 @@ export function labelFinancialCategoryStatus(status: string): string {
 }
 
 /** Texto da coluna Tipo: prioriza código conhecido; traduz label da API quando possível. */
-export function displayFinancialCategoryType(row: Pick<FinancialCategory, 'type' | 'typeLabel'>): string {
+export function displayFinancialCategoryType(
+  row: Pick<FinancialCategory, 'type' | 'typeLabel'>,
+): string {
   const fromCode = TYPE_LABELS[row.type];
   if (fromCode) return fromCode;
   const fromLabel = normalizeLabelToPt(row.typeLabel, TYPE_LABEL_EN_PT);

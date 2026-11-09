@@ -48,4 +48,3 @@ export function useStockTransactionsListPage() {
     total: data?.total ?? 0,
   };
 }
-

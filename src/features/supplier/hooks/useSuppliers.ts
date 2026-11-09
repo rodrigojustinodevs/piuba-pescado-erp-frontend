@@ -10,7 +10,12 @@ interface UseSuppliersParams {
   enabled?: boolean;
 }
 
-export function useSuppliers({ page = 1, limit = 25, search, enabled = true }: UseSuppliersParams = {}) {
+export function useSuppliers({
+  page = 1,
+  limit = 25,
+  search,
+  enabled = true,
+}: UseSuppliersParams = {}) {
   return useQuery({
     queryKey: ['suppliers', 'list', page, limit, search],
     queryFn: () => supplierService.list({ page, limit, search }),

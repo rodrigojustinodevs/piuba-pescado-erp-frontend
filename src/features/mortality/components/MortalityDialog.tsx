@@ -41,10 +41,7 @@ const DIALOG_CONFIG = {
     description: 'Cadastre um novo registro de mortalidade para o lote.',
     maxWidth: 'sm:max-w-xl',
   },
-} satisfies Record<
-  MortalityDialogMode,
-  { title: string; description: string; maxWidth: string }
->;
+} satisfies Record<MortalityDialogMode, { title: string; description: string; maxWidth: string }>;
 
 export function MortalityDialog({
   open,

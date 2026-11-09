@@ -1,14 +1,6 @@
 import { z } from 'zod';
 
-export const supplyDefaultUnitValues = [
-  'kg',
-  'g',
-  'liter',
-  'ml',
-  'unit',
-  'box',
-  'piece',
-] as const;
+export const supplyDefaultUnitValues = ['kg', 'g', 'liter', 'ml', 'unit', 'box', 'piece'] as const;
 
 export const supplyCategoryValues = [
   'feed',
@@ -48,4 +40,3 @@ export const createSupplyFormSchema = z.object({
 });
 
 export type CreateSupplyFormData = z.infer<typeof createSupplyFormSchema>;
-

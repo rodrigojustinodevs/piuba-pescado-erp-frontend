@@ -18,7 +18,8 @@ export function usePurchaseLookupOptions<T extends FieldValues>({
 }: UsePurchaseLookupOptionsParams<T>) {
   const { user } = useAuthContext();
   const selectedCompanyId = useWatch({ control, name: companyIdFieldName });
-  const effectiveCompanyId = (showCompanySelect ? selectedCompanyId : user?.companyId)?.trim() || '';
+  const effectiveCompanyId =
+    (showCompanySelect ? selectedCompanyId : user?.companyId)?.trim() || '';
 
   const { data: suppliersData, isLoading: loadingSuppliers } = usePurchaseSuppliers(
     !!effectiveCompanyId,
@@ -48,4 +49,3 @@ export function usePurchaseLookupOptions<T extends FieldValues>({
     supplyOptions,
   };
 }
-

@@ -75,4 +75,3 @@ export function BiometryViewDialogContent({ biometry }: Readonly<BiometryViewDia
     </div>
   );
 }
-

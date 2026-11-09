@@ -426,7 +426,11 @@ export function WaterQualitiesListView({
   );
 }
 
-function KpiCard({ label, value, quality }: Readonly<{ label: string; value: number; quality: Quality }>) {
+function KpiCard({
+  label,
+  value,
+  quality,
+}: Readonly<{ label: string; value: number; quality: Quality }>) {
   const cfg = qualityConfig[quality];
   const Icon = cfg.icon;
   return (

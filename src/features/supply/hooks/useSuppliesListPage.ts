@@ -13,7 +13,9 @@ function sortSupplies(list: Supply[], sortBy: string): Supply[] {
     case 'name':
       return rows.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
     case 'updatedAt':
-      return rows.sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime());
+      return rows.sort(
+        (a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime(),
+      );
     default:
       return rows;
   }
@@ -68,15 +70,26 @@ export function useSuppliesListPage() {
   }, [supplies]);
 
   const filtered = useMemo(
-    () => filterSupplies(sortSupplies(supplies, sortBy), search, categoryFilter, statusFilter, typeFilter),
+    () =>
+      filterSupplies(
+        sortSupplies(supplies, sortBy),
+        search,
+        categoryFilter,
+        statusFilter,
+        typeFilter,
+      ),
     [supplies, sortBy, search, categoryFilter, statusFilter, typeFilter],
   );
 
-  const stats = useMemo<SupplyCatalogStats>(() => ({
-    totalItems: data?.total ?? 0,
-    belowMinimumCount: supplies.filter((s) => s.currentStock < s.minStock && s.minStock > 0).length,
-    totalStockValue: supplies.reduce((acc, s) => acc + s.currentStock * s.unitCost, 0),
-  }), [data?.total, supplies]);
+  const stats = useMemo<SupplyCatalogStats>(
+    () => ({
+      totalItems: data?.total ?? 0,
+      belowMinimumCount: supplies.filter((s) => s.currentStock < s.minStock && s.minStock > 0)
+        .length,
+      totalStockValue: supplies.reduce((acc, s) => acc + s.currentStock * s.unitCost, 0),
+    }),
+    [data?.total, supplies],
+  );
 
   const deleteSupply = useDeleteSupply();
   const { showError } = useAlertModal();

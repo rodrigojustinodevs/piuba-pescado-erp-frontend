@@ -67,7 +67,12 @@ export function GenerateManagementPlanDialog({
         )}
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => handleClose(false)} disabled={saving}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleClose(false)}
+            disabled={saving}
+          >
             Cancelar
           </Button>
           <Button type="button" onClick={handleConfirm} disabled={saving}>

@@ -15,4 +15,3 @@ export {
   StockTransactionsListView,
   StockTransactionCatalogStatsCards,
 } from './components';
-

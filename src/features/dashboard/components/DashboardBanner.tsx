@@ -33,7 +33,8 @@ export function DashboardBanner({
     >
       {/* Wave Pattern Background */}
       <div className="absolute inset-0 opacity-10 h-full w-full">
-        <svg aria-hidden="true"
+        <svg
+          aria-hidden="true"
           className="absolute bottom-0 w-full h-full"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"

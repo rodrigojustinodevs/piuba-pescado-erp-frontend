@@ -42,7 +42,6 @@ export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProp
               </p>
             </div>
           </div>
-
         </div>
 
         {/* Key Metrics */}
@@ -110,7 +109,9 @@ export function BiometryDetailView({ biometry }: Readonly<BiometryDetailViewProp
                   </p>
                 </div>
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">PESO DA AMOSTRA</p>
+                  <p className="text-xs font-medium text-slate-600 uppercase mb-2">
+                    PESO DA AMOSTRA
+                  </p>
                   <p className="text-sm font-medium text-[#0F172A]">
                     {formatSampleWeight(biometry.sampleWeight)}
                   </p>

@@ -46,14 +46,11 @@ export function SpeciesListView({
   const [dialogMode, setDialogMode] = useState<SpeciesDialogMode>('create');
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
 
-  const openSpeciesDialog = useCallback(
-    (mode: SpeciesDialogMode, item: Species | null = null) => {
-      setDialogMode(mode);
-      setSelectedSpecies(item);
-      setDialogOpen(true);
-    },
-    [],
-  );
+  const openSpeciesDialog = useCallback((mode: SpeciesDialogMode, item: Species | null = null) => {
+    setDialogMode(mode);
+    setSelectedSpecies(item);
+    setDialogOpen(true);
+  }, []);
 
   const renderContent = () => {
     if (isLoading) return <ListLoadingState />;

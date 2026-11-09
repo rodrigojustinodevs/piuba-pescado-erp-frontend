@@ -14,7 +14,10 @@ function formatMoney(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
-function TypeBadge({ type, typeLabel }: Readonly<{ type: FinancialTransactionType; typeLabel: string }>) {
+function TypeBadge({
+  type,
+  typeLabel,
+}: Readonly<{ type: FinancialTransactionType; typeLabel: string }>) {
   const styles: Record<FinancialTransactionType, { cls: string; icon: React.ReactNode }> = {
     income: { cls: 'bg-emerald-100 text-emerald-700', icon: <TrendingUp className="h-3 w-3" /> },
     expense: { cls: 'bg-rose-100 text-rose-700', icon: <TrendingDown className="h-3 w-3" /> },
@@ -65,8 +68,15 @@ function getAmountColor(type: FinancialTransactionType): string {
   return 'text-slate-700';
 }
 
-function AmountCell({ amount, type }: Readonly<{ amount: number; type: FinancialTransactionType }>) {
-  return <div className={`text-sm font-semibold tabular-nums ${getAmountColor(type)}`}>{formatMoney(amount)}</div>;
+function AmountCell({
+  amount,
+  type,
+}: Readonly<{ amount: number; type: FinancialTransactionType }>) {
+  return (
+    <div className={`text-sm font-semibold tabular-nums ${getAmountColor(type)}`}>
+      {formatMoney(amount)}
+    </div>
+  );
 }
 
 const columns: Array<DataTableColumn<FinancialTransaction>> = [

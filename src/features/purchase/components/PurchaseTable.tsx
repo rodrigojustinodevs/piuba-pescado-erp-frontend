@@ -69,62 +69,112 @@ function getRowLabel(row: Purchase): string {
   return `${row.supplierName || 'Fornecedor'} · ${formatPurchaseMoney(row.totalPrice)}`;
 }
 
-function getViewAction(row: Purchase, onView: PurchaseTableProps['onView']): DataTableAction | null {
+function getViewAction(
+  row: Purchase,
+  onView: PurchaseTableProps['onView'],
+): DataTableAction | null {
   if (!onView) return null;
-  return { label: 'Ver detalhes', onClick: () => onView(row), icon: <EyeIcon className="h-4 w-4" /> };
+  return {
+    label: 'Ver detalhes',
+    onClick: () => onView(row),
+    icon: <EyeIcon className="h-4 w-4" />,
+  };
 }
 
-function getEditAction(row: Purchase, onEdit: PurchaseTableProps['onEdit']): DataTableAction | null {
+function getEditAction(
+  row: Purchase,
+  onEdit: PurchaseTableProps['onEdit'],
+): DataTableAction | null {
   if (!onEdit) return null;
   return { label: 'Editar', onClick: () => onEdit(row), icon: <EditIcon className="h-4 w-4" /> };
 }
 
-function getReceiveAction(row: Purchase, onReceive: PurchaseTableProps['onReceive'], isReceiving: boolean): DataTableAction | null {
+function getReceiveAction(
+  row: Purchase,
+  onReceive: PurchaseTableProps['onReceive'],
+  isReceiving: boolean,
+): DataTableAction | null {
   if (!onReceive || row.status === 'received' || row.status === 'cancelled') return null;
   return {
     label: isReceiving ? 'Recebendo...' : 'Receber compra',
     onClick: () => onReceive(row),
     disabled: isReceiving,
-    icon: isReceiving ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <PackageCheck className="h-4 w-4" />,
+    icon: isReceiving ? (
+      <SpinnerIcon className="h-4 w-4 animate-spin" />
+    ) : (
+      <PackageCheck className="h-4 w-4" />
+    ),
   };
 }
 
-function getCancelAction(row: Purchase, onCancel: PurchaseTableProps['onCancel'], isCancelling: boolean): DataTableAction | null {
+function getCancelAction(
+  row: Purchase,
+  onCancel: PurchaseTableProps['onCancel'],
+  isCancelling: boolean,
+): DataTableAction | null {
   if (!onCancel || row.status === 'received' || row.status === 'cancelled') return null;
   return {
     label: isCancelling ? 'Cancelando...' : 'Cancelar compra',
     onClick: () => onCancel(row.id, getRowLabel(row)),
     disabled: isCancelling,
     variant: 'danger',
-    icon: isCancelling ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <CircleX className="h-4 w-4" />,
+    icon: isCancelling ? (
+      <SpinnerIcon className="h-4 w-4 animate-spin" />
+    ) : (
+      <CircleX className="h-4 w-4" />
+    ),
   };
 }
 
-function getRegisterPaymentAction(row: Purchase, onRegisterPayment: PurchaseTableProps['onRegisterPayment'], isRegisteringPayment: boolean): DataTableAction | null {
+function getRegisterPaymentAction(
+  row: Purchase,
+  onRegisterPayment: PurchaseTableProps['onRegisterPayment'],
+  isRegisteringPayment: boolean,
+): DataTableAction | null {
   if (!onRegisterPayment || row.paymentStatus === 'paid' || row.status === 'cancelled') return null;
   return {
     label: isRegisteringPayment ? 'Registrando...' : 'Registrar pagamento',
     onClick: () => onRegisterPayment(row),
     disabled: isRegisteringPayment,
-    icon: isRegisteringPayment ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />,
+    icon: isRegisteringPayment ? (
+      <SpinnerIcon className="h-4 w-4 animate-spin" />
+    ) : (
+      <CheckCircle2 className="h-4 w-4" />
+    ),
   };
 }
 
-function getDeleteAction(row: Purchase, onDelete: PurchaseTableProps['onDelete'], isDeleting: boolean): DataTableAction | null {
+function getDeleteAction(
+  row: Purchase,
+  onDelete: PurchaseTableProps['onDelete'],
+  isDeleting: boolean,
+): DataTableAction | null {
   if (!onDelete) return null;
   return {
     label: 'Excluir',
     onClick: () => onDelete(row.id, getRowLabel(row)),
     variant: 'danger',
     disabled: isDeleting,
-    icon: isDeleting ? <SpinnerIcon className="h-4 w-4 animate-spin" /> : <TrashIcon className="h-4 w-4" />,
+    icon: isDeleting ? (
+      <SpinnerIcon className="h-4 w-4 animate-spin" />
+    ) : (
+      <TrashIcon className="h-4 w-4" />
+    ),
   };
 }
 
 function buildRowActions(row: Purchase, props: PurchaseTableProps): DataTableAction[] {
   const {
-    onView, onEdit, onDelete, onReceive, onCancel, onRegisterPayment,
-    isDeleting = false, isCancelling = false, isReceiving = false, isRegisteringPayment = false,
+    onView,
+    onEdit,
+    onDelete,
+    onReceive,
+    onCancel,
+    onRegisterPayment,
+    isDeleting = false,
+    isCancelling = false,
+    isReceiving = false,
+    isRegisteringPayment = false,
   } = props;
   return [
     getViewAction(row, onView),
@@ -240,7 +290,21 @@ export function PurchaseTable({
       data={purchases}
       columns={columns}
       getRowId={(row) => row.id}
-      rowActions={(row) => buildRowActions(row, { purchases, onView, onEdit, onDelete, isDeleting, onReceive, isReceiving, onCancel, isCancelling, onRegisterPayment, isRegisteringPayment })}
+      rowActions={(row) =>
+        buildRowActions(row, {
+          purchases,
+          onView,
+          onEdit,
+          onDelete,
+          isDeleting,
+          onReceive,
+          isReceiving,
+          onCancel,
+          isCancelling,
+          onRegisterPayment,
+          isRegisteringPayment,
+        })
+      }
       emptyState={<div className="p-8 text-center text-slate-500">Nenhuma compra encontrada.</div>}
     />
   );
