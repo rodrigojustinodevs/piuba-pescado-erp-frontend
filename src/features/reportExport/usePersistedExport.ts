@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
-import { EXPORT_STORAGE_KEY } from '../constants';
 
 export type PersistedExport = {
   exportId: string;
@@ -25,9 +24,9 @@ function notify() {
   for (const listener of listeners) listener();
 }
 
-function readRaw(): string | null {
+function readRaw(storageKey: string): string | null {
   try {
-    return globalThis.localStorage.getItem(EXPORT_STORAGE_KEY);
+    return globalThis.localStorage.getItem(storageKey);
   } catch {
     return null;
   }
@@ -50,27 +49,31 @@ function parse(raw: string | null): PersistedExport | null {
   return null;
 }
 
-export function usePersistedExport() {
-  const raw = useSyncExternalStore(subscribe, readRaw, () => null);
+export function usePersistedExport(storageKey: string) {
+  const getSnapshot = useCallback(() => readRaw(storageKey), [storageKey]);
+  const raw = useSyncExternalStore(subscribe, getSnapshot, () => null);
   const current = useMemo(() => parse(raw), [raw]);
 
-  const save = useCallback((value: PersistedExport) => {
-    try {
-      globalThis.localStorage.setItem(EXPORT_STORAGE_KEY, JSON.stringify(value));
-    } catch {
-      // persistência é só conveniência
-    }
-    notify();
-  }, []);
+  const save = useCallback(
+    (value: PersistedExport) => {
+      try {
+        globalThis.localStorage.setItem(storageKey, JSON.stringify(value));
+      } catch {
+        // persistência é só conveniência
+      }
+      notify();
+    },
+    [storageKey],
+  );
 
   const clear = useCallback(() => {
     try {
-      globalThis.localStorage.removeItem(EXPORT_STORAGE_KEY);
+      globalThis.localStorage.removeItem(storageKey);
     } catch {
       // ignora
     }
     notify();
-  }, []);
+  }, [storageKey]);
 
   return { current, save, clear };
 }

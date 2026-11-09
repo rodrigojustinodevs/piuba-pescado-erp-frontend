@@ -3,7 +3,7 @@
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartContainer } from '@/shared/components/ui/Chart';
 import type { GrowthPoint } from '../types';
-import { fmtNumber } from '../utils/format';
+import { fmtNumber } from '@/features/reportExport/format';
 
 const PALETTE = [
   '#0EA5A4',

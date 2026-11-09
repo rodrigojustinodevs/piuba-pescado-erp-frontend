@@ -5,8 +5,8 @@ import { cn } from '@/shared/lib/utils';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
 import { GROWTH_DEVIATION_ALERT_PCT } from '../constants';
 import type { GrowthPoint } from '../types';
-import { EMPTY_VALUE, fmtNumber, fmtPct } from '../utils/format';
-import { ReportSection, SectionEmpty } from './ReportSection';
+import { EMPTY_VALUE, fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 const GrowthChart = dynamic(() => import('./GrowthChart'), {
   ssr: false,

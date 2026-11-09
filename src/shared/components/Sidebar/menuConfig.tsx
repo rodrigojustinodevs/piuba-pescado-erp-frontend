@@ -49,6 +49,8 @@ const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [
   UserRole.MANAGER,
   UserRole.MASTER_ADMIN,
 ];
+/** Relatório financeiro: `view-financial-report` não inclui manager. */
+const ROLES_COMPANY_ADMIN_ONLY: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MASTER_ADMIN];
 const REQUIRES_COMPANY = true;
 
 function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
@@ -72,10 +74,16 @@ function tanksChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   }));
 }
 
+function relatorioRoles(id: string): UserRoleType[] {
+  if (id === 'estoque') return ROLES_COMPANY_ADMIN_MANAGER;
+  if (id === 'financeiro') return ROLES_COMPANY_ADMIN_ONLY;
+  return ROLES_COMPANY_ADMIN_MANAGER;
+}
+
 function relatoriosChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({
     ...item,
-    allowedRoles: item.id === 'estoque' ? [UserRole.COMPANY_ADMIN] : ROLES_COMPANY_ADMIN_MANAGER,
+    allowedRoles: relatorioRoles(item.id),
   }));
 }
 

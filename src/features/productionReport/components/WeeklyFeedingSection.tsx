@@ -5,8 +5,8 @@ import { Button } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
 import type { WeeklyFeeding } from '../types';
-import { fmtKg, fmtPct } from '../utils/format';
-import { ReportSection, SectionEmpty } from './ReportSection';
+import { fmtKg, fmtPct } from '@/features/reportExport/format';
+import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 const PAGE_SIZE = 50;
 

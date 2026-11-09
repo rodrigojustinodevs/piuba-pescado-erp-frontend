@@ -145,17 +145,8 @@ export type ProductionPreview = {
   harvests: Harvest[];
 };
 
-export type ExportJobStatus = 'pending' | 'processing' | 'done' | 'failed';
-
-export type ExportStatus = {
-  id: string;
-  type: 'production';
-  createdAt: string;
-  status: ExportJobStatus;
-  rows: number | null;
-  durationMs: number | null;
-  error: string | null;
-  downloadUrl: string | null;
-};
-
-export type StartExportResult = { exportId: string; status: ExportJobStatus };
+export type {
+  ExportJobStatus,
+  ExportStatus,
+  StartExportResult,
+} from '@/features/reportExport/types';

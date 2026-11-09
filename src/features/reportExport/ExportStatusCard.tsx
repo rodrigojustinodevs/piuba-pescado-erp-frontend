@@ -8,8 +8,8 @@ import {
   CollapsibleTrigger,
 } from '@/shared/components/ui/Collapsible';
 import { formatDateTimeLocal } from '@/shared/utils/dateFormat';
-import type { ExportStatus } from '../types';
-import { fmtDuration, fmtNumber } from '../utils/format';
+import type { ExportStatus } from './types';
+import { fmtDuration, fmtNumber } from './format';
 
 type Props = Readonly<{
   status: ExportStatus | undefined;
@@ -39,7 +39,7 @@ export function ExportStatusCard({
   if (current === 'processing') {
     icon = <Loader2 className="h-5 w-5 animate-spin text-[#0EA5A4]" aria-hidden="true" />;
     title = 'Gerando PDF…';
-    description = 'Pode levar de segundos a vários minutos, principalmente com o anexo analítico.';
+    description = 'Pode levar de segundos a vários minutos, conforme o relatório e os anexos.';
   } else if (current === 'done') {
     icon = <CheckCircle2 className="h-5 w-5 text-emerald-600" aria-hidden="true" />;
     title = 'PDF pronto';

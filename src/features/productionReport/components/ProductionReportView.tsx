@@ -7,7 +7,7 @@ import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { useProductionReportPage } from '../hooks/useProductionReportPage';
 import { PRODUCTION_REPORT_ROLES } from '../utils/permissions';
 import { BatchesTable } from './BatchesTable';
-import { ExportStatusCard } from './ExportStatusCard';
+import { ExportStatusCard } from '@/features/reportExport/ExportStatusCard';
 import { GrowthSection } from './GrowthSection';
 import { HarvestsSection } from './HarvestsSection';
 import { MortalitySection } from './MortalitySection';

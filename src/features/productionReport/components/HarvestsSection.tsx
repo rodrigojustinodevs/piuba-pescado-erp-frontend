@@ -6,8 +6,8 @@ import { cn } from '@/shared/lib/utils';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
 import { HARVEST_DESTINATION_LABELS, HARVEST_TYPE_LABELS } from '../constants';
 import type { Harvest } from '../types';
-import { EMPTY_VALUE, fmtKg, fmtMoney, fmtNumber } from '../utils/format';
-import { ReportSection, SectionEmpty } from './ReportSection';
+import { EMPTY_VALUE, fmtKg, fmtMoney, fmtNumber } from '@/features/reportExport/format';
+import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 export function HarvestsSection({ harvests }: Readonly<{ harvests: Harvest[] }>) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());

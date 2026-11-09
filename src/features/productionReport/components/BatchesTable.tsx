@@ -19,8 +19,8 @@ import {
 import { cn } from '@/shared/lib/utils';
 import { WARNING_LABELS } from '../constants';
 import type { BatchRow } from '../types';
-import { EMPTY_VALUE, fmtKg, fmtMoney, fmtNumber, fmtPct } from '../utils/format';
-import { ReportSection, SectionEmpty } from './ReportSection';
+import { EMPTY_VALUE, fmtKg, fmtMoney, fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 type SortKey =
   | 'batchName'

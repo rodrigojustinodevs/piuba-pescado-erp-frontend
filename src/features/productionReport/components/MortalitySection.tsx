@@ -1,7 +1,7 @@
 import { CAUSE_LABELS, SEVERITY_LABELS } from '../constants';
 import type { BatchRow, Mortality } from '../types';
-import { fmtNumber, fmtPct } from '../utils/format';
-import { ReportSection, SectionEmpty } from './ReportSection';
+import { fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 import { cn } from '@/shared/lib/utils';
 
 function cellStyle(value: number, max: number): React.CSSProperties | undefined {

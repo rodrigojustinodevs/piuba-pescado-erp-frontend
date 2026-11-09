@@ -3,29 +3,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useBatches } from '@/features/batch';
 import { useTanks } from '@/features/tank/hooks/useTanks';
+import { toReportError, type ReportError } from '@/features/reportExport/toReportError';
 import { HttpError } from '@/shared/lib/http/httpError';
 import { mapServerFieldErrors, validateFilters, type FilterFieldErrors } from '../schemas';
 import type { ReportFilters } from '../types';
-import { todayIso } from '../utils/format';
+import { todayIso } from '@/features/reportExport/format';
 import { filtersSignature, useProductionExport } from './useProductionExport';
 import { useProductionPreview } from './useProductionPreview';
-
-export type ReportError = { message: string; status: number | null };
-
-function toReportError(error: unknown): ReportError {
-  if (error instanceof HttpError) {
-    let message = error.message;
-    if (error.status === 403) message = 'Você não tem permissão para acessar este relatório.';
-    if (error.message.includes('master_admin')) {
-      message = `${error.message} Selecione uma empresa ativa e tente novamente.`;
-    }
-    return { message, status: error.status };
-  }
-  return {
-    message: error instanceof Error ? error.message : 'Erro inesperado.',
-    status: null,
-  };
-}
 
 export function useProductionReportPage() {
   const [filters, setFilters] = useState<ReportFilters>(() => ({
