@@ -19,6 +19,8 @@ type Props = Readonly<{
   onDownload: () => void;
   onRetry: () => void;
   onDismiss: () => void;
+  /** Nome do arquivo nas mensagens (ex.: 'PDF', 'arquivo'). */
+  fileLabel?: string;
 }>;
 
 export function ExportStatusCard({
@@ -29,24 +31,26 @@ export function ExportStatusCard({
   onDownload,
   onRetry,
   onDismiss,
+  fileLabel = 'PDF',
 }: Props) {
+  const fileTitle = fileLabel.charAt(0).toUpperCase() + fileLabel.slice(1);
   const current = status?.status;
 
   let icon = <Clock className="h-5 w-5 text-slate-500" aria-hidden="true" />;
   let title = 'Na fila…';
-  let description = 'O PDF foi enfileirado. Você pode continuar usando o sistema.';
+  let description = `O ${fileLabel} foi enfileirado. Você pode continuar usando o sistema.`;
 
   if (current === 'processing') {
     icon = <Loader2 className="h-5 w-5 animate-spin text-[#0EA5A4]" aria-hidden="true" />;
-    title = 'Gerando PDF…';
+    title = `Gerando ${fileLabel}…`;
     description = 'Pode levar de segundos a vários minutos, conforme o relatório e os anexos.';
   } else if (current === 'done') {
     icon = <CheckCircle2 className="h-5 w-5 text-emerald-600" aria-hidden="true" />;
-    title = 'PDF pronto';
+    title = `${fileTitle} pronto`;
     description = `${fmtNumber(status?.rows)} linhas · gerado em ${fmtDuration(status?.durationMs)}`;
   } else if (current === 'failed') {
     icon = <AlertTriangle className="h-5 w-5 text-red-600" aria-hidden="true" />;
-    title = 'Não foi possível gerar o PDF';
+    title = `Não foi possível gerar o ${fileLabel}`;
     description = 'Tente novamente. Se o problema persistir, contate o suporte.';
   } else if (!status) {
     title = 'Consultando status…';
@@ -62,7 +66,7 @@ export function ExportStatusCard({
   return (
     <section
       aria-live="polite"
-      aria-label="Status da geração do PDF"
+      aria-label={`Status da geração do ${fileLabel}`}
       className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6"
     >
       <div className="flex items-start gap-3">
@@ -85,7 +89,7 @@ export function ExportStatusCard({
           variant="ghost"
           size="icon"
           onClick={onDismiss}
-          aria-label="Dispensar status do PDF"
+          aria-label={`Dispensar status do ${fileLabel}`}
         >
           <X aria-hidden="true" />
         </Button>
@@ -108,7 +112,7 @@ export function ExportStatusCard({
         {current === 'done' && (
           <Button onClick={onDownload} className="bg-[#0EA5A4] hover:bg-[#0F766E]">
             <Download aria-hidden="true" />
-            Baixar PDF
+            Baixar {fileLabel}
           </Button>
         )}
         {(current === 'failed' || timedOut) && (

@@ -1,4 +1,4 @@
-import { fmtMoney } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 import {
   Table,
@@ -44,6 +44,7 @@ export function CashFlowTable({
   months,
   summary,
 }: Readonly<{ months: MonthRow[]; summary: Summary }>) {
+  const { fmtMoney } = useReportFormatters();
   return (
     <ReportSection
       title="Fluxo de caixa mensal"

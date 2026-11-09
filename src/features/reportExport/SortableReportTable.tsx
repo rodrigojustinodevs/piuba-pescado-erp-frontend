@@ -14,7 +14,7 @@ import {
 } from '@/shared/components/ui/Table';
 import { TooltipProvider } from '@/shared/components/ui/Tooltip';
 import { cn } from '@/shared/lib/utils';
-import { fmtNumber } from './format';
+import { type ReportFormatters, useReportFormatters } from './useReportFormatters';
 import { ReportSection, SectionEmpty } from './ReportSection';
 
 const PAGE_SIZE = 25;
@@ -23,12 +23,12 @@ export type ReportColumn<TRow, TSummary, TKey extends string = string> = {
   key: TKey;
   label: string;
   numeric?: boolean;
-  cell: (row: TRow) => ReactNode;
+  cell: (row: TRow, f: ReportFormatters) => ReactNode;
   cellClass?: (row: TRow) => string | undefined;
   /** Valor usado na ordenação; `null` vai sempre para o fim. Padrão: `row[key]`. */
   sortValue?: (row: TRow) => number | string | null;
   /** Texto da linha de totais (vindo do `summary` do servidor). */
-  total?: (summary: TSummary) => string;
+  total?: (summary: TSummary, f: ReportFormatters) => string;
   totalClass?: (summary: TSummary) => string | undefined;
 };
 
@@ -91,6 +91,7 @@ export function SortableReportTable<TRow, TSummary>({
   rowClassName,
   firstCellExtra,
 }: Props<TRow, TSummary>) {
+  const f = useReportFormatters();
   // A ordem inicial é a do servidor.
   const [sort, setSort] = useState<SortState>(null);
   const [page, setPage] = useState(1);
@@ -162,7 +163,7 @@ export function SortableReportTable<TRow, TSummary>({
                         col.cellClass?.(row),
                       )}
                     >
-                      {col.cell(row)}
+                      {col.cell(row, f)}
                       {index === 0 && firstCellExtra?.(row)}
                     </TableCell>
                   ))}
@@ -181,7 +182,7 @@ export function SortableReportTable<TRow, TSummary>({
                         col.totalClass?.(summary),
                       )}
                     >
-                      {col.total ? col.total(summary) : ''}
+                      {col.total ? col.total(summary, f) : ''}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -197,7 +198,7 @@ export function SortableReportTable<TRow, TSummary>({
           className="mt-4 flex items-center justify-between text-sm text-slate-600"
         >
           <span>
-            Página {currentPage} de {pageCount} · {fmtNumber(sorted.length)} {itemsLabel}
+            Página {currentPage} de {pageCount} · {f.fmtNumber(sorted.length)} {itemsLabel}
           </span>
           <div className="flex gap-2">
             <Button

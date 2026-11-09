@@ -1,9 +1,11 @@
 import { AlertTriangle } from 'lucide-react';
 import { StatCard } from '@/shared/components/Cards/StatCard';
-import { fmtKg, fmtMoney, fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import type { Summary } from '../types';
 
 export function CommercialSummaryCards({ summary }: Readonly<{ summary: Summary }>) {
+  const { fmtKg, fmtMoney } = useReportFormatters();
   const cards: { label: string; value: string; subtitle?: string; danger?: boolean }[] = [
     {
       label: 'Vendas',

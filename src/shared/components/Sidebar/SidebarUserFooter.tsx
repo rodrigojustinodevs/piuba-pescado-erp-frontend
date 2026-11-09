@@ -1,6 +1,8 @@
 'use client';
 
-import { LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { LogOut, Settings } from 'lucide-react';
+import { canSeeSettings } from '@/features/companySettings/utils/permissions';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/Avatar';
 import { cn } from '@/shared/lib/utils';
@@ -13,6 +15,9 @@ function getInitials(name: string): string {
   const second = parts.length > 1 ? parts.at(-1)!.charAt(0) : (parts[0].charAt(1) ?? '');
   return `${first}${second}`.toUpperCase();
 }
+
+const footerActionClass =
+  'flex size-8 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2';
 
 export function SidebarUserFooter() {
   const { user, logout } = useAuthContext();
@@ -36,12 +41,22 @@ export function SidebarUserFooter() {
                 <span className="truncate text-xs text-sidebar-foreground/60">{user.email}</span>
               )}
             </div>
+            {canSeeSettings(user?.role) ? (
+              <Link
+                href="/dashboard/configuracoes"
+                aria-label="Configurações"
+                title="Configurações"
+                className={footerActionClass}
+              >
+                <Settings aria-hidden="true" className="size-4" />
+              </Link>
+            ) : null}
             <button
               type="button"
               aria-label="Sair"
               title="Sair"
               onClick={() => void logout()}
-              className="flex size-8 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2"
+              className={footerActionClass}
             >
               <LogOut aria-hidden="true" className="size-4" />
             </button>

@@ -1,7 +1,7 @@
 'use client';
 
 import { TriangleAlert } from 'lucide-react';
-import { EMPTY_VALUE, fmtMoney, fmtNumber } from '@/features/reportExport/format';
+import { EMPTY_VALUE, fmtNumber } from '@/features/reportExport/format';
 import {
   SortableReportTable,
   type ReportColumn,
@@ -59,13 +59,18 @@ const COLUMNS: ReportColumn<StockItem, Summary>[] = [
     numeric: true,
     cell: (r) => fmtQty(r.minimumStock, r.unit),
   },
-  { key: 'unitPrice', label: 'Preço unit.', numeric: true, cell: (r) => fmtMoney(r.unitPrice) },
+  {
+    key: 'unitPrice',
+    label: 'Preço unit.',
+    numeric: true,
+    cell: (r, f) => f.fmtMoney(r.unitPrice),
+  },
   {
     key: 'totalValue',
     label: 'Valor',
     numeric: true,
-    cell: (r) => fmtMoney(r.totalValue),
-    total: (s) => fmtMoney(s.totalValue),
+    cell: (r, f) => f.fmtMoney(r.totalValue),
+    total: (s, f) => f.fmtMoney(s.totalValue),
   },
   {
     key: 'situation',
@@ -91,11 +96,11 @@ const COLUMNS: ReportColumn<StockItem, Summary>[] = [
     key: 'shortage',
     label: 'Falta / reposição',
     numeric: true,
-    cell: (r) =>
+    cell: (r, f) =>
       r.shortage > 0
-        ? `${fmtQty(r.shortage, r.unit)} · ${fmtMoney(r.replenishmentValue)}`
+        ? `${fmtQty(r.shortage, r.unit)} · ${f.fmtMoney(r.replenishmentValue)}`
         : EMPTY_VALUE,
-    total: (s) => fmtMoney(s.replenishmentValue),
+    total: (s, f) => f.fmtMoney(s.replenishmentValue),
   },
 ];
 
