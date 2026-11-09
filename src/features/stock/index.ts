@@ -12,10 +12,7 @@ export type {
   StockDialogMode,
   StockMovementType,
 } from './types';
-export {
-  STOCK_LOCATION_TYPE_LABELS,
-  STOCK_LOCATION_STATUS_LABELS,
-} from './types';
+export { STOCK_LOCATION_TYPE_LABELS, STOCK_LOCATION_STATUS_LABELS } from './types';
 export { mapApiStockList, mapApiStockLocation } from './utils/apiMapper';
 export {
   createStockFormSchema,
@@ -25,11 +22,7 @@ export {
   stockLocationTypeOptions,
   stockLocationStatusOptions,
 } from './schemas';
-export type {
-  CreateStockFormData,
-  UpdateStockFormData,
-  MovementFormData,
-} from './schemas';
+export type { CreateStockFormData, UpdateStockFormData, MovementFormData } from './schemas';
 export { stockService } from './services/stockService';
 export {
   useStocks,

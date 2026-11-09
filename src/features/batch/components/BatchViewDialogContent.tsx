@@ -74,4 +74,3 @@ export function BatchViewDialogContent({ batch }: Readonly<BatchViewDialogConten
     </div>
   );
 }
-

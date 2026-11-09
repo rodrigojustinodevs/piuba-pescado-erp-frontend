@@ -8,7 +8,6 @@ type SupplyCatalogStatsProps = {
   stats: SupplyCatalogStats;
 };
 
-
 export function SupplyCatalogStatsCards({ stats }: Readonly<SupplyCatalogStatsProps>) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -42,13 +41,19 @@ export function SupplyCatalogStatsCards({ stats }: Readonly<SupplyCatalogStatsPr
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-slate-500">Estoque Baixo</p>
-            <p className={`mt-1 text-3xl font-bold ${stats.belowMinimumCount > 0 ? 'text-amber-500' : 'text-slate-900'}`}>
+            <p
+              className={`mt-1 text-3xl font-bold ${stats.belowMinimumCount > 0 ? 'text-amber-500' : 'text-slate-900'}`}
+            >
               {stats.belowMinimumCount}
             </p>
             <p className="mt-0.5 text-xs text-slate-400">necessitam reposição</p>
           </div>
-          <div className={`rounded-lg p-2 ${stats.belowMinimumCount > 0 ? 'bg-amber-50' : 'bg-slate-100'}`}>
-            <AlertTriangle className={`h-5 w-5 ${stats.belowMinimumCount > 0 ? 'text-amber-500' : 'text-slate-500'}`} />
+          <div
+            className={`rounded-lg p-2 ${stats.belowMinimumCount > 0 ? 'bg-amber-50' : 'bg-slate-100'}`}
+          >
+            <AlertTriangle
+              className={`h-5 w-5 ${stats.belowMinimumCount > 0 ? 'text-amber-500' : 'text-slate-500'}`}
+            />
           </div>
         </div>
       </div>

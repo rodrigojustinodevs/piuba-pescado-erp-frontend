@@ -1,8 +1,4 @@
-import type {
-  ApiNamedListResponse,
-  SupplierListResponse,
-  SupplyListResponse,
-} from '../types';
+import type { ApiNamedListResponse, SupplierListResponse, SupplyListResponse } from '../types';
 import {
   extractListFromPagedApiResponse,
   getApiPagedListMeta,

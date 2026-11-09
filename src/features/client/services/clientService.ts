@@ -3,7 +3,11 @@ import { browserHttpClient } from '@/shared/lib/http/browserHttpClient';
 import { buildQueryString } from '@/shared/utils/queryString';
 
 export const clientService = {
-  async list(params?: { page?: number; limit?: number; search?: string }): Promise<ClientListResponse> {
+  async list(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }): Promise<ClientListResponse> {
     const queryString = buildQueryString(
       {
         page: params?.page,
@@ -33,4 +37,3 @@ export const clientService = {
     await browserHttpClient.delete<null>(`/api/company/clients/${id}`);
   },
 };
-

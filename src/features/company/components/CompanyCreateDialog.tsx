@@ -400,4 +400,3 @@ export function CompanyCreateDialog({
     </Dialog>
   );
 }
-

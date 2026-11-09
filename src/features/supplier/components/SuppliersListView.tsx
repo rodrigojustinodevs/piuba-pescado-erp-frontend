@@ -96,12 +96,24 @@ export function SuppliersListView({
 
   const renderContent = () => {
     if (isLoading) return <ListLoadingState />;
-    if (error) return <ListErrorState title="Erro ao carregar fornecedores" message="Não foi possível carregar os fornecedores. Tente novamente." />;
+    if (error)
+      return (
+        <ListErrorState
+          title="Erro ao carregar fornecedores"
+          message="Não foi possível carregar os fornecedores. Tente novamente."
+        />
+      );
     if (suppliers.length === 0) return <ListEmptyState title="Nenhum fornecedor encontrado." />;
     return (
       <>
         <SupplierTable suppliers={pagedSuppliers} getRowActions={getRowActions} />
-        <Pagination page={page} limit={perPage} total={total} itemLabelPlural="fornecedores" onPageChange={setPage} />
+        <Pagination
+          page={page}
+          limit={perPage}
+          total={total}
+          itemLabelPlural="fornecedores"
+          onPageChange={setPage}
+        />
       </>
     );
   };
@@ -148,15 +160,25 @@ export function SuppliersListView({
                 placeholder="Buscar por nome, documento ou e-mail..."
               />
             </div>
-            <FilterSelect value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}>
+            <FilterSelect
+              value={categoryFilter}
+              onChange={(e) => {
+                setCategoryFilter(e.target.value);
+                setPage(1);
+              }}
+            >
               <option value="">Todas as categorias</option>
               {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
+                <option key={value} value={value}>
+                  {label}
+                </option>
               ))}
             </FilterSelect>
             <FilterSelect value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>Ordenar por: {option.label}</option>
+                <option key={option.value} value={option.value}>
+                  Ordenar por: {option.label}
+                </option>
               ))}
             </FilterSelect>
           </div>

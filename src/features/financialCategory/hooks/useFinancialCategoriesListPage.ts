@@ -38,9 +38,7 @@ export function useFinancialCategoriesListPage() {
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       rows = rows.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          (c.notes ?? '').toLowerCase().includes(q),
+        (c) => c.name.toLowerCase().includes(q) || (c.notes ?? '').toLowerCase().includes(q),
       );
     }
 

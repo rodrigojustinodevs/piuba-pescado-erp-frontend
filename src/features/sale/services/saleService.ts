@@ -51,4 +51,3 @@ export const saleService = {
     return browserHttpClient.delete<Sale>(`/api/company/sales/${id}/cancel`);
   },
 };
-

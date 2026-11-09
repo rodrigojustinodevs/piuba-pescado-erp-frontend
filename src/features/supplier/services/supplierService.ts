@@ -21,7 +21,9 @@ export const supplierService = {
       },
       { skipEmptyString: true },
     );
-    const endpoint = queryString ? `/api/company/suppliers?${queryString}` : '/api/company/suppliers';
+    const endpoint = queryString
+      ? `/api/company/suppliers?${queryString}`
+      : '/api/company/suppliers';
     return browserHttpClient.get<SupplierListResponse>(endpoint);
   },
 

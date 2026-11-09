@@ -26,7 +26,7 @@ export function useUpdateTank() {
       // Redireciona para a página de detalhes
       router.push(`/company/tanks`);
     },
-    
+
     onError: (error: Error) => {
       showError(error.message || 'Erro ao atualizar tanque. Tente novamente.');
     },

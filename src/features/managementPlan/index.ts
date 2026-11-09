@@ -26,10 +26,7 @@ export type { ReviewManagementPlanFormData } from './schemas';
 export { managementPlanService } from './services/managementPlanService';
 
 // Permissions
-export {
-  MANAGEMENT_PLAN_VIEW_ROLES,
-  MANAGEMENT_PLAN_REVIEW_ROLES,
-} from './utils/permissions';
+export { MANAGEMENT_PLAN_VIEW_ROLES, MANAGEMENT_PLAN_REVIEW_ROLES } from './utils/permissions';
 
 // Hooks
 export {

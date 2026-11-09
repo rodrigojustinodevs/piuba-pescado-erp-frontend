@@ -23,7 +23,10 @@ export interface Integration {
   lastSyncAt: string | null;
 }
 
-export type CreateIntegrationData = Omit<Integration, 'id' | 'status' | 'lastSyncAt' | 'deviceCount'>;
+export type CreateIntegrationData = Omit<
+  Integration,
+  'id' | 'status' | 'lastSyncAt' | 'deviceCount'
+>;
 
 export type UpdateIntegrationData = Partial<CreateIntegrationData> & { id: string };
 

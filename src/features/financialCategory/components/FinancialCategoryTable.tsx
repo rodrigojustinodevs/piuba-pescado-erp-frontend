@@ -7,7 +7,6 @@ import { TrendingUp, TrendingDown, BarChart2 } from 'lucide-react';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { formatCurrency } from '@/shared/utils/numberFormat';
 
-
 function getTypeIcon(isRevenue: boolean, isExpense: boolean) {
   if (isRevenue) return <TrendingUp className="h-3 w-3" />;
   if (isExpense) return <TrendingDown className="h-3 w-3" />;
@@ -48,28 +47,28 @@ function AmountCell({ amount, type }: Readonly<{ amount: number; type: string }>
 }
 
 const columns: Array<DataTableColumn<FinancialCategory>> = [
-    {
-      id: 'name',
-      header: 'Nome',
-      cell: (row) => <div className="text-sm font-semibold text-slate-900">{row.name}</div>,
-    },
-    {
-      id: 'type',
-      header: 'Tipo',
-      cell: (row) => <TypeBadge type={row.type} typeLabel={row.typeLabel} />,
-    },
-    {
-      id: 'notes',
-      header: 'Descrição',
-      cell: (row) => (
-        <div className="text-sm text-slate-500 max-w-55 truncate">{row.notes || '—'}</div>
-      ),
-    },
-    {
-      id: 'totalAmount',
-      header: 'Total Movimentado',
-      cell: (row) => <AmountCell amount={row.totalAmount} type={row.type} />,
-    },
+  {
+    id: 'name',
+    header: 'Nome',
+    cell: (row) => <div className="text-sm font-semibold text-slate-900">{row.name}</div>,
+  },
+  {
+    id: 'type',
+    header: 'Tipo',
+    cell: (row) => <TypeBadge type={row.type} typeLabel={row.typeLabel} />,
+  },
+  {
+    id: 'notes',
+    header: 'Descrição',
+    cell: (row) => (
+      <div className="text-sm text-slate-500 max-w-55 truncate">{row.notes || '—'}</div>
+    ),
+  },
+  {
+    id: 'totalAmount',
+    header: 'Total Movimentado',
+    cell: (row) => <AmountCell amount={row.totalAmount} type={row.type} />,
+  },
 ];
 
 export type FinancialCategoryTableProps = {

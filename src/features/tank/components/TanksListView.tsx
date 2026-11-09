@@ -101,8 +101,7 @@ export function TanksListView({
           message="Não foi possível carregar os tanques. Tente novamente."
         />
       );
-    if (!filteredTanks.length)
-      return <ListEmptyState title="Nenhum tanque encontrado." />;
+    if (!filteredTanks.length) return <ListEmptyState title="Nenhum tanque encontrado." />;
 
     return (
       <>

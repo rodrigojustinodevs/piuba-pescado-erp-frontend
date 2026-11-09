@@ -479,7 +479,7 @@ export function SaleForm({
           status: data.status,
           notes: data.notes?.trim() || null,
           needsInvoice: data.needsInvoice,
-          invoiceNumber: data.needsInvoice ? (data.invoiceNumber?.trim() || null) : null,
+          invoiceNumber: data.needsInvoice ? data.invoiceNumber?.trim() || null : null,
           discount: data.discount,
           shipping: data.shipping,
           taxes: data.taxes,
@@ -631,9 +631,7 @@ function ItemRow({
                 className={selectClass}
                 disabled={isSubmitting || isLoadingStockings || !batchIdForItem}
               >
-                <option value="">
-                  {isLoadingStockings ? 'Carregando...' : '— Selecione —'}
-                </option>
+                <option value="">{isLoadingStockings ? 'Carregando...' : '— Selecione —'}</option>
                 {stockingOptions.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}

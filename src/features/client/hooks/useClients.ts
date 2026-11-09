@@ -10,4 +10,3 @@ export function useClients(params: { page: number; limit: number; search?: strin
     staleTime: 1000 * 60 * 5,
   });
 }
-

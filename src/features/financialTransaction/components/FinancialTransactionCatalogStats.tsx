@@ -6,7 +6,6 @@ import { formatCurrency } from '@/shared/utils/numberFormat';
 
 type Props = { stats: FinancialTransactionCatalogStats };
 
-
 export function FinancialTransactionCatalogStatsCards({ stats }: Readonly<Props>) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -64,7 +63,9 @@ export function FinancialTransactionCatalogStatsCards({ stats }: Readonly<Props>
             </p>
             <p className="mt-0.5 text-xs text-slate-400">necessitam atenção</p>
           </div>
-          <div className={`rounded-lg p-2 ${stats.overdueCount > 0 ? 'bg-amber-50' : 'bg-slate-100'}`}>
+          <div
+            className={`rounded-lg p-2 ${stats.overdueCount > 0 ? 'bg-amber-50' : 'bg-slate-100'}`}
+          >
             <AlertTriangle
               className={`h-5 w-5 ${stats.overdueCount > 0 ? 'text-amber-500' : 'text-slate-500'}`}
             />

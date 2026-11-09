@@ -15,9 +15,7 @@ function sortPurchases(rows: Purchase[], sortBy: string): Purchase[] {
   const list = [...rows];
   switch (sortBy) {
     case 'orderDate':
-      return list.sort(
-        (a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime(),
-      );
+      return list.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
     case 'supplierName':
       return list.sort((a, b) =>
         (a.supplierName || '').localeCompare(b.supplierName || '', 'pt-BR'),

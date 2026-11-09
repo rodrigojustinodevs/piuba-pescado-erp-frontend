@@ -12,8 +12,7 @@ export function useCreateFinancialTransaction({ skipNavigateToList: _ = false }:
   const { showSuccess, showError } = useToast();
 
   return useMutation({
-    mutationFn: (data: CreateFinancialTransactionData) =>
-      financialTransactionService.create(data),
+    mutationFn: (data: CreateFinancialTransactionData) => financialTransactionService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financialTransactions', 'list'] });
       showSuccess('Transação cadastrada com sucesso!');

@@ -151,10 +151,7 @@ export function IntegrationsListView({
             </SelectContent>
           </Select>
 
-          <Select
-            value={filter}
-            onValueChange={(v) => setFilter(v as IntegrationStatusFilter)}
-          >
+          <Select value={filter} onValueChange={(v) => setFilter(v as IntegrationStatusFilter)}>
             <SelectTrigger className="w-full sm:w-[160px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>

@@ -32,10 +32,7 @@ export const financialTransactionService = {
   },
 
   async create(data: CreateFinancialTransactionData): Promise<FinancialTransaction> {
-    return browserHttpClient.post<FinancialTransaction>(
-      '/api/company/financial-transaction',
-      data,
-    );
+    return browserHttpClient.post<FinancialTransaction>('/api/company/financial-transaction', data);
   },
 
   async update(data: UpdateFinancialTransactionData): Promise<FinancialTransaction> {

@@ -2,11 +2,7 @@
 
 import Link from 'next/link';
 import type { Harvest } from '../types';
-import {
-  HARVEST_DESTINATION_LABELS,
-  HARVEST_STATUS_LABELS,
-  HARVEST_TYPE_LABELS,
-} from '../types';
+import { HARVEST_DESTINATION_LABELS, HARVEST_STATUS_LABELS, HARVEST_TYPE_LABELS } from '../types';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 import { CircleIcon, PencilIcon } from '@/shared/components/icons/AppIcons';
 
@@ -135,7 +131,9 @@ export function HarvestDetailView({ harvest, batchLabel }: Readonly<HarvestDetai
                 />
                 <InfoCard
                   label="DESTINO COMERCIAL"
-                  value={harvest.destination ? HARVEST_DESTINATION_LABELS[harvest.destination] : '—'}
+                  value={
+                    harvest.destination ? HARVEST_DESTINATION_LABELS[harvest.destination] : '—'
+                  }
                 />
               </div>
             </div>
@@ -151,9 +149,7 @@ export function HarvestDetailView({ harvest, batchLabel }: Readonly<HarvestDetai
               {harvest.clientDestination && (
                 <InfoCard label="CLIENTE / DESTINO" value={harvest.clientDestination} />
               )}
-              {harvest.responsible && (
-                <InfoCard label="RESPONSÁVEL" value={harvest.responsible} />
-              )}
+              {harvest.responsible && <InfoCard label="RESPONSÁVEL" value={harvest.responsible} />}
               {harvest.operationalCost !== undefined && (
                 <InfoCard label="CUSTO OPERACIONAL" value={fmtCurrency(harvest.operationalCost)} />
               )}
@@ -173,13 +169,18 @@ export function HarvestDetailView({ harvest, batchLabel }: Readonly<HarvestDetai
                 <div className="text-right">R$/kg</div>
               </div>
               {harvest.sizeClassifications.map((c, i) => (
-                <div key={c.class || i} className="grid grid-cols-4 px-4 py-2.5 border-b border-slate-100 last:border-0">
+                <div
+                  key={c.class || i}
+                  className="grid grid-cols-4 px-4 py-2.5 border-b border-slate-100 last:border-0"
+                >
                   <div className="text-sm font-medium text-[#0F172A]">{c.class}</div>
                   <div className="text-sm text-right text-slate-600">{fmt(c.quantity)}</div>
                   <div className="text-sm text-right text-slate-600">
                     {fmt(c.averageWeight, { minimumFractionDigits: 1 })}
                   </div>
-                  <div className="text-sm text-right text-slate-600">{fmtCurrency(c.pricePerKg)}</div>
+                  <div className="text-sm text-right text-slate-600">
+                    {fmtCurrency(c.pricePerKg)}
+                  </div>
                 </div>
               ))}
             </div>

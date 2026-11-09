@@ -58,7 +58,9 @@ export function StockViewDialogContent({ stock }: Readonly<StockViewDialogConten
             <Boxes className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stock.currentQuantity.toLocaleString('pt-BR')}</div>
+            <div className="text-2xl font-bold">
+              {stock.currentQuantity.toLocaleString('pt-BR')}
+            </div>
             <p className="text-xs text-muted-foreground">itens distintos</p>
           </CardContent>
         </Card>
@@ -93,7 +95,11 @@ export function StockViewDialogContent({ stock }: Readonly<StockViewDialogConten
       <div className="space-y-2">
         <p className="text-sm font-semibold text-slate-700">Detalhes do Local</p>
         <div className="grid grid-cols-2 gap-2">
-          <DetailItem icon={<MapPin className="h-4 w-4" />} label="Localização" value={stock.location} />
+          <DetailItem
+            icon={<MapPin className="h-4 w-4" />}
+            label="Localização"
+            value={stock.location}
+          />
           <DetailItem
             icon={<User className="h-4 w-4" />}
             label="Responsável"

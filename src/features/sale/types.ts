@@ -102,7 +102,14 @@ export type SaleDialogMode = 'create' | 'edit' | 'view';
 
 export type SaleStatus = 'pending' | 'confirmed' | 'paid' | 'delivered' | 'overdue' | 'cancelled';
 
-export type SaleStatusFilter = 'all' | 'pending' | 'confirmed' | 'paid' | 'delivered' | 'overdue' | 'cancelled';
+export type SaleStatusFilter =
+  | 'all'
+  | 'pending'
+  | 'confirmed'
+  | 'paid'
+  | 'delivered'
+  | 'overdue'
+  | 'cancelled';
 
 export type SaleUpdateStatus = 'pending' | 'confirmed';
 

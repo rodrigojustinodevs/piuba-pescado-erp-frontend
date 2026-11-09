@@ -24,12 +24,20 @@ type MortalityFormProps = {
   onCancel?: () => void;
 };
 
-const SEVERITY_OPTIONS = (['low', 'medium', 'high', 'critical'] as const satisfies readonly MortalitySeverity[]).map(
-  (value) => ({ value, label: SEVERITY_LABELS[value] }),
-);
+const SEVERITY_OPTIONS = (
+  ['low', 'medium', 'high', 'critical'] as const satisfies readonly MortalitySeverity[]
+).map((value) => ({ value, label: SEVERITY_LABELS[value] }));
 
 const CAUSE_OPTIONS = (
-  ['disease', 'water_quality', 'predation', 'handling', 'climate', 'unknown', 'other'] as const satisfies readonly MortalityCause[]
+  [
+    'disease',
+    'water_quality',
+    'predation',
+    'handling',
+    'climate',
+    'unknown',
+    'other',
+  ] as const satisfies readonly MortalityCause[]
 ).map((value) => ({ value, label: CAUSE_LABELS[value] }));
 
 function toMortalityDateString(value: string): string {

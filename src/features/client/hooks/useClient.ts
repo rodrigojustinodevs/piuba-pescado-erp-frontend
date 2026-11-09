@@ -14,4 +14,3 @@ export function useClient(id: string | undefined, enabled = true) {
     staleTime: 1000 * 60 * 5,
   });
 }
-

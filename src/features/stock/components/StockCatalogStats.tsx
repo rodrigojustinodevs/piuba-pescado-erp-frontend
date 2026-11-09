@@ -40,7 +40,9 @@ export function StockCatalogStatsCards({ stats }: Readonly<StockCatalogStatsProp
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-slate-500">Estoques Inativos</p>
-            <p className={`mt-1 text-3xl font-bold ${stats.inactiveCount > 0 ? 'text-slate-700' : 'text-slate-900'}`}>
+            <p
+              className={`mt-1 text-3xl font-bold ${stats.inactiveCount > 0 ? 'text-slate-700' : 'text-slate-900'}`}
+            >
               {stats.inactiveCount}
             </p>
             <p className="mt-0.5 text-xs text-slate-400">desativados</p>
@@ -70,7 +72,9 @@ export function StockCatalogStatsCards({ stats }: Readonly<StockCatalogStatsProp
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-slate-500">Itens Armazenados</p>
-            <p className="mt-1 text-3xl font-bold text-slate-900">{stats.totalItems.toLocaleString('pt-BR')}</p>
+            <p className="mt-1 text-3xl font-bold text-slate-900">
+              {stats.totalItems.toLocaleString('pt-BR')}
+            </p>
             <p className="mt-0.5 text-xs text-slate-400">itens distintos</p>
           </div>
           <div className="rounded-lg bg-slate-100 p-2">

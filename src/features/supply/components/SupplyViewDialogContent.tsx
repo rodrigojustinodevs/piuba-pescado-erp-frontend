@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  DollarSign,
-  TrendingUp,
-  Barcode,
-  Grid2x2,
-  Boxes,
-  Building2,
-  Package,
-} from 'lucide-react';
+import { DollarSign, TrendingUp, Barcode, Grid2x2, Boxes, Building2, Package } from 'lucide-react';
 import { STATUS_LABELS, SupplyStatus, type Supply } from '../types';
 import { getSupplyDefaultUnitLabel } from '../utils/defaultUnitLabel';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
@@ -44,16 +36,18 @@ function StatCard({
 }
 
 function getMarginStyle(margin: number): { card: string; icon: string; text: string } {
-  if (margin >= 30) return {
-    card: 'border-emerald-500/30 bg-emerald-500/5',
-    icon: 'h-5 w-5 text-emerald-600',
-    text: 'text-lg font-bold text-emerald-600',
-  };
-  if (margin >= 15) return {
-    card: 'border-amber-500/30 bg-amber-500/5',
-    icon: 'h-5 w-5 text-amber-600',
-    text: 'text-lg font-bold text-amber-600',
-  };
+  if (margin >= 30)
+    return {
+      card: 'border-emerald-500/30 bg-emerald-500/5',
+      icon: 'h-5 w-5 text-emerald-600',
+      text: 'text-lg font-bold text-emerald-600',
+    };
+  if (margin >= 15)
+    return {
+      card: 'border-amber-500/30 bg-amber-500/5',
+      icon: 'h-5 w-5 text-amber-600',
+      text: 'text-lg font-bold text-amber-600',
+    };
   return {
     card: 'border-destructive/30 bg-destructive/5',
     icon: 'h-5 w-5 text-destructive',
@@ -131,9 +125,7 @@ export function SupplyViewDialogContent({ supply }: Readonly<SupplyViewDialogCon
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium">
-                Preço Venda
-              </CardTitle>
+              <CardTitle className="text-xs font-medium">Preço Venda</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -166,9 +158,7 @@ export function SupplyViewDialogContent({ supply }: Readonly<SupplyViewDialogCon
                 <TrendingUp className={marginStyle.icon} />
                 <span className="text-sm font-medium">Margem Bruta Estimada</span>
               </div>
-              <span className={marginStyle.text}>
-                {margin.toFixed(1)}%
-              </span>
+              <span className={marginStyle.text}>{margin.toFixed(1)}%</span>
             </CardContent>
           </Card>
         )}

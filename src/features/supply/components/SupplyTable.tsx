@@ -5,7 +5,6 @@ import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/
 import { Package } from 'lucide-react';
 import { formatCurrency } from '@/shared/utils/numberFormat';
 
-
 function StatusBadge({ status, statusLabel }: Readonly<{ status: string; statusLabel: string }>) {
   const isBelowMin = status === 'below_minimum' || status === 'low_stock';
   return isBelowMin ? (
@@ -25,68 +24,68 @@ type SupplyTableProps = {
 };
 
 const columns: Array<DataTableColumn<Supply>> = [
-    {
-      id: 'sku',
-      header: 'SKU',
-      cell: (row) => <div className="text-xs font-mono text-slate-500">{row.sku || '—'}</div>,
-    },
-    {
-      id: 'name',
-      header: 'Nome',
-      cell: (row) => (
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100">
-            <Package className="h-4 w-4 text-slate-400" />
-          </div>
-          <div>
-            <div className="text-sm font-medium text-slate-900">{row.name}</div>
-            {row.supplierName && <div className="text-xs text-slate-400">{row.supplierName}</div>}
-          </div>
+  {
+    id: 'sku',
+    header: 'SKU',
+    cell: (row) => <div className="text-xs font-mono text-slate-500">{row.sku || '—'}</div>,
+  },
+  {
+    id: 'name',
+    header: 'Nome',
+    cell: (row) => (
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100">
+          <Package className="h-4 w-4 text-slate-400" />
         </div>
-      ),
-    },
-    {
-      id: 'category',
-      header: 'Categoria',
-      cell: (row) => (
-        <div className="text-sm text-slate-600">{row.categoryLabel || row.category || '—'}</div>
-      ),
-    },
-    {
-      id: 'stock',
-      header: 'Estoque',
-      cell: (row) => (
         <div>
-          <div className="text-sm font-medium text-slate-800">
-            {row.currentStock.toLocaleString('pt-BR')} {row.defaultUnit}
-          </div>
-          <div className="text-xs text-slate-400">mín. {row.minStock.toLocaleString('pt-BR')}</div>
+          <div className="text-sm font-medium text-slate-900">{row.name}</div>
+          {row.supplierName && <div className="text-xs text-slate-400">{row.supplierName}</div>}
         </div>
-      ),
-    },
-    {
-      id: 'unitCost',
-      header: 'Custo',
-      cell: (row) => (
-        <div className="text-sm text-slate-700">
-          {row.unitCost > 0 ? formatCurrency(row.unitCost) : '—'}
+      </div>
+    ),
+  },
+  {
+    id: 'category',
+    header: 'Categoria',
+    cell: (row) => (
+      <div className="text-sm text-slate-600">{row.categoryLabel || row.category || '—'}</div>
+    ),
+  },
+  {
+    id: 'stock',
+    header: 'Estoque',
+    cell: (row) => (
+      <div>
+        <div className="text-sm font-medium text-slate-800">
+          {row.currentStock.toLocaleString('pt-BR')} {row.defaultUnit}
         </div>
-      ),
-    },
-    {
-      id: 'salePrice',
-      header: 'Preço Venda',
-      cell: (row) => (
-        <div className="text-sm text-slate-700">
-          {row.salePrice > 0 ? formatCurrency(row.salePrice) : '—'}
-        </div>
-      ),
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      cell: (row) => <StatusBadge status={row.status} statusLabel={row.statusLabel} />,
-    },
+        <div className="text-xs text-slate-400">mín. {row.minStock.toLocaleString('pt-BR')}</div>
+      </div>
+    ),
+  },
+  {
+    id: 'unitCost',
+    header: 'Custo',
+    cell: (row) => (
+      <div className="text-sm text-slate-700">
+        {row.unitCost > 0 ? formatCurrency(row.unitCost) : '—'}
+      </div>
+    ),
+  },
+  {
+    id: 'salePrice',
+    header: 'Preço Venda',
+    cell: (row) => (
+      <div className="text-sm text-slate-700">
+        {row.salePrice > 0 ? formatCurrency(row.salePrice) : '—'}
+      </div>
+    ),
+  },
+  {
+    id: 'status',
+    header: 'Status',
+    cell: (row) => <StatusBadge status={row.status} statusLabel={row.statusLabel} />,
+  },
 ];
 
 export function SupplyTable({ supplies, getRowActions }: Readonly<SupplyTableProps>) {

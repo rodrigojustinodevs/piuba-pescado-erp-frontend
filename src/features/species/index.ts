@@ -35,10 +35,5 @@ export {
 } from './hooks';
 
 // Components
-export {
-  SpeciesTable,
-  SpeciesListView,
-  SpeciesDialog,
-  GrowthCurveFieldArray,
-} from './components';
+export { SpeciesTable, SpeciesListView, SpeciesDialog, GrowthCurveFieldArray } from './components';
 export type { SpeciesDialogMode } from './components';

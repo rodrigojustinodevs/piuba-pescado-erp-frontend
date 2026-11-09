@@ -8,7 +8,6 @@ type StockTransactionCatalogStatsProps = {
   stats: StockTransactionCatalogStats;
 };
 
-
 export function StockTransactionCatalogStatsCards({
   stats,
 }: Readonly<StockTransactionCatalogStatsProps>) {
@@ -59,9 +58,7 @@ export function StockTransactionCatalogStatsCards({
             </p>
             <p className="mt-0.5 text-xs text-slate-400">movimentações de saída</p>
           </div>
-          <div
-            className={`rounded-lg p-2 ${stats.exitsCount > 0 ? 'bg-red-50' : 'bg-slate-100'}`}
-          >
+          <div className={`rounded-lg p-2 ${stats.exitsCount > 0 ? 'bg-red-50' : 'bg-slate-100'}`}>
             <ArrowUpRight
               className={`h-5 w-5 ${stats.exitsCount > 0 ? 'text-red-600' : 'text-slate-500'}`}
             />

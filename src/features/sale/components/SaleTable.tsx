@@ -85,9 +85,7 @@ const SALE_COLUMNS: Array<DataTableColumn<Sale>> = [
   {
     id: 'numberNf',
     header: 'Nota Fiscal',
-    cell: (row) => (
-      <div className="text-xs text-slate-500">{row.numberNf || '—'}</div>
-    ),
+    cell: (row) => <div className="text-xs text-slate-500">{row.numberNf || '—'}</div>,
   },
   {
     id: 'clientName',
@@ -111,7 +109,9 @@ const SALE_COLUMNS: Array<DataTableColumn<Sale>> = [
     cell: (row) => {
       const overdue = isOverdue(row.dueDate);
       return (
-        <div className={`text-sm whitespace-nowrap font-medium ${overdue ? 'text-red-500' : 'text-slate-600'}`}>
+        <div
+          className={`text-sm whitespace-nowrap font-medium ${overdue ? 'text-red-500' : 'text-slate-600'}`}
+        >
           {row.dueDate ? formatCalendarDatePtBR(row.dueDate) : '—'}
         </div>
       );
@@ -121,7 +121,9 @@ const SALE_COLUMNS: Array<DataTableColumn<Sale>> = [
     id: 'paymentMethod',
     header: 'Pagamento',
     cell: (row) => (
-      <div className="text-sm text-slate-600">{PAYMENT_METHOD_LABELS[row.paymentMethod ?? ''] ?? row.paymentMethod ?? '—'}</div>
+      <div className="text-sm text-slate-600">
+        {PAYMENT_METHOD_LABELS[row.paymentMethod ?? ''] ?? row.paymentMethod ?? '—'}
+      </div>
     ),
   },
   {

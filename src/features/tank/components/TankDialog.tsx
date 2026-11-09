@@ -6,12 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCompanies } from '@/features/company';
 import { useCreateTank, useTankTypes, useUpdateTank } from '@/features/tank';
 import { createTankSchema, type CreateTankFormData } from '../schemas';
-import type {
-  CreateTankData,
-  Tank,
-  TankDialogMode,
-  UpdateTankData,
-} from '../types';
+import type { CreateTankData, Tank, TankDialogMode, UpdateTankData } from '../types';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import {
   Dialog,
@@ -196,13 +191,34 @@ export function TankDialog({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <InfoRow icon={<Droplets className="h-4 w-4" />} label="Capacidade" value={`${formatCapacity(tank.capacityLiters)} L`} />
+                <InfoRow
+                  icon={<Droplets className="h-4 w-4" />}
+                  label="Capacidade"
+                  value={`${formatCapacity(tank.capacityLiters)} L`}
+                />
                 {isMaster() && (
-                  <InfoRow icon={<Building2 className="h-4 w-4" />} label="Empresa" value={tank.company.name || '—'} />
+                  <InfoRow
+                    icon={<Building2 className="h-4 w-4" />}
+                    label="Empresa"
+                    value={tank.company.name || '—'}
+                  />
                 )}
-                <InfoRow icon={<MapPin className="h-4 w-4" />} label="Localização" value={tank.location || '—'} className="sm:col-span-2" />
-                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Criado em" value={formatDate(tank.createdAt)} />
-                <InfoRow icon={<Calendar className="h-4 w-4" />} label="Atualizado em" value={formatDate(tank.updatedAt)} />
+                <InfoRow
+                  icon={<MapPin className="h-4 w-4" />}
+                  label="Localização"
+                  value={tank.location || '—'}
+                  className="sm:col-span-2"
+                />
+                <InfoRow
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Criado em"
+                  value={formatDate(tank.createdAt)}
+                />
+                <InfoRow
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Atualizado em"
+                  value={formatDate(tank.updatedAt)}
+                />
               </div>
             </div>
 
@@ -213,150 +229,151 @@ export function TankDialog({
             </DialogFooter>
           </>
         ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground">Dados do tanque</h3>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {isMaster() ? (
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="companyId">Empresa *</Label>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-muted-foreground">Dados do tanque</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {isMaster() ? (
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="companyId">Empresa *</Label>
+                    <Controller
+                      name="companyId"
+                      control={control}
+                      render={({ field }) => (
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger id="companyId">
+                            <SelectValue placeholder="Selecione a empresa" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(companiesData?.companies ?? []).map((company) => (
+                              <SelectItem key={company.id} value={String(company.id)}>
+                                {company.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.companyId && (
+                      <p className="text-xs text-destructive">{errors.companyId.message}</p>
+                    )}
+                  </div>
+                ) : (
+                  <input type="hidden" {...register('companyId')} />
+                )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome *</Label>
+                  <Input id="name" placeholder="Nome do tanque" {...register('name')} />
+                  {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="tankTypeId">Tipo de tanque *</Label>
                   <Controller
-                    name="companyId"
+                    name="tankTypeId"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger id="companyId">
-                          <SelectValue placeholder="Selecione a empresa" />
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={isLoadingTypes}
+                      >
+                        <SelectTrigger id="tankTypeId">
+                          <SelectValue
+                            placeholder={
+                              isLoadingTypes ? 'Carregando tipos...' : 'Selecione um tipo'
+                            }
+                          />
                         </SelectTrigger>
                         <SelectContent>
-                          {(companiesData?.companies ?? []).map((company) => (
-                            <SelectItem key={company.id} value={String(company.id)}>
-                              {company.name}
+                          {(tankTypesData?.tankTypes ?? []).map((type) => (
+                            <SelectItem key={type.id} value={String(type.id)}>
+                              {type.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                   />
-                  {errors.companyId && (
-                    <p className="text-xs text-destructive">{errors.companyId.message}</p>
+                  {errors.tankTypeId && (
+                    <p className="text-xs text-destructive">{errors.tankTypeId.message}</p>
                   )}
                 </div>
-              ) : (
-                <input type="hidden" {...register('companyId')} />
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome *</Label>
-                <Input id="name" placeholder="Nome do tanque" {...register('name')} />
-                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tankTypeId">Tipo de tanque *</Label>
-                <Controller
-                  name="tankTypeId"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={isLoadingTypes}
-                    >
-                      <SelectTrigger id="tankTypeId">
-                        <SelectValue
-                          placeholder={isLoadingTypes ? 'Carregando tipos...' : 'Selecione um tipo'}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(tankTypesData?.tankTypes ?? []).map((type) => (
-                          <SelectItem key={type.id} value={String(type.id)}>
-                            {type.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                <div className="space-y-2">
+                  <Label htmlFor="capacityLiters">Capacidade (litros) *</Label>
+                  <Input
+                    id="capacityLiters"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    {...register('capacityLiters', { valueAsNumber: true })}
+                  />
+                  {errors.capacityLiters && (
+                    <p className="text-xs text-destructive">{errors.capacityLiters.message}</p>
                   )}
-                />
-                {errors.tankTypeId && (
-                  <p className="text-xs text-destructive">{errors.tankTypeId.message}</p>
-                )}
-              </div>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="capacityLiters">Capacidade (litros) *</Label>
-                <Input
-                  id="capacityLiters"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  {...register('capacityLiters', { valueAsNumber: true })}
-                />
-                {errors.capacityLiters && (
-                  <p className="text-xs text-destructive">{errors.capacityLiters.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="status">Status *</Label>
-                <Controller
-                  name="status"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={(value: 'active' | 'inactive') => {
-                        field.onChange(value);
-                        setValue('status', value, { shouldDirty: true, shouldValidate: true });
-                      }}
-                    >
-                      <SelectTrigger id="status">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Ativo</SelectItem>
-                        <SelectItem value="inactive">Inativo</SelectItem>
-                      </SelectContent>
-                    </Select>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status *</Label>
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={(value: 'active' | 'inactive') => {
+                          field.onChange(value);
+                          setValue('status', value, { shouldDirty: true, shouldValidate: true });
+                        }}
+                      >
+                        <SelectTrigger id="status">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Ativo</SelectItem>
+                          <SelectItem value="inactive">Inativo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.status && (
+                    <p className="text-xs text-destructive">{errors.status.message}</p>
                   )}
-                />
-                {errors.status && (
-                  <p className="text-xs text-destructive">{errors.status.message}</p>
-                )}
-              </div>
+                </div>
 
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="location">Localização</Label>
-                <Input
-                  id="location"
-                  placeholder="Ex: Setor A - Bloco 3"
-                  {...register('location')}
-                />
-                {errors.location && (
-                  <p className="text-xs text-destructive">{errors.location.message}</p>
-                )}
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="location">Localização</Label>
+                  <Input
+                    id="location"
+                    placeholder="Ex: Setor A - Bloco 3"
+                    {...register('location')}
+                  />
+                  {errors.location && (
+                    <p className="text-xs text-destructive">{errors.location.message}</p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleClose(false)}
-              disabled={saving}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={saving}>
-              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEdit ? 'Salvar alterações' : 'Cadastrar'}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleClose(false)}
+                disabled={saving}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isEdit ? 'Salvar alterações' : 'Cadastrar'}
+              </Button>
+            </DialogFooter>
+          </form>
         )}
       </DialogContent>
     </Dialog>
   );
 }
-

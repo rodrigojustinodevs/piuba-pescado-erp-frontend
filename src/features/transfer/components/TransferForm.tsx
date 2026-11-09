@@ -205,7 +205,6 @@ export function TransferForm({
 
   const isCompleted = isEditMode && currentStatus === 'completed';
 
-
   useEffect(() => {
     if (!showCompanyField || !companyId) {
       resetCompanyData();

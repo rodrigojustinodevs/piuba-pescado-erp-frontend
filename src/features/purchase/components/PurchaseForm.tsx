@@ -56,7 +56,10 @@ type PurchaseFormProps = {
 
 // ─── Subcomponentes de cálculo ──────────────────────────────────────────────
 
-function ItemTotal({ control, index }: Readonly<{ control: Control<CreatePurchaseFormData>; index: number }>) {
+function ItemTotal({
+  control,
+  index,
+}: Readonly<{ control: Control<CreatePurchaseFormData>; index: number }>) {
   const qty = useWatch({ control, name: `items.${index}.quantity` });
   const price = useWatch({ control, name: `items.${index}.unitPrice` });
   const discount = useWatch({ control, name: `items.${index}.discount` });
@@ -76,12 +79,15 @@ function FinancialSummary({ control }: Readonly<{ control: Control<CreatePurchas
   const freightCost = useWatch({ control, name: 'freightCost' });
   const otherCosts = useWatch({ control, name: 'otherCosts' });
 
-  const subtotal = (items ?? []).reduce((sum: number, item: CreatePurchaseFormData['items'][number]) => {
-    const t = roundMoney(
-      (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0) - (Number(item.discount) || 0),
-    );
-    return sum + Math.max(0, t);
-  }, 0);
+  const subtotal = (items ?? []).reduce(
+    (sum: number, item: CreatePurchaseFormData['items'][number]) => {
+      const t = roundMoney(
+        (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0) - (Number(item.discount) || 0),
+      );
+      return sum + Math.max(0, t);
+    },
+    0,
+  );
 
   const extras = (Number(freightCost) || 0) + (Number(otherCosts) || 0);
   const total = roundMoney(subtotal + extras);

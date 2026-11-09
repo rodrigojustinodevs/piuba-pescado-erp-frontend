@@ -1,10 +1,7 @@
 'use client';
 
 import { SEVERITY_LABELS, type Mortality } from '../types';
-import {
-  formatNullableDatePtBR,
-  formatRelativeDateTimePtBR,
-} from '@/shared/utils/dateFormat';
+import { formatNullableDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
 import { Calendar, Hash, Skull } from 'lucide-react';
 import { InfoRow } from '@/shared/components/entityDetail';
 
@@ -27,7 +24,9 @@ export function MortalityViewDialogContent({
     );
   }
 
-  const title = mortality.batch?.name?.trim() || `Mortalidade ${formatNullableDatePtBR(mortality.mortalityDate)}`;
+  const title =
+    mortality.batch?.name?.trim() ||
+    `Mortalidade ${formatNullableDatePtBR(mortality.mortalityDate)}`;
 
   return (
     <div className="space-y-6">
@@ -88,4 +87,3 @@ export function MortalityViewDialogContent({
     </div>
   );
 }
-
