@@ -1,6 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 import { StatCard } from '@/shared/components/Cards/StatCard';
-import { fmtMoney, fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import type { Summary } from '../types';
 
 type CardData = { label: string; value: string; subtitle?: string; danger?: boolean };
@@ -35,6 +36,7 @@ function Note({ children }: Readonly<{ children: React.ReactNode }>) {
 }
 
 export function FinancialSummaryCards({ summary }: Readonly<{ summary: Summary }>) {
+  const { fmtMoney } = useReportFormatters();
   const realized: CardData[] = [
     { label: 'Receita realizada', value: fmtMoney(summary.revenueRealized) },
     { label: 'Despesa realizada', value: fmtMoney(summary.expenseRealized) },

@@ -1,6 +1,12 @@
 export type ExportJobStatus = 'pending' | 'processing' | 'done' | 'failed';
 
-export type ExportType = 'production' | 'commercial' | 'financial' | 'inventory' | 'tank';
+export type ExportType =
+  | 'production'
+  | 'commercial'
+  | 'financial'
+  | 'inventory'
+  | 'tank'
+  | 'data-export';
 
 export type ExportStatus = {
   id: string;

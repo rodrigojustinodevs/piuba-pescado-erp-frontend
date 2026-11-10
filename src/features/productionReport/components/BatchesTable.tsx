@@ -19,7 +19,11 @@ import {
 import { cn } from '@/shared/lib/utils';
 import { WARNING_LABELS } from '../constants';
 import type { BatchRow } from '../types';
-import { EMPTY_VALUE, fmtKg, fmtMoney, fmtNumber, fmtPct } from '@/features/reportExport/format';
+import { EMPTY_VALUE, fmtNumber, fmtPct } from '@/features/reportExport/format';
+import {
+  type ReportFormatters,
+  useReportFormatters,
+} from '@/features/reportExport/useReportFormatters';
 import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 type SortKey =
@@ -43,7 +47,7 @@ type Column = {
   key: SortKey;
   label: string;
   numeric?: boolean;
-  render: (row: BatchRow) => string;
+  render: (row: BatchRow, f: ReportFormatters) => string;
 };
 
 const COLUMNS: Column[] = [
@@ -66,17 +70,22 @@ const COLUMNS: Column[] = [
     numeric: true,
     render: (r) => fmtNumber(r.gpdGPerDay, 2),
   },
-  { key: 'biomassKg', label: 'Biomassa', numeric: true, render: (r) => fmtKg(r.biomassKg) },
+  { key: 'biomassKg', label: 'Biomassa', numeric: true, render: (r, f) => f.fmtKg(r.biomassKg) },
   {
     key: 'densityKgM3',
     label: 'Densidade (kg/m³)',
     numeric: true,
     render: (r) => fmtNumber(r.densityKgM3, 2),
   },
-  { key: 'feedKg', label: 'Ração', numeric: true, render: (r) => fmtKg(r.feedKg) },
+  { key: 'feedKg', label: 'Ração', numeric: true, render: (r, f) => f.fmtKg(r.feedKg) },
   { key: 'fcr', label: 'FCA', numeric: true, render: (r) => fmtNumber(r.fcr, 2) },
-  { key: 'totalCost', label: 'Custo total', numeric: true, render: (r) => fmtMoney(r.totalCost) },
-  { key: 'costPerKg', label: 'Custo/kg', numeric: true, render: (r) => fmtMoney(r.costPerKg) },
+  {
+    key: 'totalCost',
+    label: 'Custo total',
+    numeric: true,
+    render: (r, f) => f.fmtMoney(r.totalCost),
+  },
+  { key: 'costPerKg', label: 'Custo/kg', numeric: true, render: (r, f) => f.fmtMoney(r.costPerKg) },
 ];
 
 function compare(a: BatchRow, b: BatchRow, key: SortKey): number {
@@ -115,6 +124,7 @@ function WarningIcon({ row }: Readonly<{ row: BatchRow }>) {
 }
 
 export function BatchesTable({ batches }: Readonly<{ batches: BatchRow[] }>) {
+  const f = useReportFormatters();
   const [sort, setSort] = useState<{ key: SortKey; dir: 'asc' | 'desc' } | null>(null);
 
   const rows = useMemo(() => {
@@ -192,7 +202,7 @@ export function BatchesTable({ batches }: Readonly<{ batches: BatchRow[] }>) {
                           'font-semibold text-red-600',
                       )}
                     >
-                      {col.render(row)}
+                      {col.render(row, f)}
                       {index === 0 && <WarningIcon row={row} />}
                     </TableCell>
                   ))}

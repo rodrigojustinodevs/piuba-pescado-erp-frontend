@@ -5,12 +5,14 @@ import { Button } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
 import type { WeeklyFeeding } from '../types';
-import { fmtKg, fmtPct } from '@/features/reportExport/format';
+import { fmtPct } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 const PAGE_SIZE = 50;
 
 export function WeeklyFeedingSection({ rows }: Readonly<{ rows: WeeklyFeeding[] }>) {
+  const { fmtKg } = useReportFormatters();
   const [page, setPage] = useState(0);
   const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const current = Math.min(page, pageCount - 1);

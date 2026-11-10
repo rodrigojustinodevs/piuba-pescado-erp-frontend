@@ -90,7 +90,7 @@ export function useReportExport<TInput>({
         showError('O arquivo ainda não está disponível para download.');
       }
     } catch (error) {
-      showError(error instanceof Error ? error.message : 'Não foi possível baixar o PDF.');
+      showError(error instanceof Error ? error.message : 'Não foi possível baixar o arquivo.');
     }
   }, [exportId, getExport, showError]);
 

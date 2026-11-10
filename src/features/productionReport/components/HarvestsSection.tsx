@@ -6,10 +6,12 @@ import { cn } from '@/shared/lib/utils';
 import { formatCalendarDatePtBR } from '@/shared/utils/dateFormat';
 import { HARVEST_DESTINATION_LABELS, HARVEST_TYPE_LABELS } from '../constants';
 import type { Harvest } from '../types';
-import { EMPTY_VALUE, fmtKg, fmtMoney, fmtNumber } from '@/features/reportExport/format';
+import { EMPTY_VALUE, fmtNumber } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import { ReportSection, SectionEmpty } from '@/features/reportExport/ReportSection';
 
 export function HarvestsSection({ harvests }: Readonly<{ harvests: Harvest[] }>) {
+  const { fmtKg, fmtMoney } = useReportFormatters();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   function toggle(id: string) {

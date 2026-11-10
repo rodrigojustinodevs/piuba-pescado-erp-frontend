@@ -1,9 +1,11 @@
 import { AlertTriangle } from 'lucide-react';
 import { StatCard } from '@/shared/components/Cards/StatCard';
-import { fmtMoney, fmtNumber } from '@/features/reportExport/format';
+import { fmtNumber } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import type { Summary } from '../types';
 
 export function InventorySummaryCards({ summary }: Readonly<{ summary: Summary }>) {
+  const { fmtMoney } = useReportFormatters();
   const cards: { label: string; value: string; subtitle?: string; danger?: boolean }[] = [
     { label: 'Itens', value: fmtNumber(summary.items) },
     { label: 'Valor em estoque', value: fmtMoney(summary.totalValue) },

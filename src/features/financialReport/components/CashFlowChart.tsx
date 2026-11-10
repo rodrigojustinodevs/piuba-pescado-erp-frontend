@@ -1,7 +1,7 @@
 'use client';
 
 import { Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from 'recharts';
-import { fmtMoney } from '@/features/reportExport/format';
+import { useReportFormatters } from '@/features/reportExport/useReportFormatters';
 import { ChartContainer } from '@/shared/components/ui/Chart';
 import type { MonthRow } from '../types';
 import { fmtMonth } from '../utils/format';
@@ -11,6 +11,7 @@ const EXPENSE = '#D97706';
 const BALANCE = '#2563EB';
 
 export default function CashFlowChart({ months }: Readonly<{ months: MonthRow[] }>) {
+  const { fmtMoney } = useReportFormatters();
   return (
     <ChartContainer
       config={{}}
