@@ -10,6 +10,11 @@ import type {
 import { WaterQualityCards } from './WaterQualityCards';
 import { WaterQualityDialog } from './WaterQualityDialog';
 import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
+import {
+  ListEmptyState,
+  ListErrorState,
+  ListLoadingState,
+} from '@/shared/components/states/ListStates';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { WaterQualityDropletIcon } from '@/shared/components/icons/FeatureEntityIcons';
 import {
@@ -23,7 +28,6 @@ import {
   Eye,
   FlaskConical,
   Gauge,
-  Loader2,
   Minus,
   Pencil,
   Ruler,
@@ -138,7 +142,6 @@ export function WaterQualitiesListView({
   const [selectedRecord, setSelectedRecord] = useState<WaterQuality | null>(null);
   const [tankFilter, setTankFilter] = useState('all');
   const [qualityFilter, setQualityFilter] = useState('all');
-  console.log('stats2', stats);
   const openWaterQualityDialog = useCallback(
     (mode: WaterQualityDialogMode, record: WaterQuality | null = null) => {
       setDialogMode(mode);
@@ -238,26 +241,15 @@ export function WaterQualitiesListView({
   );
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading) return <ListLoadingState />;
+    if (error)
       return (
-        <div className="p-8 text-center">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            <span>Carregando...</span>
-          </div>
-        </div>
+        <ListErrorState
+          title="Erro ao carregar qualidade da água"
+          message="Não foi possível carregar as medições. Tente novamente."
+        />
       );
-    }
-
-    if (error) {
-      return (
-        <div className="p-8 text-center text-red-600">Erro ao carregar qualidade da água.</div>
-      );
-    }
-
-    if (!waterQualities.length) {
-      return <div className="p-8 text-center text-slate-500">Nenhuma medição encontrada.</div>;
-    }
+    if (!waterQualities.length) return <ListEmptyState title="Nenhuma medição encontrada." />;
 
     return (
       <>
@@ -288,24 +280,15 @@ export function WaterQualitiesListView({
   };
 
   const renderTableContent = () => {
-    if (isLoading) {
+    if (isLoading) return <ListLoadingState />;
+    if (error)
       return (
-        <div className="p-8 text-center">
-          <div className="flex items-center justify-center gap-2 text-slate-500">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Carregando...</span>
-          </div>
-        </div>
+        <ListErrorState
+          title="Erro ao carregar medições"
+          message="Não foi possível carregar as medições. Tente novamente."
+        />
       );
-    }
-
-    if (error) {
-      return <div className="p-8 text-center text-red-600">Erro ao carregar leituras.</div>;
-    }
-
-    if (!filtered.length) {
-      return <div className="p-8 text-center text-slate-500">Nenhuma leitura encontrada.</div>;
-    }
+    if (!filtered.length) return <ListEmptyState title="Nenhuma medição encontrada." />;
 
     return (
       <>
@@ -350,7 +333,7 @@ export function WaterQualitiesListView({
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold">{stats.score}</span>
+              <span className="text-4xl font-bold tabular-nums">{stats.score}</span>
               <span className="text-sm text-muted-foreground">/ 100</span>
             </div>
             <Progress value={stats.score} className="mt-3" />
@@ -367,45 +350,48 @@ export function WaterQualitiesListView({
           <TabsTrigger value="viveiros">Por Viveiro</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="parametros" className="space-y-4">
-          {/* Filtros */}
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <SearchField
-              search={search}
-              setSearch={setSearch}
-              setCurrentPage={setPage}
-              placeholder="Buscar por sensor, tanque ou observações..."
-            />
-            <Select value={tankFilter} onValueChange={(v) => setTankFilter(v)}>
-              <SelectTrigger className="sm:w-[200px]">
-                <SelectValue placeholder="Viveiro" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os viveiros</SelectItem>
-                {tanks.map((t) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={qualityFilter} onValueChange={(v) => setQualityFilter(v)}>
-              <SelectTrigger className="sm:w-[180px]">
-                <SelectValue placeholder="Qualidade" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas</SelectItem>
-                <SelectItem value="excellent">Excelente</SelectItem>
-                <SelectItem value="good">Bom</SelectItem>
-                <SelectItem value="warning">Atenção</SelectItem>
-                <SelectItem value="critical">Crítico</SelectItem>
-                <SelectItem value="unknown">Sem dados</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+        <TabsContent value="parametros">
           <Card>
-            <CardContent className="p-0">{renderTableContent()}</CardContent>
+            <CardHeader>
+              <CardTitle className="text-base">Lista de Medições</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                <SearchField
+                  search={search}
+                  setSearch={setSearch}
+                  setCurrentPage={setPage}
+                  placeholder="Buscar por sensor ou viveiro…"
+                />
+                <Select value={tankFilter} onValueChange={setTankFilter}>
+                  <SelectTrigger className="w-full md:w-50" aria-label="Filtrar por viveiro">
+                    <SelectValue placeholder="Viveiro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os viveiros</SelectItem>
+                    {tanks.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={qualityFilter} onValueChange={setQualityFilter}>
+                  <SelectTrigger className="w-full md:w-45" aria-label="Filtrar por qualidade">
+                    <SelectValue placeholder="Qualidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    <SelectItem value="excellent">Excelente</SelectItem>
+                    <SelectItem value="good">Bom</SelectItem>
+                    <SelectItem value="warning">Atenção</SelectItem>
+                    <SelectItem value="critical">Crítico</SelectItem>
+                    <SelectItem value="unknown">Sem dados</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {renderTableContent()}
+            </CardContent>
           </Card>
         </TabsContent>
 
@@ -440,9 +426,9 @@ function KpiCard({
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
-          <span className="text-3xl font-bold">{value}</span>
+          <span className="text-3xl font-bold tabular-nums">{value}</span>
           <div className={'flex h-9 w-9 items-center justify-center rounded-md ' + cfg.className}>
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4" aria-hidden="true" />
           </div>
         </div>
       </CardContent>

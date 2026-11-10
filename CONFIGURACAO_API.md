@@ -5,12 +5,13 @@
 Crie um arquivo `.env.local` na raiz do projeto com:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8005
+API_URL=http://localhost:8005
 ```
 
 **Importante**: 
-- Use `NEXT_PUBLIC_` como prefixo para variáveis acessíveis no cliente
-- O valor padrão é `http://localhost:8005` se a variável não estiver definida
+- `API_URL` é lida apenas no servidor (BFF); não use `NEXT_PUBLIC_`, pois a API nunca é chamada direto do browser
+- `NEXT_PUBLIC_API_URL` ainda é aceita como legado
+- Em desenvolvimento, o padrão é `http://localhost:8005`; em **produção a variável é obrigatória** e o build/boot falha sem ela
 
 ## 🔌 Endpoint da API
 

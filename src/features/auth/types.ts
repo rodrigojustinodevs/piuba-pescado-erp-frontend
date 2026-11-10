@@ -26,7 +26,6 @@ export interface ApiLoginResponse {
 export interface LoginResponse {
   ok: boolean;
   message?: string;
-  token?: string;
 }
 
 /**

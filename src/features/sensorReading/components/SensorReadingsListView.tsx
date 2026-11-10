@@ -139,7 +139,6 @@ export function SensorReadingsListView({
     }
     return Array.from(sensorMap.values());
   }, [data?.sensorReadings]);
-  console.log(sensors);
 
   const filteredReadings = useMemo(
     () =>

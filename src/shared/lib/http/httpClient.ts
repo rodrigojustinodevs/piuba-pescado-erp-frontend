@@ -6,7 +6,11 @@ import { ErrorMessages } from '@/shared/constants/errorMessages';
 export interface HttpClientConfig {
   baseUrl: string;
   tokenProvider?: TokenProvider;
+  /** Tempo máximo por requisição, em ms (padrão 30s). */
+  timeoutMs?: number;
 }
+
+const DEFAULT_TIMEOUT_MS = 30_000;
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -17,10 +21,12 @@ type ApiEnvelope<T> = {
 export class HttpClient {
   private readonly baseUrl: string;
   private readonly tokenProvider?: TokenProvider;
+  private readonly timeoutMs: number;
 
   constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl;
     this.tokenProvider = config.tokenProvider;
+    this.timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   }
 
   async request<T>(endpoint: string, options: HttpRequestOptions = {}): Promise<T> {
@@ -43,10 +49,18 @@ export class HttpClient {
       headers.set('Authorization', `Bearer ${token}`);
     }
 
-    const response = await fetch(url, {
-      ...fetchInit,
-      headers,
-    });
+    const timeoutSignal = AbortSignal.timeout(this.timeoutMs);
+    const signal = fetchInit.signal ? AbortSignal.any([fetchInit.signal, timeoutSignal]) : timeoutSignal;
+
+    let response: Response;
+    try {
+      response = await fetch(url, { ...fetchInit, headers, signal });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'TimeoutError') {
+        throw new HttpError(ErrorMessages.TIMEOUT, 504);
+      }
+      throw error;
+    }
 
     if (!response.ok) {
       const { message, fieldErrors } = await extractErrorDetails(response);

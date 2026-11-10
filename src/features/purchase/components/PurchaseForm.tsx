@@ -268,7 +268,6 @@ export function PurchaseForm({
       notes: form.notes?.trim() || undefined,
     });
   };
-  console.log('render form', { defaultValues: initialValues });
   const innerContent = (
     <div className="space-y-6">
       {showCompanySelect && (

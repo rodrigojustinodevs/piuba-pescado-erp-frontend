@@ -3,11 +3,17 @@ import { normalizeAuthUser, type AuthApiDataLike } from '@/features/auth/mappers
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { failureResponse, successResponse } from '@/shared/lib/api/responseEnvelope';
 import { HttpClient, serverHttpClient } from '@/shared/lib/http';
+import { getApiBaseUrl } from '@/shared/lib/http/apiUrl';
+import { authCookieOptions, resolveCookieMaxAge } from '@/shared/lib/http/authCookie';
 import { HttpError } from '@/shared/lib/http/httpError';
 import { decodeJWT } from '@/shared/utils/jwt';
-const publicHttpClient = new HttpClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8005',
-});
+
+const publicHttpClient = new HttpClient({ baseUrl: getApiBaseUrl() });
+
+function isExpired(payload: Record<string, unknown> | null): boolean {
+  const exp = Number(payload?.exp);
+  return Number.isFinite(exp) && exp * 1000 <= Date.now();
+}
 
 type LoginApiResponse = {
   status: boolean;
@@ -25,7 +31,6 @@ export async function POST(req: Request) {
     if (!email || !password) {
       return failureResponse(ErrorMessages.LOGIN_REQUIRED_FIELDS, 400);
     }
-    console.log('publicHttpClient', publicHttpClient);
     const data = await publicHttpClient.request<LoginApiResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -35,24 +40,13 @@ export async function POST(req: Request) {
 
     const cookieStore = await cookies();
     cookieStore.set({
-      name: 'auth_token',
+      ...authCookieOptions(resolveCookieMaxAge(decodeJWT(token))),
       value: token,
-      httpOnly: true,
-      path: '/',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
     });
 
-    return successResponse(
-      {
-        ok: true,
-        message: data.message || 'Login successful',
-        token,
-      },
-      200,
-    );
+    // O token nunca é devolvido ao browser: fica apenas no cookie httpOnly.
+    return successResponse({ ok: true, message: data.message || 'Login successful' }, 200);
   } catch (error) {
-    console.log(error);
     if (error instanceof HttpError && error.status === 401) {
       return failureResponse(ErrorMessages.LOGIN_CREDENTIALS, 401);
     }
@@ -61,26 +55,34 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value;
 
-    if (!token) {
+  if (!token) {
+    return successResponse({ isAuthenticated: false }, 200);
+  }
+
+  const decodedToken = decodeJWT(token);
+  if (!decodedToken || isExpired(decodedToken)) {
+    cookieStore.set({ ...authCookieOptions(0), value: '' });
+    return successResponse({ isAuthenticated: false }, 200);
+  }
+
+  try {
+    const data = await serverHttpClient.request<AuthApiDataLike>('/api/auth/me', {
+      method: 'GET',
+    });
+    return successResponse({ isAuthenticated: true, user: normalizeAuthUser(data, decodedToken) }, 200);
+  } catch (error) {
+    // Backend rejeitou o token (revogado/inválido): a sessão não é mais válida.
+    if (error instanceof HttpError && (error.status === 401 || error.status === 403)) {
+      cookieStore.set({ ...authCookieOptions(0), value: '' });
       return successResponse({ isAuthenticated: false }, 200);
     }
-
-    const decodedToken = decodeJWT(token);
-    try {
-      const data = await serverHttpClient.request<AuthApiDataLike>('/api/auth/me', {
-        method: 'GET',
-      });
-      const user = normalizeAuthUser(data, decodedToken);
-      return successResponse({ isAuthenticated: true, user }, 200);
-    } catch {
-      const user = normalizeAuthUser({}, decodedToken);
-      return successResponse({ isAuthenticated: true, user }, 200);
-    }
-  } catch {
-    return successResponse({ isAuthenticated: false }, 200);
+    // Indisponibilidade transitória do backend: usa o JWT (já validado quanto à expiração).
+    return successResponse(
+      { isAuthenticated: true, user: normalizeAuthUser({}, decodedToken) },
+      200,
+    );
   }
 }

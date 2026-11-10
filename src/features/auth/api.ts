@@ -92,20 +92,8 @@ export const authService = {
 
       const data = unwrapEnvelope(response.data);
 
-      if (data.isAuthenticated && data.user) {
-        console.log('✅ Usuário autenticado - Tipo:', data.user.role);
-        console.log('📦 [Auth API] Dados completos do usuário recebidos:', {
-          id: data.user.id,
-          email: data.user.email,
-          name: data.user.name,
-          role: data.user.role,
-          companyId: data.user.companyId,
-          rawResponse: data,
-        });
-      }
       return data;
-    } catch (error) {
-      console.error('❌ [Auth API] Erro ao verificar autenticação:', error);
+    } catch {
       return { isAuthenticated: false };
     }
   },

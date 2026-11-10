@@ -21,7 +21,6 @@ export function useLogin() {
         throw new Error(response.message || ErrorMessages.LOGIN_CREDENTIALS);
       }
 
-      // Retorna a resposta com o token
       return response;
     },
     onSuccess: () => {
@@ -31,10 +30,6 @@ export function useLogin() {
       // Redireciona para o dashboard após login bem-sucedido
       router.push('/dashboard');
       router.refresh(); // Força atualização do middleware
-    },
-    onError: (error: Error) => {
-      // Erro já é tratado pelo mutation.error
-      console.error('Erro ao fazer login:', error);
     },
   });
 
