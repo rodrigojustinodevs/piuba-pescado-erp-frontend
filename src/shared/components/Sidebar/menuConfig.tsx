@@ -60,13 +60,6 @@ function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
   }));
 }
 
-function comercialChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
-  return items.map((item) => ({
-    ...item,
-    allowedRoles: item.id === 'pedidos' ? ROLES_COMPANY_ALL : ROLES_COMPANY_ADMIN_MANAGER,
-  }));
-}
-
 function tanksChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({
     ...item,
@@ -121,7 +114,6 @@ const operacaoItems: MenuItemWithAuth[] = [
     id: 'producao',
     label: 'Produção',
     icon: Fish,
-    href: '/company/production',
     allowedRoles: ROLES_COMPANY_ALL,
     children: childrenAllCompanyAdminManager(producaoSubmenuItems),
   },
@@ -147,7 +139,7 @@ const gestaoItems: MenuItemWithAuth[] = [
     label: 'Comercial',
     icon: ShoppingCart,
     allowedRoles: ROLES_COMPANY_ALL,
-    children: comercialChildrenWithAuth(comercialSubmenuItems),
+    children: childrenAllCompanyAdminManager(comercialSubmenuItems),
   },
   {
     id: 'relatorios',

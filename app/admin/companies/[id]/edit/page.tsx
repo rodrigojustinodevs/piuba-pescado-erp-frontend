@@ -18,12 +18,7 @@ export default function EditCompanyPage() {
 
   if (isLoading) {
     return (
-      <DashboardLayout
-        user={{
-          name: 'Usuário Demo',
-          email: 'demo@dev.com',
-        }}
-      >
+      <DashboardLayout>
         <div className="text-center py-8">
           <div className="flex items-center justify-center gap-2 text-gray-500">
             <svg aria-hidden="true"
@@ -48,12 +43,7 @@ export default function EditCompanyPage() {
 
   if (!company) {
     return (
-      <DashboardLayout
-        user={{
-          name: 'Usuário Demo',
-          email: 'demo@dev.com',
-        }}
-      >
+      <DashboardLayout>
         <div className="text-center py-8">
           <p className="text-red-600">Empresa não encontrada.</p>
         </div>
@@ -62,12 +52,7 @@ export default function EditCompanyPage() {
   }
 
   return (
-    <DashboardLayout
-      user={{
-        name: 'Usuário Demo',
-        email: 'demo@dev.com',
-      }}
-    >
+    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div>
