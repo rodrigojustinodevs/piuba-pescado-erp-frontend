@@ -31,7 +31,7 @@ function toStartErrorMessage(error: unknown): string | null {
   return errorMessage(error, 'Não foi possível iniciar a exportação.');
 }
 
-const signature = (entities: ExportableEntity[]) => [...entities].sort().join(',');
+const signature = (entities: ExportableEntity[]) => [...entities].sort((a, b) => a.localeCompare(b)).join(',');
 
 export function DataExportCard() {
   const { user } = useAuthContext();

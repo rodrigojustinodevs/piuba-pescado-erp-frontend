@@ -146,6 +146,14 @@ export function TimezoneCombobox({ id, value, onChange, disabled, invalid, descr
                   aria-selected={option.value === value}
                   onPointerMove={() => setActiveIndex(index)}
                   onClick={() => select(option)}
+                  // O foco fica no input (aria-activedescendant); isto cobre leitores de tela
+                  // que movem o foco virtual para a opção.
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      select(option);
+                    }
+                  }}
                   className={cn(
                     'flex cursor-pointer items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm',
                     index === activeIndex && 'bg-accent text-accent-foreground',
