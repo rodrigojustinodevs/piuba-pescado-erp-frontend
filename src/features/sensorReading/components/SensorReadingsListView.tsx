@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { SensorReading, SensorReadingListResponse, SensorReadingType } from '../types';
 import { SensorReadingTable } from './SensorReadingTable';
 import { SensorReadingDialog } from './SensorReadingDialog';
@@ -129,6 +129,12 @@ export function SensorReadingsListView({
   const [selectedSensorReading, setSelectedSensorReading] = useState<SensorReading | null>(null);
   const [sensorFilter, setSensorFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  // "Agora" como estado (e não Date.now() no render), atualizado a cada minuto.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   const sensors = useMemo(() => {
     const sensorMap = new Map<string, NonNullable<SensorReading['sensor']>>();
@@ -156,10 +162,10 @@ export function SensorReadingsListView({
     const automatic = filteredReadings.filter((m) => m.type === 'automatic').length;
     const outOfRange = filteredReadings.filter((m) => isOutOfRange(m.type, m.value)).length;
     const last24h = filteredReadings.filter(
-      (m) => Date.now() - new Date(m.measuredAt).getTime() < 24 * 60 * 60 * 1000,
+      (m) => now - new Date(m.measuredAt).getTime() < 24 * 60 * 60 * 1000,
     ).length;
     return { total, manual, automatic, outOfRange, last24h };
-  }, [filteredReadings]);
+  }, [filteredReadings, now]);
   const openSensorReadingDialog = useCallback(
     (mode: SensorReadingDialogMode, sensorReading: SensorReading | null = null) => {
       setDialogMode(mode);

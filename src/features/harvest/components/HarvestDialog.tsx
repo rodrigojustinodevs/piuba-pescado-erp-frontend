@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import type { Harvest, HarvestDialogMode, CreateHarvestData, PatchHarvestPayload } from '../types';
 import type { CreateHarvestFormData } from '../schemas';
 import type { ApiFieldError } from './HarvestForm';
@@ -67,10 +67,13 @@ export function HarvestDialog({
   const [apiError, setApiError] = useState<ApiFieldError>(null);
   const [currentMode, setCurrentMode] = useState<HarvestDialogMode>(mode);
 
-  // sync when the dialog re-opens with a different mode
-  useMemo(() => {
+  // Sincroniza quando o diálogo reabre com outro modo (ajuste de estado durante o render,
+  // padrão recomendado pelo React em vez de setState dentro de useMemo/useEffect).
+  const [lastMode, setLastMode] = useState<HarvestDialogMode>(mode);
+  if (mode !== lastMode) {
+    setLastMode(mode);
     setCurrentMode(mode);
-  }, [mode]);
+  }
 
   const isViewMode = currentMode === 'view';
   const isLoading = createHarvest.isPending || updateHarvest.isPending;
