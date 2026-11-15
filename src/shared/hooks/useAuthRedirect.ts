@@ -3,6 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { isPublicRoute } from '@/shared/constants/publicRoutes';
 import { extractHttpStatus } from '@/shared/lib/http/httpError';
 
 export function useAuthRedirect() {
@@ -13,7 +14,7 @@ export function useAuthRedirect() {
 
   useEffect(() => {
     const maybeRedirect = (error: unknown) => {
-      if (pathname?.startsWith('/login')) {
+      if (isPublicRoute(pathname)) {
         return;
       }
 

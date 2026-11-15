@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import type { LoginCredentials, LoginResponse } from './types';
+import type { ResetPasswordPayload } from './schemas';
 
 type ApiEnvelope<T> = { success: true; data: T } | { success: false; error: string };
 
@@ -37,6 +38,14 @@ authApi.interceptors.response.use(
       return Promise.reject(error);
     }
     const status = error.response.status;
+    const url = String(error.config?.url ?? '');
+
+    if (url.includes('password')) {
+      const apiMessage = (error.response.data as { error?: string } | undefined)?.error;
+      return Promise.reject(
+        new Error(status >= 500 || !apiMessage ? ErrorMessages.UNEXPECTED : apiMessage),
+      );
+    }
 
     if (status === 400) {
       return Promise.reject(new Error(ErrorMessages.LOGIN_REQUIRED_FIELDS));
@@ -64,6 +73,14 @@ export const authService = {
       credentials,
     );
     return unwrapEnvelope(response.data);
+  },
+
+  async forgotPassword(email: string): Promise<void> {
+    await authApi.post('/forgot-password', { email });
+  },
+
+  async resetPassword(payload: ResetPasswordPayload): Promise<void> {
+    await authApi.post('/reset-password', payload);
   },
 
   /**
