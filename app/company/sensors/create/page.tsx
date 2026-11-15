@@ -23,7 +23,9 @@ export default function SensorCreatePage() {
             </span>
             <div>
               <h1 className="text-3xl font-bold text-[#0F172A]">Sensor</h1>
-              <p className="text-sm text-slate-600">Cadastro de sensor para monitoramento de tanque</p>
+              <p className="text-sm text-slate-600">
+                Cadastro de sensor para monitoramento de tanque
+              </p>
             </div>
           </div>
         </div>

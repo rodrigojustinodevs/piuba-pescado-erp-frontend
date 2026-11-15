@@ -31,7 +31,11 @@ export function useDashboardData() {
     const now = new Date();
     const tankList = tanks.data?.tanks ?? [];
     const batchList = batches.batches;
-    const readings = filterByWindow(waterQualities.data?.waterQualities ?? [], (r) => r.measuredAt, now);
+    const readings = filterByWindow(
+      waterQualities.data?.waterQualities ?? [],
+      (r) => r.measuredAt,
+      now,
+    );
     const recentFeedings = filterByWindow(feedings.data?.feedings ?? [], (f) => f.feedingDate, now);
 
     const sampled = [

@@ -1,6 +1,9 @@
 'use client';
 
-import { StockTransactionsListView, useStockTransactionsListPage } from '@/features/stockTransaction';
+import {
+  StockTransactionsListView,
+  useStockTransactionsListPage,
+} from '@/features/stockTransaction';
 import { DashboardLayout } from '@/shared/components/Layout';
 
 export default function StockTransactionsPage() {
@@ -12,4 +15,3 @@ export default function StockTransactionsPage() {
     </DashboardLayout>
   );
 }
-

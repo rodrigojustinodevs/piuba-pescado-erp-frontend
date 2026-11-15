@@ -65,12 +65,9 @@ function ResetPasswordForm() {
   if (isSuccess) {
     return (
       <>
-        <p
-          role="status"
-          className="rounded-md border border-green-100 bg-green-50 p-3 text-sm text-green-700"
-        >
+        <output className="block rounded-md border border-green-100 bg-green-50 p-3 text-sm text-green-700">
           Senha redefinida com sucesso.
-        </p>
+        </output>
         <Button className="mt-6 w-full" onClick={() => router.push('/login')}>
           Ir para o login
         </Button>

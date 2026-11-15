@@ -18,6 +18,16 @@ type ApiEnvelope<T> = {
   error?: string;
 };
 
+function unwrapEnvelope<T>(payload: ApiEnvelope<T> | T, status: number): T {
+  if (typeof payload === 'object' && payload !== null && 'success' in payload) {
+    if (payload.success === false) {
+      throw new HttpError(payload.error || ErrorMessages.UNEXPECTED, status);
+    }
+    return payload.data as T;
+  }
+  return payload;
+}
+
 export class HttpClient {
   private readonly baseUrl: string;
   private readonly tokenProvider?: TokenProvider;
@@ -34,33 +44,10 @@ export class HttpClient {
 
     const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
 
-    const headers = new Headers(customHeaders);
+    const headers = await this.buildHeaders(customHeaders, expectJson);
+    const signal = this.buildSignal(fetchInit.signal);
 
-    if (expectJson && !headers.has('Content-Type')) {
-      headers.set('Content-Type', 'application/json');
-    }
-
-    if (this.tokenProvider) {
-      const token = await this.tokenProvider.getToken();
-      if (!token) {
-        throw new HttpError(ErrorMessages.UNAUTHORIZED, 401);
-      }
-
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    const timeoutSignal = AbortSignal.timeout(this.timeoutMs);
-    const signal = fetchInit.signal ? AbortSignal.any([fetchInit.signal, timeoutSignal]) : timeoutSignal;
-
-    let response: Response;
-    try {
-      response = await fetch(url, { ...fetchInit, headers, signal });
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'TimeoutError') {
-        throw new HttpError(ErrorMessages.TIMEOUT, 504);
-      }
-      throw error;
-    }
+    const response = await this.send(url, { ...fetchInit, headers, signal });
 
     if (!response.ok) {
       const { message, fieldErrors } = await extractErrorDetails(response);
@@ -72,16 +59,44 @@ export class HttpClient {
     }
 
     const payload = (await response.json()) as ApiEnvelope<T> | T;
+    return unwrapEnvelope<T>(payload, response.status);
+  }
 
-    if (typeof payload === 'object' && payload !== null && 'success' in payload) {
-      if (payload.success === false) {
-        throw new HttpError(payload.error || ErrorMessages.UNEXPECTED, response.status);
-      }
+  private async buildHeaders(
+    custom: HttpRequestOptions['headers'],
+    expectJson: boolean,
+  ): Promise<Headers> {
+    const headers = new Headers(custom);
 
-      return payload.data as T;
+    if (expectJson && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
     }
 
-    return payload;
+    if (this.tokenProvider) {
+      const token = await this.tokenProvider.getToken();
+      if (!token) {
+        throw new HttpError(ErrorMessages.UNAUTHORIZED, 401);
+      }
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
+  }
+
+  private buildSignal(external?: AbortSignal | null): AbortSignal {
+    const timeoutSignal = AbortSignal.timeout(this.timeoutMs);
+    return external ? AbortSignal.any([external, timeoutSignal]) : timeoutSignal;
+  }
+
+  private async send(url: string, init: RequestInit): Promise<Response> {
+    try {
+      return await fetch(url, init);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'TimeoutError') {
+        throw new HttpError(ErrorMessages.TIMEOUT, 504);
+      }
+      throw error;
+    }
   }
 
   get<T>(endpoint: string, options: HttpRequestOptions = {}) {

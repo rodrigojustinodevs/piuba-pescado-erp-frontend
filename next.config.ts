@@ -31,18 +31,18 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  async redirects() {
+  redirects() {
     // URL antiga (com erro de digitação) mantida para favoritos e links já compartilhados.
-    return [
+    return Promise.resolve([
       {
         source: '/company/stocks-transations',
         destination: '/company/stock-transactions',
         permanent: true,
       },
-    ];
+    ]);
   },
-  async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+  headers() {
+    return Promise.resolve([{ source: '/:path*', headers: securityHeaders }]);
   },
 };
 

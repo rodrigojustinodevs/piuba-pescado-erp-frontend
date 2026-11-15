@@ -32,4 +32,3 @@ export const PUT = createPutHandler<ApiSupplyDetailEnvelope, UpdateSupplyData, {
   mapBody: buildSupplyBody,
   mapResponse: mapDetailResponse,
 });
-

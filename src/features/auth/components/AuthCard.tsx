@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Fish } from 'lucide-react';
 
-type AuthCardProps = { title: string; description: string; children: ReactNode };
+type AuthCardProps = Readonly<{ title: string; description: string; children: ReactNode }>;
 
 export function AuthCard({ title, description, children }: AuthCardProps) {
   return (

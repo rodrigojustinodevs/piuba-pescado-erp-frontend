@@ -30,22 +30,23 @@ const ROUTES = [
   '/dashboard/relatorios/producao',
 ];
 
-test.describe('navegação autenticada', () => {
-  test.skip(!hasCredentials, 'defina E2E_EMAIL e E2E_PASSWORD para rodar');
+if (hasCredentials) {
+  test.describe('navegação autenticada', () => {
+    test('módulos principais carregam sem erro', async ({ page }) => {
+      test.setTimeout(180_000);
+      await loginAndWaitForDashboard(page);
 
-  test('módulos principais carregam sem erro', async ({ page }) => {
-    test.setTimeout(180_000);
-    await loginAndWaitForDashboard(page);
-
-    for (const route of ROUTES) {
-      const response = await page.goto(route);
-      expect(response?.status(), route).toBeLessThan(400);
-      await expect(page, route).not.toHaveURL(/\/login$/);
-      await expect(page.getByRole('heading', { name: 'Algo deu errado' }), route).toHaveCount(0);
-      await expect(page.getByRole('heading', { name: 'Página não encontrada' }), route).toHaveCount(
-        0,
-      );
-      await expect(page.getByRole('heading').first(), route).toBeVisible();
-    }
+      for (const route of ROUTES) {
+        const response = await page.goto(route);
+        expect(response?.status(), route).toBeLessThan(400);
+        await expect(page, route).not.toHaveURL(/\/login$/);
+        await expect(page.getByRole('heading', { name: 'Algo deu errado' }), route).toHaveCount(0);
+        await expect(
+          page.getByRole('heading', { name: 'Página não encontrada' }),
+          route,
+        ).toHaveCount(0);
+        await expect(page.getByRole('heading').first(), route).toBeVisible();
+      }
+    });
   });
-});
+}

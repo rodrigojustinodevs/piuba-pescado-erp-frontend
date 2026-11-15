@@ -72,7 +72,10 @@ export async function GET() {
     const data = await serverHttpClient.request<AuthApiDataLike>('/api/auth/me', {
       method: 'GET',
     });
-    return successResponse({ isAuthenticated: true, user: normalizeAuthUser(data, decodedToken) }, 200);
+    return successResponse(
+      { isAuthenticated: true, user: normalizeAuthUser(data, decodedToken) },
+      200,
+    );
   } catch (error) {
     // Backend rejeitou o token (revogado/inválido): a sessão não é mais válida.
     if (error instanceof HttpError && (error.status === 401 || error.status === 403)) {

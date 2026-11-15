@@ -16,4 +16,3 @@ export const POST = createUpsertHandler<ApiSupplyCreateResponse, CreateSupplyDat
     return mapApiSupply(api as ApiSupply);
   },
 });
-

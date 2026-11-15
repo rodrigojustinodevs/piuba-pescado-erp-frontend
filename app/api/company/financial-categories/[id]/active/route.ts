@@ -3,4 +3,3 @@ import { createFinancialCategoryStatusPatchHandler } from '../createFinancialCat
 const CONTEXT = 'Financial Category active API Proxy';
 
 export const PATCH = createFinancialCategoryStatusPatchHandler('active', CONTEXT);
-

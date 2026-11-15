@@ -192,8 +192,8 @@ export function BatchForm({
 
     reset(batchToSimpleFormData(initialData));
     setTab('simple');
-  // Re-sincroniza só quando o registro muda (id), não a cada novo objeto retornado pela query.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Re-sincroniza só quando o registro muda (id), não a cada novo objeto retornado pela query.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, initialData?.id, reset, resetDistributed]);
   // ─── Derived state ──────────────────────────────────────────────────────────
 

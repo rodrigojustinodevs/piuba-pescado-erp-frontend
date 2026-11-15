@@ -2,7 +2,13 @@
 
 import dynamic from 'next/dynamic';
 import { Button } from '@/shared/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/Card';
 import { Skeleton } from '@/shared/components/ui/Skeleton';
 import {
   Table,
@@ -42,7 +48,9 @@ function EmptyHint({ children }: Readonly<{ children: React.ReactNode }>) {
 }
 
 function formatMetric(value: number | null, unit: string, digits = 1): string {
-  return value === null ? '—' : `${formatNumber(value, { maximumFractionDigits: digits })}\u00A0${unit}`;
+  return value === null
+    ? '—'
+    : `${formatNumber(value, { maximumFractionDigits: digits })}\u00A0${unit}`;
 }
 
 export function DashboardView() {
@@ -51,9 +59,7 @@ export function DashboardView() {
   if (isLoading) {
     return (
       <div className="mx-auto w-full max-w-[1600px] space-y-6" aria-busy="true">
-        <p role="status" className="sr-only">
-          Carregando dashboard…
-        </p>
+        <output className="sr-only">Carregando dashboard…</output>
         <Skeleton className="h-8 w-48" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
@@ -69,9 +75,7 @@ export function DashboardView() {
     return (
       <div role="alert" className="mx-auto max-w-md space-y-3 py-16 text-center">
         <h1 className="text-xl font-medium">Não foi possível carregar o dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Verifique sua conexão e tente novamente.
-        </p>
+        <p className="text-sm text-muted-foreground">Verifique sua conexão e tente novamente.</p>
         <Button onClick={() => void refetch()}>Tentar novamente</Button>
       </div>
     );
@@ -101,7 +105,9 @@ export function DashboardView() {
   ];
 
   const temperatureSummary = `Gráfico de linha da temperatura média diária da água: ${data.temperatureSeries
-    .map((point) => `${point.day}, ${formatNumber(point.temp, { maximumFractionDigits: 1 })}\u00A0°C`)
+    .map(
+      (point) => `${point.day}, ${formatNumber(point.temp, { maximumFractionDigits: 1 })}\u00A0°C`,
+    )
     .join('; ')}.`;
   const feedMax = data.feedByBatch[0]?.quantity || 1;
   const batchSampleTotal = data.batchStatus.reduce((sum, b) => sum + b.count, 0);
@@ -139,7 +145,9 @@ export function DashboardView() {
                 <TemperatureChart data={data.temperatureSeries} />
               </div>
             ) : (
-              <EmptyHint>Nenhuma leitura de temperatura nos últimos {DASHBOARD_WINDOW_DAYS} dias.</EmptyHint>
+              <EmptyHint>
+                Nenhuma leitura de temperatura nos últimos {DASHBOARD_WINDOW_DAYS} dias.
+              </EmptyHint>
             )}
           </CardContent>
         </Card>
@@ -215,7 +223,9 @@ export function DashboardView() {
 
         <Card className={`${cardClass} lg:col-span-2`}>
           <CardHeader className="p-5 pb-2">
-            <CardTitle className="font-medium tracking-normal">Últimas leituras de qualidade</CardTitle>
+            <CardTitle className="font-medium tracking-normal">
+              Últimas leituras de qualidade
+            </CardTitle>
             <CardDescription>Registros mais recentes de qualidade da água</CardDescription>
           </CardHeader>
           <CardContent className="p-5 pt-2">

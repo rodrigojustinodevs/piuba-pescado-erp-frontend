@@ -27,12 +27,9 @@ export default function ForgotPasswordPage() {
       description="Informe seu e-mail e enviaremos as instruções para redefinir a senha."
     >
       {isSuccess ? (
-        <p
-          role="status"
-          className="rounded-md border border-green-100 bg-green-50 p-3 text-sm text-green-700"
-        >
+        <output className="block rounded-md border border-green-100 bg-green-50 p-3 text-sm text-green-700">
           Se o e-mail estiver cadastrado, enviaremos as instruções para redefinir a senha.
-        </p>
+        </output>
       ) : (
         <form onSubmit={handleSubmit((d) => mutate(d.email))} className="space-y-5" noValidate>
           <div>
