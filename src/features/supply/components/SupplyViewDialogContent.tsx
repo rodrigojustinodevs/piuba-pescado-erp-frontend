@@ -4,36 +4,16 @@ import { DollarSign, TrendingUp, Barcode, Grid2x2, Boxes, Building2, Package } f
 import { STATUS_LABELS, SupplyStatus, type Supply } from '../types';
 import { getSupplyDefaultUnitLabel } from '../utils/defaultUnitLabel';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { useMemo } from 'react';
-import { Separator } from '@/src/shared/components/ui/Separator';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Separator } from '@/shared/components/ui/Separator';
+import { Badge } from '@/shared/components/ui/Badge';
 import { formatCurrency } from '@/shared/utils/numberFormat';
 import { DetailItem } from '@/shared/components/ui/DetailItem';
 
 type SupplyViewDialogContentProps = {
   supply: Supply | null;
 };
-
-function StatCard({
-  label,
-  icon,
-  children,
-}: Readonly<{
-  label: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}>) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-500">{label}</span>
-        <span className="text-slate-400">{icon}</span>
-      </div>
-      {children}
-    </div>
-  );
-}
 
 function getMarginStyle(margin: number): { card: string; icon: string; text: string } {
   if (margin >= 30)

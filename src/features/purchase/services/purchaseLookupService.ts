@@ -5,6 +5,14 @@ import { buildQueryString } from '@/shared/utils/queryString';
 
 const LOOKUP_LIMIT = 500;
 
+type RawSupplier = { id: string; name: string; cnpj?: string | null; document?: string | null };
+type RawSupplierList = {
+  suppliers?: RawSupplier[];
+  total?: number;
+  page?: number;
+  limit?: number;
+};
+
 export const purchaseLookupService = {
   async listSuppliers(companyId?: string | null): Promise<SupplierListResponse> {
     const qs = buildQueryString(
@@ -15,8 +23,8 @@ export const purchaseLookupService = {
       },
       { skipEmptyString: true },
     );
-    const raw = await browserHttpClient.get<any>(`/api/company/suppliers?${qs}`);
-    const suppliers = (raw?.suppliers ?? []).map((s: any) => ({
+    const raw = await browserHttpClient.get<RawSupplierList>(`/api/company/suppliers?${qs}`);
+    const suppliers = (raw?.suppliers ?? []).map((s) => ({
       id: s.id,
       name: s.name,
       document: s.cnpj ?? s.document ?? undefined,

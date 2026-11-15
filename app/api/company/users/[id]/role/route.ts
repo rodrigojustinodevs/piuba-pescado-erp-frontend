@@ -18,10 +18,7 @@ type ParamsContext = {
 
 const handler = withErrorHandling(async function PATCH(req: Request, routeContext: ParamsContext) {
   const params = await routeContext.params;
-  const { role, companyId } = (await req.json()) as Pick<
-    UpdateUserRoleData,
-    'role' | 'companyId'
-  >;
+  const { role, companyId } = (await req.json()) as Pick<UpdateUserRoleData, 'role' | 'companyId'>;
   const data = await serverHttpClient.request<ApiUserResponse>(
     `/api/company/user/${params.id}/role`,
     {

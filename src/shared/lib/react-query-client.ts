@@ -2,6 +2,9 @@
 import { QueryClient } from '@tanstack/react-query';
 import { extractHttpStatus } from '@/shared/lib/http/httpError';
 
+/** Dados que mudam a cada minuto (sensores, qualidade da água): cache curto. */
+export const REALTIME_STALE_TIME = 1000 * 30;
+
 // Cria um cliente de cache do React Query que será usado globalmente
 export const queryClient = new QueryClient({
   defaultOptions: {

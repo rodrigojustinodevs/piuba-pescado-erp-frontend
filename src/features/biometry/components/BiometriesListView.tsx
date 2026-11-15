@@ -7,8 +7,8 @@ import { BiometryDialog } from './BiometryDialog';
 import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
 import { SpinnerIcon } from '@/shared/components/icons/AppIcons';
 import { Activity, Eye, FingerprintPattern, Pencil, Ruler, Scale, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
-import { formatNumber } from '@/src/shared/utils/numberFormat';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { formatNumber } from '@/shared/utils/numberFormat';
 
 function toFiniteNumber(value: unknown): number {
   const n = typeof value === 'number' ? value : Number(value);

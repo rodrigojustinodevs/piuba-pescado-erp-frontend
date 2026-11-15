@@ -1,5 +1,6 @@
 'use client';
 
+import { REALTIME_STALE_TIME } from '@/shared/lib/react-query-client';
 import { useQuery } from '@tanstack/react-query';
 import { waterQualityService } from '../services/waterQualityService';
 
@@ -20,6 +21,6 @@ export function useWaterQualities({
     queryKey: ['waterQualities', 'list', page, limit, search],
     queryFn: () => waterQualityService.list({ page, limit, search }),
     enabled,
-    staleTime: 1000 * 60 * 5,
+    staleTime: REALTIME_STALE_TIME,
   });
 }

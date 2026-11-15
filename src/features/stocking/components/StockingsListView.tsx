@@ -7,8 +7,8 @@ import { StockingTable, getStockingRowLabel } from './StockingTable';
 import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
 import { SpinnerIcon } from '@/shared/components/icons/AppIcons';
 import { CheckCircle2, Eye, Fish, Pencil, Scale, Shrimp, Sprout, Trash } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
-import { formatNumber } from '@/src/shared/utils/numberFormat';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { formatNumber } from '@/shared/utils/numberFormat';
 
 export type StockingsListViewProps = {
   page: number;

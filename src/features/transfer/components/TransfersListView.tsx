@@ -18,7 +18,7 @@ import {
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
 import { ArrowLeftRight, ArrowRightLeft, Boxes, CalendarClock, Scale } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { formatNumber } from '@/shared/utils/numberFormat';
 import type { DataTableAction } from '@/shared/components/Table';
 import {
@@ -26,8 +26,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/shared/components/ui/Select';
-import { Select } from '@/src/shared/components/ui';
+} from '@/shared/components/ui/Select';
+import { Select } from '@/shared/components/ui';
 
 export type TransfersListViewProps = {
   page: number;

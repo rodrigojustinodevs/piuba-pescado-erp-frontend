@@ -11,7 +11,7 @@ import {
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
 import { StatCard } from '@/shared/components/Cards/StatCard';
-import { Card, CardContent } from '@/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { Building, Droplets, Eye, Pencil, Trash } from 'lucide-react';
 type TankFilter = 'all' | 'active' | 'inactive' | 'maintenance';
 
@@ -163,30 +163,32 @@ export function TanksListView({
         />
       </div>
       <Card>
-        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
-          <SearchField
-            search={search}
-            setSearch={setSearch}
-            setCurrentPage={setPage}
-            placeholder="Buscar por nome, CNPJ ou e-mail..."
-          />
+        <CardHeader>
+          <CardTitle className="text-base">Lista de Tanques</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <SearchField
+              search={search}
+              setSearch={setSearch}
+              setCurrentPage={setPage}
+              placeholder="Buscar por nome, tipo ou localização…"
+            />
 
-          <StatusFilterTabs
-            filter={filter}
-            onChange={setFilter}
-            inactiveCount={stats.inactive}
-            labels={{
-              all: 'Todas',
-              active: 'Ativas',
-              inactive: 'Inativas',
-            }}
-          />
+            <StatusFilterTabs
+              filter={filter}
+              onChange={setFilter}
+              inactiveCount={stats.inactive}
+              labels={{
+                all: 'Todas',
+                active: 'Ativas',
+                inactive: 'Inativas',
+              }}
+            />
+          </div>
+          {renderContent()}
         </CardContent>
       </Card>
-
-      <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {renderContent()}
-      </main>
     </div>
   );
 }

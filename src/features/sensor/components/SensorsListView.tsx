@@ -37,8 +37,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/shared/components/ui/Select';
-import { useAuthContext } from '@/src/shared/contexts/AuthContext';
+} from '@/shared/components/ui/Select';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
 
 export function SensorsListView({
   page,
@@ -53,7 +53,6 @@ export function SensorsListView({
   isLoading,
   error,
   filteredSensors,
-  stats,
   handleDelete,
   isDeleting,
 }: Readonly<SensorsListViewProps>) {

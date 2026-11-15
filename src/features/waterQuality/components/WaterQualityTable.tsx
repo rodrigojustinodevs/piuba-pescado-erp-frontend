@@ -73,12 +73,6 @@ function WaterQualityRangeCell({
   );
 }
 
-function getTrendIcon(trend: Trend): LucideIcon {
-  if (trend === 'up') return TrendingUp;
-  if (trend === 'down') return TrendingDown;
-  return Minus;
-}
-
 function getTrendClass(trend: Trend): string {
   if (trend === 'up') return 'text-emerald-500';
   if (trend === 'down') return 'text-red-500';
@@ -87,8 +81,10 @@ function getTrendClass(trend: Trend): string {
 
 function WaterQualityTrendCell({ getTrend }: Readonly<{ getTrend: () => Trend }>) {
   const trend = getTrend();
-  const TrendIcon = getTrendIcon(trend);
-  return <TrendIcon className={`h-4 w-4 ${getTrendClass(trend)}`} />;
+  const className = `h-4 w-4 ${getTrendClass(trend)}`;
+  if (trend === 'up') return <TrendingUp aria-label="Em alta" className={className} />;
+  if (trend === 'down') return <TrendingDown aria-label="Em queda" className={className} />;
+  return <Minus aria-label="Estável" className={className} />;
 }
 
 function WaterQualityBadgeCell({

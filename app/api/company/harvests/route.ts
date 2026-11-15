@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ApiHarvestListResponse, CreateHarvestData, HarvestListResponse } from '@/features/harvest';
+import type {
+  ApiHarvestListResponse,
+  CreateHarvestData,
+  HarvestListResponse,
+} from '@/features/harvest';
 import { mapApiHarvestList } from '@/features/harvest';
 import { createListGetHandler } from '@/shared/lib/api/routeFactories';
 import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
@@ -19,7 +23,10 @@ export const GET = createListGetHandler<ApiHarvestListResponse, HarvestListRespo
 
 export const POST = withAuthGuard(async (_auth, req: NextRequest) => {
   try {
-    const body = (await req.json().catch(() => null)) as Omit<CreateHarvestData, 'companyId'> | null;
+    const body = (await req.json().catch(() => null)) as Omit<
+      CreateHarvestData,
+      'companyId'
+    > | null;
     if (!body) {
       return NextResponse.json({ error: 'Payload inválido' }, { status: 400 });
     }
@@ -34,7 +41,10 @@ export const POST = withAuthGuard(async (_auth, req: NextRequest) => {
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error(`[${CONTEXT}] Erro ao criar despesca:`, error);
+    console.error(
+      `[${CONTEXT}] Erro ao criar despesca:`,
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 });

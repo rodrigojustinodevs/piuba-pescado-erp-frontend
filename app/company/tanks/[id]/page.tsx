@@ -7,7 +7,6 @@ import { useAlertModal } from '@/shared/components/AlertModal';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { formatCapacityLiters } from '@/features/tank/utils/format';
 import { DashboardLayout } from '@/shared/components/Layout';
-import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 import { PencilIcon, TankDocumentIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 import { formatDatePtBR, formatRelativeDateTimePtBR } from '@/shared/utils/dateFormat';
@@ -35,7 +34,7 @@ export default function TankDetailPage() {
 
   if (isLoading) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <LoadingState />
       </DashboardLayout>
     );
@@ -43,7 +42,7 @@ export default function TankDetailPage() {
 
   if (error || !tank) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <NotFoundState message="Tanque não encontrado." backHref="/company/tanks" />
       </DashboardLayout>
     );
@@ -52,7 +51,7 @@ export default function TankDetailPage() {
   const capacity = formatCapacityLiters(tank.capacityLiters);
 
   return (
-    <DashboardLayout user={demoUser}>
+    <DashboardLayout>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         {/* Breadcrumb */}
         <p className="text-sm text-slate-600 mb-4">Dashboard / Tanques / {tank.name}</p>

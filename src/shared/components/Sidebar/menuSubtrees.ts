@@ -24,19 +24,16 @@ export const insumosEstoqueSubmenuItems: MenuItem[] = [
   { id: 'compras', label: 'Compras', href: '/company/purchases' },
   { id: 'fornecedores', label: 'Fornecedores', href: '/company/suppliers' },
   { id: 'estoques', label: 'Estoques', href: '/company/stocks' },
-  { id: 'estoques-transacoes', label: 'Movimentações de estoque', href: '/company/stocks-transations' },
+  { id: 'estoques-transacoes', label: 'Movimentações de estoque', href: '/company/stock-transactions' },
 ];
 
 export const financeiroSubmenuItems: MenuItem[] = [
   { id: 'categorias-financeiras', label: 'Categorias financeiras', href: '/company/financial-categories' },
-  { id: 'contas-financeiras', label: 'Contas financeiras', href: '/company/financial-accounts' },
   { id: 'transacoes-financeiras', label: 'Transações financeiras', href: '/company/financial-transactions' },
 ];
 
 export const comercialSubmenuItems: MenuItem[] = [
   { id: 'clientes', label: 'Clientes', href: '/company/clients' },
-  { id: 'orcamentos', label: 'Orçamentos', href: '/dashboard/orcamentos' },
-  { id: 'pedidos', label: 'Pedidos', href: '/dashboard/pedidos' },
   { id: 'vendas-erp', label: 'Vendas', href: '/company/sales' },
 ];
 
@@ -51,5 +48,4 @@ export const relatoriosSubmenuItems: MenuItem[] = [
 export const administracaoSubmenuItems: MenuItem[] = [
   { id: 'usuarios', label: 'Usuários', href: '/dashboard/usuarios' },
   { id: 'configuracoes', label: 'Configurações', href: '/dashboard/configuracoes' },
-  { id: 'integracoes-iot', label: 'Integrações IoT', href: '/admin/iot-integrations' },
 ];

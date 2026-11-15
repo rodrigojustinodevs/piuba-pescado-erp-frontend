@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useCompany, useDeleteCompany } from '@/features/company';
 import { useAlertModal } from '@/shared/components/AlertModal';
 import { DashboardLayout } from '@/shared/components/Layout';
-import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 import { BuildingIcon, PencilIcon, TrashIcon } from '@/shared/components/icons/AppIcons';
 import { Breadcrumb } from '@/shared/components/ui';
@@ -33,7 +32,7 @@ export default function CompanyDetailPage() {
 
   if (isLoading) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <LoadingState />
       </DashboardLayout>
     );
@@ -41,14 +40,14 @@ export default function CompanyDetailPage() {
 
   if (error || !company) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <NotFoundState message="Empresa não encontrada." backHref="/admin/companies" />
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout user={demoUser}>
+    <DashboardLayout>
       <div className="-m-4 lg:-m-8 bg-[#F8FAFC] px-8 py-6 min-h-full">
         <Breadcrumb
           items={[

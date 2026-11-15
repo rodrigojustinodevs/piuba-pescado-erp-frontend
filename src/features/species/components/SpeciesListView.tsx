@@ -12,7 +12,7 @@ import {
   ListErrorState,
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
-import { Card, CardContent } from '@/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { Fish } from 'lucide-react';
 
 export type SpeciesListViewProps = {
@@ -106,19 +106,21 @@ export function SpeciesListView({
       )}
 
       <Card>
-        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
-          <SearchField
-            search={search}
-            setSearch={setSearch}
-            setCurrentPage={setPage}
-            placeholder="Buscar por nome..."
-          />
+        <CardHeader>
+          <CardTitle className="text-base">Lista de Espécies</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <SearchField
+              search={search}
+              setSearch={setSearch}
+              setCurrentPage={setPage}
+              placeholder="Buscar por nome…"
+            />
+          </div>
+          {renderContent()}
         </CardContent>
       </Card>
-
-      <main className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {renderContent()}
-      </main>
     </div>
   );
 }

@@ -63,7 +63,10 @@ function mapPurchaseResponse(data: ApiPurchasePaymentEnvelope): Purchase {
   return mapApiPurchase(api as ApiPurchase);
 }
 
-const getHandler = withErrorHandling(async function GET(_req: Request, routeContext: ParamsContext) {
+const getHandler = withErrorHandling(async function GET(
+  _req: Request,
+  routeContext: ParamsContext,
+) {
   const params = await routeContext.params;
   const data = await serverHttpClient.request<ApiPaymentsGetResponse>(
     `/api/company/purchase/${params.id}/payments`,
@@ -72,7 +75,10 @@ const getHandler = withErrorHandling(async function GET(_req: Request, routeCont
   return successResponse(mapPaymentsGetResponse(data), 200);
 }, CONTEXT);
 
-const postHandler = withErrorHandling(async function POST(req: Request, routeContext: ParamsContext) {
+const postHandler = withErrorHandling(async function POST(
+  req: Request,
+  routeContext: ParamsContext,
+) {
   const params = await routeContext.params;
   const body = await req.json().catch(() => undefined);
   const data = await serverHttpClient.request<ApiPurchasePaymentEnvelope>(

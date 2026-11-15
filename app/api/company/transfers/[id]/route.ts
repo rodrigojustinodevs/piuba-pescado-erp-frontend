@@ -27,7 +27,10 @@ async function withTransferId(
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error(`Erro ao ${actionLabel} transferência:`, error);
+    console.error(
+      `Erro ao ${actionLabel} transferência:`,
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import type { Tank, TankTableProps } from '../types';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { formatCapacityLiters } from '../utils/format';
 import { DataTable, type DataTableColumn } from '@/shared/components/Table';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 import { Building2, MapPin } from 'lucide-react';
 import { formatDate } from '../../batch/utils/format';
 
@@ -16,10 +16,6 @@ const statusConfig: Record<
   inactive: { label: 'Inativo', variant: 'secondary' },
   maintenance: { label: 'Manutenção', variant: 'destructive' },
 };
-
-function TankTypeBadge({ name }: Readonly<{ name: string | undefined }>) {
-  return <Badge variant="outline">{name}</Badge>;
-}
 
 function buildColumns(showCompanyColumn: boolean): Array<DataTableColumn<Tank>> {
   return [

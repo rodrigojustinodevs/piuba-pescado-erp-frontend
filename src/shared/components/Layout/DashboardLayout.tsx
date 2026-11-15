@@ -28,7 +28,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/shared/components/ui/Collapsible';
-import type { MenuItem, NavGroup, SidebarProps } from '../Sidebar/types';
+import type { MenuItem, NavGroup } from '../Sidebar/types';
 
 // Item ativo: faixa turquesa que some para a direita + barrinha turquesa à esquerda.
 const MENU_BUTTON_CLASS = [
@@ -50,7 +50,6 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
   /** Sobrescreve os grupos do menu (sem filtro de autorização). */
   menuGroups?: NavGroup[];
-  user?: NonNullable<SidebarProps['user']>;
   headerProps?: HeaderProps;
 }
 

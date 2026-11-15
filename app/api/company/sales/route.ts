@@ -15,4 +15,3 @@ export const GET = createListGetHandler<ApiSaleListResponse, SaleListResponse>({
       passthrough: ['client_id', 'batch_id', 'status', 'date_from', 'date_to'],
     }),
 });
-

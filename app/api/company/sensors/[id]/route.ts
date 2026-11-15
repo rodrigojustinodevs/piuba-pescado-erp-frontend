@@ -1,6 +1,10 @@
 import type { ApiSensor, Sensor, UpdateSensorData } from '@/features/sensor/types';
 import { mapApiSensor } from '@/features/sensor/utils/apiMapper';
-import { createDeleteHandler, createDetailGetHandler, createPutHandler } from '@/shared/lib/api/routeFactories';
+import {
+  createDeleteHandler,
+  createDetailGetHandler,
+  createPutHandler,
+} from '@/shared/lib/api/routeFactories';
 
 const CONTEXT = 'Sensors API Proxy';
 

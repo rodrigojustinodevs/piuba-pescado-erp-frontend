@@ -1,6 +1,9 @@
 'use client';
 
-import { FinancialCategoriesListView, useFinancialCategoriesListPage } from '@/features/financialCategory';
+import {
+  FinancialCategoriesListView,
+  useFinancialCategoriesListPage,
+} from '@/features/financialCategory';
 import { DashboardLayout } from '@/shared/components/Layout';
 
 export default function FinancialCategoriesPage() {

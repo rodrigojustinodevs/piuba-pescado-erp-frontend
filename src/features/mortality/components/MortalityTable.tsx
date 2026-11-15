@@ -3,7 +3,7 @@
 import { SEVERITY_LABELS, CAUSE_LABELS, type Mortality, type MortalitySeverity } from '../types';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 
 function formatNumber(value: number): string {
   return Number.isFinite(value) ? String(value) : '—';

@@ -33,7 +33,7 @@ export function useSensorReadingsListPage() {
   const deleteReading = useDeleteSensorReading();
   const { showError } = useAlertModal();
 
-  const sensorReadings = data?.sensorReadings ?? [];
+  const sensorReadings = useMemo(() => data?.sensorReadings ?? [], [data]);
   const sortedReadings = useMemo(
     () => sortSensorReadings(sensorReadings, sortBy),
     [sensorReadings, sortBy],

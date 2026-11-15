@@ -1,4 +1,8 @@
-import type { ApiSensorReading, SensorReading, UpdateSensorReadingData } from '@/features/sensorReading/types';
+import type {
+  ApiSensorReading,
+  SensorReading,
+  UpdateSensorReadingData,
+} from '@/features/sensorReading/types';
 import { mapApiSensorReading } from '@/features/sensorReading/utils/apiMapper';
 import {
   createDeleteHandler,

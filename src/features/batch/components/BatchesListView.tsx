@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/shared/components/ui/Select';
+} from '@/shared/components/ui/Select';
 import { formatNumber } from '@/shared/utils/numberFormat';
 
 export function BatchesListView({

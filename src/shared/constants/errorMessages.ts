@@ -13,10 +13,19 @@ export const ErrorMessages = {
 
   UNAUTHORIZED: 'Não autenticado.',
 
+  INVALID_TOKEN: 'Sessão inválida. Faça login novamente.',
+
+  SESSION_EXPIRED: 'Sessão expirada. Faça login novamente.',
+
+  FORBIDDEN: 'Você não tem permissão para realizar esta ação.',
+
+  TIMEOUT: 'O servidor demorou demais para responder. Tente novamente.',
+
   SERVER_CONNECTION: 'Erro ao conectar com o servidor. Tente novamente.',
 
   SERVER_FAILURE: 'Falha na comunicação com o servidor.',
 
+  TOO_MANY_REQUESTS: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
   UNEXPECTED: 'Ocorreu um erro inesperado.',
 } as const;
 

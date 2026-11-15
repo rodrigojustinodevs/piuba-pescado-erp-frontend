@@ -18,15 +18,11 @@ export default function EditCompanyPage() {
 
   if (isLoading) {
     return (
-      <DashboardLayout
-        user={{
-          name: 'Usuário Demo',
-          email: 'demo@dev.com',
-        }}
-      >
+      <DashboardLayout>
         <div className="text-center py-8">
           <div className="flex items-center justify-center gap-2 text-gray-500">
-            <svg aria-hidden="true"
+            <svg
+              aria-hidden="true"
               className="w-5 h-5 animate-spin"
               fill="none"
               stroke="currentColor"
@@ -48,12 +44,7 @@ export default function EditCompanyPage() {
 
   if (!company) {
     return (
-      <DashboardLayout
-        user={{
-          name: 'Usuário Demo',
-          email: 'demo@dev.com',
-        }}
-      >
+      <DashboardLayout>
         <div className="text-center py-8">
           <p className="text-red-600">Empresa não encontrada.</p>
         </div>
@@ -62,12 +53,7 @@ export default function EditCompanyPage() {
   }
 
   return (
-    <DashboardLayout
-      user={{
-        name: 'Usuário Demo',
-        email: 'demo@dev.com',
-      }}
-    >
+    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -84,7 +70,13 @@ export default function EditCompanyPage() {
               }`}
             >
               {company.active ? (
-                <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -93,7 +85,13 @@ export default function EditCompanyPage() {
                   />
                 </svg>
               ) : (
-                <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

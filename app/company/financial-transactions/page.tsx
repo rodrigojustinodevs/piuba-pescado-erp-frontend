@@ -1,6 +1,9 @@
 'use client';
 
-import { FinancialTransactionsListView, useFinancialTransactionsListPage } from '@/features/financialTransaction';
+import {
+  FinancialTransactionsListView,
+  useFinancialTransactionsListPage,
+} from '@/features/financialTransaction';
 import { DashboardLayout } from '@/shared/components/Layout';
 
 export default function FinancialTransactionsPage() {
@@ -12,4 +15,3 @@ export default function FinancialTransactionsPage() {
     </DashboardLayout>
   );
 }
-

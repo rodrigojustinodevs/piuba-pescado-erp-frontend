@@ -15,14 +15,14 @@ import { SpinnerIcon } from '@/shared/components/icons/AppIcons';
 import { Activity, Eye, HeartPulse, Pencil, Skull, Trash, TrendingDown } from 'lucide-react';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { formatNumber } from '@/shared/utils/numberFormat';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
-import { Select } from '@/src/shared/components/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
+import { Select } from '@/shared/components/ui';
 import {
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/shared/components/ui/Select';
+} from '@/shared/components/ui/Select';
 
 export type MortalitiesListViewProps = {
   page: number;
@@ -48,7 +48,6 @@ export function MortalitiesListView({
   setPage,
   search,
   setSearch,
-  setSortBy,
   data,
   isLoading,
   error,

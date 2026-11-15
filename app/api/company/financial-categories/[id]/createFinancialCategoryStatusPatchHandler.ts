@@ -20,7 +20,10 @@ export function createFinancialCategoryStatusPatchHandler(
   status: 'active' | 'inactive',
   context: string,
 ) {
-  const handler = withErrorHandling(async function PATCH(_req: Request, routeContext: ParamsContext) {
+  const handler = withErrorHandling(async function PATCH(
+    _req: Request,
+    routeContext: ParamsContext,
+  ) {
     const params = await routeContext.params;
     const data = await serverHttpClient.request<ApiFinancialCategoryEnvelope>(
       `/api/company/financial-category/${params.id}/${status}`,
@@ -36,4 +39,3 @@ export function createFinancialCategoryStatusPatchHandler(
     handler(req, routeContext),
   );
 }
-

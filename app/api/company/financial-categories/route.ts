@@ -8,7 +8,10 @@ import { buildPaginationQueryStringWithPassthrough } from '@/shared/lib/paginati
 
 const CONTEXT = 'Financial Categories API Proxy';
 
-export const GET = createListGetHandler<ApiFinancialCategoryListResponse, FinancialCategoryListResponse>({
+export const GET = createListGetHandler<
+  ApiFinancialCategoryListResponse,
+  FinancialCategoryListResponse
+>({
   backendPath: '/api/company/financial-categories',
   mapResponse: mapApiFinancialCategoryList,
   context: CONTEXT,

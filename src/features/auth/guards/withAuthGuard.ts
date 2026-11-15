@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { failureResponse } from '@/shared/lib/api/responseEnvelope';
 import { decodeJWT } from '@/shared/utils/jwt';
 import { extractCompanyIdFromJWT, extractRoleFromJWT } from '@/shared/utils/jwtExtractors';
@@ -43,28 +44,28 @@ export function withAuthGuard<TArgs extends unknown[]>(
     const token = cookieStore.get('auth_token')?.value;
 
     if (!token) {
-      return failureResponse('Unauthorized', 401);
+      return failureResponse(ErrorMessages.UNAUTHORIZED, 401);
     }
 
     const decodedToken = decodeJWT(token);
     if (!decodedToken) {
-      return failureResponse('Invalid token', 401);
+      return failureResponse(ErrorMessages.INVALID_TOKEN, 401);
     }
 
     const expirationMs = getTokenExpirationMs(decodedToken);
     if (expirationMs !== null && expirationMs <= Date.now()) {
-      return failureResponse('Token expired', 401);
+      return failureResponse(ErrorMessages.SESSION_EXPIRED, 401);
     }
 
     const role = extractRoleFromJWT(decodedToken);
     const companyId = extractCompanyIdFromJWT(decodedToken);
 
     if (options.roles?.length && (!role || !options.roles.includes(role))) {
-      return failureResponse('Unauthorized', 401);
+      return failureResponse(ErrorMessages.FORBIDDEN, 403);
     }
 
     if (options.requireCompany && !companyId) {
-      return failureResponse('Unauthorized', 401);
+      return failureResponse(ErrorMessages.FORBIDDEN, 403);
     }
 
     return handler(

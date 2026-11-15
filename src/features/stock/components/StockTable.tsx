@@ -2,7 +2,7 @@
 
 import type { StockLocation } from '../types';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
-import { Progress } from '@/src/shared/components/ui/Progress';
+import { Progress } from '@/shared/components/ui/Progress';
 import { Warehouse, MapPin } from 'lucide-react';
 
 type StockTableProps = {

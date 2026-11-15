@@ -11,7 +11,7 @@ import { StockTransactionTable } from './StockTransactionTable';
 import { StockTransactionCatalogStatsCards } from './StockTransactionCatalogStats';
 import { SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 
 const REFERENCE_TYPE_OPTIONS: Array<{
   value: StockTransactionReferenceType | 'all';

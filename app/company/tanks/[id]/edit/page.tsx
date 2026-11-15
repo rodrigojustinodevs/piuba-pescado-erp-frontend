@@ -6,7 +6,6 @@ import { useTank, useUpdateTank } from '@/features/tank';
 import type { CreateTankFormData } from '@/features/tank';
 
 import { DashboardLayout } from '@/shared/components/Layout';
-import { demoUser } from '@/shared/constants/demoUser';
 import { LoadingState, NotFoundState } from '@/shared/components/states/PageStates';
 import { TankDocumentIcon } from '@/shared/components/icons/AppIcons';
 import { TankPageShell, TankUpsertForm } from '@/features/tank/components';
@@ -36,7 +35,7 @@ export default function EditTankPage() {
 
   if (isLoading) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <LoadingState />
       </DashboardLayout>
     );
@@ -44,14 +43,14 @@ export default function EditTankPage() {
 
   if (!tank) {
     return (
-      <DashboardLayout user={demoUser}>
+      <DashboardLayout>
         <NotFoundState message="Tanque não encontrado." />
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout user={demoUser}>
+    <DashboardLayout>
       <TankPageShell
         breadcrumb="Dashboard / Tanques / Editar"
         title="Tanque"

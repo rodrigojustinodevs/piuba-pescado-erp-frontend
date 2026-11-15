@@ -36,4 +36,3 @@ export const POST = createUpsertHandler<ApiClientCreateResponse, CreateClientDat
     return mapApiClient(api as ApiClient);
   },
 });
-

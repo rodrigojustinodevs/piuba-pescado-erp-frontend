@@ -51,19 +51,11 @@ const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [
 ];
 /** Relatório financeiro: `view-financial-report` não inclui manager. */
 const ROLES_COMPANY_ADMIN_ONLY: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MASTER_ADMIN];
-const REQUIRES_COMPANY = true;
 
 function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({
     ...item,
     allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-  }));
-}
-
-function comercialChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
-  return items.map((item) => ({
-    ...item,
-    allowedRoles: item.id === 'pedidos' ? ROLES_COMPANY_ALL : ROLES_COMPANY_ADMIN_MANAGER,
   }));
 }
 
@@ -121,7 +113,6 @@ const operacaoItems: MenuItemWithAuth[] = [
     id: 'producao',
     label: 'Produção',
     icon: Fish,
-    href: '/company/production',
     allowedRoles: ROLES_COMPANY_ALL,
     children: childrenAllCompanyAdminManager(producaoSubmenuItems),
   },
@@ -147,7 +138,7 @@ const gestaoItems: MenuItemWithAuth[] = [
     label: 'Comercial',
     icon: ShoppingCart,
     allowedRoles: ROLES_COMPANY_ALL,
-    children: comercialChildrenWithAuth(comercialSubmenuItems),
+    children: childrenAllCompanyAdminManager(comercialSubmenuItems),
   },
   {
     id: 'relatorios',

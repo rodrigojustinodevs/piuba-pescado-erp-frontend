@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 import type { Feeding } from '../types';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { formatDateTimeLocal } from '@/shared/utils/dateFormat';

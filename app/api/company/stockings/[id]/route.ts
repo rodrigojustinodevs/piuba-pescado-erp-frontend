@@ -37,7 +37,10 @@ async function stockingRouteRunner(
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error(`[STOCKING_ROUTE_ERROR] Erro ao ${action} (ID: ${id}):`, error);
+    console.error(
+      `[STOCKING_ROUTE_ERROR] Erro ao ${action} (ID: ${id}):`,
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Progress } from '@/src/shared/components/ui/Progress';
+import { Progress } from '@/shared/components/ui/Progress';
 import {
   PAYMENT_STATUS_LABELS,
   PurchasePaymentStatus,
@@ -18,7 +18,7 @@ import {
   type DataTableAction,
   type DataTableColumn,
 } from '@/shared/components/Table';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 import { CheckCircle2, CircleX, PackageCheck } from 'lucide-react';
 
 const STATUS_STYLES: Record<PurchaseStatus, string> = {

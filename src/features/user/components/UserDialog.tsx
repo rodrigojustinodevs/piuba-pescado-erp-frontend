@@ -169,7 +169,7 @@ export function UserDialog({
 
     if (isEdit) {
       if (!user?.id) return;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- role must never be sent by this generic update
+      // role nunca deve ser enviado por este update genérico
       const { role: _role, ...editableFields } = data;
       const payload: UpdateUserData = { id: user.id, ...editableFields };
       updateUser.mutate(payload, {

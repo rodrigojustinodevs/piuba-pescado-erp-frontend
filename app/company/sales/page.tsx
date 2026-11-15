@@ -32,7 +32,9 @@ export default function SalesPage() {
         dialogOpen={state.dialogOpen}
         dialogMode={state.dialogMode}
         selectedSale={state.selectedSale}
-        onDialogOpenChange={(open) => { if (!open) state.closeDialog(); }}
+        onDialogOpenChange={(open) => {
+          if (!open) state.closeDialog();
+        }}
         onDialogSuccess={state.closeDialog}
       />
     </DashboardLayout>
