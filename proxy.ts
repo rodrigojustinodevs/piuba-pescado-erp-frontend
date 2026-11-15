@@ -9,7 +9,7 @@ const MASTER_ROLES = new Set(['master', 'master_admin']);
 
 type JwtPayload = Record<string, unknown>;
 
-// O middleware roda no Edge runtime: sem Buffer, apenas atob.
+// Next 16: o "proxy" substitui o middleware. Mantemos atob (sem Buffer) para o decode do JWT.
 function decodePayload(token: string): JwtPayload | null {
   try {
     const part = token.split('.')[1];
@@ -39,7 +39,7 @@ function redirectToLogin(request: NextRequest, clearCookie: boolean) {
   return response;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
   const { pathname } = request.nextUrl;
 

@@ -36,7 +36,10 @@ async function withTankId(
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error(`Erro ao ${actionLabel} tanque:`, error);
+    console.error(
+      `Erro ao ${actionLabel} tanque:`,
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }

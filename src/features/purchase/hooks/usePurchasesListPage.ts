@@ -83,7 +83,7 @@ export function usePurchasesListPage() {
   const cancelPurchase = useCancelPurchase();
   const { showError, showSuccess } = useAlertModal();
 
-  const allPurchases = data?.purchases ?? [];
+  const allPurchases = useMemo(() => data?.purchases ?? [], [data]);
   const stats = useMemo(() => computeStats(allPurchases), [allPurchases]);
   const filtered = useMemo(
     () => filterPurchases(allPurchases, search, statusFilter, tabFilter),

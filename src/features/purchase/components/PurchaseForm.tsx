@@ -15,8 +15,8 @@ import { createPurchaseFormSchema, type CreatePurchaseFormData } from '../schema
 import { usePurchaseLookupOptions } from '../hooks/usePurchaseLookupOptions';
 import { getPurchaseStatusLabel } from '../utils/purchaseStatusLabels';
 import { formatPurchaseMoney } from '../utils/formatPurchaseMoney';
-import { Separator } from '@/src/shared/components/ui/Separator';
-import { Button } from '@/src/shared/components/ui/Button';
+import { Separator } from '@/shared/components/ui/Separator';
+import { Button } from '@/shared/components/ui/Button';
 
 const STATUS_OPTIONS = [
   { value: 'draft', label: getPurchaseStatusLabel('draft') },

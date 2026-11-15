@@ -30,7 +30,10 @@ export const GET = withAuthGuard(async (_auth) => {
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Erro ao listar tipos de tanque:', error);
+    console.error(
+      'Erro ao listar tipos de tanque:',
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 });

@@ -4,7 +4,7 @@ import type { Harvest, HarvestStatus, HarvestType } from '../types';
 import { HARVEST_DESTINATION_LABELS, HARVEST_STATUS_LABELS, HARVEST_TYPE_LABELS } from '../types';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { Calendar, Package, User } from 'lucide-react';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 
 type Props = { harvest: Harvest | null };
 

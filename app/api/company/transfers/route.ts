@@ -10,10 +10,7 @@ import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQu
 
 const CONTEXT = 'Transfers API Proxy';
 
-export const GET = createListGetHandler<
-  ApiTransferListResponse,
-  TransferListResponse
->({
+export const GET = createListGetHandler<ApiTransferListResponse, TransferListResponse>({
   backendPath: '/api/company/transfers',
   mapResponse: mapApiTransferList,
   context: CONTEXT,

@@ -4,8 +4,8 @@ import { Building2, Mail, Phone, User, FileText, Star } from 'lucide-react';
 import type { Supplier, SupplierStatus } from '../types';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
-import { Separator } from '@/src/shared/components/ui/Separator';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Separator } from '@/shared/components/ui/Separator';
+import { Badge } from '@/shared/components/ui/Badge';
 import { formatCurrency } from '@/shared/utils/numberFormat';
 import { DetailItem } from '@/shared/components/ui/DetailItem';
 

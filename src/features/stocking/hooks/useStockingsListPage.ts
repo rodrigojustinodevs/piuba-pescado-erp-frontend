@@ -19,7 +19,7 @@ export function useStockingsListPage() {
   const deleteStocking = useDeleteStocking();
   const { showError } = useAlertModal();
 
-  const stockings = data?.stockings ?? [];
+  const stockings = useMemo(() => data?.stockings ?? [], [data]);
 
   /** Mapa batchId -> label derivado da própria listagem (API já retorna batch em cada item) */
   const batchMap = useMemo(() => {

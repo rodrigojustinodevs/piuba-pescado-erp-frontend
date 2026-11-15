@@ -16,7 +16,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { Eye, Pencil, Plus, Trash } from 'lucide-react';
 import { SearchField } from '@/shared/components/list';
 import { Pagination } from '@/shared/components/list/Pagination';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 
 type TypeFilter = FinancialCategoryTypeStrict | 'all';
 

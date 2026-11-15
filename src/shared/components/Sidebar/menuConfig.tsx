@@ -51,7 +51,6 @@ const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [
 ];
 /** Relatório financeiro: `view-financial-report` não inclui manager. */
 const ROLES_COMPANY_ADMIN_ONLY: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MASTER_ADMIN];
-const REQUIRES_COMPANY = true;
 
 function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({

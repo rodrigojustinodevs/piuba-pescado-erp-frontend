@@ -25,6 +25,7 @@ export const ErrorMessages = {
 
   SERVER_FAILURE: 'Falha na comunicação com o servidor.',
 
+  TOO_MANY_REQUESTS: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
   UNEXPECTED: 'Ocorreu um erro inesperado.',
 } as const;
 

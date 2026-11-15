@@ -16,11 +16,13 @@ export const GET = createDetailGetHandler<ApiSpeciesResponse, Species, RoutePara
   mapResponse: (data): Species => mapApiSpecies(data.response),
 });
 
-export const PUT = createPutHandler<ApiSpeciesResponse, Omit<CreateSpeciesData, 'id'>, RouteParams>({
-  backendPathBuilder: (params) => `/api/company/species/${params.id}`,
-  context: CONTEXT,
-  mapResponse: (data): Species => mapApiSpecies(data.response),
-});
+export const PUT = createPutHandler<ApiSpeciesResponse, Omit<CreateSpeciesData, 'id'>, RouteParams>(
+  {
+    backendPathBuilder: (params) => `/api/company/species/${params.id}`,
+    context: CONTEXT,
+    mapResponse: (data): Species => mapApiSpecies(data.response),
+  },
+);
 
 export const DELETE = createDeleteHandler<RouteParams>({
   backendPathBuilder: (params) => `/api/company/species/${params.id}`,

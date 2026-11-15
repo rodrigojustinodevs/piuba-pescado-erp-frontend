@@ -19,8 +19,8 @@ export const stockTransactionService = {
       { skipEmptyString: true },
     );
     const endpoint = queryString
-      ? `/api/company/stocks-transations?${queryString}`
-      : '/api/company/stocks-transations';
+      ? `/api/company/stock-transactions?${queryString}`
+      : '/api/company/stock-transactions';
     return browserHttpClient.get<StockTransactionListResponse>(endpoint);
   },
 };

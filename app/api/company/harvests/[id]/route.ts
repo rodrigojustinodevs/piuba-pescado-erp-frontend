@@ -27,7 +27,10 @@ async function withHarvestId(
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error(`Erro ao ${actionLabel} despesca:`, error);
+    console.error(
+      `Erro ao ${actionLabel} despesca:`,
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 }

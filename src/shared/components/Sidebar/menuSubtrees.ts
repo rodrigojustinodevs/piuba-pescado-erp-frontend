@@ -24,7 +24,7 @@ export const insumosEstoqueSubmenuItems: MenuItem[] = [
   { id: 'compras', label: 'Compras', href: '/company/purchases' },
   { id: 'fornecedores', label: 'Fornecedores', href: '/company/suppliers' },
   { id: 'estoques', label: 'Estoques', href: '/company/stocks' },
-  { id: 'estoques-transacoes', label: 'Movimentações de estoque', href: '/company/stocks-transations' },
+  { id: 'estoques-transacoes', label: 'Movimentações de estoque', href: '/company/stock-transactions' },
 ];
 
 export const financeiroSubmenuItems: MenuItem[] = [

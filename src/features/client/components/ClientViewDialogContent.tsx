@@ -15,8 +15,8 @@ import { CLIENT_STATUS_LABELS, type Client, type ClientStatus } from '../types';
 import { maskCpfCnpj } from '@/shared/utils/documentMask';
 import { maskPhone } from '@/shared/utils/phoneMask';
 import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
-import { Separator } from '@/src/shared/components/ui/Separator';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Separator } from '@/shared/components/ui/Separator';
+import { Badge } from '@/shared/components/ui/Badge';
 import { DetailItem } from '@/shared/components/ui/DetailItem';
 
 type ClientViewDialogContentProps = {

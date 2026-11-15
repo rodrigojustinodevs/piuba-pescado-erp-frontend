@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import type { FinancialTransaction } from '../types';
 import { formatCalendarDatePtBR, formatNullableDatePtBR } from '@/shared/utils/dateFormat';
-import { Separator } from '@/src/shared/components/ui/Separator';
+import { Separator } from '@/shared/components/ui/Separator';
 import { formatCurrency } from '@/shared/utils/numberFormat';
 import { DetailItem } from '@/shared/components/ui/DetailItem';
 

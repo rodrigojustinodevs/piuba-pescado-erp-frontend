@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-// Não dependem do backend: validam middleware, headers e páginas de erro.
+// Não dependem do backend: validam o proxy, headers e páginas de erro.
 test.describe('proteção de rotas', () => {
   for (const path of ['/dashboard', '/company/tanks', '/admin/companies', '/alerts']) {
     test(`${path} sem sessão redireciona para /login`, async ({ page }) => {
@@ -42,5 +42,15 @@ test.describe('headers e páginas de erro', () => {
     const res = await page.goto('/rota-que-nao-existe');
     expect(res?.status()).toBe(404);
     await expect(page.getByRole('heading', { name: 'Página não encontrada' })).toBeVisible();
+  });
+});
+
+test.describe('URLs legadas', () => {
+  test('/company/stocks-transations redireciona permanentemente para a grafia correta', async ({
+    request,
+  }) => {
+    const res = await request.get('/company/stocks-transations', { maxRedirects: 0 });
+    expect(res.status()).toBe(308);
+    expect(res.headers()['location']).toMatch(/\/company\/stock-transactions$/);
   });
 });

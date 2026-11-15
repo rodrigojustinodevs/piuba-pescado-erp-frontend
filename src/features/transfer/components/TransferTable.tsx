@@ -5,7 +5,7 @@ import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { formatNumber } from '@/shared/utils/numberFormat';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { ArrowRight } from 'lucide-react';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 
 const STATUS_STYLES: Record<TransferStatus, string> = {
   completed: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30',

@@ -69,8 +69,6 @@ export function PurchasesListView({
   stats,
   handleDelete,
   isDeleting,
-  handleReceive,
-  isReceiving,
   handleCancel,
   isCancelling,
 }: Readonly<PurchasesListViewProps>) {

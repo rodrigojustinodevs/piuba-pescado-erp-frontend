@@ -7,9 +7,9 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts', 'middleware.test.ts'],
+    include: ['src/**/*.test.ts', 'proxy.test.ts'],
     exclude: ['node_modules', '.next', 'e2e'],
     env: { TZ: 'America/Sao_Paulo' },
-    coverage: { provider: 'v8', include: ['src/**/*.ts', 'middleware.ts'] },
+    coverage: { provider: 'v8', include: ['src/**/*.ts', 'proxy.ts'] },
   },
 });

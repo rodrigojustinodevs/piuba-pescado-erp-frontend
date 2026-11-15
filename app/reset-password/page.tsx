@@ -51,7 +51,10 @@ function ResetPasswordForm() {
           Link de redefinição inválido ou incompleto. Solicite um novo.
         </p>
         <p className="mt-6 text-center text-sm">
-          <Link href="/forgot-password" className="font-medium text-primary hover:underline">
+          <Link
+            href="/forgot-password"
+            className="font-medium text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
             Solicitar novo link
           </Link>
         </p>

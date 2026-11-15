@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 import type { Sensor, SensorDialogMode, SensorType } from '../types';
 import { type DataTableAction } from '@/shared/components/Table';
 import {
@@ -17,16 +17,16 @@ import {
   Pencil,
   Trash2,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/src/shared/components/DropdownMenu/dropdown-menu';
-import { Button } from '@/src/shared/components/ui/Button';
-import { Progress } from '@/src/shared/components/ui/Progress';
-import { formatNullableDatePtBR } from '@/src/shared/utils/dateFormat';
+} from '@/shared/components/DropdownMenu/dropdown-menu';
+import { Button } from '@/shared/components/ui/Button';
+import { Progress } from '@/shared/components/ui/Progress';
+import { formatNullableDatePtBR } from '@/shared/utils/dateFormat';
 import { getSensorTypeLabel } from '../utils/sensorDisplayLabels';
 interface SensorCardsProps {
   sensors: Sensor[];

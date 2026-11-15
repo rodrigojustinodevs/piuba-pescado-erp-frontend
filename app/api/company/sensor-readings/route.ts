@@ -4,7 +4,10 @@ import type {
   CreateSensorReadingData,
   SensorReadingListResponse,
 } from '@/features/sensorReading/types';
-import { mapApiSensorReading, mapApiSensorReadingList } from '@/features/sensorReading/utils/apiMapper';
+import {
+  mapApiSensorReading,
+  mapApiSensorReadingList,
+} from '@/features/sensorReading/utils/apiMapper';
 import { createListGetHandler, createUpsertHandler } from '@/shared/lib/api/routeFactories';
 import { buildPaginationQueryString } from '@/shared/lib/pagination/paginationQuery';
 

@@ -48,6 +48,7 @@ export default function ForgotPasswordPage() {
                 id="email"
                 placeholder="seu@email.com"
                 autoComplete="email"
+                spellCheck={false}
                 inputClassName="pl-10"
                 {...register('email')}
                 error={errors.email?.message}
@@ -68,7 +69,10 @@ export default function ForgotPasswordPage() {
         </form>
       )}
       <p className="mt-6 text-center text-sm">
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link
+          href="/login"
+          className="font-medium text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
           Voltar para o login
         </Link>
       </p>

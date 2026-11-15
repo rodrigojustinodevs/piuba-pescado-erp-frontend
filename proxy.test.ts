@@ -1,19 +1,19 @@
 import { NextRequest } from 'next/server';
 import { describe, expect, it } from 'vitest';
 import { fakeJwt, inSeconds } from '@/test/jwt';
-import { middleware } from './middleware';
+import { proxy } from './proxy';
 
 function run(path: string, token?: string) {
   const request = new NextRequest(`http://localhost${path}`, {
     headers: token ? { cookie: `auth_token=${token}` } : {},
   });
-  return middleware(request);
+  return proxy(request);
 }
 
 const location = (res: Response) => res.headers.get('location');
 const valid = (role: string) => fakeJwt({ roles: [role], exp: inSeconds(600) });
 
-describe('middleware', () => {
+describe('proxy', () => {
   it.each(['/dashboard', '/company/tanks', '/admin/companies', '/alerts'])(
     'redireciona %s ao login sem cookie',
     (path) => {

@@ -4,7 +4,7 @@ import type { Batch, BatchCultivation } from '../types';
 import { DataTable, DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { BatchStatusBadge } from './BatchStatusBadge';
 import { formatDate } from '../utils/format';
-import { Badge } from '@/src/shared/components/ui/Badge';
+import { Badge } from '@/shared/components/ui/Badge';
 import { formatNumber } from '@/shared/utils/numberFormat';
 function CultivationBadge({ label }: Readonly<{ label: string }>) {
   return <Badge variant="outline">{label}</Badge>;

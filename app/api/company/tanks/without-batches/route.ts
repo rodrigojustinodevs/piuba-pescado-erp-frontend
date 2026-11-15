@@ -30,7 +30,10 @@ export const GET = withAuthGuard(async (_auth, req: NextRequest) => {
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Erro ao listar tanques sem lotes:', error);
+    console.error(
+      'Erro ao listar tanques sem lotes:',
+      error instanceof Error ? error.message : 'erro desconhecido',
+    );
     return NextResponse.json({ error: ErrorMessages.SERVER_CONNECTION }, { status: 500 });
   }
 });

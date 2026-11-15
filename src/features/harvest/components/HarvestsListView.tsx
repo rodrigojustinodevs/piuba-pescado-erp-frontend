@@ -12,7 +12,7 @@ import {
   ListLoadingState,
 } from '@/shared/components/states/ListStates';
 import { DollarSign, Fish, Percent, Scale, TrendingUp, Waves } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/shared/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
 import { StatCard } from '@/shared/components/Cards';
 import { formatNumber } from '@/shared/utils/numberFormat';
 import type { DataTableAction } from '@/shared/components/Table';
@@ -23,7 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/src/shared/components/ui/Select';
+} from '@/shared/components/ui/Select';
 
 export type HarvestsListViewProps = {
   page: number;

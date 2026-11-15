@@ -24,11 +24,23 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
   ...(isDev
     ? []
-    : [{ key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' }]),
+    : [
+        { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+      ]),
 ];
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    // URL antiga (com erro de digitação) mantida para favoritos e links já compartilhados.
+    return [
+      {
+        source: '/company/stocks-transations',
+        destination: '/company/stock-transactions',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },

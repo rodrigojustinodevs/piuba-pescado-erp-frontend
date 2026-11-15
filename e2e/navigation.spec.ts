@@ -20,6 +20,7 @@ const ROUTES = [
   '/company/purchases',
   '/company/suppliers',
   '/company/stocks',
+  '/company/stock-transactions',
   '/company/clients',
   '/company/sales',
   '/company/financial-categories',

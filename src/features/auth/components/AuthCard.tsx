@@ -11,7 +11,9 @@ export function AuthCard({ title, description, children }: AuthCardProps) {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Fish className="h-5 w-5" aria-hidden="true" />
           </div>
-          <p className="text-base font-bold text-gray-900">Piúba Pescado</p>
+          <p translate="no" className="text-base font-bold text-gray-900">
+            Piúba Pescado
+          </p>
         </div>
         <header className="mb-6">
           <h1 className="text-balance text-xl font-bold text-gray-900">{title}</h1>

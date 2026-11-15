@@ -128,7 +128,7 @@ export function HarvestForm({
           addRequiredCompanyIssue(ctx);
         }
       }),
-    [baseSchema, showCompanyField],
+    [baseSchema, showCompanyField, isEditMode],
   );
 
   const emptyValues: CreateHarvestFormData = {

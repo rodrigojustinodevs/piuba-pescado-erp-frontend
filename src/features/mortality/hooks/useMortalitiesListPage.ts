@@ -31,7 +31,7 @@ export function useMortalitiesListPage() {
   const deleteMortality = useDeleteMortality();
   const { showError } = useAlertModal();
 
-  const mortalities = data?.mortalities ?? [];
+  const mortalities = useMemo(() => data?.mortalities ?? [], [data]);
   const sortedMortalities = useMemo(
     () => sortMortalities(mortalities, sortBy),
     [mortalities, sortBy],

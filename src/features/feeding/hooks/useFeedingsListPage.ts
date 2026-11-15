@@ -32,7 +32,7 @@ export function useFeedingsListPage() {
   const deleteFeeding = useDeleteFeeding();
   const { showError } = useAlertModal();
 
-  const feedings = data?.feedings ?? [];
+  const feedings = useMemo(() => data?.feedings ?? [], [data]);
   const sortedFeedings = useMemo(() => sortFeedings(feedings, sortBy), [feedings, sortBy]);
 
   const handleDelete = useCallback(

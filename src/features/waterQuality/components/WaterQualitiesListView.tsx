@@ -39,7 +39,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { Sensor, SensorType } from '../../sensor/types';
-import { Progress } from '@/src/shared/components/ui/Progress';
+import { Progress } from '@/shared/components/ui/Progress';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/components/ui/Tabs';
 import { WaterQualityTable } from './WaterQualityTable';
 
@@ -127,8 +127,6 @@ export function WaterQualitiesListView({
   setPage,
   search,
   setSearch,
-  sortBy,
-  setSortBy,
   data,
   isLoading,
   error,

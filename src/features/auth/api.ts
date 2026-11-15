@@ -40,6 +40,10 @@ authApi.interceptors.response.use(
     const status = error.response.status;
     const url = String(error.config?.url ?? '');
 
+    if (status === 429) {
+      return Promise.reject(new Error(ErrorMessages.TOO_MANY_REQUESTS));
+    }
+
     if (url.includes('password')) {
       const apiMessage = (error.response.data as { error?: string } | undefined)?.error;
       return Promise.reject(

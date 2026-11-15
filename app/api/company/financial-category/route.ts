@@ -1,10 +1,15 @@
-import type { ApiFinancialCategory, CreateFinancialCategoryData } from '@/features/financialCategory/types';
+import type {
+  ApiFinancialCategory,
+  CreateFinancialCategoryData,
+} from '@/features/financialCategory/types';
 import { mapApiFinancialCategory } from '@/features/financialCategory/utils/apiMapper';
 import { createUpsertHandler } from '@/shared/lib/api/routeFactories';
 
 const CONTEXT = 'Financial Category API Proxy';
 
-type ApiFinancialCategoryCreateResponse = { response?: ApiFinancialCategory } | ApiFinancialCategory;
+type ApiFinancialCategoryCreateResponse =
+  | { response?: ApiFinancialCategory }
+  | ApiFinancialCategory;
 
 export const POST = createUpsertHandler<
   ApiFinancialCategoryCreateResponse,

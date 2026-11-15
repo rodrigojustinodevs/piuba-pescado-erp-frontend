@@ -1,4 +1,8 @@
-import type { ApiStockLocation, StockLocation, UpdateStockLocationData } from '@/features/stock/types';
+import type {
+  ApiStockLocation,
+  StockLocation,
+  UpdateStockLocationData,
+} from '@/features/stock/types';
 import { mapApiStockLocation } from '@/features/stock/utils/apiMapper';
 import {
   createDeleteHandler,
@@ -29,7 +33,11 @@ export const GET = createDetailGetHandler<ApiStockDetailEnvelope, StockLocation,
   mapResponse: mapDetailResponse,
 });
 
-export const PUT = createPutHandler<ApiStockDetailEnvelope, UpdateStockLocationData, { id: string }>({
+export const PUT = createPutHandler<
+  ApiStockDetailEnvelope,
+  UpdateStockLocationData,
+  { id: string }
+>({
   backendPathBuilder: (params) => `/api/company/stock/${params.id}`,
   context: CONTEXT,
   mapBody: mapUpdateBody,

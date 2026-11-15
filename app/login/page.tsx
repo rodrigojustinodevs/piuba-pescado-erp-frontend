@@ -19,18 +19,20 @@ function LoginHero() {
 
       <div className="relative flex items-center gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Fish className="h-5 w-5" />
+          <Fish className="h-5 w-5" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-base font-bold leading-tight text-white">Piúba Pescado</p>
+          <p translate="no" className="text-base font-bold leading-tight text-white">
+            Piúba Pescado
+          </p>
           <p className="text-xs leading-tight text-white/60">Aquicultura Inteligente</p>
         </div>
       </div>
 
       <div className="relative">
-        <h1 className="text-3xl font-bold leading-tight text-white md:text-4xl">
+        <p className="text-balance text-3xl font-bold leading-tight text-white md:text-4xl">
           Gestão completa da sua fazenda aquícola em um só lugar.
-        </h1>
+        </p>
         <p className="mt-4 text-sm leading-relaxed text-white/70">
           Monitore viveiros, controle a produção, gerencie vendas e acompanhe indicadores em tempo
           real com a plataforma Piúba.
@@ -63,7 +65,7 @@ export default function LoginPage() {
       <section className="flex w-full flex-col items-center justify-center p-6 md:w-1/2">
         <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
           <header className="mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Acesse sua conta</h2>
+            <h1 className="text-balance text-xl font-bold text-gray-900">Acesse sua conta</h1>
             <p className="mt-1 text-sm text-gray-500">Entre com suas credenciais para continuar.</p>
           </header>
 
@@ -73,10 +75,15 @@ export default function LoginPage() {
                 E-mail
               </label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Mail
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                  aria-hidden="true"
+                />
                 <EmailInput
                   id="email"
                   placeholder="seu@email.com"
+                  autoComplete="username"
+                  spellCheck={false}
                   inputClassName="pl-10"
                   {...register('email')}
                   error={errors.email?.message}
@@ -91,16 +98,20 @@ export default function LoginPage() {
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-primary hover:underline focus:outline-none"
+                  className="text-sm text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   Esqueceu a senha?
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Lock
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                  aria-hidden="true"
+                />
                 <PasswordInput
                   id="password"
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   inputClassName="pl-10"
                   {...register('password')}
                   error={errors.password?.message}
@@ -118,14 +129,12 @@ export default function LoginPage() {
             )}
 
             <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? 'Autenticando...' : 'Entrar'}
+              {isLoading ? 'Autenticando…' : 'Entrar'}
             </Button>
 
             <p className="text-center text-sm text-gray-500">
               Não tem uma conta?{' '}
-              <span className="font-medium text-primary hover:underline">
-                Fale com seu administrador
-              </span>
+              <span className="font-medium text-primary">Fale com seu administrador</span>
             </p>
           </form>
         </div>
