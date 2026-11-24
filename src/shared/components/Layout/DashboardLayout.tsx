@@ -29,6 +29,8 @@ import {
   CollapsibleTrigger,
 } from '@/shared/components/ui/Collapsible';
 import type { MenuItem, NavGroup } from '../Sidebar/types';
+import { BillingStatusBanner } from '@/features/billing/components/BillingStatusBanner';
+import { BillingGateDialog } from '@/features/billing/components/BillingGateDialog';
 
 // Item ativo: faixa turquesa que some para a direita + barrinha turquesa à esquerda.
 const MENU_BUTTON_CLASS = [
@@ -119,7 +121,11 @@ function SidebarItemSimple({ item, pathname }: Readonly<SidebarItemNavProps>) {
   );
 }
 
-export function DashboardLayout({ children, menuGroups, headerProps }: Readonly<DashboardLayoutProps>) {
+export function DashboardLayout({
+  children,
+  menuGroups,
+  headerProps,
+}: Readonly<DashboardLayoutProps>) {
   // Filtra os grupos de menu baseado nas permissões do usuário
   const authorizedMenuGroups = useMenuGroupsAuthorization(menuGroupsConfig);
   // Se menuGroups for passado como prop, usa ele diretamente (sem filtro de autorização)
@@ -133,11 +139,13 @@ export function DashboardLayout({ children, menuGroups, headerProps }: Readonly<
         {/* Área principal: SidebarInset é o par peer do Sidebar (shadcn) e ocupa o restante da largura */}
         <SidebarInset className="min-h-0 flex-1 flex-col overflow-hidden">
           <Header {...headerProps} />
+          <BillingStatusBanner />
 
           <div className="min-h-0 flex-1 overflow-y-auto bg-[#f9fafb]">
             <div className="w-full p-4 lg:p-8">{children}</div>
           </div>
         </SidebarInset>
+        <BillingGateDialog />
       </div>
     </SidebarProvider>
   );

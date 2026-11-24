@@ -50,8 +50,8 @@ export class HttpClient {
     const response = await this.send(url, { ...fetchInit, headers, signal });
 
     if (!response.ok) {
-      const { message, fieldErrors } = await extractErrorDetails(response);
-      throw new HttpError(message, response.status, fieldErrors);
+      const { message, fieldErrors, ...extra } = await extractErrorDetails(response);
+      throw new HttpError(message, response.status, fieldErrors, extra);
     }
 
     if (!expectJson || response.status === 204) {
