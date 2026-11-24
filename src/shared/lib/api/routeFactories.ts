@@ -199,3 +199,30 @@ export function createUpsertHandler<TApi, TBody>(config: UpsertConfig<TApi, TBod
 
   return withAuthGuard(async (_auth, req: Request) => handler(req));
 }
+
+export type JsonMutationConfig<TApi> = {
+  backendPath: string;
+  method: 'POST' | 'PATCH' | 'DELETE';
+  context: string;
+  /** Status repassado ao browser em caso de sucesso (ex.: 201 na criação). */
+  successStatus?: number;
+  mapBody?: (payload: unknown) => unknown;
+  mapResponse?: (data: TApi) => unknown;
+};
+
+/** Escrita em recurso singular sem params de rota (corpo opcional, resposta JSON). */
+export function createJsonMutationHandler<TApi>(config: JsonMutationConfig<TApi>) {
+  const handler = withErrorHandling(async function MUTATE(req: Request) {
+    const raw = await req.text();
+    const payload: unknown = raw ? JSON.parse(raw) : undefined;
+    const requestBody = config.mapBody ? config.mapBody(payload) : payload;
+    const data = await serverHttpClient.request<TApi>(config.backendPath, {
+      method: config.method,
+      body: requestBody === undefined ? undefined : JSON.stringify(requestBody),
+    });
+    const responseData = config.mapResponse ? config.mapResponse(data) : data;
+    return successResponse(responseData, config.successStatus ?? 200);
+  }, config.context);
+
+  return withAuthGuard(async (_auth, req: Request) => handler(req));
+}

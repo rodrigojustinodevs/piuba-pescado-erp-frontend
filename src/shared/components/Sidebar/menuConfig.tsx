@@ -11,6 +11,7 @@ import {
   viveirosSubmenuItems,
 } from './menuSubtrees';
 import { UserRole, type UserRoleType } from '@/shared/types/auth';
+import { BILLING_ROLES } from '@/features/billing/utils/permissions';
 
 import {
   LayoutDashboard,
@@ -152,8 +153,18 @@ const gestaoItems: MenuItemWithAuth[] = [
     label: 'Administração',
     icon: Settings,
     href: '/dashboard/configuracoes',
-    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-    children: childrenAllCompanyAdminManager(administracaoSubmenuItems),
+    // `admin` entra só pela Assinatura; os demais filhos mantêm seus papéis.
+    allowedRoles: [...ROLES_COMPANY_ADMIN_MANAGER, UserRole.ADMIN],
+    children: [
+      ...childrenAllCompanyAdminManager(administracaoSubmenuItems),
+      {
+        id: 'assinatura',
+        label: 'Assinatura',
+        href: '/dashboard/assinatura',
+        allowedRoles: BILLING_ROLES,
+        requiresCompany: true,
+      },
+    ],
   },
 ];
 

@@ -13,7 +13,11 @@ export function withErrorHandling<TArgs extends unknown[]>(
       return await handler(...args);
     } catch (error) {
       if (error instanceof HttpError) {
-        return failureResponse(error.message, error.status, error.fieldErrors);
+        return failureResponse(error.message, error.status, error.fieldErrors, {
+          code: error.code,
+          details: error.details,
+          retryAfterSeconds: error.retryAfterSeconds,
+        });
       }
 
       console.error(`[${context}]`, {
