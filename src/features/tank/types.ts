@@ -3,7 +3,6 @@
  */
 
 import type { ApiListResponse, ApiResponse } from '@/shared/types/api';
-import type { DataTableAction } from '@/shared/components/Table';
 
 export interface TankCompany {
   id?: string;
@@ -90,11 +89,3 @@ export interface TankListResponse {
 }
 
 export type TankDialogMode = 'create' | 'edit' | 'view';
-
-export interface TankTableProps {
-  tanks: Tank[];
-  openTankDialog: (mode: TankDialogMode, tank: Tank | null) => void;
-  handleTankDelete: (id: string, name: string) => void;
-  rowActions: (tank: Tank) => DataTableAction[];
-  isDeleting?: boolean;
-}

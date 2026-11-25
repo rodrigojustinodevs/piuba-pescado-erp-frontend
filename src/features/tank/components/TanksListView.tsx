@@ -1,10 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { Activity, CirclePause, Droplets, Wrench } from 'lucide-react';
 import type { Tank, TankListResponse, TankDialogMode } from '../types';
-import { TankTable } from './TankTable';
+import type { StatusFilter } from '@/shared/hooks/useListPageState';
+import { TankCards } from './TankCards';
 import { TankDialog } from './TankDialog';
-import { ListHeader, Pagination, SearchField, StatusFilterTabs } from '@/shared/components/list';
+import { TankDetailsDialog } from './TankDetailsDialog';
+import { useTankTypes } from '../hooks/useTankTypes';
+import { TANK_STATUS_FILTER_OPTIONS } from '../utils/tankDisplayLabels';
+import { ListHeader, Pagination, SearchField } from '@/shared/components/list';
 import {
   ListEmptyState,
   ListErrorState,
@@ -12,25 +17,33 @@ import {
 } from '@/shared/components/states/ListStates';
 import { StatCard } from '@/shared/components/Cards/StatCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
-import { Building, Droplets, Eye, Pencil, Trash } from 'lucide-react';
-type TankFilter = 'all' | 'active' | 'inactive' | 'maintenance';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/Select';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
 
 export type TanksListViewProps = {
   page: number;
   setPage: (next: number) => void;
   search: string;
   setSearch: (next: string) => void;
-  filter: TankFilter;
-  setFilter: (next: TankFilter) => void;
-  sortBy: string;
-  setSortBy: (next: string) => void;
+  filter: StatusFilter;
+  setFilter: (next: StatusFilter) => void;
+  tankTypeFilter: string;
+  setTankTypeFilter: (next: string) => void;
   data: TankListResponse | undefined;
   isLoading: boolean;
   error: unknown;
   filteredTanks: Tank[];
   stats: {
     total: number;
+    active: number;
     inactive: number;
+    maintenance: number;
   };
   handleDelete: (id: string, name: string) => void;
   isDeleting: boolean;
@@ -44,6 +57,8 @@ export function TanksListView({
   setSearch,
   filter,
   setFilter,
+  tankTypeFilter,
+  setTankTypeFilter,
   data,
   isLoading,
   error,
@@ -56,12 +71,30 @@ export function TanksListView({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<TankDialogMode>('create');
   const [selectedTank, setSelectedTank] = useState<Tank | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [detailsTank, setDetailsTank] = useState<Tank | null>(null);
+  const { isMaster } = useAuthContext();
+  const { data: tankTypesData } = useTankTypes();
+  const tankTypes = tankTypesData?.tankTypes ?? [];
 
   const openTankDialog = useCallback((mode: TankDialogMode, tank: Tank | null = null) => {
+    if (mode === 'view') {
+      setDetailsTank(tank);
+      setDetailsOpen(true);
+      return;
+    }
     setDialogMode(mode);
     setSelectedTank(tank);
     setDialogOpen(true);
   }, []);
+
+  const handleEditFromDetails = useCallback(
+    (tank: Tank) => {
+      setDetailsOpen(false);
+      openTankDialog('edit', tank);
+    },
+    [openTankDialog],
+  );
 
   useEffect(() => {
     if (autoOpenCreate) {
@@ -69,28 +102,6 @@ export function TanksListView({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoOpenCreate]);
-
-  const getRowActions = useCallback(
-    (tank: Tank) => [
-      {
-        label: 'Ver detalhes',
-        onClick: () => openTankDialog('view', tank),
-        icon: <Eye className="h-4 w-4" />,
-      },
-      {
-        label: 'Editar',
-        onClick: () => openTankDialog('edit', tank),
-        icon: <Pencil className="h-4 w-4" />,
-      },
-      {
-        label: 'Excluir',
-        onClick: () => handleDelete(tank.id, tank.name),
-        variant: 'danger' as const,
-        icon: <Trash className="h-4 w-4" />,
-      },
-    ],
-    [handleDelete, openTankDialog],
-  );
 
   const renderContent = () => {
     if (isLoading) return <ListLoadingState />;
@@ -105,12 +116,12 @@ export function TanksListView({
 
     return (
       <>
-        <TankTable
+        <TankCards
           tanks={filteredTanks}
-          openTankDialog={openTankDialog}
-          handleTankDelete={handleDelete}
+          isMaster={isMaster()}
           isDeleting={isDeleting}
-          rowActions={getRowActions}
+          openTankDialog={openTankDialog}
+          onDelete={handleDelete}
         />
         {data && data.total > data.limit && (
           <Pagination
@@ -135,60 +146,91 @@ export function TanksListView({
         dialogLabel="Novo Tanque"
         setDialogOpen={() => openTankDialog('create')}
       />
-      <TankDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onSuccess={() => {
-          setDialogOpen(false);
-        }}
-        mode={dialogMode}
-        tank={selectedTank}
-      />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Total"
-          value={data?.total ?? 0}
-          icon={<Building className="h-4 w-4 text-muted-foreground" />}
+          label="Total de Tanques"
+          value={stats.total}
+          icon={<Droplets className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
         />
         <StatCard
-          label="Ativas"
-          value={data?.tanks.filter((t) => t.status === 'active').length ?? 0}
-          icon={<div className="h-2 w-2 rounded-full bg-emerald-500" />}
+          label="Ativos"
+          value={stats.active}
+          icon={<Activity className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
         />
         <StatCard
-          label="Inativas / Suspensas"
-          value={data?.tanks.filter((t) => t.status !== 'active').length ?? 0}
-          icon={<div className="h-2 w-2 rounded-full bg-destructive" />}
+          label="Inativos"
+          value={stats.inactive}
+          icon={<CirclePause className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
+        />
+        <StatCard
+          label="Em Manutenção"
+          value={stats.maintenance}
+          icon={<Wrench className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
         />
       </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Lista de Tanques</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-center">
-            <SearchField
-              search={search}
-              setSearch={setSearch}
-              setCurrentPage={setPage}
-              placeholder="Buscar por nome, tipo ou localização…"
-            />
-
-            <StatusFilterTabs
-              filter={filter}
-              onChange={setFilter}
-              inactiveCount={stats.inactive}
-              labels={{
-                all: 'Todas',
-                active: 'Ativas',
-                inactive: 'Inativas',
-              }}
-            />
+            <div className="relative flex-1">
+              <SearchField
+                search={search}
+                setSearch={setSearch}
+                setCurrentPage={setPage}
+                placeholder="Buscar por nome, tipo ou localização…"
+              />
+            </div>
+            <Select value={tankTypeFilter} onValueChange={setTankTypeFilter}>
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por tipo">
+                <SelectValue placeholder="Tipo de Tanque" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os Tipos</SelectItem>
+                {tankTypes.map((type) => (
+                  <SelectItem key={type.id} value={type.id}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={filter} onValueChange={(v) => setFilter(v as StatusFilter)}>
+              <SelectTrigger className="w-full sm:w-[180px]" aria-label="Filtrar por status">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                {TANK_STATUS_FILTER_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {renderContent()}
         </CardContent>
       </Card>
+
+      <TankDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelectedTank(null);
+          setDialogOpen(open);
+        }}
+        onSuccess={() => setDialogOpen(false)}
+        mode={dialogMode}
+        tank={selectedTank}
+      />
+
+      <TankDetailsDialog
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        tank={detailsTank}
+        onEdit={handleEditFromDetails}
+      />
     </div>
   );
 }
