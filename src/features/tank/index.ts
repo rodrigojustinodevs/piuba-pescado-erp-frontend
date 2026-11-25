@@ -35,9 +35,10 @@ export {
 // Components
 export {
   TankForm,
-  TankTable,
+  TankCards,
   TanksListView,
   TankPageShell,
   TankUpsertForm,
   TankDialog,
+  TankDetailsDialog,
 } from './components';

@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "skills": {
+    "next-best-practices": {
+      "source": "vercel-labs/openreview",
+      "commit": "672deb21e70e471e0536d5ad7a67c14b8359e97e",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/next-best-practices/SKILL.md",
+      "computedHash": "9ea546a01ce0f1e93a6d3895b8f1d81177ec08257457d6a3848060b50b203191"
+    },
+    "react-best-practices": {
+      "source": "mastra-ai/mastra",
+      "commit": "93e709c787be58a11374f941fe1267ab6582ea7b",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/react-best-practices/SKILL.md",
+      "computedHash": "81a16ec914b9291c136bcad9e8e7b7e93dfa157c532ed28ef7558ee09020d078"
+    },
+    "tailwind-design-system": {
+      "source": "wshobson/agents",
+      "commit": "c96b5f6552dba32e4492307493ee613581430715",
+      "sourceType": "github",
+      "skillPath": "plugins/frontend-mobile-development/skills/tailwind-design-system/SKILL.md",
+      "computedHash": "c807f0c9619e8c389879f55846c2e395956f1073ab6d01a93fbb30b340015ab1"
+    }
+  }
+}
