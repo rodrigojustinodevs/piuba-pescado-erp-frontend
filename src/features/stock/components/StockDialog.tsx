@@ -3,18 +3,16 @@
 import type { StockDialogMode, StockLocation, UpdateStockLocationData } from '../types';
 import type { CreateStockFormData } from '../schemas';
 import { StockForm } from './StockForm';
-import { StockViewDialogContent } from './StockViewDialogContent';
+import { StockDetailsDialog } from './StockDetailsDialog';
 import { useCreateStock } from '../hooks/useCreateStock';
 import { useUpdateStock } from '../hooks/useUpdateStock';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type StockDialogProps = {
   open: boolean;
@@ -22,6 +20,8 @@ type StockDialogProps = {
   mode: StockDialogMode;
   stock: StockLocation | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -48,11 +48,11 @@ export function StockDialog({
   mode,
   stock,
   onSuccess,
+  onEdit,
 }: Readonly<StockDialogProps>) {
   const createStock = useCreateStock({ skipNavigateToList: true });
   const updateStock = useUpdateStock({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createStock.isPending || updateStock.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -88,18 +88,6 @@ export function StockDialog({
       : undefined;
 
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <StockViewDialogContent stock={stock} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && stock && editInitialValues) {
       return (
         <StockForm
@@ -133,6 +121,17 @@ export function StockDialog({
         submitLabel="Cadastrar local"
         submittingLabel="Cadastrando..."
         inDialog
+      />
+    );
+  }
+
+  if (mode === 'view') {
+    return (
+      <StockDetailsDialog
+        stock={stock ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
       />
     );
   }

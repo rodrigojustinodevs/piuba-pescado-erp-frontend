@@ -5,15 +5,15 @@ Componente de menu lateral responsivo com suporte a dropdowns e navegação.
 ## 🚀 Uso Básico
 
 ```tsx
-import { DashboardLayout } from "@/shared/components/Layout";
-import { defaultMenuItems } from "@/shared/components/Sidebar/menuItems";
+import { DashboardLayout } from '@/shared/components/Layout';
+import { defaultMenuItems } from '@/shared/components/Sidebar/menuItems';
 
 export default function MinhaPage() {
   return (
     <DashboardLayout
       user={{
-        name: "João Silva",
-        email: "joao@exemplo.com",
+        name: 'João Silva',
+        email: 'joao@exemplo.com',
       }}
     >
       <div>Conteúdo da página</div>
@@ -27,81 +27,85 @@ export default function MinhaPage() {
 ### Usando itens padrão
 
 ```tsx
-import { DashboardLayout } from "@/shared/components/Layout";
-import { defaultMenuItems } from "@/shared/components/Sidebar/menuItems";
+import { DashboardLayout } from '@/shared/components/Layout';
+import { defaultMenuItems } from '@/shared/components/Sidebar/menuItems';
 
-<DashboardLayout menuItems={defaultMenuItems} />
+<DashboardLayout menuItems={defaultMenuItems} />;
 ```
 
 ### Criando itens customizados
 
 ```tsx
-import { DashboardLayout } from "@/shared/components/Layout";
-import type { MenuItem } from "@/shared/components/Sidebar";
+import { DashboardLayout } from '@/shared/components/Layout';
+import type { MenuItem } from '@/shared/components/Sidebar';
 
 const meuMenu: MenuItem[] = [
   {
-    id: "dashboard",
-    label: "Dashboard",
+    id: 'dashboard',
+    label: 'Dashboard',
     icon: <MeuIcone />,
-    href: "/dashboard",
+    href: '/dashboard',
   },
   {
-    id: "vendas",
-    label: "Vendas",
+    id: 'vendas',
+    label: 'Vendas',
     icon: <VendasIcon />,
     children: [
       {
-        id: "pedidos",
-        label: "Pedidos",
-        href: "/pedidos",
+        id: 'pedidos',
+        label: 'Pedidos',
+        href: '/pedidos',
       },
       {
-        id: "clientes",
-        label: "Clientes",
-        href: "/clientes",
+        id: 'clientes',
+        label: 'Clientes',
+        href: '/clientes',
       },
     ],
   },
 ];
 
-<DashboardLayout menuItems={meuMenu} />
+<DashboardLayout menuItems={meuMenu} />;
 ```
 
 ## 📝 Estrutura de MenuItem
 
 ```typescript
 interface MenuItem {
-  id: string;                    // ID único
-  label: string;                  // Texto exibido
-  icon?: React.ReactNode;         // Ícone (opcional)
-  href?: string;                  // Link (opcional)
-  onClick?: () => void;          // Função ao clicar (opcional)
-  badge?: string | number;        // Badge/contador (opcional)
-  children?: MenuItem[];          // Subitens para dropdown
+  id: string; // ID único
+  label: string; // Texto exibido
+  icon?: React.ReactNode; // Ícone (opcional)
+  href?: string; // Link (opcional)
+  onClick?: () => void; // Função ao clicar (opcional)
+  badge?: string | number; // Badge/contador (opcional)
+  children?: MenuItem[]; // Subitens para dropdown
 }
 ```
 
 ## 🎯 Funcionalidades
 
 ### ✅ Menu Lateral
+
 - Responsivo (mobile/desktop)
 - Fechamento automático no mobile após clicar em item
 - Overlay escuro no mobile
 - Animações suaves
 
 ### ✅ Dropdown
+
 - Suporte a múltiplos níveis
 - Animação de expansão/colapso
 - Fechamento ao clicar fora
 - Indentação visual para subitens
 
 ### ✅ Navegação
+
 - Destaque do item ativo baseado na rota
 - Links usando Next.js Link
 - Suporte a onClick customizado
 
 ### ✅ Footer do Usuário
+
 - Exibe informações do usuário
 - Botão de logout integrado
 - Avatar ou ícone padrão
@@ -173,4 +177,3 @@ Os componentes usam Tailwind CSS. Você pode customizar:
   ],
 }
 ```
-

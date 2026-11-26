@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { companyService } from '../services/companyService';
 
 interface UseCompaniesParams {
@@ -11,7 +12,8 @@ interface UseCompaniesParams {
 }
 
 /**
- * Hook para listar empresas com paginação
+ * Hook para listar empresas com paginação.
+ * `/api/companies` é exclusiva do master: para os demais perfis a consulta nem dispara.
  */
 export function useCompanies({
   page = 1,
@@ -19,10 +21,11 @@ export function useCompanies({
   search,
   enabled = true,
 }: UseCompaniesParams = {}) {
+  const { isMaster } = useAuthContext();
   return useQuery({
     queryKey: ['companies', 'list', page, limit, search],
     queryFn: () => companyService.list({ page, limit, search }),
-    enabled,
+    enabled: enabled && isMaster(),
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }

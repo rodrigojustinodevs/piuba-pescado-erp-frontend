@@ -3,18 +3,16 @@
 import type { Supply, SupplyDialogMode, CreateSupplyData } from '../types';
 import type { CreateSupplyFormData } from '../schemas';
 import { SupplyForm } from './SupplyForm';
-import { SupplyViewDialogContent } from './SupplyViewDialogContent';
+import { SupplyDetailsDialog } from './SupplyDetailsDialog';
 import { useCreateSupply } from '../hooks/useCreateSupply';
 import { useUpdateSupply } from '../hooks/useUpdateSupply';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type SupplyDialogProps = {
   open: boolean;
@@ -22,6 +20,8 @@ type SupplyDialogProps = {
   mode: SupplyDialogMode;
   supply: Supply | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -48,11 +48,11 @@ export function SupplyDialog({
   mode,
   supply,
   onSuccess,
+  onEdit,
 }: Readonly<SupplyDialogProps>) {
   const createSupply = useCreateSupply({ skipNavigateToList: true });
   const updateSupply = useUpdateSupply({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createSupply.isPending || updateSupply.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -101,18 +101,6 @@ export function SupplyDialog({
       : undefined;
 
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <SupplyViewDialogContent supply={supply} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && supply) {
       return (
         <SupplyForm
@@ -136,6 +124,17 @@ export function SupplyDialog({
         submitLabel="Cadastrar produto"
         submittingLabel="Cadastrando..."
         inDialog
+      />
+    );
+  }
+
+  if (mode === 'view') {
+    return (
+      <SupplyDetailsDialog
+        supply={supply ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
       />
     );
   }

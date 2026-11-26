@@ -10,18 +10,16 @@ import type {
 import type { CreateTransferFormData } from '../schemas';
 import type { ApiFieldError } from './TransferForm';
 import { TransferForm } from './TransferForm';
-import { TransferViewDialogContent } from './TransferViewDialogContent';
+import { TransferDetailsDialog } from './TransferDetailsDialog';
 import { useCreateTransfer } from '../hooks/useCreateTransfer';
 import { useUpdateTransfer } from '../hooks/useUpdateTransfer';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type TransferDialogProps = {
   open: boolean;
@@ -29,6 +27,8 @@ type TransferDialogProps = {
   mode: TransferDialogMode;
   transfer: Transfer | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -71,12 +71,12 @@ export function TransferDialog({
   mode,
   transfer,
   onSuccess,
+  onEdit,
 }: Readonly<TransferDialogProps>) {
   const createTransfer = useCreateTransfer({ skipNavigateToList: true });
   const updateTransfer = useUpdateTransfer({ skipNavigateToList: true });
   const [apiError, setApiError] = useState<ApiFieldError>(null);
 
-  const isViewMode = mode === 'view';
   const isLoading = createTransfer.isPending || updateTransfer.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -110,18 +110,6 @@ export function TransferDialog({
   }
 
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <TransferViewDialogContent transfer={transfer} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     const openState = open ? 'open' : 'closed';
     if (mode === 'edit' && transfer) {
       return (
@@ -145,6 +133,17 @@ export function TransferDialog({
         isLoading={isLoading}
         submitLabel="Registrar"
         onCancel={handleClose}
+      />
+    );
+  }
+
+  if (mode === 'view') {
+    return (
+      <TransferDetailsDialog
+        transfer={transfer ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
       />
     );
   }

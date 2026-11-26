@@ -286,8 +286,14 @@ export function TransferForm({
 
       (onSubmit as (data: PatchTransferPayload) => void)(patch);
     } else {
-      if (exceedsStock((data as CreateTransferFormData).quantity)) return;
-      (onSubmit as (data: CreateTransferFormData) => void)(data as CreateTransferFormData);
+      const createData = data as CreateTransferFormData;
+      if (exceedsStock(createData.quantity)) return;
+      // Sem seletor de empresa, o backend resolve pelo usuário logado: não envia "".
+      const { companyId, ...rest } = createData;
+      const trimmedCompanyId = companyId?.trim();
+      (onSubmit as (data: CreateTransferFormData) => void)(
+        trimmedCompanyId ? { ...rest, companyId: trimmedCompanyId } : rest,
+      );
     }
   }
 

@@ -20,7 +20,6 @@ export function InfoRow({ icon, label, value, className }: InfoRowProps) {
   );
 }
 
-
 export type DetailSummaryCardProps = {
   label: string;
   value: string;

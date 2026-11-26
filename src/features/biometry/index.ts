@@ -23,6 +23,6 @@ export {
   BiometryForm,
   BiometryPageShell,
   BiometryDialog,
-  BiometryViewDialogContent,
+  BiometryDetailsDialog,
 } from './components';
 export { biometryService } from './services/biometryService';

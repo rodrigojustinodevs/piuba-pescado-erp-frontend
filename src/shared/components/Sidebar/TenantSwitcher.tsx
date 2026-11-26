@@ -3,19 +3,18 @@
 import Image from 'next/image';
 import { ChevronsUpDown } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { useCompany } from '@/features/company';
+import { useCompanySettings } from '@/shared/contexts/CompanySettingsContext';
 import { cn } from '@/shared/lib/utils';
 import { useSidebar } from './Sidebar';
 
 const FALLBACK_SUBTITLE = 'Selecione uma empresa';
 
 export function TenantSwitcher() {
-  const { user } = useAuthContext();
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
-  const { data: company } = useCompany(user?.companyId ?? undefined);
-  const companyName = company?.name ?? FALLBACK_SUBTITLE;
+  // Nome vem de /api/company/settings (já carregado no provider), que vale para todos os perfis.
+  const { settings } = useCompanySettings();
+  const companyName = settings?.general.name ?? FALLBACK_SUBTITLE;
 
   return (
     <DropdownMenu.Root>

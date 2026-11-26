@@ -5,19 +5,16 @@ import type { Harvest, HarvestDialogMode, CreateHarvestData, PatchHarvestPayload
 import type { CreateHarvestFormData } from '../schemas';
 import type { ApiFieldError } from './HarvestForm';
 import { HarvestForm } from './HarvestForm';
-import { HarvestViewDialogContent } from './HarvestViewDialogContent';
+import { HarvestDetailsDialog } from './HarvestDetailsDialog';
 import { useCreateHarvest } from '../hooks/useCreateHarvest';
 import { useUpdateHarvest } from '../hooks/useUpdateHarvest';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
-import { Pencil } from 'lucide-react';
 
 type HarvestDialogProps = {
   open: boolean;
@@ -112,24 +109,6 @@ export function HarvestDialog({
   }
 
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <HarvestViewDialogContent harvest={harvest} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-            {harvest && (
-              <Button type="button" onClick={() => setCurrentMode('edit')}>
-                <Pencil className="mr-1.5 h-4 w-4" />
-                Editar
-              </Button>
-            )}
-          </DialogFooter>
-        </>
-      );
-    }
     const openState = open ? 'open' : 'closed';
     if (currentMode === 'edit' && harvest) {
       return (
@@ -153,6 +132,17 @@ export function HarvestDialog({
         isLoading={isLoading}
         submitLabel="Registrar"
         onCancel={handleClose}
+      />
+    );
+  }
+
+  if (isViewMode) {
+    return (
+      <HarvestDetailsDialog
+        harvest={harvest}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={() => setCurrentMode('edit')}
       />
     );
   }

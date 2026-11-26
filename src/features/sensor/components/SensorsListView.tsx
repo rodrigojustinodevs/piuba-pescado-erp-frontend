@@ -282,6 +282,7 @@ export function SensorsListView({
         }}
         mode={dialogMode}
         sensor={selectedSensor}
+        onEdit={() => setDialogMode('edit')}
       />
     </div>
   );

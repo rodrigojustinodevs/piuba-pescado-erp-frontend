@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { Purchase, PurchaseDialogMode, CreatePurchaseData } from '../types';
 import type { CreatePurchaseFormData } from '../schemas';
 import { PurchaseForm } from './PurchaseForm';
-import { PurchaseViewDialogContent } from './PurchaseViewDialogContent';
+import { PurchaseDetailsDialog } from './PurchaseDetailsDialog';
 import { PurchaseReceiveDialog } from './PurchaseReceiveDialog';
 import { PurchasePaymentDialog } from './PurchasePaymentDialog';
 import { useCreatePurchase } from '../hooks/useCreatePurchase';
@@ -15,11 +15,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type PurchaseDialogProps = {
   open: boolean;
@@ -27,6 +25,8 @@ type PurchaseDialogProps = {
   mode: PurchaseDialogMode;
   purchase: Purchase | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -60,6 +60,7 @@ export function PurchaseDialog({
   mode,
   purchase,
   onSuccess,
+  onEdit,
 }: Readonly<PurchaseDialogProps>) {
   const [receiveDialogOpen, setReceiveDialogOpen] = useState(false);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
@@ -140,25 +141,6 @@ export function PurchaseDialog({
       : undefined;
 
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <PurchaseViewDialogContent
-            purchase={purchase}
-            onReceive={handleReceive}
-            isReceiving={isReceiving}
-            onCancel={handleCancel}
-            isCancelling={cancelPurchase.isPending}
-            onOpenPaymentDialog={() => setPaymentDialogOpen(true)}
-          />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && purchase) {
       return (
         <PurchaseForm
@@ -196,15 +178,29 @@ export function PurchaseDialog({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {renderContent()}
-        </DialogContent>
-      </Dialog>
+      {isViewMode ? (
+        <PurchaseDetailsDialog
+          purchase={purchase}
+          open={open}
+          onOpenChange={onOpenChange}
+          onEdit={onEdit}
+          onReceive={handleReceive}
+          isReceiving={isReceiving}
+          onCancel={handleCancel}
+          isCancelling={cancelPurchase.isPending}
+          onOpenPaymentDialog={() => setPaymentDialogOpen(true)}
+        />
+      ) : (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
+            <DialogHeader>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>{description}</DialogDescription>
+            </DialogHeader>
+            {renderContent()}
+          </DialogContent>
+        </Dialog>
+      )}
 
       <PurchaseReceiveDialog
         open={receiveDialogOpen}

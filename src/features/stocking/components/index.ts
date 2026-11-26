@@ -4,7 +4,7 @@ export type { StockingsListViewProps } from './StockingsListView';
 export { StockingDetailView } from './StockingDetailView';
 export type { StockingDetailViewProps } from './StockingDetailView';
 export { StockingCreateDialog } from './StockingCreateDialog';
-export { StockingViewDialogContent } from './StockingViewDialogContent';
+export { StockingDetailsDialog } from './StockingDetailsDialog';
 export { StockingForm } from './StockingForm';
 export type { StockingFormProps } from './StockingForm';
 export { StockingPageShell } from './StockingPageShell';

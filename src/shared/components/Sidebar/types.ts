@@ -2,7 +2,7 @@
  * Tipos para o menu lateral
  */
 
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from 'lucide-react';
 
 export interface MenuItem {
   id: string;

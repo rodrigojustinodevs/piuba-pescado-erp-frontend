@@ -225,6 +225,7 @@ export function CompaniesListView({
         }}
         mode={dialogMode}
         company={selectedCompany}
+        onEdit={() => setDialogMode('edit')}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card>

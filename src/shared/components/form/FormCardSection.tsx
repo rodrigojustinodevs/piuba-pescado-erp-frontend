@@ -7,7 +7,12 @@ export type FormCardSectionProps = {
   footer?: ReactNode;
 };
 
-export function FormCardSection({ title, description, children, footer }: Readonly<FormCardSectionProps>) {
+export function FormCardSection({
+  title,
+  description,
+  children,
+  footer,
+}: Readonly<FormCardSectionProps>) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
       <div className="mb-6">

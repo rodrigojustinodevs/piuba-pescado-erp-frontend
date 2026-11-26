@@ -221,6 +221,7 @@ export function FinancialTransactionsListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         transaction={selectedTransaction}
         onSuccess={() => setDialogOpen(false)}
       />

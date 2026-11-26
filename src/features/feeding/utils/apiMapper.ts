@@ -6,7 +6,7 @@ export type ApiFeedingDetail = {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
-  stock?: { id: string; name: string };
+  stock?: { id: string; supplyId?: string | null; name: string };
   stockReductionQuantity: number;
   batch?: { id: string; name: string };
   createdAt: string | null;

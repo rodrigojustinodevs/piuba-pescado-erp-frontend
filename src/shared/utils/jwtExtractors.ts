@@ -46,10 +46,7 @@ export function extractEmailFromJWT(payload: JWTPayload | null): string | null {
 export function extractNameFromJWT(payload: JWTPayload | null): string | null {
   if (!payload) return null;
   return (
-    (payload.name as string) ||
-    (payload.user_name as string) ||
-    (payload.unm as string) ||
-    null
+    (payload.name as string) || (payload.user_name as string) || (payload.unm as string) || null
   );
 }
 

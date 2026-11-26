@@ -23,7 +23,7 @@ export const GET = createListGetHandler<ApiStockingListResponse, StockingListRes
 });
 
 export const POST = createUpsertHandler<Stocking, CreateStockingData>({
-  backendPath: '/api/company/stockings',
+  backendPath: '/api/company/stocking',
   method: 'POST',
   context: CONTEXT,
 });

@@ -24,6 +24,6 @@ export {
   MortalityForm,
   MortalityDetailView,
   MortalityDialog,
-  MortalityViewDialogContent,
+  MortalityDetailsDialog,
 } from './components';
 export { mortalityService } from './services/mortalityService';

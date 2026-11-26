@@ -28,7 +28,7 @@ export default function EditFeedingPage() {
       feedingDate: toDateTimeLocalValue(feeding.feedingDate),
       quantityProvided: feeding.quantityProvided,
       feedType: feeding.feedType,
-      stockId: feeding.stock.id,
+      supplyId: feeding.stock.supplyId ?? '',
       stockReductionQuantity: feeding.stockReductionQuantity,
     };
   }, [feeding]);

@@ -7,18 +7,16 @@ import {
   type CreateClientFormData,
 } from '../schemas';
 import { ClientForm } from './ClientForm';
-import { ClientViewDialogContent } from './ClientViewDialogContent';
+import { ClientDetailsDialog } from './ClientDetailsDialog';
 import { useCreateClient } from '../hooks/useCreateClient';
 import { useUpdateClient } from '../hooks/useUpdateClient';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type ClientDialogProps = {
   open: boolean;
@@ -26,6 +24,8 @@ type ClientDialogProps = {
   mode: ClientDialogMode;
   client: Client | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 type PriceGroupValue = (typeof clientPriceGroupValues)[number];
@@ -86,11 +86,11 @@ export function ClientDialog({
   mode,
   client,
   onSuccess,
+  onEdit,
 }: Readonly<ClientDialogProps>) {
   const createClient = useCreateClient({ skipNavigateToList: true });
   const updateClient = useUpdateClient({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createClient.isPending || updateClient.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -122,19 +122,18 @@ export function ClientDialog({
 
   const editInitialValues = client && mode === 'edit' ? buildEditValues(client) : undefined;
 
+  if (mode === 'view') {
+    return (
+      <ClientDetailsDialog
+        client={client}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   function renderDialogContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <ClientViewDialogContent client={client} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && client) {
       return (
         <ClientForm

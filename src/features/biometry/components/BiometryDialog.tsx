@@ -4,18 +4,16 @@ import { useMemo } from 'react';
 import type { Biometry, BiometryDialogMode } from '../types';
 import type { CreateBiometryFormData } from '../schemas';
 import { BiometryForm } from './BiometryForm';
-import { BiometryViewDialogContent } from './BiometryViewDialogContent';
+import { BiometryDetailsDialog } from './BiometryDetailsDialog';
 import { useCreateBiometry } from '../hooks/useCreateBiometry';
 import { useUpdateBiometry } from '../hooks/useUpdateBiometry';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type BiometryDialogProps = {
   open: boolean;
@@ -23,6 +21,8 @@ type BiometryDialogProps = {
   mode: BiometryDialogMode;
   biometry: Biometry | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -49,11 +49,11 @@ export function BiometryDialog({
   mode,
   biometry,
   onSuccess,
+  onEdit,
 }: Readonly<BiometryDialogProps>) {
   const createBiometry = useCreateBiometry({ skipNavigateToList: true });
   const updateBiometry = useUpdateBiometry({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createBiometry.isPending || updateBiometry.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -101,6 +101,17 @@ export function BiometryDialog({
     });
   }
 
+  if (mode === 'view') {
+    return (
+      <BiometryDetailsDialog
+        biometry={biometry ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -109,27 +120,16 @@ export function BiometryDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        {isViewMode ? (
-          <>
-            <BiometryViewDialogContent biometry={biometry} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : (
-          <BiometryForm
-            key={`${mode}-${biometry?.id ?? 'new'}-${open ? 'open' : 'closed'}`}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            isSubmitting={isLoading}
-            isUpdate={mode === 'edit'}
-            submitLabel={mode === 'edit' ? 'Atualizar biometria' : 'Criar biometria'}
-            submittingLabel={mode === 'edit' ? 'Atualizando...' : 'Criando...'}
-            onCancel={handleClose}
-          />
-        )}
+        <BiometryForm
+          key={`${mode}-${biometry?.id ?? 'new'}-${open ? 'open' : 'closed'}`}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          isSubmitting={isLoading}
+          isUpdate={mode === 'edit'}
+          submitLabel={mode === 'edit' ? 'Atualizar biometria' : 'Criar biometria'}
+          submittingLabel={mode === 'edit' ? 'Atualizando...' : 'Criando...'}
+          onCancel={handleClose}
+        />
       </DialogContent>
     </Dialog>
   );

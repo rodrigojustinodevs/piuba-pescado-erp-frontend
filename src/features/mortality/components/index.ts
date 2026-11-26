@@ -4,4 +4,4 @@ export { MortalityPageShell } from './MortalityPageShell';
 export { MortalityForm } from './MortalityForm';
 export { MortalityDetailView } from './MortalityDetailView';
 export { MortalityDialog } from './MortalityDialog';
-export { MortalityViewDialogContent } from './MortalityViewDialogContent';
+export { MortalityDetailsDialog } from './MortalityDetailsDialog';

@@ -353,6 +353,7 @@ export function SensorReadingsListView({
           setDialogOpen(false);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         sensorReading={selectedSensorReading}
       />
     </div>

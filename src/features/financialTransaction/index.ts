@@ -33,6 +33,6 @@ export {
   FinancialTransactionsListView,
   FinancialTransactionDialog,
   FinancialTransactionForm,
-  FinancialTransactionViewDialogContent,
+  FinancialTransactionDetailsDialog,
   FinancialTransactionCatalogStatsCards,
 } from './components';

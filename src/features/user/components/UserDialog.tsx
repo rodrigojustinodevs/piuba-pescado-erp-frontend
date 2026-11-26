@@ -9,8 +9,7 @@ import { useUpdateUser } from '../hooks/useUpdateUser';
 import { createUserSchema, type CreateUserFormData } from '../schemas';
 import type { CreateUserData, User, UserDialogMode, UpdateUserData } from '../types';
 import { ROLE_OPTIONS, getRoleLabel } from '../utils/roleLabels';
-import { POSITION_OPTIONS, getPositionLabel } from '../utils/positionLabels';
-import { STATUS_LABELS } from '../utils/statusLabels';
+import { POSITION_OPTIONS } from '../utils/positionLabels';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
 import {
   Dialog,
@@ -31,9 +30,8 @@ import {
   SelectValue,
 } from '@/shared/components/ui/Select';
 import { Badge } from '@/shared/components/ui/Badge';
-import { Loader2, Mail, Phone, ShieldCheck, User as UserIcon } from 'lucide-react';
-import { InfoRow } from '@/shared/components/entityDetail';
-import { formatDateTimeLocal } from '@/shared/utils/dateFormat';
+import { Loader2 } from 'lucide-react';
+import { UserDetailsDialog } from './UserDetailsDialog';
 
 interface UserDialogProps {
   readonly open: boolean;
@@ -41,6 +39,8 @@ interface UserDialogProps {
   readonly onSuccess?: () => void;
   readonly mode?: UserDialogMode;
   readonly user?: User | null;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  readonly onEdit?: () => void;
 }
 
 const initialForm: CreateUserFormData = {
@@ -126,9 +126,11 @@ export function UserDialog({
   onSuccess,
   mode = 'create',
   user = null,
+  onEdit,
 }: Readonly<UserDialogProps>) {
   const { isMaster, user: authUser } = useAuthContext();
-  const { data: companiesData } = useCompanies({ limit: 1000 });
+  const isMasterUser = isMaster();
+  const { data: companiesData } = useCompanies({ limit: 1000, enabled: open });
 
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
@@ -147,7 +149,6 @@ export function UserDialog({
 
   const isView = mode === 'view';
   const isEdit = mode === 'edit';
-  const isMasterUser = isMaster();
 
   useEffect(() => {
     if (!open) return;
@@ -200,13 +201,16 @@ export function UserDialog({
     onOpenChange(value);
   }
 
+  if (isView) {
+    return (
+      <UserDetailsDialog user={user} open={open} onOpenChange={onOpenChange} onEdit={onEdit} />
+    );
+  }
+
   let title = 'Novo Usuário';
   let description = 'Preencha os dados para cadastrar um novo usuário.';
 
-  if (isView) {
-    title = 'Detalhes do Usuário';
-    description = 'Visualização das informações do usuário.';
-  } else if (isEdit) {
+  if (isEdit) {
     title = 'Editar Usuário';
     description = 'Atualize os dados do usuário abaixo.';
   }
@@ -219,116 +223,90 @@ export function UserDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        {isView && user ? (
-          <>
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <UserIcon className="h-7 w-7" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-lg font-semibold">{user.name}</h3>
-                  <p className="text-sm text-muted-foreground">{getPositionLabel(user.position)}</p>
-                  <Badge variant="outline" className="mt-2">
-                    {STATUS_LABELS[user.status]}
-                  </Badge>
-                </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-muted-foreground">Dados do usuário</h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <CompanyIdField
+                isMasterUser={isMasterUser}
+                control={control}
+                register={register}
+                companies={companiesData?.companies ?? []}
+                error={errors.companyId?.message}
+              />
+
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome *</Label>
+                <Input id="name" placeholder="Nome completo" {...register('name')} />
+                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <InfoRow
-                  icon={<Mail className="h-4 w-4" />}
-                  label="E-mail"
-                  value={user.email || '—'}
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="email@empresa.com"
+                  {...register('email')}
                 />
-                <InfoRow
-                  icon={<Phone className="h-4 w-4" />}
-                  label="Telefone"
-                  value={user.phone || '—'}
-                />
-                <InfoRow
-                  icon={<ShieldCheck className="h-4 w-4" />}
-                  label="Perfil"
-                  value={getRoleLabel(user.role)}
-                />
-                {isMasterUser && (
-                  <InfoRow
-                    icon={<UserIcon className="h-4 w-4" />}
-                    label="Empresa"
-                    value={user.company?.name || '—'}
-                  />
-                )}
-                <InfoRow
-                  icon={<UserIcon className="h-4 w-4" />}
-                  label="Último acesso"
-                  value={user.lastAccessAt ? formatDateTimeLocal(user.lastAccessAt) : '—'}
-                />
-                <InfoRow
-                  icon={<UserIcon className="h-4 w-4" />}
-                  label="Criado em"
-                  value={formatDateTimeLocal(user.createdAt)}
-                />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
               </div>
-            </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => handleClose(false)}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-muted-foreground">Dados do usuário</h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <CompanyIdField
-                  isMasterUser={isMasterUser}
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input id="phone" placeholder="(00) 00000-0000" {...register('phone')} />
+                {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="position">Cargo</Label>
+                <Controller
+                  name="position"
                   control={control}
-                  register={register}
-                  companies={companiesData?.companies ?? []}
-                  error={errors.companyId?.message}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="position">
+                        <SelectValue placeholder="Selecione um cargo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {POSITION_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
+                {errors.position && (
+                  <p className="text-xs text-destructive">{errors.position.message}</p>
+                )}
+              </div>
 
+              {isEdit ? (
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome *</Label>
-                  <Input id="name" placeholder="Nome completo" {...register('name')} />
-                  {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+                  <Label>Perfil de acesso</Label>
+                  <div>
+                    <Badge variant="outline">{user ? getRoleLabel(user.role) : '—'}</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Para alterar o perfil de acesso, utilize a ação &quot;Alterar perfil&quot; na
+                    listagem de usuários.
+                  </p>
                 </div>
-
+              ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-mail *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="email@empresa.com"
-                    {...register('email')}
-                  />
-                  {errors.email && (
-                    <p className="text-xs text-destructive">{errors.email.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input id="phone" placeholder="(00) 00000-0000" {...register('phone')} />
-                  {errors.phone && (
-                    <p className="text-xs text-destructive">{errors.phone.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="position">Cargo</Label>
+                  <Label htmlFor="role">Perfil de acesso *</Label>
                   <Controller
-                    name="position"
+                    name="role"
                     control={control}
                     render={({ field }) => (
                       <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger id="position">
-                          <SelectValue placeholder="Selecione um cargo" />
+                        <SelectTrigger id="role">
+                          <SelectValue placeholder="Selecione um perfil" />
                         </SelectTrigger>
                         <SelectContent>
-                          {POSITION_OPTIONS.map((option) => (
+                          {ROLE_OPTIONS.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -337,90 +315,50 @@ export function UserDialog({
                       </Select>
                     )}
                   />
-                  {errors.position && (
-                    <p className="text-xs text-destructive">{errors.position.message}</p>
-                  )}
+                  {errors.role && <p className="text-xs text-destructive">{errors.role.message}</p>}
                 </div>
+              )}
 
-                {isEdit ? (
-                  <div className="space-y-2">
-                    <Label>Perfil de acesso</Label>
-                    <div>
-                      <Badge variant="outline">{user ? getRoleLabel(user.role) : '—'}</Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Para alterar o perfil de acesso, utilize a ação &quot;Alterar perfil&quot; na
-                      listagem de usuários.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Perfil de acesso *</Label>
-                    <Controller
-                      name="role"
-                      control={control}
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger id="role">
-                            <SelectValue placeholder="Selecione um perfil" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ROLE_OPTIONS.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {errors.role && (
-                      <p className="text-xs text-destructive">{errors.role.message}</p>
-                    )}
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status *</Label>
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="status">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Ativo</SelectItem>
+                        <SelectItem value="inactive">Inativo</SelectItem>
+                        <SelectItem value="blocked">Bloqueado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.status && (
+                  <p className="text-xs text-destructive">{errors.status.message}</p>
                 )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status *</Label>
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger id="status">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">Ativo</SelectItem>
-                          <SelectItem value="inactive">Inativo</SelectItem>
-                          <SelectItem value="blocked">Bloqueado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.status && (
-                    <p className="text-xs text-destructive">{errors.status.message}</p>
-                  )}
-                </div>
               </div>
             </div>
+          </div>
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleClose(false)}
-                disabled={saving}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={saving}>
-                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEdit ? 'Salvar alterações' : 'Cadastrar'}
-              </Button>
-            </DialogFooter>
-          </form>
-        )}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleClose(false)}
+              disabled={saving}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isEdit ? 'Salvar alterações' : 'Cadastrar'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

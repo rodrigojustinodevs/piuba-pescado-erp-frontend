@@ -8,7 +8,13 @@ type IconBaseProps = {
 };
 
 const IconBase = ({ children, className = 'w-5 h-5' }: IconBaseProps) => (
-  <svg aria-hidden="true" className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg
+    aria-hidden="true"
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
     {children}
   </svg>
 );

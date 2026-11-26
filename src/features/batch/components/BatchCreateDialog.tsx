@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   isBatchDistributionData,
   type BatchDistributionFormData,
@@ -11,23 +10,15 @@ import { useCreateBatch } from '../hooks/useCreateBatch';
 import { useDistributeBatch } from '../hooks/useDistributeBatch';
 import { useUpdateBatch } from '../hooks/useUpdateBatch';
 import { BatchForm, type BatchFormProps } from './BatchForm';
-import { BatchViewDialogContent } from './BatchViewDialogContent';
+import { BatchDetailsDialog } from './BatchDetailsDialog';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 import { Batch, BatchDialogMode, UpdateBatchData } from '../types';
-import { useAuthContext } from '@/shared/contexts/AuthContext';
-import {
-  GenerateManagementPlanDialog,
-  MANAGEMENT_PLAN_VIEW_ROLES,
-} from '@/features/managementPlan';
-import { Sparkles } from 'lucide-react';
 
 type BatchCreateDialogProps = {
   open: boolean;
@@ -35,6 +26,8 @@ type BatchCreateDialogProps = {
   mode: BatchDialogMode;
   batch: Batch | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -61,12 +54,12 @@ export function BatchCreateDialog({
   mode,
   batch,
   onSuccess,
+  onEdit,
 }: Readonly<BatchCreateDialogProps>) {
   const createBatch = useCreateBatch({ skipNavigateToList: true });
   const distributeBatch = useDistributeBatch({ skipNavigateToList: true });
   const updateBatch = useUpdateBatch();
 
-  const isViewMode = mode === 'view';
   const isLoading = createBatch.isPending || distributeBatch.isPending || updateBatch.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -114,6 +107,17 @@ export function BatchCreateDialog({
           onSubmit: handleSubmit as (data: UpdateBatchFormData) => void,
         };
 
+  if (mode === 'view') {
+    return (
+      <BatchDetailsDialog
+        batch={batch ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -122,60 +126,14 @@ export function BatchCreateDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        {isViewMode ? (
-          <ViewContent batch={batch} onClose={handleClose} />
-        ) : (
-          <BatchForm
-            key={`${mode}-${batch?.id ?? 'new'}-${open ? 'open' : 'closed'}`}
-            {...batchFormProps}
-            isLoading={isLoading}
-            submitLabel={mode === 'edit' ? 'Atualizar lote' : 'Criar lote'}
-            onCancel={handleClose}
-          />
-        )}
+        <BatchForm
+          key={`${mode}-${batch?.id ?? 'new'}-${open ? 'open' : 'closed'}`}
+          {...batchFormProps}
+          isLoading={isLoading}
+          submitLabel={mode === 'edit' ? 'Atualizar lote' : 'Criar lote'}
+          onCancel={handleClose}
+        />
       </DialogContent>
     </Dialog>
-  );
-}
-
-type ViewContentProps = {
-  batch: Batch | null;
-  onClose: () => void;
-};
-
-function ViewContent({ batch, onClose }: Readonly<ViewContentProps>) {
-  const { canAccess } = useAuthContext();
-  const canViewManagementPlan = canAccess(MANAGEMENT_PLAN_VIEW_ROLES);
-  const [generatePlanOpen, setGeneratePlanOpen] = useState(false);
-
-  return (
-    <>
-      <BatchViewDialogContent batch={batch} />
-      <DialogFooter>
-        {canViewManagementPlan && batch && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setGeneratePlanOpen(true)}
-            className="gap-2"
-          >
-            <Sparkles className="h-4 w-4" />
-            Criar Plano de Manejo
-          </Button>
-        )}
-        <Button type="button" variant="outline" onClick={onClose}>
-          Fechar
-        </Button>
-      </DialogFooter>
-
-      {canViewManagementPlan && batch && (
-        <GenerateManagementPlanDialog
-          open={generatePlanOpen}
-          onOpenChange={setGeneratePlanOpen}
-          batchId={batch.id}
-          hasSpecies={!!batch.species}
-        />
-      )}
-    </>
   );
 }

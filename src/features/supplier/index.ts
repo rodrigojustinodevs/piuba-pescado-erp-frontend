@@ -34,6 +34,6 @@ export {
   SupplierForm,
   SupplierDetailView,
   SupplierDialog,
-  SupplierViewDialogContent,
+  SupplierDetailsDialog,
 } from './components';
 export { supplierService } from './services/supplierService';

@@ -9,6 +9,7 @@ import { FormActions, FormCardSection, Select, TextArea } from '@/shared/compone
 import { Input } from '@/shared/components/ui';
 import type { CreateFinancialTransactionData } from '../types';
 import {
+  categoryTypeForTransaction,
   createFinancialTransactionFormSchema,
   transactionMethodValues,
   transactionStatusValues,
@@ -71,6 +72,8 @@ export function FinancialTransactionForm({
     handleSubmit,
     reset,
     control,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<CreateFinancialTransactionFormData>({
     resolver: zodResolver(resolverSchema),
@@ -100,13 +103,26 @@ export function FinancialTransactionForm({
     companyId: showCompanySelect ? selectedCompanyId : undefined,
     enabled: showCompanySelect ? !!selectedCompanyId?.trim() : true,
   });
-  const categoryOptions = useMemo(
-    () => [
-      { value: '', label: 'Sem categoria' },
-      ...(categoriesData?.financialCategories ?? []).map((c) => ({ value: c.id, label: c.name })),
-    ],
-    [categoriesData],
-  );
+  const selectedType = useWatch({ control, name: 'type' });
+  const requiredCategoryType = categoryTypeForTransaction(selectedType);
+  const categoryOptions = useMemo(() => {
+    const categories = (categoriesData?.financialCategories ?? [])
+      .filter((c) => !requiredCategoryType || c.type === requiredCategoryType)
+      .map((c) => ({ value: c.id, label: c.name }));
+
+    return requiredCategoryType
+      ? categories
+      : [{ value: '', label: 'Sem categoria' }, ...categories];
+  }, [categoriesData, requiredCategoryType]);
+
+  // Ao trocar o tipo, descarta a categoria que não pertence mais ao novo tipo.
+  useEffect(() => {
+    if (!categoriesData) return;
+    const current = getValues('categoryId');
+    if (current && !categoryOptions.some((o) => o.value === current)) {
+      setValue('categoryId', '', { shouldValidate: true });
+    }
+  }, [categoriesData, categoryOptions, getValues, setValue]);
 
   const handleFormSubmit = handleSubmit((data) => {
     const companyId = showCompanySelect ? data.companyId?.trim() : undefined;

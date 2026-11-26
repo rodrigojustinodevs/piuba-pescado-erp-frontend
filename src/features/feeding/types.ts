@@ -15,6 +15,8 @@ export interface Feeding {
   feedType: string;
   stock: {
     id: string;
+    /** Insumo (ração) do estoque debitado */
+    supplyId?: string | null;
     name: string;
   };
   stockReductionQuantity: number;
@@ -36,6 +38,8 @@ export interface ApiFeeding {
   feedType: string;
   stock: {
     id: string;
+    /** Insumo (ração) do estoque debitado */
+    supplyId?: string | null;
     name: string;
   };
   stockReductionQuantity: number;
@@ -60,7 +64,8 @@ export interface CreateFeedingData {
   feedingDate: string;
   quantityProvided: number;
   feedType: string;
-  stockId: string;
+  /** Insumo (ração) consumido; o backend resolve o estoque correspondente */
+  supplyId: string;
   stockReductionQuantity: number;
 }
 

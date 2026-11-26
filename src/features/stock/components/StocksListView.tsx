@@ -192,6 +192,7 @@ export function StocksListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         stock={selectedStock}
         onSuccess={() => setDialogOpen(false)}
       />

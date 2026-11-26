@@ -17,4 +17,3 @@ export function useCompanyOptions(showCompanySelect: boolean) {
 
   return { loadingCompanies, companyOptions };
 }
-

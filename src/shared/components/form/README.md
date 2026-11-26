@@ -15,16 +15,19 @@ Sistema completo de componentes de formulário padronizados, reutilizáveis e ac
 ## 📦 Componentes Disponíveis
 
 ### Inputs de Texto
+
 - `TextInput` - Input de texto genérico
 - `EmailInput` - Input de email com validação HTML5
 - `PasswordInput` - Input de senha com toggle de visibilidade
 - `NumberInput` - Input numérico com min/max/step
 
 ### Seleção e Texto Longo
+
 - `Select` - Dropdown de seleção
 - `TextArea` - Área de texto multilinha
 
 ### Escolha
+
 - `Checkbox` - Checkbox simples
 - `Radio` - Radio button individual
 - `RadioGroup` - Grupo de radio buttons
@@ -45,45 +48,39 @@ import {
   Checkbox,
   RadioGroup,
   Switch,
-} from "@/shared/components/form";
+} from '@/shared/components/form';
 ```
 
 ### Exemplo Simples
 
 ```tsx
-<TextInput
-  label="Nome"
-  placeholder="Digite seu nome"
-  required
-/>
+<TextInput label="Nome" placeholder="Digite seu nome" required />
 ```
 
 ### Com React Hook Form
 
 ```tsx
-import { useForm } from "react-hook-form";
-import { TextInput, Select } from "@/shared/components/form";
+import { useForm } from 'react-hook-form';
+import { TextInput, Select } from '@/shared/components/form';
 
 function MyForm() {
-  const { register, formState: { errors } } = useForm();
+  const {
+    register,
+    formState: { errors },
+  } = useForm();
 
   return (
     <form>
-      <TextInput
-        label="Email"
-        required
-        {...register("email")}
-        error={errors.email?.message}
-      />
-      
+      <TextInput label="Email" required {...register('email')} error={errors.email?.message} />
+
       <Select
         label="País"
         options={[
-          { value: "br", label: "Brasil" },
-          { value: "us", label: "Estados Unidos" },
+          { value: 'br', label: 'Brasil' },
+          { value: 'us', label: 'Estados Unidos' },
         ]}
         placeholder="Selecione um país"
-        {...register("country")}
+        {...register('country')}
         error={errors.country?.message}
       />
     </form>
@@ -122,23 +119,13 @@ function MyForm() {
 ### EmailInput
 
 ```tsx
-<EmailInput
-  label="E-mail"
-  name="email"
-  required
-  error={errors.email?.message}
-/>
+<EmailInput label="E-mail" name="email" required error={errors.email?.message} />
 ```
 
 ### PasswordInput
 
 ```tsx
-<PasswordInput
-  label="Senha"
-  name="password"
-  required
-  error={errors.password?.message}
-/>
+<PasswordInput label="Senha" name="password" required error={errors.password?.message} />
 ```
 
 ### NumberInput
@@ -167,9 +154,9 @@ function MyForm() {
 
 ```tsx
 const options = [
-  { value: "1", label: "Opção 1" },
-  { value: "2", label: "Opção 2" },
-  { value: "3", label: "Opção 3", disabled: true },
+  { value: '1', label: 'Opção 1' },
+  { value: '2', label: 'Opção 2' },
+  { value: '3', label: 'Opção 3', disabled: true },
 ];
 
 <Select
@@ -178,8 +165,8 @@ const options = [
   placeholder="Escolha..."
   required
   error={errors.option?.message}
-  {...register("option")}
-/>
+  {...register('option')}
+/>;
 ```
 
 ### TextArea
@@ -202,7 +189,7 @@ const options = [
   name="terms"
   required
   error={errors.terms?.message}
-  {...register("terms")}
+  {...register('terms')}
 />
 ```
 
@@ -210,8 +197,8 @@ const options = [
 
 ```tsx
 const statusOptions = [
-  { value: "active", label: "Ativo" },
-  { value: "inactive", label: "Inativo" },
+  { value: 'active', label: 'Ativo' },
+  { value: 'inactive', label: 'Inativo' },
 ];
 
 <RadioGroup
@@ -222,7 +209,7 @@ const statusOptions = [
   onChange={setSelectedStatus}
   required
   error={errors.status?.message}
-/>
+/>;
 ```
 
 ### Switch
@@ -257,30 +244,26 @@ const statusOptions = [
 ### Classes Customizadas
 
 ```tsx
-<TextInput
-  label="Customizado"
-  className="mb-4"
-  inputClassName="font-mono"
-/>
+<TextInput label="Customizado" className="mb-4" inputClassName="font-mono" />
 ```
 
 ## 🔧 Props Comuns
 
 Todos os componentes compartilham estas props base:
 
-| Prop | Tipo | Descrição |
-|------|------|-----------|
-| `label` | `string` | Label do campo |
-| `helperText` | `string` | Texto de ajuda abaixo do campo |
-| `error` | `string` | Mensagem de erro (ativa estado de erro) |
-| `required` | `boolean` | Se o campo é obrigatório |
-| `disabled` | `boolean` | Se o campo está desabilitado |
-| `size` | `"sm" \| "md" \| "lg"` | Tamanho do campo |
-| `variant` | `"default" \| "error" \| "success"` | Variante visual |
-| `id` | `string` | ID do campo (gerado automaticamente se não fornecido) |
-| `name` | `string` | Nome do campo (para React Hook Form) |
-| `className` | `string` | Classes CSS para o container |
-| `inputClassName` | `string` | Classes CSS para o input |
+| Prop             | Tipo                                | Descrição                                             |
+| ---------------- | ----------------------------------- | ----------------------------------------------------- |
+| `label`          | `string`                            | Label do campo                                        |
+| `helperText`     | `string`                            | Texto de ajuda abaixo do campo                        |
+| `error`          | `string`                            | Mensagem de erro (ativa estado de erro)               |
+| `required`       | `boolean`                           | Se o campo é obrigatório                              |
+| `disabled`       | `boolean`                           | Se o campo está desabilitado                          |
+| `size`           | `"sm" \| "md" \| "lg"`              | Tamanho do campo                                      |
+| `variant`        | `"default" \| "error" \| "success"` | Variante visual                                       |
+| `id`             | `string`                            | ID do campo (gerado automaticamente se não fornecido) |
+| `name`           | `string`                            | Nome do campo (para React Hook Form)                  |
+| `className`      | `string`                            | Classes CSS para o container                          |
+| `inputClassName` | `string`                            | Classes CSS para o input                              |
 
 ## ♿ Acessibilidade
 
@@ -304,24 +287,17 @@ Todos os componentes seguem as melhores práticas de acessibilidade:
   <input
     id="name"
     type="text"
-    {...register("name")}
+    {...register('name')}
     className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
   />
-  {errors.name && (
-    <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-  )}
+  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
 </div>
 ```
 
 ### Depois
 
 ```tsx
-<TextInput
-  label="Nome"
-  required
-  {...register("name")}
-  error={errors.name?.message}
-/>
+<TextInput label="Nome" required {...register('name')} error={errors.name?.message} />
 ```
 
 ## 🚀 Melhorias Futuras
@@ -353,4 +329,3 @@ Ao adicionar novos componentes de formulário:
 3. Adicione exemplos de uso no README
 4. Garanta acessibilidade completa
 5. Teste com React Hook Form
-

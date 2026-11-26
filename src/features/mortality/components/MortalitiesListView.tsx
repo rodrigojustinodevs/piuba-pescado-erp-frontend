@@ -293,6 +293,7 @@ export function MortalitiesListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         mortality={selectedMortality}
         onSuccess={() => {
           setDialogOpen(false);

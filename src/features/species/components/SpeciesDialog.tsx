@@ -7,6 +7,7 @@ import { createSpeciesSchema, type CreateSpeciesFormData } from '../schemas';
 import { useCreateSpecies } from '../hooks/useCreateSpecies';
 import { useUpdateSpecies } from '../hooks/useUpdateSpecies';
 import { GrowthCurveFieldArray } from './GrowthCurveFieldArray';
+import { SpeciesDetailsDialog } from './SpeciesDetailsDialog';
 import type { Species } from '../types';
 import {
   Dialog,
@@ -20,7 +21,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { Loader2 } from 'lucide-react';
 
-export type SpeciesDialogMode = 'create' | 'edit';
+export type SpeciesDialogMode = 'create' | 'edit' | 'view';
 
 interface SpeciesDialogProps {
   readonly open: boolean;
@@ -28,6 +29,8 @@ interface SpeciesDialogProps {
   readonly onSuccess?: () => void;
   readonly mode?: SpeciesDialogMode;
   readonly species?: Species | null;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  readonly onEdit?: () => void;
 }
 
 const optionalNumber = { setValueAs: (v: string) => (v === '' ? undefined : Number(v)) };
@@ -66,6 +69,7 @@ export function SpeciesDialog({
   onSuccess,
   mode = 'create',
   species = null,
+  onEdit,
 }: Readonly<SpeciesDialogProps>) {
   const createSpecies = useCreateSpecies();
   const updateSpecies = useUpdateSpecies();
@@ -114,6 +118,17 @@ export function SpeciesDialog({
   function handleClose(value: boolean) {
     if (!value) reset(DEFAULT_VALUES);
     onOpenChange(value);
+  }
+
+  if (mode === 'view') {
+    return (
+      <SpeciesDetailsDialog
+        species={species}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
   }
 
   const title = isEdit ? 'Editar Espécie' : 'Nova Espécie';

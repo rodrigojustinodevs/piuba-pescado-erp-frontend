@@ -4,4 +4,4 @@ export { FeedingDetailView } from './FeedingDetailView';
 export { FeedingForm } from './FeedingForm';
 export { FeedingPageShell } from './FeedingPageShell';
 export { FeedingDialog } from './FeedingDialog';
-export { FeedingViewDialogContent } from './FeedingViewDialogContent';
+export { FeedingDetailsDialog } from './FeedingDetailsDialog';

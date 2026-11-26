@@ -276,6 +276,7 @@ export function BatchesListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         batch={selectedBatch}
         onSuccess={() => {
           setDialogOpen(false);

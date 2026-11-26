@@ -38,6 +38,6 @@ export {
   StocksListView,
   StockForm,
   StockDialog,
-  StockViewDialogContent,
+  StockDetailsDialog,
   StockCatalogStatsCards,
 } from './components';

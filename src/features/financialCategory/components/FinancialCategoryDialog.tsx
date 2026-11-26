@@ -8,18 +8,16 @@ import type {
 import type { CreateFinancialCategoryFormData } from '../schemas';
 import { financialCategoryStatusValues, financialCategoryTypeValues } from '../schemas';
 import { FinancialCategoryForm } from './FinancialCategoryForm';
-import { FinancialCategoryViewDialogContent } from './FinancialCategoryViewDialogContent';
+import { FinancialCategoryDetailsDialog } from './FinancialCategoryDetailsDialog';
 import { useCreateFinancialCategory } from '../hooks/useCreateFinancialCategory';
 import { useUpdateFinancialCategory } from '../hooks/useUpdateFinancialCategory';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type FinancialCategoryDialogProps = {
   open: boolean;
@@ -27,6 +25,8 @@ type FinancialCategoryDialogProps = {
   mode: FinancialCategoryDialogMode;
   category: FinancialCategory | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -56,11 +56,11 @@ export function FinancialCategoryDialog({
   mode,
   category,
   onSuccess,
+  onEdit,
 }: Readonly<FinancialCategoryDialogProps>) {
   const createCategory = useCreateFinancialCategory({ skipNavigateToList: true });
   const updateCategory = useUpdateFinancialCategory({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createCategory.isPending || updateCategory.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -105,19 +105,18 @@ export function FinancialCategoryDialog({
         }
       : undefined;
 
+  if (mode === 'view') {
+    return (
+      <FinancialCategoryDetailsDialog
+        category={category}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <FinancialCategoryViewDialogContent category={category} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && category) {
       return (
         <FinancialCategoryForm

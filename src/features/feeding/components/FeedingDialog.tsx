@@ -4,16 +4,14 @@ import type { CreateFeedingFormData } from '../schemas';
 import { useCreateFeeding } from '../hooks/useCreateFeeding';
 import { useUpdateFeeding } from '../hooks/useUpdateFeeding';
 import { FeedingForm, toDateTimeLocalValue } from './FeedingForm';
-import { FeedingViewDialogContent } from './FeedingViewDialogContent';
+import { FeedingDetailsDialog } from './FeedingDetailsDialog';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 import type { CreateFeedingData, Feeding, FeedingDialogMode, UpdateFeedingData } from '../types';
 
 type FeedingDialogProps = {
@@ -22,6 +20,8 @@ type FeedingDialogProps = {
   mode: FeedingDialogMode;
   feeding: Feeding | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -48,11 +48,11 @@ export function FeedingDialog({
   mode,
   feeding,
   onSuccess,
+  onEdit,
 }: Readonly<FeedingDialogProps>) {
   const createFeeding = useCreateFeeding({ skipNavigateToList: true });
   const updateFeeding = useUpdateFeeding({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createFeeding.isPending || updateFeeding.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -88,24 +88,12 @@ export function FeedingDialog({
           feedingDate: toDateTimeLocalValue(feeding.feedingDate),
           quantityProvided: feeding.quantityProvided,
           feedType: feeding.feedType,
-          stockId: feeding.stock.id,
+          supplyId: feeding.stock.supplyId ?? '',
           stockReductionQuantity: feeding.stockReductionQuantity,
         }
       : undefined;
 
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <FeedingViewDialogContent feeding={feeding} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && feeding) {
       return (
         <FeedingForm
@@ -129,6 +117,17 @@ export function FeedingDialog({
         submittingLabel="Criando..."
         variant="dialog"
         onCancel={handleClose}
+      />
+    );
+  }
+
+  if (mode === 'view') {
+    return (
+      <FeedingDetailsDialog
+        feeding={feeding ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
       />
     );
   }

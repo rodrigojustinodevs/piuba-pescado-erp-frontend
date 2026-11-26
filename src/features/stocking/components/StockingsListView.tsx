@@ -226,6 +226,7 @@ export function StockingsListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         stocking={selectedStocking}
         batchMap={batchMap}
         onSuccess={() => {

@@ -28,6 +28,6 @@ export {
   ClientForm,
   ClientDetailView,
   ClientDialog,
-  ClientViewDialogContent,
+  ClientDetailsDialog,
   ClientCatalogStatsCards,
 } from './components';

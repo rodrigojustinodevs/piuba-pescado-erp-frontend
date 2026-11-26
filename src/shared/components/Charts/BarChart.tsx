@@ -15,7 +15,9 @@ export function BarChart({ data, height = 200 }: Readonly<BarChartProps>) {
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
-      <svg role="img" aria-label="Gráfico de barras"
+      <svg
+        role="img"
+        aria-label="Gráfico de barras"
         viewBox={`0 0 ${data.length * (barWidth + spacing)} ${height}`}
         className="w-full h-full"
         preserveAspectRatio="none"

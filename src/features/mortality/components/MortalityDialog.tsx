@@ -4,18 +4,16 @@ import { useMemo } from 'react';
 import type { Mortality, MortalityDialogMode, CreateMortalityData } from '../types';
 import type { CreateMortalityFormData } from '../schemas';
 import { MortalityForm, toDateInputValue } from './MortalityForm';
-import { MortalityViewDialogContent } from './MortalityViewDialogContent';
+import { MortalityDetailsDialog } from './MortalityDetailsDialog';
 import { useCreateMortality } from '../hooks/useCreateMortality';
 import { useUpdateMortality } from '../hooks/useUpdateMortality';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type MortalityDialogProps = {
   open: boolean;
@@ -23,6 +21,8 @@ type MortalityDialogProps = {
   mode: MortalityDialogMode;
   mortality: Mortality | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -49,11 +49,11 @@ export function MortalityDialog({
   mode,
   mortality,
   onSuccess,
+  onEdit,
 }: Readonly<MortalityDialogProps>) {
   const createMortality = useCreateMortality({ skipNavigateToList: true });
   const updateMortality = useUpdateMortality({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createMortality.isPending || updateMortality.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -95,6 +95,17 @@ export function MortalityDialog({
     });
   }
 
+  if (mode === 'view') {
+    return (
+      <MortalityDetailsDialog
+        mortality={mortality ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -103,26 +114,15 @@ export function MortalityDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        {isViewMode ? (
-          <>
-            <MortalityViewDialogContent mortality={mortality} />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={handleClose}>
-                Fechar
-              </Button>
-            </DialogFooter>
-          </>
-        ) : (
-          <MortalityForm
-            key={`${mode}-${mortality?.id ?? 'new'}-${open ? 'open' : 'closed'}`}
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            isSubmitting={isLoading}
-            submitLabel={mode === 'edit' ? 'Atualizar mortalidade' : 'Criar mortalidade'}
-            submittingLabel={mode === 'edit' ? 'Atualizando...' : 'Criando...'}
-            onCancel={handleClose}
-          />
-        )}
+        <MortalityForm
+          key={`${mode}-${mortality?.id ?? 'new'}-${open ? 'open' : 'closed'}`}
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          isSubmitting={isLoading}
+          submitLabel={mode === 'edit' ? 'Atualizar mortalidade' : 'Criar mortalidade'}
+          submittingLabel={mode === 'edit' ? 'Atualizando...' : 'Criando...'}
+          onCancel={handleClose}
+        />
       </DialogContent>
     </Dialog>
   );

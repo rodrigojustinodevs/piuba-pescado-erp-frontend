@@ -404,6 +404,7 @@ export function WaterQualitiesListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         record={selectedRecord}
       />
     </div>

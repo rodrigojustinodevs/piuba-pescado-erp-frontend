@@ -8,18 +8,16 @@ import type {
 import type { CreateFinancialTransactionFormData } from '../schemas';
 import { transactionTypeValues, transactionStatusValues } from '../schemas';
 import { FinancialTransactionForm } from './FinancialTransactionForm';
-import { FinancialTransactionViewDialogContent } from './FinancialTransactionViewDialogContent';
+import { FinancialTransactionDetailsDialog } from './FinancialTransactionDetailsDialog';
 import { useCreateFinancialTransaction } from '../hooks/useCreateFinancialTransaction';
 import { useUpdateFinancialTransaction } from '../hooks/useUpdateFinancialTransaction';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type Props = {
   open: boolean;
@@ -27,6 +25,8 @@ type Props = {
   mode: FinancialTransactionDialogMode;
   transaction: FinancialTransaction | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -56,6 +56,7 @@ export function FinancialTransactionDialog({
   mode,
   transaction,
   onSuccess,
+  onEdit,
 }: Readonly<Props>) {
   const createTransaction = useCreateFinancialTransaction({ skipNavigateToList: true });
   const updateTransaction = useUpdateFinancialTransaction({ skipNavigateToList: true });
@@ -110,18 +111,6 @@ export function FinancialTransactionDialog({
       : undefined;
 
   function renderContent() {
-    if (mode === 'view') {
-      return (
-        <>
-          <FinancialTransactionViewDialogContent transaction={transaction} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && transaction) {
       return (
         <FinancialTransactionForm
@@ -146,6 +135,17 @@ export function FinancialTransactionDialog({
         submitLabel="Cadastrar transação"
         submittingLabel="Cadastrando..."
         inDialog
+      />
+    );
+  }
+
+  if (mode === 'view') {
+    return (
+      <FinancialTransactionDetailsDialog
+        transaction={transaction ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
       />
     );
   }

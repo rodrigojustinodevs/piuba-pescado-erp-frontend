@@ -199,6 +199,7 @@ export function BiometriesListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         biometry={selectedBiometry}
         onSuccess={() => {
           setDialogOpen(false);
