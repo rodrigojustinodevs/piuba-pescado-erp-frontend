@@ -34,7 +34,7 @@ export {
   FinancialCategoryForm,
   FinancialCategoryDetailView,
   FinancialCategoryDialog,
-  FinancialCategoryViewDialogContent,
+  FinancialCategoryDetailsDialog,
   FinancialCategoryCatalogStatsCards,
 } from './components';
 export { financialCategoryService } from './services/financialCategoryService';

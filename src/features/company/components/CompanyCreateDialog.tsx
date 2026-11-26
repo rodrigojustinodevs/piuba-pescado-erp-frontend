@@ -20,9 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/Select';
-import { Badge } from '@/shared/components/ui/Badge';
-import { Loader2, Mail, Phone, MapPin, Building, Calendar } from 'lucide-react';
-import { InfoRow } from '@/shared/components/entityDetail';
+import { Loader2 } from 'lucide-react';
+import { CompanyDetailsDialog } from './CompanyDetailsDialog';
 import { createCompanySchema, type CreateCompanyFormData } from '../schemas';
 import type { Company, CreateCompanyData, UpdateCompanyData } from '../types';
 import { STATES_LIST } from '@/shared/types';
@@ -35,6 +34,8 @@ interface CompanyCreateDialogProps {
   readonly onSuccess?: () => void;
   readonly mode?: CompanyDialogMode;
   readonly company?: Company | null;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  readonly onEdit?: () => void;
 }
 
 const initialForm: CreateCompanyFormData = {
@@ -52,17 +53,6 @@ const initialForm: CreateCompanyFormData = {
     zipCode: '',
   },
   active: true,
-};
-
-type CompanyStatus = 'active' | 'inactive' | 'suspended';
-
-const statusLabel: Record<
-  CompanyStatus,
-  { label: string; variant: 'default' | 'secondary' | 'destructive' }
-> = {
-  active: { label: 'Ativo', variant: 'default' },
-  inactive: { label: 'Inativo', variant: 'secondary' },
-  suspended: { label: 'Suspenso', variant: 'destructive' },
 };
 
 function companyToForm(c: Company): CreateCompanyFormData {
@@ -90,6 +80,7 @@ export function CompanyCreateDialog({
   onSuccess,
   mode = 'create',
   company = null,
+  onEdit,
 }: CompanyCreateDialogProps) {
   const {
     register,
@@ -144,93 +135,29 @@ export function CompanyCreateDialog({
     onOpenChange(value);
   }
 
-  let title: string;
   if (isView) {
-    title = 'Detalhes da Empresa';
-  } else if (isEdit) {
+    return (
+      <CompanyDetailsDialog
+        company={company}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
+  let title: string;
+  if (isEdit) {
     title = 'Editar Empresa';
   } else {
     title = 'Nova Empresa';
   }
 
   let description: string;
-  if (isView) {
-    description = 'Visualização das informações da empresa.';
-  } else if (isEdit) {
+  if (isEdit) {
     description = 'Atualize os dados da empresa abaixo.';
   } else {
     description = 'Preencha os dados para cadastrar uma nova empresa ou fazenda.';
-  }
-
-  // ---------- View mode ----------
-  if (isView && company) {
-    const sc = statusLabel[(company.status as CompanyStatus) ?? 'inactive'];
-    const fullAddress = [
-      [company.address.street, company.address.number].filter(Boolean).join(', '),
-      company.address.complement,
-      company.address.neighborhood,
-      [company.address.city, company.address.state].filter(Boolean).join('/'),
-      company.address.zipCode,
-    ]
-      .filter(Boolean)
-      .join(' • ');
-
-    return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xl font-semibold text-primary">
-                {company.name.charAt(0)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate text-lg font-semibold">{company.name}</h3>
-                <p className="font-mono text-sm text-muted-foreground">{company.cnpj}</p>
-                <Badge variant={sc.variant} className="mt-2">
-                  {sc.label}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <InfoRow icon={<Mail className="h-4 w-4" />} label="E-mail" value={company.email} />
-              <InfoRow
-                icon={<Phone className="h-4 w-4" />}
-                label="Telefone"
-                value={company.phone}
-              />
-              <InfoRow
-                icon={<MapPin className="h-4 w-4" />}
-                label="Endereço"
-                value={fullAddress || '—'}
-                className="sm:col-span-2"
-              />
-              <InfoRow
-                icon={<Calendar className="h-4 w-4" />}
-                label="Criado em"
-                value={new Date(company.createdAt).toLocaleString('pt-BR')}
-              />
-              <InfoRow
-                icon={<Building className="h-4 w-4" />}
-                label="Atualizado em"
-                value={new Date(company.updatedAt).toLocaleString('pt-BR')}
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleClose(false)}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
   }
 
   // ---------- Create / Edit mode ----------

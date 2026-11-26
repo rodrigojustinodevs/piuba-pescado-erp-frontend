@@ -10,7 +10,10 @@ type CompanyAndNameFieldsProps = {
   isSubmitting: boolean;
   loadingCompanies: boolean;
   companyOptions: SelectProps['options'];
-  companySelectProps: Omit<SelectProps, 'label' | 'required' | 'disabled' | 'options' | 'placeholder' | 'error'>;
+  companySelectProps: Omit<
+    SelectProps,
+    'label' | 'required' | 'disabled' | 'options' | 'placeholder' | 'error'
+  >;
   companyError?: string;
   nameInputProps: Omit<InputProps, 'label' | 'requiredIndicator' | 'type' | 'disabled' | 'error'>;
   nameError?: string;
@@ -53,4 +56,3 @@ export function CompanyAndNameFields({
     </>
   );
 }
-

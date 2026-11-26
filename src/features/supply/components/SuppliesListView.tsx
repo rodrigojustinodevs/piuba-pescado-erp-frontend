@@ -213,6 +213,7 @@ export function SuppliesListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         supply={selectedSupply}
         onSuccess={() => setDialogOpen(false)}
       />

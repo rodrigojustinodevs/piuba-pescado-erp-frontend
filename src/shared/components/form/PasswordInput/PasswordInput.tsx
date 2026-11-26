@@ -81,7 +81,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, Omit<TextInputProps, '
             tabIndex={-1}
           >
             {showPassword ? (
-              <svg aria-hidden="true"
+              <svg
+                aria-hidden="true"
                 className="w-5 h-5 shrink-0"
                 fill="none"
                 stroke="currentColor"
@@ -96,7 +97,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, Omit<TextInputProps, '
                 />
               </svg>
             ) : (
-              <svg aria-hidden="true"
+              <svg
+                aria-hidden="true"
                 className="w-5 h-5 shrink-0"
                 fill="none"
                 stroke="currentColor"

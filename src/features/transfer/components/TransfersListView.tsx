@@ -265,6 +265,7 @@ export function TransfersListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         transfer={selectedTransfer}
         onSuccess={() => {
           setDialogOpen(false);

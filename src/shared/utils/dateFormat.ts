@@ -91,3 +91,51 @@ export function formatDateTimeLocal(dateString: string): string {
 export function isToday(dateStr: string): boolean {
   return dateStr === new Date().toISOString().slice(0, 10);
 }
+
+const RELATIVE_TIME_UNITS: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+  ['year', 31_536_000],
+  ['month', 2_592_000],
+  ['day', 86_400],
+  ['hour', 3_600],
+  ['minute', 60],
+];
+
+const relativeTimeFormatPtBR = new Intl.RelativeTimeFormat('pt-BR', { numeric: 'auto' });
+const dateTimeShortFormatPtBR = new Intl.DateTimeFormat('pt-BR', {
+  dateStyle: 'short',
+  timeStyle: 'short',
+});
+
+/** Tempo relativo em pt-BR ("há 19 dias", "ontem", "agora mesmo"). */
+export function formatRelativeTimePtBR(iso: string, now: number = Date.now()): string {
+  const time = new Date(iso).getTime();
+  if (Number.isNaN(time)) return '—';
+  const diffSec = (time - now) / 1000;
+  for (const [unit, sec] of RELATIVE_TIME_UNITS) {
+    if (Math.abs(diffSec) >= sec)
+      return relativeTimeFormatPtBR.format(Math.round(diffSec / sec), unit);
+  }
+  return 'agora mesmo';
+}
+
+/** Data e hora curtas em pt-BR (ex.: "24/11/2026, 14:03"). */
+export function formatDateTimeShortPtBR(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? '—' : dateTimeShortFormatPtBR.format(d);
+}
+
+/**
+ * Carimbos de auditoria do servidor (`createdAt`, `updatedAt`, `lastAccessAt`) chegam como
+ * "YYYY-MM-DD HH:mm:ss" em UTC, sem indicador de fuso. Sem tratamento, o navegador os lê
+ * como horário local e eles aparecem deslocados (ex.: "em 3 horas" no fuso de Brasília).
+ * Retorna um ISO 8601 em UTC, ou `null` se o valor for inválido.
+ * Não use para datas informadas pelo usuário (ex.: `measuredAt`), que já são locais.
+ */
+export function normalizeServerTimestamp(value: string | null | undefined): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const naive = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)$/.exec(trimmed);
+  const d = naive ? new Date(`${naive[1]}T${naive[2]}Z`) : new Date(trimmed);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}

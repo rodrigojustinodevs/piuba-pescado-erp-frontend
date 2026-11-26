@@ -9,4 +9,4 @@ export { BatchForm } from './BatchForm';
 export type { BatchFormProps } from './BatchForm';
 export { BatchDistributionForm } from './BatchDistributionForm';
 export { BatchCreateDialog } from './BatchCreateDialog';
-export { BatchViewDialogContent } from './BatchViewDialogContent';
+export { BatchDetailsDialog } from './BatchDetailsDialog';

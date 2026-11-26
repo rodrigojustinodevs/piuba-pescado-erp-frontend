@@ -149,6 +149,7 @@ export function UsersListView({
         onOpenChange={setDialogOpen}
         onSuccess={() => setDialogOpen(false)}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         user={selectedUser}
       />
       <UserRoleDialog

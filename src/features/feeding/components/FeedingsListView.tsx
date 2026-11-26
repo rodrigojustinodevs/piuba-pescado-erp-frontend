@@ -249,6 +249,7 @@ export function FeedingsListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         feeding={selectedFeeding}
         onSuccess={() => {
           setDialogOpen(false);

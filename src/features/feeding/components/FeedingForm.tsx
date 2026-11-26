@@ -81,7 +81,7 @@ export function FeedingForm({
       feedingDate: '',
       quantityProvided: 0,
       feedType: '',
-      stockId: '',
+      supplyId: '',
       stockReductionQuantity: 0,
     },
   });
@@ -138,8 +138,8 @@ export function FeedingForm({
         disabled={isSubmitting || isLoadingStocks}
         options={stockOptions}
         placeholder={isLoadingStocks ? 'Carregando estoques...' : 'Selecione um estoque'}
-        {...register('stockId')}
-        error={errors.stockId?.message}
+        {...register('supplyId')}
+        error={errors.supplyId?.message}
       />
 
       <Input

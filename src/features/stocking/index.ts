@@ -5,7 +5,7 @@ export {
   StockingPageShell,
   StockingForm,
   StockingCreateDialog,
-  StockingViewDialogContent,
+  StockingDetailsDialog,
   getStockingRowLabel,
 } from './components';
 export type {

@@ -27,7 +27,7 @@ export {
   FeedingForm,
   FeedingPageShell,
   FeedingDialog,
-  FeedingViewDialogContent,
+  FeedingDetailsDialog,
 } from './components';
 export { feedingService } from './services/feedingService';
 export { feedingLookupService } from './services/feedingLookupService';

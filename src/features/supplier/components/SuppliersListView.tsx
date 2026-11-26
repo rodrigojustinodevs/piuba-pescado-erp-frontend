@@ -198,6 +198,7 @@ export function SuppliersListView({
         mode={dialogMode}
         supplier={selectedSupplier}
         onSuccess={() => setDialogOpen(false)}
+        onEdit={() => setDialogMode('edit')}
       />
     </div>
   );

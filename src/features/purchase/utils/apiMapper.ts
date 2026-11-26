@@ -40,6 +40,10 @@ export function mapApiPurchasePayment(api: ApiPurchasePayment): PurchasePayment 
 }
 
 export function mapApiPurchase(api: ApiPurchase): Purchase {
+  const totalPrice = api.totalPrice ?? 0;
+  const freightCost = api.freight ?? 0;
+  const otherCosts = api.otherCosts ?? 0;
+
   return {
     id: api.id,
     referenceCode: api.code,
@@ -47,8 +51,10 @@ export function mapApiPurchase(api: ApiPurchase): Purchase {
     supplierId: api.supplierId,
     invoiceNumber: api.invoiceNumber ?? null,
     totalPrice: api.totalPrice,
-    freightCost: api.freight ?? 0,
-    otherCosts: api.otherCosts ?? 0,
+    freightCost,
+    otherCosts,
+    grandTotal:
+      api.grandTotal ?? Math.round((totalPrice + freightCost + otherCosts) * 100) / 100,
     status: api.status,
     paymentStatus: api.paymentStatus ?? 'pending',
     paymentMethod: api.paymentMethod ?? null,

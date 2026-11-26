@@ -176,6 +176,7 @@ export function ClientsListView({
         mode={dialogMode}
         client={selectedClient}
         onSuccess={() => setDialogOpen(false)}
+        onEdit={() => setDialogMode('edit')}
       />
     </div>
   );

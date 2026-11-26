@@ -3,7 +3,7 @@
 import type { Sale, SaleDialogMode, CreateSaleData, UpdateSaleData } from '../types';
 import type { CreateSaleFormData } from '../schemas';
 import { SaleForm } from './SaleForm';
-import { SaleViewDialogContent } from './SaleViewDialogContent';
+import { SaleDetailsDialog } from './SaleDetailsDialog';
 import { useCreateSale } from '../hooks/useCreateSale';
 import { useUpdateSale } from '../hooks/useUpdateSale';
 import { saleToUpdateFormValues } from '../utils/apiMapper';
@@ -11,11 +11,9 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type SaleDialogProps = {
   open: boolean;
@@ -23,6 +21,8 @@ type SaleDialogProps = {
   mode: SaleDialogMode;
   sale: Sale | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -49,6 +49,7 @@ export function SaleDialog({
   mode,
   sale,
   onSuccess,
+  onEdit,
 }: Readonly<SaleDialogProps>) {
   const createSale = useCreateSale({ skipNavigateToList: true });
   const updateSale = useUpdateSale({ skipNavigateToList: true });
@@ -86,19 +87,6 @@ export function SaleDialog({
     sale && mode === 'edit' ? saleToUpdateFormValues(sale) : undefined;
 
   function renderContent() {
-    if (mode === 'view') {
-      return (
-        <>
-          <SaleViewDialogContent sale={sale} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
-
     if (mode === 'edit' && sale) {
       return (
         <SaleForm
@@ -123,6 +111,17 @@ export function SaleDialog({
         submitLabel="Cadastrar venda"
         submittingLabel="Cadastrando..."
         inDialog
+      />
+    );
+  }
+
+  if (mode === 'view') {
+    return (
+      <SaleDetailsDialog
+        sale={sale ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
       />
     );
   }

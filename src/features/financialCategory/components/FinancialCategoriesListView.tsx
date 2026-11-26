@@ -195,6 +195,7 @@ export function FinancialCategoriesListView({
         mode={dialogMode}
         category={selectedCategory}
         onSuccess={() => setDialogOpen(false)}
+        onEdit={() => setDialogMode('edit')}
       />
     </div>
   );

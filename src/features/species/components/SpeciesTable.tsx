@@ -5,6 +5,7 @@ import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { SPECIES_WRITE_ROLES } from '../utils/permissions';
 import { DataTable, type DataTableAction, type DataTableColumn } from '@/shared/components/Table';
 import { EditIcon, SpinnerIcon, TrashIcon } from '@/shared/components/Table/ActionIcons';
+import { Eye } from 'lucide-react';
 
 function formatRange(min?: number, max?: number, unit = ''): string {
   if (min === undefined && max === undefined) return '—';
@@ -38,6 +39,7 @@ const columns: Array<DataTableColumn<Species>> = [
 
 export type SpeciesTableProps = {
   species: Species[];
+  onView: (species: Species) => void;
   onEdit: (species: Species) => void;
   handleDelete: (id: string, name: string) => void;
   isDeleting?: boolean;
@@ -45,6 +47,7 @@ export type SpeciesTableProps = {
 
 export function SpeciesTable({
   species,
+  onView,
   onEdit,
   handleDelete,
   isDeleting,
@@ -53,6 +56,15 @@ export function SpeciesTable({
   const canWrite = canAccess(SPECIES_WRITE_ROLES);
 
   const rowActions = (row: Species): DataTableAction[] => [
+    {
+      label: 'Ver detalhes',
+      onClick: () => onView(row),
+      icon: <Eye className="h-4 w-4" />,
+    },
+    ...(canWrite ? writeActions(row) : []),
+  ];
+
+  const writeActions = (row: Species): DataTableAction[] => [
     {
       label: 'Editar',
       onClick: () => onEdit(row),
@@ -80,7 +92,7 @@ export function SpeciesTable({
       data={species}
       columns={columns}
       getRowId={(item) => item.id}
-      rowActions={canWrite ? rowActions : undefined}
+      rowActions={rowActions}
       showPagination={false}
     />
   );

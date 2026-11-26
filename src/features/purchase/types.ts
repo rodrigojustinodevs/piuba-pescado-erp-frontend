@@ -110,6 +110,8 @@ export interface ApiPurchase {
   totalPrice: number;
   freight: number;
   otherCosts: number;
+  /** totalPrice + freight + otherCosts */
+  grandTotal?: number;
   status: string;
   statusLabel: string;
   paymentStatus: string;
@@ -156,6 +158,8 @@ export interface Purchase {
   totalPrice: number;
   freightCost: number;
   otherCosts: number;
+  /** Total geral: itens + frete + outros custos */
+  grandTotal: number;
   status: string;
   paymentStatus: string;
   paymentMethod: string | null;

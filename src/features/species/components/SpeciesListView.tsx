@@ -67,6 +67,7 @@ export function SpeciesListView({
       <>
         <SpeciesTable
           species={species}
+          onView={(item) => openSpeciesDialog('view', item)}
           onEdit={(item) => openSpeciesDialog('edit', item)}
           handleDelete={handleDelete}
           isDeleting={isDeleting}
@@ -95,15 +96,14 @@ export function SpeciesListView({
         setDialogOpen={() => openSpeciesDialog('create')}
       />
 
-      {canWrite && (
-        <SpeciesDialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-          onSuccess={() => setDialogOpen(false)}
-          mode={dialogMode}
-          species={selectedSpecies}
-        />
-      )}
+      <SpeciesDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSuccess={() => setDialogOpen(false)}
+        mode={dialogMode}
+        species={selectedSpecies}
+        onEdit={canWrite ? () => setDialogMode('edit') : undefined}
+      />
 
       <Card>
         <CardHeader>

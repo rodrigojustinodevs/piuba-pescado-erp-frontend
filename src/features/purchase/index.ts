@@ -47,7 +47,7 @@ export {
   PurchaseForm,
   PurchaseDetailView,
   PurchaseDialog,
-  PurchaseViewDialogContent,
+  PurchaseDetailsDialog,
   PurchaseCatalogStatsCards,
   PurchaseReceiveDialog,
   PurchasePaymentDialog,

@@ -10,16 +10,24 @@ import {
   getApiPagedListMeta,
 } from '@/shared/utils/apiListResponse';
 
+/**
+ * A API às vezes envia os parâmetros como número (ex.: `salinity: 0`), apesar do contrato
+ * declarar string. Normaliza para string para que o restante do app possa confiar no tipo.
+ */
+function toMetricString(value: unknown): string {
+  return value == null ? '' : String(value);
+}
+
 export function mapApiWaterQuality(api: ApiWaterQuality): WaterQuality {
   return {
     id: api.id,
     measuredAt: api.measuredAt,
-    ph: api.ph,
-    dissolvedOxygen: api.dissolvedOxygen,
-    temperature: api.temperature,
-    ammonia: api.ammonia,
-    salinity: api.salinity ?? '',
-    turbidity: api.turbidity ?? '',
+    ph: toMetricString(api.ph),
+    dissolvedOxygen: toMetricString(api.dissolvedOxygen),
+    temperature: toMetricString(api.temperature),
+    ammonia: toMetricString(api.ammonia),
+    salinity: toMetricString(api.salinity),
+    turbidity: toMetricString(api.turbidity),
     quality: api.quality,
     notes: api.notes ?? null,
     company: api.company ?? { name: null },

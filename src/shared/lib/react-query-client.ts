@@ -37,9 +37,11 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false, // Desativa refetch desnecessário em ERPs
       // Token expirado (401) não se resolve tentando de novo — falha rápido para
       // useAuthRedirect redirecionar ao login sem esperar os retries.
-      // 403 de gating também não muda tentando de novo.
-      retry: (failureCount, error) =>
-        extractHttpStatus(error) !== 401 && parseGateError(error) === null && failureCount < 3,
+      // 403 (gating ou falta de permissão) também não muda tentando de novo.
+      retry: (failureCount, error) => {
+        const status = extractHttpStatus(error);
+        return status !== 401 && status !== 403 && parseGateError(error) === null && failureCount < 3;
+      },
     },
   },
 });

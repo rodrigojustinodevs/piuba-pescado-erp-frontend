@@ -217,6 +217,7 @@ export function PurchasesListView({
           setDialogOpen(open);
         }}
         mode={dialogMode}
+        onEdit={() => setDialogMode('edit')}
         purchase={selectedPurchase}
         onSuccess={() => setDialogOpen(false)}
       />

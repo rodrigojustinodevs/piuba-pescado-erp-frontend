@@ -18,7 +18,8 @@ export function buildFinancialTransactionBody(
   payload: CreateFinancialTransactionData,
 ): Record<string, unknown> {
   const body: Record<string, unknown> = {
-    type: payload.type,
+    // O backend usa "revenue"; o front trabalha com "income".
+    type: payload.type === 'income' ? 'revenue' : payload.type,
     status: payload.status,
     amount: payload.amount,
   };

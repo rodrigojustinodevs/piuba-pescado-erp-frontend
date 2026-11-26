@@ -4,16 +4,14 @@ import type { CreateStockingFormData, UpdateStockingFormData } from '../schemas'
 import { useCreateStocking } from '../hooks/useCreateStocking';
 import { useUpdateStocking } from '../hooks/useUpdateStocking';
 import { StockingForm } from './StockingForm';
-import { StockingViewDialogContent } from './StockingViewDialogContent';
+import { StockingDetailsDialog } from './StockingDetailsDialog';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 import type { Stocking, StockingDialogMode, UpdateStockingData } from '../types';
 
 type StockingCreateDialogProps = {
@@ -23,6 +21,8 @@ type StockingCreateDialogProps = {
   stocking: Stocking | null;
   batchMap: Record<string, string>;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -50,11 +50,11 @@ export function StockingCreateDialog({
   stocking,
   batchMap,
   onSuccess,
+  onEdit,
 }: Readonly<StockingCreateDialogProps>) {
   const createStocking = useCreateStocking({ skipNavigateToList: true });
   const updateStocking = useUpdateStocking({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createStocking.isPending || updateStocking.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -91,9 +91,6 @@ export function StockingCreateDialog({
   }
 
   function renderContent() {
-    if (isViewMode) {
-      return <ViewContent stocking={stocking} batchMap={batchMap} onClose={handleClose} />;
-    }
     if (mode === 'edit' && stocking) {
       return (
         <StockingForm
@@ -119,6 +116,18 @@ export function StockingCreateDialog({
     );
   }
 
+  if (mode === 'view') {
+    return (
+      <StockingDetailsDialog
+        stocking={stocking ?? null}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+        batchMap={batchMap}
+      />
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[90vh] overflow-y-auto bg-white ${maxWidth}`}>
@@ -129,24 +138,5 @@ export function StockingCreateDialog({
         {renderContent()}
       </DialogContent>
     </Dialog>
-  );
-}
-
-type ViewContentProps = {
-  stocking: Stocking | null;
-  batchMap: Record<string, string>;
-  onClose: () => void;
-};
-
-function ViewContent({ stocking, batchMap, onClose }: Readonly<ViewContentProps>) {
-  return (
-    <>
-      <StockingViewDialogContent stocking={stocking} batchMap={batchMap} />
-      <DialogFooter>
-        <Button type="button" variant="outline" onClick={onClose}>
-          Fechar
-        </Button>
-      </DialogFooter>
-    </>
   );
 }

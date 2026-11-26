@@ -3,18 +3,16 @@
 import type { Supplier, SupplierDialogMode, CreateSupplierData } from '../types';
 import type { CreateSupplierFormData } from '../schemas';
 import { SupplierForm } from './SupplierForm';
-import { SupplierViewDialogContent } from './SupplierViewDialogContent';
+import { SupplierDetailsDialog } from './SupplierDetailsDialog';
 import { useCreateSupplier } from '../hooks/useCreateSupplier';
 import { useUpdateSupplier } from '../hooks/useUpdateSupplier';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
-import { Button } from '@/shared/components/ui/Button';
 
 type SupplierDialogProps = {
   open: boolean;
@@ -22,6 +20,8 @@ type SupplierDialogProps = {
   mode: SupplierDialogMode;
   supplier: Supplier | null;
   onSuccess: () => void;
+  /** Chamado pelo botão "Editar" da visualização (troca o modo para 'edit'). */
+  onEdit?: () => void;
 };
 
 const DIALOG_CONFIG = {
@@ -48,11 +48,11 @@ export function SupplierDialog({
   mode,
   supplier,
   onSuccess,
+  onEdit,
 }: Readonly<SupplierDialogProps>) {
   const createSupplier = useCreateSupplier({ skipNavigateToList: true });
   const updateSupplier = useUpdateSupplier({ skipNavigateToList: true });
 
-  const isViewMode = mode === 'view';
   const isLoading = createSupplier.isPending || updateSupplier.isPending;
   const { title, description, maxWidth } = DIALOG_CONFIG[mode];
 
@@ -109,19 +109,18 @@ export function SupplierDialog({
         }
       : undefined;
 
+  if (mode === 'view') {
+    return (
+      <SupplierDetailsDialog
+        supplier={supplier}
+        open={open}
+        onOpenChange={onOpenChange}
+        onEdit={onEdit}
+      />
+    );
+  }
+
   function renderContent() {
-    if (isViewMode) {
-      return (
-        <>
-          <SupplierViewDialogContent supplier={supplier} />
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </>
-      );
-    }
     if (mode === 'edit' && supplier) {
       return (
         <SupplierForm

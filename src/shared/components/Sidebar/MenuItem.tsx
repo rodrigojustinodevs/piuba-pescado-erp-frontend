@@ -57,7 +57,9 @@ export function MenuItem({ item, isOpen, onToggle, isCollapsed = false }: Readon
       {item.icon && (
         <span
           className={`grid h-5 w-5 place-items-center flex-shrink-0 transition-colors ${
-            isActive ? 'text-[color:var(--sidebar-accent-foreground)]' : 'text-white/70 group-hover:text-white'
+            isActive
+              ? 'text-[color:var(--sidebar-accent-foreground)]'
+              : 'text-white/70 group-hover:text-white'
           }`}
         >
           <span className="w-5 h-5 flex items-center justify-center">

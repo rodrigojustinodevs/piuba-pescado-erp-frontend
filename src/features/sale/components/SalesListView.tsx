@@ -241,6 +241,7 @@ export function SalesListView({
         open={dialogOpen}
         onOpenChange={onDialogOpenChange}
         mode={dialogMode}
+        onEdit={selectedSale ? () => onEdit(selectedSale) : undefined}
         sale={selectedSale}
         onSuccess={onDialogSuccess}
       />

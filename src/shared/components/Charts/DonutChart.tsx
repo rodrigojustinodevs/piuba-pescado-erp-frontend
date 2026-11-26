@@ -21,7 +21,13 @@ export function DonutChart({ percentage, data, size = 120 }: Readonly<DonutChart
   return (
     <div className="flex items-center gap-6">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg role="img" aria-label="Gráfico de rosca" width={size} height={size} className="transform -rotate-90">
+        <svg
+          role="img"
+          aria-label="Gráfico de rosca"
+          width={size}
+          height={size}
+          className="transform -rotate-90"
+        >
           {/* Background circle */}
           <circle
             cx={size / 2}

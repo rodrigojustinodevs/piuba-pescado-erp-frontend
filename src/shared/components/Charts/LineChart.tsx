@@ -16,7 +16,9 @@ export function LineChart({ data, height = 200 }: Readonly<LineChartProps>) {
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
-      <svg role="img" aria-label="Gráfico de linhas"
+      <svg
+        role="img"
+        aria-label="Gráfico de linhas"
         viewBox={`0 0 ${data.length * 100} ${height}`}
         className="w-full h-full"
         preserveAspectRatio="none"

@@ -86,7 +86,7 @@ export function PurchasePaymentDialog({
 
   if (!purchase) return null;
 
-  const totalPrice = summary?.totalAmount ?? purchase.totalPrice ?? 0;
+  const totalPrice = summary?.totalAmount ?? purchase.grandTotal ?? 0;
   const paidAmount = summary?.totalPaid ?? purchase.paidAmount ?? 0;
   const pendingAmount = summary?.balance ?? Math.max(0, totalPrice - paidAmount);
   function getProgressPercent() {

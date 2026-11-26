@@ -13,11 +13,13 @@ export function useFormWithCompany<T extends ZodTypeAny>(baseSchema: T) {
   const resolverSchema = useMemo(
     () =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (baseSchema as any).superRefine((data: { companyId?: string }, ctx: import('zod').RefinementCtx) => {
-        if (showCompanySelect && !data.companyId?.trim()) {
-          addRequiredCompanyIssue(ctx);
-        }
-      }),
+      (baseSchema as any).superRefine(
+        (data: { companyId?: string }, ctx: import('zod').RefinementCtx) => {
+          if (showCompanySelect && !data.companyId?.trim()) {
+            addRequiredCompanyIssue(ctx);
+          }
+        },
+      ),
     [baseSchema, showCompanySelect],
   );
 

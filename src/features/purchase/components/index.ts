@@ -3,7 +3,7 @@ export { PurchasesListView } from './PurchasesListView';
 export { PurchaseForm } from './PurchaseForm';
 export { PurchaseDetailView } from './PurchaseDetailView';
 export { PurchaseDialog } from './PurchaseDialog';
-export { PurchaseViewDialogContent } from './PurchaseViewDialogContent';
+export { PurchaseDetailsDialog } from './PurchaseDetailsDialog';
 export { PurchaseCatalogStatsCards } from './PurchaseCatalogStats';
 export { PurchaseReceiveDialog } from './PurchaseReceiveDialog';
 export { PurchasePaymentDialog } from './PurchasePaymentDialog';

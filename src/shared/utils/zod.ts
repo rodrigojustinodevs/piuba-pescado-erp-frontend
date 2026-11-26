@@ -8,7 +8,10 @@ export function addRequiredCompanyIssue(ctx: z.RefinementCtx) {
   });
 }
 
-export function withRequiredCompany<T extends z.ZodTypeAny>(schema: T, showCompanySelect: boolean): T {
+export function withRequiredCompany<T extends z.ZodTypeAny>(
+  schema: T,
+  showCompanySelect: boolean,
+): T {
   const getCompanyId = (value: unknown): string | undefined => {
     if (!value || typeof value !== 'object') return undefined;
     if (!('companyId' in value)) return undefined;
@@ -23,4 +26,3 @@ export function withRequiredCompany<T extends z.ZodTypeAny>(schema: T, showCompa
     }
   }) as T;
 }
-
