@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { financialTransactionService } from '../services/financialTransactionService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteFinancialTransaction() {
   const queryClient = useQueryClient();
@@ -15,6 +16,7 @@ export function useDeleteFinancialTransaction() {
       showSuccess('Transação excluída com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir transação. Tente novamente.');
     },
   });

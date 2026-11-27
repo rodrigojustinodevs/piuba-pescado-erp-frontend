@@ -1,10 +1,4 @@
-import { UserRole } from '@/shared/types/auth';
+import { rolesWithPermission } from '@/shared/access/roles';
 
-/** Roles com a permissão `view-tank-report` no backend (operator não possui). */
-export const TANK_REPORT_ROLES: string[] = [
-  UserRole.MASTER,
-  UserRole.MASTER_ADMIN,
-  UserRole.COMPANY_ADMIN,
-  UserRole.ADMIN,
-  UserRole.MANAGER,
-];
+/** Papéis com `view-tank-report` na matriz da API. */
+export const TANK_REPORT_ROLES = rolesWithPermission('view-tank-report');

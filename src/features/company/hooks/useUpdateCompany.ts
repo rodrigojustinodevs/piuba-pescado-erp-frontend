@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { companyService } from '../services/companyService';
 import type { UpdateCompanyData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para atualizar uma empresa existente
@@ -28,6 +29,7 @@ export function useUpdateCompany() {
       router.push(`/admin/companies/${data.id}`);
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar empresa. Tente novamente.');
     },
   });

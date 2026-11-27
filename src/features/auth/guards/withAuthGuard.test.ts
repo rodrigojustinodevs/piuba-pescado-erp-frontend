@@ -1,9 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeJwt, inSeconds } from '@/test/jwt';
+import { __setRefreshImplForTests } from '@/shared/lib/http/sessionRefresh';
 
 let cookieValue: string | undefined;
 vi.mock('next/headers', () => ({
-  cookies: async () => ({ get: () => (cookieValue ? { value: cookieValue } : undefined) }),
+  cookies: async () => ({
+    get: () => (cookieValue ? { value: cookieValue } : undefined),
+    set: (cookie: { value: string }) => {
+      cookieValue = cookie.value || undefined;
+    },
+  }),
 }));
 
 import { withAuthGuard } from './withAuthGuard';
@@ -15,16 +21,39 @@ describe('withAuthGuard', () => {
   beforeEach(() => {
     cookieValue = undefined;
   });
+  afterEach(() => __setRefreshImplForTests(null));
 
-  it('401 sem cookie', async () => {
+  it('401 SESSION_ENDED sem cookie', async () => {
+    const res = await call();
+    expect(res.status).toBe(401);
+    expect(await res.json()).toMatchObject({ code: 'SESSION_ENDED' });
+  });
+
+  it('401 para token malformado', async () => {
+    cookieValue = 'lixo';
     expect((await call()).status).toBe(401);
   });
 
-  it('401 para token malformado e para token expirado', async () => {
-    cookieValue = 'lixo';
-    expect((await call()).status).toBe(401);
-    cookieValue = fakeJwt({ exp: inSeconds(-10) });
-    expect((await call()).status).toBe(401);
+  it('renova o token vencido e segue com o token novo', async () => {
+    const fresh = fakeJwt({ role: 'manager', cid: 'c1', exp: inSeconds(3600) });
+    __setRefreshImplForTests(async () => ({ token: fresh }));
+    cookieValue = fakeJwt({ role: 'manager', exp: inSeconds(-10) });
+
+    const handler = vi.fn(async () => Response.json({}));
+    const res = await withAuthGuard(handler)();
+
+    expect(res.status).toBe(200);
+    expect(cookieValue).toBe(fresh);
+    expect(handler.mock.calls[0]).toMatchObject([{ token: fresh }]);
+  });
+
+  it('encerra a sessão quando a API recusa o refresh', async () => {
+    __setRefreshImplForTests(async () => 'rejected');
+    cookieValue = fakeJwt({ role: 'manager', exp: inSeconds(-10) });
+    const res = await call();
+    expect(res.status).toBe(401);
+    expect(await res.json()).toMatchObject({ code: 'SESSION_ENDED' });
+    expect(cookieValue).toBeUndefined();
   });
 
   it('403 (não 401) quando o papel não é permitido', async () => {

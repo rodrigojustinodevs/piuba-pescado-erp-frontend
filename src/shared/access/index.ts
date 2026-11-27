@@ -1,0 +1,11 @@
+export { Gate, useGate } from './Gate';
+export { useEntitlements, useAccessSnapshot } from './useEntitlements';
+export { useRole, usePermission } from './useRole';
+export { accessKeys } from './handleApiError';
+export { accessEvents } from './accessEvents';
+export { isAtLeast, hasPermission, normalizeRole, ROLE_LABELS } from './roles';
+export type { CompanyRole, Role } from './roles';
+export type { Permission } from './permissionMatrix';
+export { FeatureKey } from './types';
+export type { AccessSnapshot, Entitlement } from './types';
+export { ACCESS_MESSAGES, planName } from './messages';

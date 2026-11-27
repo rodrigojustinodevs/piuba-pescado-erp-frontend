@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { saleService } from '../services/saleService';
 import { translateSaleApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteSale() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export function useDeleteSale() {
       router.push('/company/sales');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       const message = error.message ? translateSaleApiErrorMessagePtBR(error.message) : '';
       showError(message || 'Erro ao excluir venda. Tente novamente.');
     },

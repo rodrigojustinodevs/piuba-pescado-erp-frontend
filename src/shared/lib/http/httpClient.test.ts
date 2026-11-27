@@ -92,4 +92,33 @@ describe('HttpClient', () => {
       retryAfterSeconds: 30,
     });
   });
+
+  it('401: renova a sessão uma vez e repete o request com o token novo', async () => {
+    let token = 'velho';
+    const spy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(json({ message: 'expirado' }, 401))
+      .mockResolvedValueOnce(json({ success: true, data: 'ok' }));
+    const onUnauthorized = vi.fn(async () => {
+      token = 'novo';
+      return true;
+    });
+    const client = new HttpClient({
+      baseUrl: 'http://x',
+      tokenProvider: { getToken: async () => token },
+      onUnauthorized,
+    });
+
+    await expect(client.post('/a', { x: 1 })).resolves.toBe('ok');
+    expect(onUnauthorized).toHaveBeenCalledTimes(1);
+    expect((spy.mock.calls[1][1]!.headers as Headers).get('Authorization')).toBe('Bearer novo');
+    expect(spy.mock.calls[1][1]!.body).toBe(JSON.stringify({ x: 1 }));
+  });
+
+  it('401 sem refresh possível: não repete e propaga o 401', async () => {
+    const spy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json({ message: 'x' }, 401));
+    const client = new HttpClient({ baseUrl: 'http://x', onUnauthorized: async () => false });
+    await expect(client.get('/a')).rejects.toMatchObject({ status: 401 });
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });

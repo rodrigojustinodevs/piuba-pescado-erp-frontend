@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { financialCategoryService } from '../services/financialCategoryService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeactivateFinancialCategory() {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export function useDeactivateFinancialCategory() {
       showSuccess('Categoria financeira inativada com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao inativar categoria financeira. Tente novamente.');
     },
   });

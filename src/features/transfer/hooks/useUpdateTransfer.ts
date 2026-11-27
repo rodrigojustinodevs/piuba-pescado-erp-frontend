@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { transferService } from '../services/transferService';
 import type { PatchTransferPayload, UpdateTransferData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateTransferOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateTransfer({ skipNavigateToList }: UseUpdateTransferOptio
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar transferência. Tente novamente.');
     },
   });

@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { batchService } from '../services/batchService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para deletar um lote
@@ -24,6 +25,7 @@ export function useDeleteBatch() {
       router.push('/company/batches');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir lote. Tente novamente.');
     },
   });

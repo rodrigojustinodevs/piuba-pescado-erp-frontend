@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateStockLocationData } from '../types';
 import { stockService } from '../services/stockService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateStockOptions = {
   skipNavigateToList?: boolean;
@@ -25,6 +26,7 @@ export function useCreateStock({ skipNavigateToList }: UseCreateStockOptions = {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao cadastrar local de armazenamento. Tente novamente.');
     },
   });

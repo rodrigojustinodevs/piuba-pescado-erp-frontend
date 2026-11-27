@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { stockService } from '../services/stockService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteStock() {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export function useDeleteStock() {
       showSuccess('Local de armazenamento excluído com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir local de armazenamento. Tente novamente.');
     },
   });

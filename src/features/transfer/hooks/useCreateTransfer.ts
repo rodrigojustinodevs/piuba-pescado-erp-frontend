@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { transferService } from '../services/transferService';
 import type { CreateTransferData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateTransferOptions = {
   skipNavigateToList?: boolean;
@@ -25,6 +26,7 @@ export function useCreateTransfer({ skipNavigateToList }: UseCreateTransferOptio
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar transferência. Tente novamente.');
     },
   });

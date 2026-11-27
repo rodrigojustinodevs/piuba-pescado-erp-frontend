@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { sensorReadingService } from '../services/sensorReadingService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteSensorReading() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useDeleteSensorReading() {
       router.push('/company/sensor-readings');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir leitura. Tente novamente.');
     },
   });

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { speciesService } from '../services/speciesService';
 import type { UpdateSpeciesData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para atualizar uma espécie existente
@@ -22,6 +23,7 @@ export function useUpdateSpecies() {
       router.push('/company/species');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar espécie. Tente novamente.');
     },
   });

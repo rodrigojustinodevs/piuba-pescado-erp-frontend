@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { mortalityService } from '../services/mortalityService';
 import type { CreateMortalityData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateMortalityOptions = {
   skipNavigateToList?: boolean;
@@ -20,6 +21,7 @@ export function useCreateMortality(_options: UseCreateMortalityOptions = {}) {
       showSuccess('Mortalidade criada com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar mortalidade. Tente novamente.');
     },
   });

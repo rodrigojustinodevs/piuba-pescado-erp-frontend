@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateFinancialCategoryData } from '../types';
 import { financialCategoryService } from '../services/financialCategoryService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type Options = {
   skipNavigateToList?: boolean;
@@ -23,6 +24,7 @@ export function useCreateFinancialCategory({ skipNavigateToList = false }: Optio
       if (!skipNavigateToList) router.push('/company/financial-categories');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao cadastrar categoria financeira. Tente novamente.');
     },
   });

@@ -6,14 +6,11 @@ import { HttpClient, serverHttpClient } from '@/shared/lib/http';
 import { getApiBaseUrl } from '@/shared/lib/http/apiUrl';
 import { authCookieOptions, resolveCookieMaxAge } from '@/shared/lib/http/authCookie';
 import { HttpError } from '@/shared/lib/http/httpError';
+import { renewSession } from '@/shared/lib/http/serverSession';
+import { shouldRefresh } from '@/shared/lib/http/sessionRefresh';
 import { decodeJWT } from '@/shared/utils/jwt';
 
 const publicHttpClient = new HttpClient({ baseUrl: getApiBaseUrl() });
-
-function isExpired(payload: Record<string, unknown> | null): boolean {
-  const exp = Number(payload?.exp);
-  return Number.isFinite(exp) && exp * 1000 <= Date.now();
-}
 
 type LoginApiResponse = {
   status: boolean;
@@ -62,10 +59,16 @@ export async function GET() {
     return successResponse({ isAuthenticated: false }, 200);
   }
 
-  const decodedToken = decodeJWT(token);
-  if (!decodedToken || isExpired(decodedToken)) {
+  let decodedToken = decodeJWT(token);
+  if (!decodedToken) {
     cookieStore.set({ ...authCookieOptions(0), value: '' });
-    return successResponse({ isAuthenticated: false }, 200);
+    return successResponse({ isAuthenticated: false, reason: 'session_ended' }, 200);
+  }
+  if (shouldRefresh(decodedToken)) {
+    const renewed = await renewSession();
+    decodedToken = renewed ? decodeJWT(renewed) : null;
+    if (!decodedToken)
+      return successResponse({ isAuthenticated: false, reason: 'session_ended' }, 200);
   }
 
   try {
@@ -80,7 +83,7 @@ export async function GET() {
     // Backend rejeitou o token (revogado/inválido): a sessão não é mais válida.
     if (error instanceof HttpError && (error.status === 401 || error.status === 403)) {
       cookieStore.set({ ...authCookieOptions(0), value: '' });
-      return successResponse({ isAuthenticated: false }, 200);
+      return successResponse({ isAuthenticated: false, reason: 'session_ended' }, 200);
     }
     // Indisponibilidade transitória do backend: usa o JWT (já validado quanto à expiração).
     return successResponse(

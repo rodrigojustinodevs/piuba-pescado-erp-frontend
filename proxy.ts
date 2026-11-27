@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { extractRoleFromJWT } from '@/shared/utils/jwtExtractors';
+import { authCookieOptions, resolveCookieMaxAge } from '@/shared/lib/http/authCookie';
+import { refreshSessionToken } from '@/shared/lib/http/sessionRefresh';
 
 const AUTH_COOKIE = 'auth_token';
 const PROTECTED_PREFIXES = ['/dashboard', '/company', '/admin', '/alerts'];
@@ -33,13 +35,45 @@ function isMasterUser(payload: JwtPayload): boolean {
   return !!role && MASTER_ROLES.has(role.replaceAll('-', '_'));
 }
 
-function redirectToLogin(request: NextRequest, clearCookie: boolean) {
-  const response = NextResponse.redirect(new URL('/login', request.url));
+function redirectToLogin(request: NextRequest, clearCookie: boolean, sessionEnded = false) {
+  const url = new URL('/login', request.url);
+  if (sessionEnded) url.searchParams.set('reason', 'session_ended');
+  const response = NextResponse.redirect(url);
   if (clearCookie) response.cookies.delete(AUTH_COOKIE);
   return response;
 }
 
-export function proxy(request: NextRequest) {
+/**
+ * Token vencido numa navegação: tenta renovar no servidor antes de mandar ao login.
+ * O cookie novo vai na resposta e no request (para os Server Components já lerem o token novo).
+ */
+async function continueWithRefresh(
+  request: NextRequest,
+  token: string,
+  onRefreshed: (payload: JwtPayload) => NextResponse,
+) {
+  const result = await refreshSessionToken(token);
+  if (typeof result !== 'object') {
+    // API recusou: sessão encerrada. API fora do ar: mesmo destino, sem apagar o cookie.
+    return redirectToLogin(request, result === 'rejected', true);
+  }
+  const payload = decodePayload(result.token);
+  if (!payload) return redirectToLogin(request, true, true);
+
+  request.cookies.set(AUTH_COOKIE, result.token);
+  const response = onRefreshed(payload);
+  response.cookies.set({
+    ...authCookieOptions(resolveCookieMaxAge(payload)),
+    value: result.token,
+  });
+  return response;
+}
+
+function nextWithRequestCookies(request: NextRequest) {
+  return NextResponse.next({ request: { headers: request.headers } });
+}
+
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
   const { pathname } = request.nextUrl;
 
@@ -51,20 +85,40 @@ export function proxy(request: NextRequest) {
 
   if (isProtectedRoute) {
     if (!token) return redirectToLogin(request, false);
-    // Token malformado ou expirado: limpa o cookie para evitar loop com /login.
-    if (!payload || !hasValidSession) return redirectToLogin(request, true);
+    // Token malformado: limpa o cookie para evitar loop com /login.
+    if (!payload) return redirectToLogin(request, true);
 
-    // /admin é exclusivo de usuários master (mesma regra do menu).
-    const isAdminRoute = pathname === ADMIN_PREFIX || pathname.startsWith(`${ADMIN_PREFIX}/`);
-    if (isAdminRoute && !isMasterUser(payload)) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+    const authorize = (current: JwtPayload, fallback: () => NextResponse) => {
+      // /admin é exclusivo de usuários master (mesma regra do menu).
+      const isAdminRoute = pathname === ADMIN_PREFIX || pathname.startsWith(`${ADMIN_PREFIX}/`);
+      if (isAdminRoute && !isMasterUser(current)) {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+      return fallback();
+    };
+
+    if (!hasValidSession) {
+      return continueWithRefresh(request, token, (fresh) =>
+        authorize(fresh, () => nextWithRequestCookies(request)),
+      );
     }
-    return NextResponse.next();
+    return authorize(payload, () => NextResponse.next());
   }
 
-  // /login com sessão válida vai direto ao dashboard; com cookie inválido, limpa e segue.
+  // /login com sessão válida (ou renovável) vai direto ao dashboard.
   if (pathname.startsWith('/login') && token) {
     if (hasValidSession) return NextResponse.redirect(new URL('/dashboard', request.url));
+    if (payload) {
+      const result = await refreshSessionToken(token);
+      if (typeof result === 'object') {
+        const response = NextResponse.redirect(new URL('/dashboard', request.url));
+        response.cookies.set({
+          ...authCookieOptions(resolveCookieMaxAge(decodePayload(result.token))),
+          value: result.token,
+        });
+        return response;
+      }
+    }
     const response = NextResponse.next();
     response.cookies.delete(AUTH_COOKIE);
     return response;

@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { supplierService } from '../services/supplierService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteSupplier() {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export function useDeleteSupplier() {
       showSuccess('Fornecedor excluído com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir fornecedor. Tente novamente.');
     },
   });

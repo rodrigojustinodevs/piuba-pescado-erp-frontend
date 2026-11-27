@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { purchaseService } from '../services/purchaseService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useCancelPurchase() {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export function useCancelPurchase() {
       showSuccess('Compra cancelada com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao cancelar compra. Tente novamente.');
     },
   });

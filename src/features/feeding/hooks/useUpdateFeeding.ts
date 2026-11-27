@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { feedingService } from '../services/feedingService';
 import type { UpdateFeedingData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export type UseUpdateFeedingOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateFeeding(options: UseUpdateFeedingOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar alimentação. Tente novamente.');
     },
   });

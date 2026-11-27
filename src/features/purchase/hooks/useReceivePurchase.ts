@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { purchaseService } from '../services/purchaseService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useReceivePurchase() {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export function useReceivePurchase() {
       showSuccess('Compra recebida com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao receber compra. Tente novamente.');
     },
   });

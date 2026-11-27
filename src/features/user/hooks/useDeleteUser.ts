@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { userService } from '../services/userService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para deletar um usuário
@@ -21,6 +22,7 @@ export function useDeleteUser() {
       router.push('/dashboard/usuarios');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir usuário. Tente novamente.');
     },
   });

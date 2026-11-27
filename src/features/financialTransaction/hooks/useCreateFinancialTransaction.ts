@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateFinancialTransactionData } from '../types';
 import { financialTransactionService } from '../services/financialTransactionService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type Options = { skipNavigateToList?: boolean };
 
@@ -18,6 +19,7 @@ export function useCreateFinancialTransaction({ skipNavigateToList: _ = false }:
       showSuccess('Transação cadastrada com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao cadastrar transação. Tente novamente.');
     },
   });

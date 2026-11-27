@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { waterQualityService } from '../services/waterQualityService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteWaterQuality() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useDeleteWaterQuality() {
       router.refresh();
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir medição. Tente novamente.');
     },
   });

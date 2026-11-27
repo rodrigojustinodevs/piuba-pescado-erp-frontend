@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { userService } from '../services/userService';
 import type { UpdateUserRoleData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para alterar o perfil de acesso (role) de um usuário
@@ -19,6 +20,7 @@ export function useUpdateUserRole() {
       showSuccess('Perfil de acesso atualizado com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar perfil de acesso. Tente novamente.');
     },
   });

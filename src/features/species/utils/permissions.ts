@@ -1,18 +1,4 @@
-import { UserRole } from '@/shared/types/auth';
+import { rolesWithPermission } from '@/shared/access/roles';
 
-export const SPECIES_VIEW_ROLES = [
-  UserRole.MASTER,
-  UserRole.MASTER_ADMIN,
-  UserRole.COMPANY_ADMIN,
-  UserRole.ADMIN,
-  UserRole.MANAGER,
-  UserRole.OPERATOR,
-];
-
-export const SPECIES_WRITE_ROLES = [
-  UserRole.MASTER,
-  UserRole.MASTER_ADMIN,
-  UserRole.COMPANY_ADMIN,
-  UserRole.ADMIN,
-  UserRole.MANAGER,
-];
+export const SPECIES_VIEW_ROLES = rolesWithPermission('view-species');
+export const SPECIES_WRITE_ROLES = rolesWithPermission('create-species');

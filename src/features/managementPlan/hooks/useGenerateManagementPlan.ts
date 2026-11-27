@@ -2,8 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
-import { isGateError } from '@/features/billing/utils/gating';
 import { managementPlanService } from '../services/managementPlanService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useGenerateManagementPlan() {
   const queryClient = useQueryClient();
@@ -16,8 +16,7 @@ export function useGenerateManagementPlan() {
       showSuccess('Plano de manejo gerado com sucesso!');
     },
     onError: (error: Error) => {
-      // 403 de plano/assinatura: o diálogo global de billing já orienta o usuário.
-      if (isGateError(error)) return;
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Falha ao gerar plano de manejo. Tente novamente.');
     },
   });

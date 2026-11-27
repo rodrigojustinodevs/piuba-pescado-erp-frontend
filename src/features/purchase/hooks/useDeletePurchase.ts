@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { purchaseService } from '../services/purchaseService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeletePurchase() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useDeletePurchase() {
       router.push('/company/purchases');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir compra. Tente novamente.');
     },
   });

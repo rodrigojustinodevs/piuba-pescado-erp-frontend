@@ -2,6 +2,15 @@
 
 import Link from 'next/link';
 import { useSyncExternalStore } from 'react';
+import { accessEvents, type PlanDialog } from '@/shared/access/accessEvents';
+import {
+  ACCESS_MESSAGES,
+  featureRequiredMessage,
+  limitMessage,
+  planName,
+  quotaMessage,
+} from '@/shared/access/messages';
+import { useAccessSnapshot } from '@/shared/access/useEntitlements';
 import { Button, buttonVariants } from '@/shared/components/ui/Button';
 import {
   Dialog,
@@ -11,73 +20,100 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
+import { Progress } from '@/shared/components/ui/Progress';
 import { useAuthContext } from '@/shared/contexts/AuthContext';
-import { gateStore } from '../gate/gateStore';
-import type { GateError } from '../utils/gating';
-import { featureLabel, tierLabel } from '../utils/labels';
 import { canManageBilling } from '../utils/permissions';
+import { formatDate } from '../utils/format';
 
-type Copy = { title: string; body: string; cta: { label: string; href: string } | null };
+type Copy = { title: string; body: string };
 
-function copyFor(gate: GateError, canManage: boolean): Copy {
-  const feature = gate.feature ? featureLabel(gate.feature) : 'Esta funcionalidade';
-  const askAdmin = 'Peça a um administrador da empresa para resolver em Assinatura.';
-  switch (gate.code) {
-    case 'PLAN_UPGRADE_REQUIRED':
+function copyFor(dialog: PlanDialog, snapshot: ReturnType<typeof useAccessSnapshot>['data']): Copy {
+  const { block } = dialog;
+  switch (dialog.kind) {
+    case 'limitReached':
+      return { title: 'Limite do plano atingido', body: limitMessage(block) };
+    case 'quotaExhausted':
       return {
-        title: `Disponível no plano ${tierLabel(gate.requiredTier)}`,
-        body: `${feature} não faz parte do plano ${tierLabel(gate.currentTier)}.${canManage ? '' : ` ${askAdmin}`}`,
-        cta: canManage
-          ? {
-              label: 'Fazer upgrade',
-              href: gate.requiredTier
-                ? `/dashboard/assinatura/planos?destaque=${gate.requiredTier}`
-                : '/dashboard/assinatura/planos',
-            }
-          : null,
+        title: 'Cota do plano esgotada',
+        body: quotaMessage(block, (iso) => formatDate(iso)),
       };
-    case 'SUBSCRIPTION_SUSPENDED':
+    case 'featureRequired':
       return {
-        title: 'Assinatura suspensa',
-        body: `${feature} está bloqueada porque há pagamento em atraso.${canManage ? '' : ` ${askAdmin}`}`,
-        cta: canManage
-          ? { label: 'Regularizar pagamento', href: '/dashboard/assinatura/faturas' }
-          : null,
-      };
-    case 'SUBSCRIPTION_PENDING':
-      return {
-        title: 'Aguardando confirmação do pagamento',
-        body: `${feature} será liberada assim que o primeiro pagamento for confirmado.`,
-        cta: canManage ? { label: 'Ver assinatura', href: '/dashboard/assinatura' } : null,
+        title: block.requiredPlan
+          ? `Disponível no plano ${planName(block.requiredPlan)}`
+          : 'Disponível em planos superiores',
+        body: featureRequiredMessage(block, snapshot),
       };
   }
 }
 
-/** Diálogo global do 403 de feature gating (alimentado pelo interceptor do React Query). */
-export function BillingGateDialog() {
-  const gate = useSyncExternalStore(gateStore.subscribe, gateStore.get, gateStore.getServer);
-  const { user } = useAuthContext();
-  if (!gate) return null;
+function plansHref(requiredPlan: string | null) {
+  return requiredPlan
+    ? `/dashboard/assinatura/planos?destaque=${requiredPlan}`
+    : '/dashboard/assinatura/planos';
+}
 
-  const copy = copyFor(gate, canManageBilling(user?.role));
+/**
+ * Modal dos 402 de plano: recurso fora do plano, limite atingido e cota esgotada.
+ * Alimentado pelo tratamento central (`handleApiError`). Somente leitura não abre
+ * modal: vira banner persistente + botões desabilitados.
+ */
+export function BillingGateDialog() {
+  const { planDialog } = useSyncExternalStore(
+    accessEvents.subscribe,
+    accessEvents.getState,
+    accessEvents.getServerState,
+  );
+  const { user } = useAuthContext();
+  const { data: snapshot } = useAccessSnapshot();
+  if (!planDialog) return null;
+
+  const canManage = canManageBilling(user?.role);
+  const copy = copyFor(planDialog, snapshot);
+  const { block } = planDialog;
+  const showUsage =
+    planDialog.kind !== 'featureRequired' && block.limit !== null && block.limit > 0;
+
   return (
-    <Dialog open onOpenChange={(open) => !open && gateStore.dismiss()}>
+    <Dialog open onOpenChange={(open) => !open && accessEvents.dismissPlanDialog()}>
       <DialogContent className="bg-white sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{copy.title}</DialogTitle>
           <DialogDescription>{copy.body}</DialogDescription>
         </DialogHeader>
+
+        {showUsage ? (
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                Uso no plano {planName(block.currentPlan)}
+              </span>
+              <span className="font-medium tabular-nums">
+                {block.used ?? block.limit} de {block.limit}
+              </span>
+            </div>
+            <Progress
+              value={Math.min(100, ((block.used ?? block.limit ?? 0) / (block.limit ?? 1)) * 100)}
+              aria-label="Uso do limite do plano"
+            />
+          </div>
+        ) : null}
+
+        {canManage ? null : (
+          <p className="text-sm text-muted-foreground">{ACCESS_MESSAGES.ASK_ADMIN}</p>
+        )}
+
         <DialogFooter className="gap-2">
-          <Button type="button" variant="outline" onClick={() => gateStore.dismiss()}>
+          <Button type="button" variant="outline" onClick={() => accessEvents.dismissPlanDialog()}>
             Agora não
           </Button>
-          {copy.cta ? (
+          {canManage ? (
             <Link
-              href={copy.cta.href}
-              onClick={() => gateStore.dismiss()}
+              href={plansHref(block.requiredPlan)}
+              onClick={() => accessEvents.dismissPlanDialog()}
               className={buttonVariants()}
             >
-              {copy.cta.label}
+              {block.requiredPlan ? `Ver plano ${planName(block.requiredPlan)}` : 'Ver planos'}
             </Link>
           ) : null}
         </DialogFooter>

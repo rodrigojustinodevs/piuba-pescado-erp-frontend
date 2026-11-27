@@ -6,6 +6,7 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { batchService } from '../services/batchService';
 import type { BatchDistributionFormData } from '../schemas';
 import type { BatchDistributionPayload } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 function toPayload(data: BatchDistributionFormData): BatchDistributionPayload {
   const notes = data.notes?.trim();
@@ -43,6 +44,7 @@ export function useDistributeBatch(options: UseDistributeBatchOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao registrar entrada de lote. Tente novamente.');
     },
   });

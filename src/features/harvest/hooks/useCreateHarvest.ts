@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { harvestService } from '../services/harvestService';
 import type { CreateHarvestData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateHarvestOptions = {
   skipNavigateToList?: boolean;
@@ -25,6 +26,7 @@ export function useCreateHarvest({ skipNavigateToList }: UseCreateHarvestOptions
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar despesca. Tente novamente.');
     },
   });

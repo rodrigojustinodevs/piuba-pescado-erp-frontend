@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { purchaseService } from '../services/purchaseService';
 import type { UpdatePurchaseData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdatePurchaseOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdatePurchase({ skipNavigateToList = false }: UseUpdatePurch
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar compra. Tente novamente.');
     },
   });

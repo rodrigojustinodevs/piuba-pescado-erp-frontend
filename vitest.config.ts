@@ -7,7 +7,9 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts', 'proxy.test.ts'],
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'proxy.test.ts'],
+    // Componentes e hooks React rodam em jsdom; o resto continua em node.
+    environmentMatchGlobs: [['src/**/*.test.tsx', 'jsdom']],
     exclude: ['node_modules', '.next', 'e2e'],
     env: { TZ: 'America/Sao_Paulo' },
     coverage: { provider: 'v8', include: ['src/**/*.ts', 'proxy.ts'] },

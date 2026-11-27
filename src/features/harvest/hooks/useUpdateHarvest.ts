@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { harvestService } from '../services/harvestService';
 import type { PatchHarvestPayload, UpdateHarvestData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateHarvestOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateHarvest({ skipNavigateToList }: UseUpdateHarvestOptions
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar despesca. Tente novamente.');
     },
   });

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { sensorService } from '../services/sensorService';
 import type { UpdateSensorData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useUpdateSensor() {
   const queryClient = useQueryClient();
@@ -20,6 +21,7 @@ export function useUpdateSensor() {
       router.refresh();
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar sensor. Tente novamente.');
     },
   });

@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { sensorService } from '../services/sensorService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteSensor() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useDeleteSensor() {
       router.push('/company/sensors');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir sensor. Tente novamente.');
     },
   });

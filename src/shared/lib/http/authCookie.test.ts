@@ -4,21 +4,24 @@ import { authCookieOptions, resolveCookieMaxAge } from './authCookie';
 
 const SEVEN_DAYS = 60 * 60 * 24 * 7;
 
+const FOURTEEN_DAYS = 60 * 60 * 24 * 14;
+
 describe('resolveCookieMaxAge', () => {
-  it('usa 7 dias quando não há exp', () => {
+  it('usa 7 dias quando não há iat', () => {
     expect(resolveCookieMaxAge(null)).toBe(SEVEN_DAYS);
     expect(resolveCookieMaxAge({})).toBe(SEVEN_DAYS);
   });
 
-  it('nunca ultrapassa o exp do token', () => {
-    const maxAge = resolveCookieMaxAge({ exp: inSeconds(3600) });
-    expect(maxAge).toBeGreaterThan(3590);
-    expect(maxAge).toBeLessThanOrEqual(3600);
+  it('sobrevive ao exp do token para permitir o refresh', () => {
+    const maxAge = resolveCookieMaxAge({ iat: inSeconds(0), exp: inSeconds(3600) });
+    expect(maxAge).toBe(SEVEN_DAYS);
   });
 
-  it('limita a 7 dias e nunca é negativo', () => {
-    expect(resolveCookieMaxAge({ exp: inSeconds(SEVEN_DAYS * 10) })).toBe(SEVEN_DAYS);
-    expect(resolveCookieMaxAge({ exp: inSeconds(-100) })).toBe(0);
+  it('não passa da janela de refresh contada do iat e nunca é negativo', () => {
+    const maxAge = resolveCookieMaxAge({ iat: inSeconds(-(FOURTEEN_DAYS - 3600)) });
+    expect(maxAge).toBeGreaterThan(3590);
+    expect(maxAge).toBeLessThanOrEqual(3600);
+    expect(resolveCookieMaxAge({ iat: inSeconds(-FOURTEEN_DAYS - 100) })).toBe(0);
   });
 });
 

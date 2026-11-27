@@ -6,6 +6,7 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import { FIELD_ERRORS_TOAST, hasServerFieldErrors } from '@/shared/utils/formErrors';
 import { tankService } from '../services/tankService';
 import type { CreateTankData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para criar um novo tanque
@@ -28,6 +29,7 @@ export function useCreateTank() {
       router.push(`/company/tanks`);
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       // Erros por campo aparecem no próprio formulário; o toast só aponta para eles.
       if (hasServerFieldErrors(error)) {
         showError(FIELD_ERRORS_TOAST);

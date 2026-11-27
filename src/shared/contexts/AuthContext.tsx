@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { authService } from '@/features/auth/api';
 import { useLogin } from '@/features/auth/hooks/useLogin';
 import type { LoginCredentials, LoginResponse } from '@/features/auth/types';
-import { useAuthRedirect } from '@/shared/hooks/useAuthRedirect';
+import { accessEvents } from '@/shared/access/accessEvents';
 import { UserRole, type UserRoleType, type AuthenticatedUser } from '@/shared/types/auth';
 
 type AuthContextValue = {
@@ -32,7 +32,6 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   const router = useRouter();
   const queryClient = useQueryClient();
   const loginHook = useLogin();
-  useAuthRedirect();
 
   const { data: authState, isLoading } = useQuery({
     queryKey: ['auth', 'check'],
@@ -48,6 +47,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
       console.error('Logout error:', error);
     } finally {
       queryClient.clear();
+      accessEvents.reset();
       router.push('/login');
       router.refresh();
     }

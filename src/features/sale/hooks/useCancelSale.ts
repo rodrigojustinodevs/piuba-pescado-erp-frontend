@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { saleService } from '../services/saleService';
 import { translateSaleApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useCancelSale() {
   const queryClient = useQueryClient();
@@ -17,6 +18,7 @@ export function useCancelSale() {
       showSuccess('Cancelamento concluído. Esta venda está cancelada.');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       const message = error.message ? translateSaleApiErrorMessagePtBR(error.message) : '';
       showError(message || 'Erro ao cancelar venda. Tente novamente.');
     },

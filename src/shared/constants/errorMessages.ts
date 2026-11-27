@@ -17,6 +17,8 @@ export const ErrorMessages = {
 
   SESSION_EXPIRED: 'Sessão expirada. Faça login novamente.',
 
+  SESSION_ENDED: 'Sua sessão foi encerrada. Entre novamente para continuar.',
+
   FORBIDDEN: 'Você não tem permissão para realizar esta ação.',
 
   TIMEOUT: 'O servidor demorou demais para responder. Tente novamente.',

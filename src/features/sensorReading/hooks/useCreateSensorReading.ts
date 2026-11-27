@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateSensorReadingData } from '../types';
 import { sensorReadingService } from '../services/sensorReadingService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useCreateSensorReading() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useCreateSensorReading() {
       router.push('/company/sensor-readings');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao registrar leitura. Tente novamente.');
     },
   });

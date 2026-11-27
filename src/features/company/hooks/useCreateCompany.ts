@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { companyService } from '../services/companyService';
 import type { CreateCompanyData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para criar uma nova empresa
@@ -27,6 +28,7 @@ export function useCreateCompany() {
       router.push(`/admin/companies/${data.id}`);
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar empresa. Tente novamente.');
     },
   });

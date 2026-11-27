@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateSupplyData } from '../types';
 import { supplyService } from '../services/supplyService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateSupplyOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useCreateSupply({ skipNavigateToList }: UseCreateSupplyOptions =
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao cadastrar produto. Tente novamente.');
     },
   });

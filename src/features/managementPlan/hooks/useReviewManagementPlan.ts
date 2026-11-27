@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { managementPlanService } from '../services/managementPlanService';
 import type { ReviewManagementPlanData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useReviewManagementPlan() {
   const queryClient = useQueryClient();
@@ -19,6 +20,7 @@ export function useReviewManagementPlan() {
       );
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao revisar plano de manejo. Tente novamente.');
     },
   });

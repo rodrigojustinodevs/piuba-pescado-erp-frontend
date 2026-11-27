@@ -6,6 +6,7 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateClientData } from '../types';
 import { clientService } from '../services/clientService';
 import { translateClientApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateClientOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useCreateClient({ skipNavigateToList }: UseCreateClientOptions =
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       const message = error.message ? translateClientApiErrorMessagePtBR(error.message) : '';
       showError(message || 'Erro ao cadastrar cliente. Tente novamente.');
     },

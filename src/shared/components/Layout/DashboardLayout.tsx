@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSyncExternalStore } from 'react';
 import { ChevronRight } from 'lucide-react';
 import {
   Sidebar,
@@ -31,6 +32,11 @@ import {
 import type { MenuItem, NavGroup } from '../Sidebar/types';
 import { BillingStatusBanner } from '@/features/billing/components/BillingStatusBanner';
 import { BillingGateDialog } from '@/features/billing/components/BillingGateDialog';
+import { accessEvents } from '@/shared/access/accessEvents';
+import {
+  CompanyAccessDenied,
+  CompanySelectDialog,
+} from '@/shared/access/company/CompanySelectDialog';
 
 // Item ativo: faixa turquesa que some para a direita + barrinha turquesa à esquerda.
 const MENU_BUTTON_CLASS = [
@@ -130,6 +136,11 @@ export function DashboardLayout({
   const authorizedMenuGroups = useMenuGroupsAuthorization(menuGroupsConfig);
   // Se menuGroups for passado como prop, usa ele diretamente (sem filtro de autorização)
   const menuGroupsToUse = menuGroups ?? authorizedMenuGroups;
+  const { companyDenied } = useSyncExternalStore(
+    accessEvents.subscribe,
+    accessEvents.getState,
+    accessEvents.getServerState,
+  );
 
   return (
     <SidebarProvider>
@@ -142,10 +153,13 @@ export function DashboardLayout({
           <BillingStatusBanner />
 
           <div className="min-h-0 flex-1 overflow-y-auto bg-[#f9fafb]">
-            <div className="w-full p-4 lg:p-8">{children}</div>
+            <div className="w-full p-4 lg:p-8">
+              {companyDenied ? <CompanyAccessDenied /> : children}
+            </div>
           </div>
         </SidebarInset>
         <BillingGateDialog />
+        <CompanySelectDialog />
       </div>
     </SidebarProvider>
   );

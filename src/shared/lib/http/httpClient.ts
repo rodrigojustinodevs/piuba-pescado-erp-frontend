@@ -8,6 +8,11 @@ export interface HttpClientConfig {
   tokenProvider?: TokenProvider;
   /** Tempo máximo por requisição, em ms (padrão 30s). */
   timeoutMs?: number;
+  /**
+   * Chamado uma vez quando a resposta é 401. Se devolver `true` (sessão renovada),
+   * o request é repetido uma única vez com o token novo.
+   */
+  onUnauthorized?: () => Promise<boolean>;
 }
 
 const DEFAULT_TIMEOUT_MS = 30_000;
@@ -32,11 +37,13 @@ export class HttpClient {
   private readonly baseUrl: string;
   private readonly tokenProvider?: TokenProvider;
   private readonly timeoutMs: number;
+  private readonly onUnauthorized?: () => Promise<boolean>;
 
   constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl;
     this.tokenProvider = config.tokenProvider;
     this.timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.onUnauthorized = config.onUnauthorized;
   }
 
   async request<T>(endpoint: string, options: HttpRequestOptions = {}): Promise<T> {
@@ -44,10 +51,16 @@ export class HttpClient {
 
     const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
 
-    const headers = await this.buildHeaders(customHeaders, expectJson);
-    const signal = this.buildSignal(fetchInit.signal);
+    const attempt = async () => {
+      const headers = await this.buildHeaders(customHeaders, expectJson);
+      const signal = this.buildSignal(fetchInit.signal);
+      return this.send(url, { ...fetchInit, headers, signal });
+    };
 
-    const response = await this.send(url, { ...fetchInit, headers, signal });
+    let response = await attempt();
+    if (response.status === 401 && this.onUnauthorized && (await this.onUnauthorized())) {
+      response = await attempt();
+    }
 
     if (!response.ok) {
       const { message, fieldErrors, ...extra } = await extractErrorDetails(response);
