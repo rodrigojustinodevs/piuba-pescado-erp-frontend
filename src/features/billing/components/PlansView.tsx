@@ -8,8 +8,14 @@ import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { usePlans, useSubscription } from '../hooks/queries';
 import type { BillingCycle, Plan, Subscription } from '../types';
-import { allFeatures, availableCycles, formatBRL } from '../utils/format';
-import { CYCLE_UNIT, featureLabel, tierLabel } from '../utils/labels';
+import {
+  allFeatures,
+  availableCycles,
+  featureAmount,
+  formatBRL,
+  isFeatureIncluded,
+} from '../utils/format';
+import { CYCLE_UNIT, tierLabel } from '../utils/labels';
 import { BillingSection } from './BillingSection';
 import { CycleToggle } from './CycleToggle';
 import { BillingEmpty, BillingError, BillingLoading } from './states';
@@ -53,6 +59,7 @@ function PlanCard({
 }>) {
   const price = plan.prices[cycle];
   const isCurrent = plan.tier === subscription.planTier;
+  const includedFeatures = plan.features.filter(isFeatureIncluded);
   const action = cardAction(plan, cycle, subscription);
 
   return (
@@ -87,15 +94,23 @@ function PlanCard({
       </p>
 
       <ul className="flex flex-1 flex-col gap-2 text-sm">
-        {plan.features.length === 0 ? (
+        {includedFeatures.length === 0 ? (
           <li className="text-muted-foreground">Funcionalidades básicas</li>
         ) : (
-          plan.features.map((f) => (
-            <li key={f} className="flex items-start gap-2">
-              <Check className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden="true" />
-              {featureLabel(f)}
-            </li>
-          ))
+          includedFeatures.map((f) => {
+            const amount = featureAmount(f);
+            return (
+              <li key={f.key} className="flex items-start gap-2">
+                <Check className="mt-0.5 size-4 shrink-0 text-emerald-600" aria-hidden="true" />
+                <span>
+                  {f.label}
+                  {amount && (
+                    <span className="text-muted-foreground tabular-nums">: {amount}</span>
+                  )}
+                </span>
+              </li>
+            );
+          })
         )}
       </ul>
 
@@ -143,15 +158,19 @@ function ComparisonTable({ plans }: Readonly<{ plans: Plan[] }>) {
           </thead>
           <tbody>
             {features.map((f) => (
-              <tr key={f} className="border-b border-border last:border-0">
+              <tr key={f.key} className="border-b border-border last:border-0">
                 <th scope="row" className="py-2 pr-4 text-left font-normal">
-                  {featureLabel(f)}
+                  {f.label}
                 </th>
                 {plans.map((p) => {
-                  const has = p.features.includes(f);
+                  const feature = p.features.find((pf) => pf.key === f.key);
+                  const has = isFeatureIncluded(feature);
+                  const amount = has && feature ? featureAmount(feature) : null;
                   return (
                     <td key={p.tier} className="px-2 py-2 text-center">
-                      {has ? (
+                      {amount ? (
+                        <span className="tabular-nums">{amount}</span>
+                      ) : has ? (
                         <Check className="mx-auto size-4 text-emerald-600" aria-label="Incluído" />
                       ) : (
                         <Minus

@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
+import { FIELD_ERRORS_TOAST, hasServerFieldErrors } from '@/shared/utils/formErrors';
 import { tankService } from '../services/tankService';
 import type { CreateTankData } from '../types';
 
@@ -27,6 +28,11 @@ export function useCreateTank() {
       router.push(`/company/tanks`);
     },
     onError: (error: Error) => {
+      // Erros por campo aparecem no próprio formulário; o toast só aponta para eles.
+      if (hasServerFieldErrors(error)) {
+        showError(FIELD_ERRORS_TOAST);
+        return;
+      }
       showError(error.message || 'Erro ao criar tanque. Tente novamente.');
     },
   });
