@@ -11,6 +11,8 @@ import {
   viveirosSubmenuItems,
 } from './menuSubtrees';
 import { UserRole, type UserRoleType } from '@/shared/types/auth';
+import type { Permission } from '@/shared/access/permissionMatrix';
+import { rolesAtLeast, rolesWithPermission } from '@/shared/access/roles';
 import { BILLING_ROLES } from '@/features/billing/utils/permissions';
 
 import {
@@ -31,52 +33,57 @@ export interface MenuItemWithAuth extends Omit<MenuItem, 'children'> {
   children?: MenuItemWithAuth[];
 }
 
-const ROLES_ALL: UserRoleType[] = [
-  UserRole.MASTER,
-  UserRole.MASTER_ADMIN,
-  UserRole.COMPANY_ADMIN,
-  UserRole.MANAGER,
-  UserRole.OPERATOR,
-];
-const ROLES_COMPANY_ALL: UserRoleType[] = [
-  UserRole.MASTER,
-  UserRole.MASTER_ADMIN,
-  UserRole.COMPANY_ADMIN,
-  UserRole.MANAGER,
-  UserRole.OPERATOR,
-];
-const ROLES_COMPANY_ADMIN_MANAGER: UserRoleType[] = [
-  UserRole.COMPANY_ADMIN,
-  UserRole.MANAGER,
-  UserRole.MASTER_ADMIN,
-];
-/** Relatório financeiro: `view-financial-report` não inclui manager. */
-const ROLES_COMPANY_ADMIN_ONLY: UserRoleType[] = [UserRole.COMPANY_ADMIN, UserRole.MASTER_ADMIN];
+/**
+ * Visibilidade do menu = permissão de leitura da tela na matriz da API
+ * (`PermissionsEnum::forRole`). O papel esconde; o plano só desabilita ações.
+ * Telas sem permissão própria na API (povoamento, transferência, água, fornecedor,
+ * insumo) seguem o papel mínimo da rota (operator).
+ */
+const MENU_PERMISSION: Record<string, Permission> = {
+  dashboard: 'view-dashboard',
+  'viveiros-listagem': 'view-tank',
+  sensores: 'view-sensor',
+  monitoramento: 'view-sensor-reading',
+  lotes: 'view-batch',
+  especies: 'view-species',
+  alimentacoes: 'view-feeding',
+  biometrias: 'view-biometry',
+  mortalidades: 'view-mortality',
+  despescas: 'view-harvest',
+  compras: 'view-purchase',
+  estoques: 'view-stock',
+  'estoques-transacoes': 'view-stock',
+  'categorias-financeiras': 'view-financial-category',
+  'transacoes-financeiras': 'view-financial-transaction',
+  clientes: 'view-client',
+  'vendas-erp': 'view-sale',
+  usuarios: 'view-user',
+};
 
-function childrenAllCompanyAdminManager(items: MenuItem[]): MenuItemWithAuth[] {
-  return items.map((item) => ({
-    ...item,
-    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
-  }));
+const REPORT_PERMISSION: Record<string, Permission> = {
+  producao: 'view-production-report',
+  comercial: 'view-commercial-report',
+  financeiro: 'view-financial-report',
+  estoque: 'view-inventory-report',
+  viveiros: 'view-tank-report',
+};
+
+const ROLES_COMPANY_ALL: UserRoleType[] = rolesAtLeast('operator');
+
+function rolesFor(id: string): UserRoleType[] {
+  const permission = MENU_PERMISSION[id];
+  return permission ? rolesWithPermission(permission) : ROLES_COMPANY_ALL;
 }
 
-function tanksChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
-  return items.map((item) => ({
-    ...item,
-    allowedRoles: ROLES_COMPANY_ALL,
-  }));
-}
-
-function relatorioRoles(id: string): UserRoleType[] {
-  if (id === 'estoque') return ROLES_COMPANY_ADMIN_MANAGER;
-  if (id === 'financeiro') return ROLES_COMPANY_ADMIN_ONLY;
-  return ROLES_COMPANY_ADMIN_MANAGER;
+function withAuth(items: MenuItem[]): MenuItemWithAuth[] {
+  return items.map((item) => ({ ...item, allowedRoles: rolesFor(item.id), requiresCompany: true }));
 }
 
 function relatoriosChildrenWithAuth(items: MenuItem[]): MenuItemWithAuth[] {
   return items.map((item) => ({
     ...item,
-    allowedRoles: relatorioRoles(item.id),
+    allowedRoles: rolesWithPermission(REPORT_PERMISSION[item.id] ?? 'view-report'),
+    requiresCompany: true,
   }));
 }
 
@@ -90,7 +97,7 @@ const geralItems: MenuItemWithAuth[] = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     href: '/dashboard',
-    allowedRoles: ROLES_ALL,
+    allowedRoles: rolesFor('dashboard'),
   },
 ];
 
@@ -108,21 +115,21 @@ const operacaoItems: MenuItemWithAuth[] = [
     icon: Container,
     href: '/company/tanks',
     allowedRoles: ROLES_COMPANY_ALL,
-    children: tanksChildrenWithAuth(viveirosSubmenuItems),
+    children: withAuth(viveirosSubmenuItems),
   },
   {
     id: 'producao',
     label: 'Produção',
     icon: Fish,
     allowedRoles: ROLES_COMPANY_ALL,
-    children: childrenAllCompanyAdminManager(producaoSubmenuItems),
+    children: withAuth(producaoSubmenuItems),
   },
   {
     id: 'insumos-estoque',
     label: 'Insumos & Estoque',
     icon: PackageSearch,
     allowedRoles: ROLES_COMPANY_ALL,
-    children: childrenAllCompanyAdminManager(insumosEstoqueSubmenuItems),
+    children: withAuth(insumosEstoqueSubmenuItems),
   },
 ];
 
@@ -132,20 +139,20 @@ const gestaoItems: MenuItemWithAuth[] = [
     label: 'Financeiro',
     icon: CircleDollarSign,
     allowedRoles: ROLES_COMPANY_ALL,
-    children: childrenAllCompanyAdminManager(financeiroSubmenuItems),
+    children: withAuth(financeiroSubmenuItems),
   },
   {
     id: 'comercial',
     label: 'Comercial',
     icon: ShoppingCart,
     allowedRoles: ROLES_COMPANY_ALL,
-    children: childrenAllCompanyAdminManager(comercialSubmenuItems),
+    children: withAuth(comercialSubmenuItems),
   },
   {
     id: 'relatorios',
     label: 'Relatórios',
     icon: FileText,
-    allowedRoles: ROLES_COMPANY_ADMIN_MANAGER,
+    allowedRoles: rolesWithPermission('view-report'),
     children: relatoriosChildrenWithAuth(relatoriosSubmenuItems),
   },
   {
@@ -153,10 +160,9 @@ const gestaoItems: MenuItemWithAuth[] = [
     label: 'Administração',
     icon: Settings,
     href: '/dashboard/configuracoes',
-    // `admin` entra só pela Assinatura; os demais filhos mantêm seus papéis.
-    allowedRoles: [...ROLES_COMPANY_ADMIN_MANAGER, UserRole.ADMIN],
+    allowedRoles: rolesAtLeast('manager'),
     children: [
-      ...childrenAllCompanyAdminManager(administracaoSubmenuItems),
+      ...withAuth(administracaoSubmenuItems),
       {
         id: 'assinatura',
         label: 'Assinatura',

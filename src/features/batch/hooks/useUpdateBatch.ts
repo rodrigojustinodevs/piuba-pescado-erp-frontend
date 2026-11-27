@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { batchService } from '../services/batchService';
 import type { UpdateBatchData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para atualizar um lote existente
@@ -28,6 +29,7 @@ export function useUpdateBatch() {
       router.push(`/company/batches`);
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar lote. Tente novamente.');
     },
   });

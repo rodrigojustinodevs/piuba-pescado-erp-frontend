@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { stockingService } from '../services/stockingService';
 import type { UpdateStockingData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateStockingOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateStocking(options: UseUpdateStockingOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar povoamento. Tente novamente.');
     },
   });

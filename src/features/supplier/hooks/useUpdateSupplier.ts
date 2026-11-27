@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { supplierService } from '../services/supplierService';
 import type { UpdateSupplierData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateSupplierOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateSupplier({ skipNavigateToList }: UseUpdateSupplierOptio
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar fornecedor. Tente novamente.');
     },
   });

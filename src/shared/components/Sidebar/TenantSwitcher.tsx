@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useSwitchCompany } from '@/shared/access/company/useSwitchCompany';
+import { useAuthContext } from '@/shared/contexts/AuthContext';
 import { useCompanySettings } from '@/shared/contexts/CompanySettingsContext';
 import { cn } from '@/shared/lib/utils';
 import { useSidebar } from './Sidebar';
@@ -15,6 +17,9 @@ export function TenantSwitcher() {
   // Nome vem de /api/company/settings (já carregado no provider), que vale para todos os perfis.
   const { settings } = useCompanySettings();
   const companyName = settings?.general.name ?? FALLBACK_SUBTITLE;
+  const { user } = useAuthContext();
+  const switchCompany = useSwitchCompany();
+  const others = (user?.companies ?? []).filter((c) => c.id !== user?.companyId);
 
   return (
     <DropdownMenu.Root>
@@ -67,10 +72,29 @@ export function TenantSwitcher() {
             disabled
             className="rounded-md px-2 py-2 text-sm outline-none data-disabled:opacity-100"
           >
-            {companyName}
+            <span className="flex items-center gap-2">
+              <span className="min-w-0 flex-1 truncate">{companyName}</span>
+              <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+            </span>
           </DropdownMenu.Item>
-          {/* TODO: listar as empresas/fazendas do usuário e permitir trocar a empresa ativa
-              quando existir endpoint/contexto de troca de tenant. */}
+          {others.length > 0 ? (
+            <>
+              <DropdownMenu.Separator className="my-1 h-px bg-sidebar-border" />
+              <DropdownMenu.Label className="px-2 py-1.5 text-[11px] uppercase tracking-wider text-sidebar-foreground/50">
+                Trocar para
+              </DropdownMenu.Label>
+              {others.map((company) => (
+                <DropdownMenu.Item
+                  key={company.id}
+                  disabled={switchCompany.isPending}
+                  onSelect={() => switchCompany.mutate(company.id)}
+                  className="cursor-pointer rounded-md px-2 py-2 text-sm outline-none data-highlighted:bg-sidebar-accent data-disabled:opacity-50"
+                >
+                  {company.name || 'Empresa sem nome'}
+                </DropdownMenu.Item>
+              ))}
+            </>
+          ) : null}
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

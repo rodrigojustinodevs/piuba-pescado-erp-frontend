@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { UpdateStockLocationData } from '../types';
 import { stockService } from '../services/stockService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateStockOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateStock({ skipNavigateToList }: UseUpdateStockOptions = {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar local de armazenamento. Tente novamente.');
     },
   });

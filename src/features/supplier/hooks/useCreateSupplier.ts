@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateSupplierData } from '../types';
 import { supplierService } from '../services/supplierService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateSupplierOptions = {
   skipNavigateToList?: boolean;
@@ -25,6 +26,7 @@ export function useCreateSupplier({ skipNavigateToList }: UseCreateSupplierOptio
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao cadastrar fornecedor. Tente novamente.');
     },
   });

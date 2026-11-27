@@ -1,6 +1,6 @@
 'use client';
 
-import { isGateError } from '@/features/billing/utils/gating';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 import { useGenerateManagementPlan } from '../hooks/useGenerateManagementPlan';
 import { MissingSpeciesBanner } from './MissingSpeciesBanner';
 import {
@@ -45,7 +45,7 @@ export function GenerateManagementPlanDialog({
       },
       // Bloqueio por plano: fecha para o diálogo global de billing assumir.
       onError: (error) => {
-        if (isGateError(error)) onOpenChange(false);
+        if (isHandledGlobally(error)) onOpenChange(false);
       },
     });
   }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { mortalityService } from '../services/mortalityService';
 import type { UpdateMortalityData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateMortalityOptions = {
   skipNavigateToList?: boolean;
@@ -26,6 +27,7 @@ export function useUpdateMortality(options: UseUpdateMortalityOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar mortalidade. Tente novamente.');
     },
   });

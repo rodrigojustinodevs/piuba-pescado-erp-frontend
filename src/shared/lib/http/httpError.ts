@@ -60,7 +60,11 @@ function pickCodeAndDetails(data: unknown): Pick<HttpErrorExtra, 'code' | 'detai
       return { code: code as string, details };
     }
   }
-  return {};
+  // 403 de papel/permissão da API: sem `code`, com o que faltou na raiz.
+  const forbidden: HttpErrorDetails = {};
+  if (typeof root.permission === 'string') forbidden.permission = root.permission;
+  if (Array.isArray(root.required_roles)) forbidden.required_roles = root.required_roles;
+  return Object.keys(forbidden).length ? { details: forbidden } : {};
 }
 
 /** `Retry-After` em segundos ou data HTTP; devolve segundos (>= 0) ou undefined. */

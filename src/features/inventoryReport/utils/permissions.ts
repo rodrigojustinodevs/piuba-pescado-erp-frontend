@@ -1,10 +1,4 @@
-import { UserRole } from '@/shared/types/auth';
+import { rolesWithPermission } from '@/shared/access/roles';
 
-/** Roles com a permissão `view-inventory-report` no backend (operator não possui). */
-export const INVENTORY_REPORT_ROLES: string[] = [
-  UserRole.MASTER,
-  UserRole.MASTER_ADMIN,
-  UserRole.COMPANY_ADMIN,
-  UserRole.ADMIN,
-  UserRole.MANAGER,
-];
+/** Papéis com `view-inventory-report` na matriz da API. */
+export const INVENTORY_REPORT_ROLES = rolesWithPermission('view-inventory-report');

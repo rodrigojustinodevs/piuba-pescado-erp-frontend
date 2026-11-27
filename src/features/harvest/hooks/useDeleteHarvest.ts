@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { harvestService } from '../services/harvestService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteHarvest() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export function useDeleteHarvest() {
       router.push('/company/disposals');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir despesca. Tente novamente.');
     },
   });

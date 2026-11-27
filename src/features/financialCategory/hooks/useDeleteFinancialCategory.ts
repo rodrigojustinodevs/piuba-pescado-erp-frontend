@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { financialCategoryService } from '../services/financialCategoryService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteFinancialCategory() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useDeleteFinancialCategory() {
       router.push('/company/financial-categories');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir categoria financeira. Tente novamente.');
     },
   });

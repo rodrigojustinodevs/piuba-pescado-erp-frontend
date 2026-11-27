@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { batchService } from '../services/batchService';
 import type { CreateBatchData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para criar um novo lote
@@ -33,6 +34,7 @@ export function useCreateBatch(options: UseCreateBatchOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar lote. Tente novamente.');
     },
   });

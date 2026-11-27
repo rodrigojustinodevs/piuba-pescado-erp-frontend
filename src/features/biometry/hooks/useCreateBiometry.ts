@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { biometryService } from '../services/biometryService';
 import type { CreateBiometryData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateBiometryOptions = {
   skipNavigateToList?: boolean;
@@ -23,6 +24,7 @@ export function useCreateBiometry(_options: UseCreateBiometryOptions = {}) {
       showSuccess('Biometria criada com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar biometria. Tente novamente.');
     },
   });

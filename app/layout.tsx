@@ -6,6 +6,7 @@ import { AlertModalProvider } from '@/shared/components/AlertModal';
 import { AuthProvider } from '@/shared/contexts/AuthContext';
 import { CompanySettingsProvider } from '@/shared/contexts/CompanySettingsContext';
 import { OnboardingWizardModal } from '@/features/onboarding';
+import { AccessBridge } from '@/shared/access/AccessBridge';
 import './globals.css';
 
 const geistSans = Geist({
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <ToastProvider>
                 <AlertModalProvider>
                   {children}
+                  <AccessBridge />
                   <OnboardingWizardModal />
                 </AlertModalProvider>
               </ToastProvider>

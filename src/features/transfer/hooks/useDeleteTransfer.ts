@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { transferService } from '../services/transferService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteTransfer() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export function useDeleteTransfer() {
       router.push('/company/transfers');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir transferência. Tente novamente.');
     },
   });

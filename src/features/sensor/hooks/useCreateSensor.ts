@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateSensorData } from '../types';
 import { sensorService } from '../services/sensorService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useCreateSensor() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useCreateSensor() {
       router.push('/company/sensors');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar sensor. Tente novamente.');
     },
   });

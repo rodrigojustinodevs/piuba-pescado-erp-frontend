@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { biometryService } from '../services/biometryService';
 import type { UpdateBiometryData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateBiometryOptions = {
   skipNavigateToList?: boolean;
@@ -29,6 +30,7 @@ export function useUpdateBiometry(options: UseUpdateBiometryOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar biometria. Tente novamente.');
     },
   });

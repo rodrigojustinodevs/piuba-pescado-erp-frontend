@@ -6,6 +6,7 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { UpdateClientData } from '../types';
 import { clientService } from '../services/clientService';
 import { translateClientApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateClientOptions = {
   skipNavigateToList?: boolean;
@@ -27,6 +28,7 @@ export function useUpdateClient({ skipNavigateToList }: UseUpdateClientOptions =
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       const message = error.message ? translateClientApiErrorMessagePtBR(error.message) : '';
       showError(message || 'Erro ao atualizar cliente. Tente novamente.');
     },

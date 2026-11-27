@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { feedingService } from '../services/feedingService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para excluir uma alimentação (lista / modal — sem navegação).
@@ -18,6 +19,7 @@ export function useDeleteFeeding() {
       showSuccess('Alimentação excluída com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir alimentação. Tente novamente.');
     },
   });

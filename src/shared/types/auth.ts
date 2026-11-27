@@ -16,6 +16,7 @@ export type AuthenticatedUser = {
   name?: string;
   role: UserRoleType;
   companyId?: string | null;
+  companies?: { id: string; name: string; role: string }[];
 };
 
 export type AuthState = {

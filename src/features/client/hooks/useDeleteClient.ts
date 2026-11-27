@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { clientService } from '../services/clientService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteClient() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export function useDeleteClient() {
       router.push('/company/clients');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir cliente. Tente novamente.');
     },
   });

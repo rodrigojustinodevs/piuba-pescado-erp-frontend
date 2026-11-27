@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { mortalityService } from '../services/mortalityService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useDeleteMortality() {
   const queryClient = useQueryClient();
@@ -15,6 +16,7 @@ export function useDeleteMortality() {
       showSuccess('Mortalidade excluida com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir mortalidade. Tente novamente.');
     },
   });

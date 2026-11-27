@@ -6,7 +6,6 @@ import { featureAmount, isFeatureIncluded } from './format';
 import { previewCancel, previewChange } from './changePreview';
 import { validateDocument, isValidCpf } from './document';
 import { billingErrorMessage, isUncertainFailure } from './errors';
-import { parseGateError } from './gating';
 import { canManageBilling } from './permissions';
 import { getPollPhase, nextPollInterval, POLL_INTERVAL_MS, POLL_TIMEOUT_MS } from './polling';
 import { daysUntil, getSubscriptionView } from './statusView';
@@ -94,37 +93,6 @@ describe('getSubscriptionView', () => {
   it('daysUntil não fica negativo', () => {
     expect(daysUntil('2026-11-01', new Date('2026-11-15T12:00:00'))).toBe(0);
     expect(daysUntil(null)).toBeNull();
-  });
-});
-
-describe('parseGateError', () => {
-  const gate = (code: string, status = 403) =>
-    new HttpError('bloqueado', status, undefined, {
-      code,
-      details: { feature: 'ai_management_plan', currentTier: 'free', requiredTier: 'professional' },
-    });
-
-  it.each(['PLAN_UPGRADE_REQUIRED', 'SUBSCRIPTION_SUSPENDED', 'SUBSCRIPTION_PENDING'])(
-    'reconhece %s com feature e tiers',
-    (code) => {
-      expect(parseGateError(gate(code))).toEqual({
-        code,
-        feature: 'ai_management_plan',
-        currentTier: 'free',
-        requiredTier: 'professional',
-        message: 'bloqueado',
-      });
-    },
-  );
-
-  it('403 sem code (papel sem permissão) não é gating', () => {
-    expect(parseGateError(new HttpError('proibido', 403))).toBeNull();
-  });
-
-  it('code desconhecido ou outro status não é gating', () => {
-    expect(parseGateError(gate('OUTRA_COISA'))).toBeNull();
-    expect(parseGateError(gate('PLAN_UPGRADE_REQUIRED', 409))).toBeNull();
-    expect(parseGateError(new Error('x'))).toBeNull();
   });
 });
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { sensorReadingService } from '../services/sensorReadingService';
 import type { UpdateSensorReadingData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useUpdateSensorReading() {
   const queryClient = useQueryClient();
@@ -20,6 +21,7 @@ export function useUpdateSensorReading() {
       router.push('/company/sensor-readings');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar leitura. Tente novamente.');
     },
   });

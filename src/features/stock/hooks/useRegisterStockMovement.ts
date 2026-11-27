@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateMovementData } from '../types';
 import { stockService } from '../services/stockService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useRegisterStockMovement() {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ export function useRegisterStockMovement() {
       showSuccess('Movimentação registrada com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao registrar movimentação. Tente novamente.');
     },
   });

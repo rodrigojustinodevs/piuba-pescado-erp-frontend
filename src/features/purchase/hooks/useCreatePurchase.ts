@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreatePurchaseData } from '../types';
 import { purchaseService } from '../services/purchaseService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreatePurchaseOptions = {
   skipNavigateToList?: boolean;
@@ -25,6 +26,7 @@ export function useCreatePurchase({ skipNavigateToList = false }: UseCreatePurch
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao registrar compra. Tente novamente.');
     },
   });

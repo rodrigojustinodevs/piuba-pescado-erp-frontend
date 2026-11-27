@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type HarvestDialogProps = {
   open: boolean;
@@ -89,6 +90,7 @@ export function HarvestDialog({
         handleClose();
       },
       onError: (error: Error) => {
+        if (isHandledGlobally(error)) return;
         setApiError(parseHarvestApiError(error.message));
       },
     });
@@ -103,6 +105,7 @@ export function HarvestDialog({
         handleClose();
       },
       onError: (error: Error) => {
+        if (isHandledGlobally(error)) return;
         setApiError(parseHarvestApiError(error.message));
       },
     });

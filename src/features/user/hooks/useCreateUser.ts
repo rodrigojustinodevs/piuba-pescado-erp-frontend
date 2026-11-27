@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { userService } from '../services/userService';
 import type { CreateUserData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para criar um novo usuário
@@ -22,6 +23,7 @@ export function useCreateUser() {
       router.push('/dashboard/usuarios');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar usuário. Tente novamente.');
     },
   });

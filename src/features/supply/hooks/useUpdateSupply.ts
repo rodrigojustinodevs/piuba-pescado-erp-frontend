@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { UpdateSupplyData } from '../types';
 import { supplyService } from '../services/supplyService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseUpdateSupplyOptions = {
   skipNavigateToList?: boolean;
@@ -27,6 +28,7 @@ export function useUpdateSupply({ skipNavigateToList }: UseUpdateSupplyOptions =
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao atualizar produto. Tente novamente.');
     },
   });

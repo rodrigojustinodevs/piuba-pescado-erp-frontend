@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { tankService } from '../services/tankService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para deletar um tanque
@@ -24,6 +25,7 @@ export function useDeleteTank() {
       router.push('/company/tanks');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao excluir tanque. Tente novamente.');
     },
   });

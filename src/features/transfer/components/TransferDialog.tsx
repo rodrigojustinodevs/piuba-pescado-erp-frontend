@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/Dialog';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type TransferDialogProps = {
   open: boolean;
@@ -104,6 +105,7 @@ export function TransferDialog({
         handleClose();
       },
       onError: (error: Error) => {
+        if (isHandledGlobally(error)) return;
         setApiError(parseTransferApiError(error.message));
       },
     });

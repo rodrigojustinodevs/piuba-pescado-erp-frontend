@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { failureResponse } from '@/shared/lib/api/responseEnvelope';
+import { renewSession, SESSION_ENDED_CODE } from '@/shared/lib/http/serverSession';
+import { shouldRefresh } from '@/shared/lib/http/sessionRefresh';
 import { decodeJWT } from '@/shared/utils/jwt';
 import { extractCompanyIdFromJWT, extractRoleFromJWT } from '@/shared/utils/jwtExtractors';
 
@@ -18,21 +20,10 @@ export type AuthGuardContext = {
   companyId: string | null;
 };
 
-function getTokenExpirationMs(decodedToken: JwtPayload): number | null {
-  const exp = decodedToken.exp;
-
-  if (typeof exp === 'number' && Number.isFinite(exp)) {
-    return exp * 1000;
-  }
-
-  if (typeof exp === 'string') {
-    const parsed = Number(exp);
-    if (Number.isFinite(parsed)) {
-      return parsed * 1000;
-    }
-  }
-
-  return null;
+function sessionEnded(): Response {
+  return failureResponse(ErrorMessages.SESSION_ENDED, 401, undefined, {
+    code: SESSION_ENDED_CODE,
+  });
 }
 
 export function withAuthGuard<TArgs extends unknown[]>(
@@ -41,20 +32,26 @@ export function withAuthGuard<TArgs extends unknown[]>(
 ) {
   return async (...args: TArgs): Promise<Response> => {
     const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+    let token = cookieStore.get('auth_token')?.value;
 
     if (!token) {
-      return failureResponse(ErrorMessages.UNAUTHORIZED, 401);
+      return sessionEnded();
     }
 
-    const decodedToken = decodeJWT(token);
+    let decodedToken = decodeJWT(token);
     if (!decodedToken) {
-      return failureResponse(ErrorMessages.INVALID_TOKEN, 401);
+      return failureResponse(ErrorMessages.INVALID_TOKEN, 401, undefined, {
+        code: SESSION_ENDED_CODE,
+      });
     }
 
-    const expirationMs = getTokenExpirationMs(decodedToken);
-    if (expirationMs !== null && expirationMs <= Date.now()) {
-      return failureResponse(ErrorMessages.SESSION_EXPIRED, 401);
+    // Token vencido (ou quase): renova antes de chamar a API, com fila compartilhada.
+    if (shouldRefresh(decodedToken)) {
+      const renewed = await renewSession();
+      const renewedPayload = renewed ? decodeJWT(renewed) : null;
+      if (!renewed || !renewedPayload) return sessionEnded();
+      token = renewed;
+      decodedToken = renewedPayload;
     }
 
     const role = extractRoleFromJWT(decodedToken);

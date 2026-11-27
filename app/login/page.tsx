@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Fish, Mail, Lock } from 'lucide-react';
@@ -8,6 +10,18 @@ import { useAuth, loginSchema, type LoginFormData } from '@/features/auth';
 import { ErrorMessages } from '@/shared/constants/errorMessages';
 import { EmailInput, PasswordInput } from '@/shared/components/form';
 import { Button } from '@/shared/components/ui/Button';
+import { Alert, AlertDescription } from '@/shared/components/ui/Alert';
+
+/** Chegou aqui porque a sessão acabou (senha trocada, refresh recusado ou janela vencida). */
+function SessionEndedNotice() {
+  const reason = useSearchParams().get('reason');
+  if (reason !== 'session_ended') return null;
+  return (
+    <Alert className="mb-5">
+      <AlertDescription>{ErrorMessages.SESSION_ENDED}</AlertDescription>
+    </Alert>
+  );
+}
 
 function LoginHero() {
   return (
@@ -68,6 +82,10 @@ export default function LoginPage() {
             <h1 className="text-balance text-xl font-bold text-gray-900">Acesse sua conta</h1>
             <p className="mt-1 text-sm text-gray-500">Entre com suas credenciais para continuar.</p>
           </header>
+
+          <Suspense fallback={null}>
+            <SessionEndedNotice />
+          </Suspense>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
             <div>

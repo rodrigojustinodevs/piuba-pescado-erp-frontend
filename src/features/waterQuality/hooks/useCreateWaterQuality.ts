@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateWaterQualityData } from '../types';
 import { waterQualityService } from '../services/waterQualityService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export type UseCreateWaterQualityOptions = {
   /** Quando true, apenas invalida cache e dá refresh na rota atual (ex.: dialog na lista). */
@@ -29,6 +30,7 @@ export function useCreateWaterQuality(options?: UseCreateWaterQualityOptions) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao registrar medição. Tente novamente.');
     },
   });

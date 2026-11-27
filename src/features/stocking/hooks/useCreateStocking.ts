@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { stockingService } from '../services/stockingService';
 import type { CreateStockingData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 type UseCreateStockingOptions = {
   skipNavigateToList?: boolean;
@@ -25,6 +26,7 @@ export function useCreateStocking(options: UseCreateStockingOptions = {}) {
       }
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar povoamento. Tente novamente.');
     },
   });

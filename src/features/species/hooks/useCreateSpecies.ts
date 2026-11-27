@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { speciesService } from '../services/speciesService';
 import type { CreateSpeciesData } from '../types';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 /**
  * Hook para criar uma nova espécie
@@ -22,6 +23,7 @@ export function useCreateSpecies() {
       router.push('/company/species');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao criar espécie. Tente novamente.');
     },
   });

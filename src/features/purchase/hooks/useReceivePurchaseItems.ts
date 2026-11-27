@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/shared/contexts/ToastContext';
 import { purchaseService } from '../services/purchaseService';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 interface ReceiveItemPayload {
   purchase_item_id: string;
@@ -22,6 +23,7 @@ export function useReceivePurchaseItems() {
       showSuccess('Recebimento registrado com sucesso!');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       showError(error.message || 'Erro ao registrar recebimento. Tente novamente.');
     },
   });

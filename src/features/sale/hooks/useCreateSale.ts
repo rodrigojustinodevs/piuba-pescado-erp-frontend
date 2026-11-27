@@ -6,6 +6,7 @@ import { useToast } from '@/shared/contexts/ToastContext';
 import type { CreateSaleData } from '../types';
 import { saleService } from '../services/saleService';
 import { translateSaleApiErrorMessagePtBR } from '../utils/errorMessagePtBR';
+import { isHandledGlobally } from '@/shared/lib/http/apiError';
 
 export function useCreateSale({ skipNavigateToList }: { skipNavigateToList?: boolean } = {}) {
   const router = useRouter();
@@ -20,6 +21,7 @@ export function useCreateSale({ skipNavigateToList }: { skipNavigateToList?: boo
       if (!skipNavigateToList) router.push('/company/sales');
     },
     onError: (error: Error) => {
+      if (isHandledGlobally(error)) return;
       const message = error.message ? translateSaleApiErrorMessagePtBR(error.message) : '';
       showError(message || 'Erro ao cadastrar venda. Tente novamente.');
     },
