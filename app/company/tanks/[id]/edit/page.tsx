@@ -18,7 +18,7 @@ export default function EditTankPage() {
 
   const onSubmit = (data: CreateTankFormData) => {
     // UI de fotos (não enviado no payload por enquanto)
-    updateTank.mutate({ ...data, id });
+    return updateTank.mutateAsync({ ...data, id });
   };
 
   const initialValues = useMemo<CreateTankFormData | undefined>(() => {

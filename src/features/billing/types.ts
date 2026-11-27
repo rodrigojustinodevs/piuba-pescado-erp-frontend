@@ -12,13 +12,27 @@ export type PlanPrice = {
   amount: number | null;
 };
 
+export type PlanFeatureType = 'boolean' | 'limit' | 'quota';
+/** `never` = cota única; `month` = renova todo mês; null em boolean/limit. */
+export type FeatureResetPeriod = 'never' | 'month' | null;
+
+export type PlanFeature = {
+  key: string;
+  type: PlanFeatureType;
+  /** boolean → liberado ou não; limit/quota → quantidade. */
+  value: boolean | number;
+  unlimited: boolean;
+  resetPeriod: FeatureResetPeriod;
+  label: string;
+};
+
 export type Plan = {
   tier: PlanTier;
   name: string;
   currency: string;
   paid: boolean;
   prices: Record<BillingCycle, PlanPrice>;
-  features: string[];
+  features: PlanFeature[];
 };
 
 export type PendingChange = {

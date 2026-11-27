@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { applyServerFieldErrors } from '@/shared/utils/formErrors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCompanies } from '@/features/company';
 import { useCreateTank, useTankTypes, useUpdateTank } from '@/features/tank';
@@ -76,6 +77,7 @@ export function TankDialog({
     control,
     setValue,
     reset,
+    setError,
     formState: { errors },
   } = useForm<CreateTankFormData>({
     resolver: zodResolver(createTankSchema),
@@ -97,6 +99,9 @@ export function TankDialog({
     reset(nextForm);
   }, [open, tank, reset, isMaster, user?.companyId]);
 
+  // O toast sai no onError do hook; aqui os erros por campo vão para o formulário.
+  const onError = (error: Error) => applyServerFieldErrors(error, setError);
+
   function onSubmit(data: CreateTankFormData) {
     if (isEdit) {
       if (!tank?.id) return;
@@ -106,6 +111,7 @@ export function TankDialog({
           onOpenChange(false);
           onSuccess?.();
         },
+        onError,
       });
       return;
     }
@@ -115,6 +121,7 @@ export function TankDialog({
         onOpenChange(false);
         onSuccess?.();
       },
+      onError,
     });
   }
 

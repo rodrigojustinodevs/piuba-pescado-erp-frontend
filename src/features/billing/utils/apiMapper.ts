@@ -4,8 +4,10 @@ import type {
   Invoice,
   InvoiceListResponse,
   Plan,
+  PlanFeature,
   Subscription,
 } from '../types';
+import { featureLabel } from './labels';
 
 /**
  * A API já devolve camelCase; o mapper só garante os valores padrão (null/false)
@@ -37,8 +39,46 @@ export function mapSubscriptionEnvelope(data: ApiEnvelope<Partial<Subscription> 
   return mapSubscription(data.response);
 }
 
-export function mapPlansEnvelope(data: ApiEnvelope<Plan[] | null>): Plan[] {
-  return data.response ?? [];
+type RawPlanFeature = {
+  key?: string;
+  type?: PlanFeature['type'];
+  value?: boolean | number | null;
+  unlimited?: boolean;
+  reset_period?: PlanFeature['resetPeriod'];
+  resetPeriod?: PlanFeature['resetPeriod'];
+  label?: string | null;
+};
+
+type RawPlan = Omit<Plan, 'features'> & { features?: Array<RawPlanFeature | string> | null };
+
+/** Aceita o formato atual (objeto) e o antigo (só o código, como string). */
+export function mapPlanFeature(raw: RawPlanFeature | string): PlanFeature {
+  if (typeof raw === 'string') {
+    return {
+      key: raw,
+      type: 'boolean',
+      value: true,
+      unlimited: false,
+      resetPeriod: null,
+      label: featureLabel(raw),
+    };
+  }
+  const key = raw.key ?? '';
+  return {
+    key,
+    type: raw.type ?? 'boolean',
+    value: raw.value ?? false,
+    unlimited: raw.unlimited ?? false,
+    resetPeriod: raw.resetPeriod ?? raw.reset_period ?? null,
+    label: raw.label || featureLabel(key),
+  };
+}
+
+export function mapPlansEnvelope(data: ApiEnvelope<RawPlan[] | null>): Plan[] {
+  return (data.response ?? []).map((plan) => ({
+    ...plan,
+    features: (plan.features ?? []).map(mapPlanFeature).filter((f) => f.key !== ''),
+  }));
 }
 
 export function mapInvoiceListEnvelope(data: ApiListEnvelope<Invoice>): InvoiceListResponse {

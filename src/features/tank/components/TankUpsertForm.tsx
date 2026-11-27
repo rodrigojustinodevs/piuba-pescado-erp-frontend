@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { applyServerFieldErrors } from '@/shared/utils/formErrors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { CreateTankFormData } from '@/features/tank';
 import { createTankSchema } from '@/features/tank/schemas';
@@ -14,7 +15,8 @@ import { PhotoPlaceholderIcon } from '@/shared/components/icons/AppIcons';
 
 type TankUpsertFormProps = {
   initialValues?: CreateTankFormData;
-  onSubmit: (data: CreateTankFormData) => void;
+  /** Devolva a promise da mutation para os erros por campo da API irem para o formulário. */
+  onSubmit: (data: CreateTankFormData) => Promise<unknown> | void;
   isSubmitting?: boolean;
   submitLabel: string;
   submittingLabel: string;
@@ -72,6 +74,7 @@ export function TankUpsertForm({
     setValue,
     control,
     reset,
+    setError,
   } = useForm<CreateTankFormData>({
     resolver: zodResolver(createTankSchema),
     mode: 'onChange',
@@ -98,7 +101,16 @@ export function TankUpsertForm({
   }, [isMaster, setValue, user?.companyId]);
 
   return (
-    <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+    <form
+      onSubmit={handleSubmit(async (data) => {
+        try {
+          await onSubmit(data);
+        } catch (error) {
+          // O toast sai no onError da mutation; aqui só marca os campos.
+          applyServerFieldErrors(error, setError);
+        }
+      })}
+    >
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
         {/* Form */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">

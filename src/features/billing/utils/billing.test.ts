@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { HttpError } from '@/shared/lib/http/httpError';
 import type { Subscription } from '../types';
-import { mapSubscription } from './apiMapper';
+import { mapPlanFeature, mapSubscription } from './apiMapper';
+import { featureAmount, isFeatureIncluded } from './format';
 import { previewCancel, previewChange } from './changePreview';
 import { validateDocument, isValidCpf } from './document';
 import { billingErrorMessage, isUncertainFailure } from './errors';
@@ -224,5 +225,53 @@ describe('erros, documento e permissão', () => {
     expect(canManageBilling('master-admin')).toBe(true);
     expect(canManageBilling('manager')).toBe(false);
     expect(canManageBilling('operator')).toBe(false);
+  });
+});
+
+describe('features do plano', () => {
+  it('normaliza o objeto da API (snake_case) e aceita o formato antigo em string', () => {
+    expect(
+      mapPlanFeature({
+        key: 'ai.management_plan',
+        type: 'quota',
+        value: 10,
+        unlimited: false,
+        reset_period: 'month',
+        label: 'Plano de manejo com IA',
+      }),
+    ).toEqual({
+      key: 'ai.management_plan',
+      type: 'quota',
+      value: 10,
+      unlimited: false,
+      resetPeriod: 'month',
+      label: 'Plano de manejo com IA',
+    });
+    expect(mapPlanFeature('ai_management_plan')).toMatchObject({
+      key: 'ai_management_plan',
+      type: 'boolean',
+      value: true,
+      label: 'Plano de manejo gerado por IA',
+    });
+  });
+
+  it('sabe se a funcionalidade está incluída e quanto o plano libera', () => {
+    const boolOff = mapPlanFeature({ key: 'api.write', type: 'boolean', value: false });
+    const quotaZero = mapPlanFeature({ key: 'ai.x', type: 'quota', value: 0 });
+    const quota = mapPlanFeature({ key: 'ai.x', type: 'quota', value: 10, reset_period: 'month' });
+    const unlimited = mapPlanFeature({
+      key: 'users.max',
+      type: 'limit',
+      value: null,
+      unlimited: true,
+    });
+
+    expect(isFeatureIncluded(boolOff)).toBe(false);
+    expect(isFeatureIncluded(quotaZero)).toBe(false);
+    expect(isFeatureIncluded(undefined)).toBe(false);
+    expect(isFeatureIncluded(unlimited)).toBe(true);
+    expect(featureAmount(boolOff)).toBeNull();
+    expect(featureAmount(quota)).toBe('10/mês');
+    expect(featureAmount(unlimited)).toBe('Ilimitado');
   });
 });

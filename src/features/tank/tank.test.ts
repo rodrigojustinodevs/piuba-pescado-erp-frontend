@@ -8,11 +8,20 @@ describe('createTankSchema', () => {
     tankTypeId: 't1',
     name: 'Viveiro 1',
     capacityLiters: 1000,
+    location: 'Setor A',
     status: 'active' as const,
   };
 
   it('aceita dados válidos', () => {
     expect(createTankSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('exige localização (obrigatória na API)', () => {
+    const r = createTankSchema.safeParse({ ...valid, location: '   ' });
+    expect(r.success).toBe(false);
+    expect(r.success ? [] : r.error.issues.map((i) => i.message)).toContain(
+      'Localização é obrigatória',
+    );
   });
 
   it('rejeita nome curto e capacidade não positiva', () => {

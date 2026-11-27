@@ -8,7 +8,7 @@ export const createTankSchema = z.object({
   tankTypeId: z.string().min(1, 'Tipo de tanque é obrigatório'),
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   capacityLiters: z.number().min(0.01, 'Capacidade deve ser maior que zero'),
-  location: z.string().optional(),
+  location: z.string().trim().min(1, 'Localização é obrigatória'),
   status: z.enum(['active', 'inactive']),
 });
 
